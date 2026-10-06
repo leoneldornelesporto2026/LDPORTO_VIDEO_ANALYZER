@@ -1,0 +1,40 @@
+{
+  "synthetic_duration_seconds": 600,
+  "visual_samples": 2400,
+  "python": "3.12.14",
+  "elapsed_with_tracemalloc_seconds": 3.4547561940003106,
+  "peak_director_allocation_mib": 5.893646240234375,
+  "metrics": {
+    "camera_director_coverage": 1.0,
+    "camera_director_timeline_coverage": 1.0,
+    "unresolved_focus_fraction": 0.0,
+    "director_switches_per_minute": 0.1,
+    "average_director_shot_seconds": 300.0,
+    "split_fraction": 0.0,
+    "two_shot_fraction": 0.0,
+    "full_frame_fraction": 0.005,
+    "switches_suppressed": 12,
+    "deadzone_suppressed_moves": 2313,
+    "unsafe_crop_avoided": 0,
+    "source_shot_resets": 1,
+    "director_intervals": 3,
+    "director_evaluation_windows": 2400,
+    "observations_per_second": 4.0,
+    "conversation_modes": {
+      "MONOLOGUE": 3
+    },
+    "elapsed_seconds": 3.4279165049997573,
+    "timeline_json_bytes": 61066,
+    "motion_limits": {
+      "max_zoom_default": 1.35,
+      "max_zoom_hard": 1.4,
+      "max_pan_speed": 0.12,
+      "max_pan_acceleration": 0.18,
+      "max_pan_jerk": 0.6,
+      "max_zoom_speed": 0.035,
+      "max_zoom_acceleration": 0.045,
+      "max_zoom_jerk": 0.15
+    },
+    "coverage_note": "Visual coverage is sampled; timeline coverage includes explicit full-frame fallback."
+  }
+}

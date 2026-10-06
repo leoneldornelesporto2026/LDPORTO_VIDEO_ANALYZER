@@ -1,0 +1,129 @@
+{
+  "project": "L.D.PORTO VIDEO ANALYZER V4 FINAL",
+  "delivery_date": "2026-10-04",
+  "analyzer_version": "4.0.0",
+  "baseline": {
+    "passed": 116,
+    "failed": 1,
+    "runtime": "Linux x86_64 / Python 3.13.5"
+  },
+  "final_tests": {
+    "passed": 130,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "duration_seconds_approx": 4.7
+  },
+  "validation_categories": {
+    "implemented_tested": [
+      "P0 nullable tracker",
+      "JSON finite sanitation",
+      "export duplication",
+      "Global Planner",
+      "Active Speaker states",
+      "run manifest",
+      "overrides backend",
+      "schemas"
+    ],
+    "implemented_synthetically_tested": [
+      "vision checkpoint integrity",
+      "preview renderer/verifier",
+      "bounded repair",
+      "source camera motion compensation"
+    ],
+    "implemented_real_video_tested": [],
+    "implemented_local_validation_required": [
+      "Windows/Python 3.11",
+      "CUDA/GPU",
+      "Pyannote/HF",
+      "Ollama",
+      "full GUI review",
+      "long-video soak"
+    ],
+    "blocked_by_external_model_hardware": [
+      "neural ASD benchmark",
+      "real diarization in this runner"
+    ],
+    "not_implemented": [
+      "final social renderer",
+      "automatic training from feedback",
+      "neural ASD adapters"
+    ]
+  },
+  "new_files": [
+    "DELIVERY_MANIFEST_V4.json",
+    "docs/V4_ASD_CANDIDATES_20261004.md",
+    "docs/V4_CACHE_RESUME.md",
+    "docs/V4_FINAL_ARCHITECTURE.md",
+    "docs/V4_GLOBAL_PLANNER.md",
+    "docs/V4_IMPLEMENTATION_REPORT.md",
+    "docs/V4_OVERRIDES.md",
+    "docs/V4_PREVIEW_RENDERER_VERIFIER.md",
+    "docs/V4_REQUIREMENT_MATRIX.md",
+    "docs/V4_SECOND_CURATION.md",
+    "docs/V4_WINDOWS_PY311_HOMOLOGATION.md",
+    "schemas/camera_plan.schema.json",
+    "schemas/preview_validation.schema.json",
+    "schemas/review_overrides.schema.json",
+    "schemas/run_manifest.schema.json",
+    "schemas/second_curation_package.schema.json",
+    "src/ldporto/asd_backend.py",
+    "src/ldporto/global_camera_planner.py",
+    "src/ldporto/preview_integration.py",
+    "src/ldporto/preview_renderer.py",
+    "src/ldporto/preview_verifier.py",
+    "src/ldporto/review_overrides.py",
+    "src/ldporto/run_status.py",
+    "src/ldporto/second_curation.py",
+    "src/ldporto/vision_checkpoint.py",
+    "src/tests/fixtures/legacy_analysis/llm_insights.json",
+    "src/tests/fixtures/legacy_analysis/scenes.json",
+    "src/tests/fixtures/legacy_analysis/speakers.json",
+    "src/tests/fixtures/legacy_analysis/timeline.json",
+    "src/tests/fixtures/legacy_analysis/words.json",
+    "src/tests/test_v4_final.py"
+  ],
+  "changed_files": [
+    "analyze.py",
+    "config/config.yaml",
+    "export_ldporto_project.py",
+    "pack_ldporto_for_work.py",
+    "src/ldporto/__init__.py",
+    "src/ldporto/active_speaker.py",
+    "src/ldporto/analysis_quality.py",
+    "src/ldporto/camera_director.py",
+    "src/ldporto/config.py",
+    "src/ldporto/core.py",
+    "src/ldporto/director_integration.py",
+    "src/ldporto/handoff.py",
+    "src/ldporto/media.py",
+    "src/ldporto/person_motion.py",
+    "src/ldporto/pipeline.py",
+    "src/ldporto/reports.py",
+    "src/ldporto/semantic.py",
+    "src/ldporto/vision.py",
+    "src/tests/test_director_integration.py",
+    "src/tests/test_v2_perception.py"
+  ],
+  "removed_files": [],
+  "required_docs": [
+    "docs/V4_FINAL_ARCHITECTURE.md",
+    "docs/V4_REQUIREMENT_MATRIX.md",
+    "docs/V4_IMPLEMENTATION_REPORT.md",
+    "docs/V4_WINDOWS_PY311_HOMOLOGATION.md",
+    "docs/V4_CACHE_RESUME.md",
+    "docs/V4_GLOBAL_PLANNER.md",
+    "docs/V4_PREVIEW_RENDERER_VERIFIER.md",
+    "docs/V4_OVERRIDES.md",
+    "docs/V4_SECOND_CURATION.md",
+    "docs/V4_ASD_CANDIDATES_20261004.md"
+  ],
+  "real_video_benchmark": {
+    "status": "NOT_RUN",
+    "reason": "analysis/video_87cfcb5f5347 was not included in the uploaded package"
+  },
+  "security": {
+    "credentials_expected_in_package": false,
+    "media_models_venv_expected_in_package": false
+  }
+}

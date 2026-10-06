@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "L.D.PORTO camera_director_timeline v3",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "schema_version",
+      "director_id",
+      "start",
+      "end",
+      "source_shot_id",
+      "conversation_mode",
+      "focus_person",
+      "layout",
+      "camera",
+      "crop",
+      "decision",
+      "audio_events"
+    ],
+    "properties": {
+      "schema_version": {
+        "const": "3.0"
+      },
+      "director_id": {
+        "type": "string",
+        "pattern": "^DIRECTOR_[0-9]+$"
+      },
+      "start": {
+        "type": "number",
+        "minimum": 0
+      },
+      "end": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "source_shot_id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "focus_person": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "layout": {
+        "enum": [
+          "full_frame",
+          "single_person",
+          "two_shot",
+          "split_candidate"
+        ]
+      },
+      "conversation_mode": {
+        "enum": [
+          "MONOLOGUE",
+          "DIALOGUE",
+          "QUICK_EXCHANGE",
+          "QUESTION_ANSWER",
+          "OVERLAP",
+          "REACTION",
+          "GROUP_DISCUSSION",
+          "B_ROLL",
+          "NO_CLEAR_SPEAKER"
+        ]
+      },
+      "camera": {
+        "type": "object",
+        "required": [
+          "center_start",
+          "center_end",
+          "zoom_start",
+          "zoom_end",
+          "keyframes",
+          "transition_in",
+          "transition_out"
+        ],
+        "properties": {
+          "center_start": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "center_end": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "keyframes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "time",
+                "center",
+                "zoom",
+                "target",
+                "velocity",
+                "acceleration"
+              ],
+              "properties": {
+                "time": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "center": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "zoom": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 2
+                },
+                "target": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "velocity": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "acceleration": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              }
+            },
+            "minItems": 2
+          },
+          "transition_in": {
+            "enum": [
+              "hold",
+              "cut",
+              "source_cut",
+              "initial",
+              "safety_cut"
+            ]
+          }
+        }
+      },
+      "crop": {
+        "type": "object",
+        "required": [
+          "safe",
+          "max_allowed"
+        ],
+        "properties": {
+          "safe": {
+            "type": "boolean"
+          },
+          "max_allowed": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 2
+          }
+        }
+      },
+      "decision": {
+        "type": "object",
+        "required": [
+          "reasons",
+          "switch_suppressed",
+          "confidence_is_calibrated"
+        ],
+        "properties": {
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "switch_suppressed": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+[
+  {"start":0.0,"end":2.0,"scene_id":"SCENE_00000","visual_observed_at":1.0,"visible_people":["PERSON_001"],"people_positions":[{"person_id":"PERSON_001","track_id":"TRACK_00001","bbox":{"x":0.2,"y":0.2,"width":0.2,"height":0.5},"face_bbox":{"x":0.24,"y":0.22,"width":0.1,"height":0.14},"safe_crop_possible":true}]},
+  {"start":2.0,"end":4.0,"scene_id":"SCENE_00001","visual_observed_at":3.0,"visible_people":["PERSON_002"],"people_positions":[{"person_id":"PERSON_002","track_id":"TRACK_00002","bbox":{"x":0.6,"y":0.2,"width":0.2,"height":0.5},"face_bbox":{"x":0.64,"y":0.22,"width":0.1,"height":0.14},"safe_crop_possible":true}]}
+]

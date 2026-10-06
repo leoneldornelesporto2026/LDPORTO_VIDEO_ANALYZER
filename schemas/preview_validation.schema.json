@@ -1,0 +1,6 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Preview Validation v1",
+  "type":"object","required":["schema_version","issues"],
+  "properties":{"schema_version":{"const":"1.0"},"issues":{"type":"array","items":{"type":"object","required":["issue_type","severity"],"properties":{"issue_type":{"type":"string"},"severity":{"enum":["info","warning","error","critical"]},"evidence":{},"suggested_repair":{}}}},"verifier_uses_rendered_frames":{"type":"boolean"}}
+}

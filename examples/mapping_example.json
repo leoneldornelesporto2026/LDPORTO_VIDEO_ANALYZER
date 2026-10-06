@@ -1,0 +1,12 @@
+{
+  "note": "Exemplo de formato. Substitua IDs/intervalos após conferir os resultados do seu vídeo.",
+  "mappings": [
+    {
+      "start": 0.0,
+      "end": 120.0,
+      "speaker": "SPEAKER_00",
+      "person_id": "PERSON_001",
+      "evidence": "Associação conferida manualmente no vídeo"
+    }
+  ]
+}

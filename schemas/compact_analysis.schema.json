@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Referenced Analysis V4.2","type":"object",
+  "required":["schema_version","collection_storage","collection_refs","metadata"],
+  "properties":{
+    "schema_version":{"const":"4.2"},"collection_storage":{"const":"references"},
+    "metadata":{"type":"object"},
+    "collection_refs":{"type":"object","additionalProperties":{"type":"object","required":["path","sha256"],
+      "properties":{"path":{"type":"string","pattern":"^[A-Za-z0-9_.-]+\\.json$"},
+                    "sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"record_count":{"type":["integer","null"],"minimum":0}}}}
+  }
+}

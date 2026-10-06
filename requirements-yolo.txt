@@ -1,0 +1,2 @@
+# Optional improved full-body detection. Review Ultralytics' license for commercial use.
+ultralytics>=8.3,<9

@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Review Overrides v1","type":"object","required":["schema_version","overrides","redo_stack"],
+  "properties":{"schema_version":{"const":"1.0"},"overrides":{"type":"array","items":{"type":"object","required":["origin","timestamp","interval","kind","value","version"],"properties":{"origin":{"const":"manual"},"interval":{"type":"object","required":["start","end"],"properties":{"start":{"type":"number"},"end":{"type":"number"}}},"kind":{"type":"string"},"version":{"type":"integer","minimum":1}}}},"redo_stack":{"type":"array"}}
+}

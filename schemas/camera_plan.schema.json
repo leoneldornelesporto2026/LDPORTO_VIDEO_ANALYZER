@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Global Camera Plan v4",
+  "type":"object",
+  "required":["schema_version","profile","selected_global_path","candidate_states","hard_constraints","metrics","planner_version"],
+  "properties":{
+    "schema_version":{"const":"4.0"},
+    "plan_id":{"type":["string","null"]},
+    "profile":{"type":"string"},
+    "target_aspect":{"type":["array","null"],"items":{"type":"number"},"minItems":2,"maxItems":2},
+    "selected_global_path":{"type":"array","items":{"type":"object","required":["start","end","state","layout"],"properties":{"start":{"type":"number"},"end":{"type":"number"},"state":{"type":"string"},"layout":{"type":"string"}}}},
+    "candidate_states":{"type":"array"},"rejected_candidates":{"type":"array"},"hard_constraints":{"type":"array"},"metrics":{"type":"object"},"planner_version":{"type":"string"}
+  }
+}

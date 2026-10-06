@@ -1,0 +1,520 @@
+{
+  "version": "camera-director-3.0",
+  "files": [
+    {
+      "path": "ABRIR_ANALYZER.bat",
+      "bytes": 396,
+      "sha256": "9bc15c15f29baa8692df3bfe0c298533962e13c0bff2da1429e9340286fc780d"
+    },
+    {
+      "path": "CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat",
+      "bytes": 2489,
+      "sha256": "79c661f9d44b45f6d08f8bf63663b6be353c0a6fda65aa58cb0332308cf2009b"
+    },
+    {
+      "path": "CORRIGIR_GPU_WINDOWS.bat",
+      "bytes": 1773,
+      "sha256": "c30e695c8afb544a8db7e6b6c2da0feaa993df8c061cc6cf74890e75e8f3cb63"
+    },
+    {
+      "path": "DIAGNOSTICO_GPU_WINDOWS.bat",
+      "bytes": 639,
+      "sha256": "e053db29ded29323f97b4296838ba3e3c3fe61177f33350e34ccd8325da63cf8"
+    },
+    {
+      "path": "DIAGNOSTICO_WINDOWS.bat",
+      "bytes": 213,
+      "sha256": "3c996f2265e448242f17690f013ab9a3d114de0b29cd7f702f5ff1be222abab5"
+    },
+    {
+      "path": "GPU_FIX_NOTES.md",
+      "bytes": 1033,
+      "sha256": "6cb8390f6eb17aaa950aadf5b247f78f2d9724f54ad7055754412f0dfecb2320"
+    },
+    {
+      "path": "INSTALAR_AVANCADO_WINDOWS.bat",
+      "bytes": 428,
+      "sha256": "9d020312682bfbe5db0205f584f567a4ff52ccaa425c40422f67340e0b30e871"
+    },
+    {
+      "path": "INSTALAR_WINDOWS.bat",
+      "bytes": 389,
+      "sha256": "4013ae78753c481e6075c64debd92b1fa2c6211c3e2fcb061c9160d7ade9e260"
+    },
+    {
+      "path": "LEIA_PRIMEIRO.md",
+      "bytes": 8664,
+      "sha256": "0ec38de6aed4d8d6efadc9e27339d0f708cd45d4438fd77e1acc7543e234463c"
+    },
+    {
+      "path": "PATCH_OLLAMA_MAXIMO.md",
+      "bytes": 1411,
+      "sha256": "62dab69de72a8df8d0bcfce3c470e4ab020702546e1dadc59cbd55b47707eb2f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4297,
+      "sha256": "7803c39a1034a443fbba3ce4e39f8a72c7b003a13c182e69e7a7e40da5f51801"
+    },
+    {
+      "path": "TESTAR_WINDOWS.bat",
+      "bytes": 375,
+      "sha256": "1e12f0ed5a8e39823e5528a506fbd8f6057f4fa0181c3c7b2b1e3999a11d1760"
+    },
+    {
+      "path": "WORK_PACKAGE_MANIFEST.json",
+      "bytes": 18178,
+      "sha256": "f1f7893791c170cbcfb7dd3a5107ac29ad158be0ac4476b2d245fab2fc62e2ba"
+    },
+    {
+      "path": "WORK_PACKAGE_PROJECT_TREE.txt",
+      "bytes": 2788,
+      "sha256": "0daa21b25130c46b8e1fcbb75d3b68a3cd60ab74115e9d38863665f7a664bf3a"
+    },
+    {
+      "path": "WORK_PACKAGE_README.txt",
+      "bytes": 873,
+      "sha256": "c64e8bd0f4f05df76d5ee2be804d51b8f81fffdfb9e1350fb01595f0346f4ea6"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/caption_segments.json",
+      "bytes": 927435,
+      "sha256": "ad15adba73a4797164b0442f3fcefdbcae61155390319717e26013007723a078"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/editorial_moments.json",
+      "bytes": 510081,
+      "sha256": "bc6d582800a4744b42cd4da2392076a7aaf247d88055250e88f5ffc020ac6880"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/llm_insights.json",
+      "bytes": 1258494,
+      "sha256": "75e1a082c5d3ed1dfa7cc7701a6f79bc9595068c76aebba14647393d0e1f9033"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/ollama_editorial_review.json",
+      "bytes": 4416,
+      "sha256": "3c028b0fa7bdf752b6aa90635403847f90a174ccd059df42ea7fe0eae6e074c4"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/people.json",
+      "bytes": 197882,
+      "sha256": "9dd8cce50c877c8757c25e489314dfc374e5f6675b4f5207864263099eabc77c"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/questions_answers.json",
+      "bytes": 18144,
+      "sha256": "fe5a79fa62ad1f2b05217f0efe01699ca5594009fe5442efbb1cf5b6497b7e74"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/scenes.json",
+      "bytes": 71839,
+      "sha256": "a60ddf1e8f2dc630521c62b71b9b5ba452f5b30f27afab4220a35d0af7fba202"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/speaker_person_mapping.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/speakers.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/timeline.json",
+      "bytes": 1128314,
+      "sha256": "03bd8307c086ea46046d61b17f7a4ca5102e420389a9cc321f74aeeacdd1ece4"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/topics.json",
+      "bytes": 19182,
+      "sha256": "7f179f240580e1f01a6317e571962af9f931fa55ffb2cbaa0f9432972a1d3fe7"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/transcript.srt",
+      "bytes": 42951,
+      "sha256": "ef8caf992fa3606cf68d46cbf0238a9efaf6f85c98a96df6225df4e05732c7d5"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/transcript.txt",
+      "bytes": 32423,
+      "sha256": "b5e751e666aef1ab510a219c29d1756abf941d39892b24ed2e7171d660414abd"
+    },
+    {
+      "path": "analysis/video_87cfcb5f5347/words.json",
+      "bytes": 1513960,
+      "sha256": "a908b8e8518d3781ea32e904c573258faa96d34d37d9fdab5501e04b6953aca1"
+    },
+    {
+      "path": "analyze.py",
+      "bytes": 8960,
+      "sha256": "e698d9b6fbf9cad50e3b05e49a5dcf3c2d95eefac5d70819fa85ef91d1b969cd"
+    },
+    {
+      "path": "app.py",
+      "bytes": 16880,
+      "sha256": "81be0c84191f62fabbab6d5a4a5305ec3e43ee522dfa6c2cf24ca44a0cc80584"
+    },
+    {
+      "path": "config/config.yaml",
+      "bytes": 1833,
+      "sha256": "9ea969c7ee2b85103ec7100a3f7bab02a05f4acffa53becf7f79764414304e9b"
+    },
+    {
+      "path": "docs/ARQUITETURA.md",
+      "bytes": 7456,
+      "sha256": "c61a307aa1afbee4fa94abc94c6653b79a8a8612e67b6988d666db7991db7502"
+    },
+    {
+      "path": "docs/AUDIO_AVANCADO.md",
+      "bytes": 3577,
+      "sha256": "d7ae292791366b1b8a0685e165bd417dce6d7c4bad5aaad1ab5ea62474548ffd"
+    },
+    {
+      "path": "docs/CAMERA_DIRECTOR_V3.md",
+      "bytes": 14268,
+      "sha256": "914f2bc6f06a8f4a3e64486ad1b852bba46e746e2301b0bfe1b007db941f3dca"
+    },
+    {
+      "path": "docs/CAMERA_PARAMETERS.md",
+      "bytes": 2063,
+      "sha256": "62409c0c64688f2263009d8520c25dfb7c74e9d833ad118d291122ff1eaff69a"
+    },
+    {
+      "path": "docs/CONTRATO_DADOS.md",
+      "bytes": 3981,
+      "sha256": "21f4dbe1ef9e60805f3560478b45e6955dd6e6034b237b61c647838d3e0a5133"
+    },
+    {
+      "path": "docs/DIRECTOR_BENCHMARK.json",
+      "bytes": 1271,
+      "sha256": "3eb0ba87cc15fa0e0c12ec91905a6a01053348726a6d89233c4a198d875146d4"
+    },
+    {
+      "path": "docs/FILES_CHANGED_V3.md",
+      "bytes": 1907,
+      "sha256": "38b579e3d0087ce951bf12edbc823b2356068da4078cd3d758bd37599016e223"
+    },
+    {
+      "path": "docs/FONTES.md",
+      "bytes": 1924,
+      "sha256": "310fc5b10e1ccca61de5136a370e11a48d50ca9580adf9fee2e4707a91c50cff"
+    },
+    {
+      "path": "docs/REQUISITOS_RECEBIDOS.txt",
+      "bytes": 37458,
+      "sha256": "6224839dba64c9fd5d8ab1a91aea9feeb07e0538dc73cb8d9283b1e69950f897"
+    },
+    {
+      "path": "docs/TEST_REPORT_V3.md",
+      "bytes": 7632,
+      "sha256": "f06ad2c30c4685dcc6167424839fb9ab2f1adff31f4d3ada44fe11416d3b2461"
+    },
+    {
+      "path": "docs/TEST_RESULTS_V3.xml",
+      "bytes": 15096,
+      "sha256": "0f929204f8b976213409e336e5bb2ec743ff743c6284e4617422a1c163696646"
+    },
+    {
+      "path": "docs/VALIDACAO.md",
+      "bytes": 3298,
+      "sha256": "a758d4db6be43dd5d1d7ffcf591f281f42b284f507498c9447af12a3e274dde1"
+    },
+    {
+      "path": "examples/README.md",
+      "bytes": 372,
+      "sha256": "9bfa9af2441cc01a4747aaff21afaf078ce407ccb8819a83ace85ece25821b0e"
+    },
+    {
+      "path": "examples/llm_insights_DEMONSTRACAO_SINTETICA.json",
+      "bytes": 15603,
+      "sha256": "f99e9c7532dfde8c9ac2aa9a102df0497a83b435535362867784b8d37462d9e9"
+    },
+    {
+      "path": "examples/mapping_example.json",
+      "bytes": 307,
+      "sha256": "b48d07b7ed48060a95730866b712af7104e0e3b970159ee075c987ab2905748a"
+    },
+    {
+      "path": "install.py",
+      "bytes": 3146,
+      "sha256": "92a64f7a7654cafe6f842f0c3ecbcb4e69e7f09aa112fabcece8685381344b60"
+    },
+    {
+      "path": "models/README.md",
+      "bytes": 475,
+      "sha256": "f87d44b24d23393c721bf774e43fc5be6ebff7fa2ff1cc0ce59ea31f832c0077"
+    },
+    {
+      "path": "models/vision_models_manifest.json",
+      "bytes": 862,
+      "sha256": "a270d89a7e7b8591a705cade14082cacae184b5cfe68e51dea6de62400be150e"
+    },
+    {
+      "path": "pack_ldporto_for_work.py",
+      "bytes": 13906,
+      "sha256": "62ad745295a728aefff7c2cb06c4b682abb1f610b33528f51e8a509f7a044c14"
+    },
+    {
+      "path": "pytest.ini",
+      "bytes": 48,
+      "sha256": "86600ed8842754524448bcbb5d5da53e1d665b5ae3593f4d9f8cfb5890ffe65a"
+    },
+    {
+      "path": "requirements-audio-events.txt",
+      "bytes": 106,
+      "sha256": "4e919210b57c02d3dcc0b8ee5da538888920d6451e93e804e24c6475937f6497"
+    },
+    {
+      "path": "requirements-demucs.txt",
+      "bytes": 132,
+      "sha256": "a1bec1418f6b6ccf95d8816dabe7568447f2f5266160f4f0898492e7dd83b84a"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "bytes": 14,
+      "sha256": "26db60f3749b2d582ef13e54530725d1038086c5b72953678670871c2b85e15a"
+    },
+    {
+      "path": "requirements-diarization.txt",
+      "bytes": 139,
+      "sha256": "b53324284ea4aabd974ecd20311f6cd4fae8dac9b5afc35652078a1d365e40be"
+    },
+    {
+      "path": "requirements-gpu-windows.txt",
+      "bytes": 222,
+      "sha256": "e510a8b25e3365ce3290d7ca682b099a7a2fa5297f4e685425a9b63887d55356"
+    },
+    {
+      "path": "requirements-ocr.txt",
+      "bytes": 25,
+      "sha256": "7145da21c3b0034e0cdf2418d19911dfc8e5ada9a72b1c31106aa0cbbd1f3d4c"
+    },
+    {
+      "path": "requirements-vision.txt",
+      "bytes": 59,
+      "sha256": "4242a110c64ac87acbed75ae4a356018786ac40f5a70b55da86b5d4dfeadd1ea"
+    },
+    {
+      "path": "requirements-yolo.txt",
+      "bytes": 109,
+      "sha256": "1831fd51fd4afdde4e80ca366dc91aaa9bd4c38b565717a7b57fc571dc092543"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 348,
+      "sha256": "6d65520cd8b4f9c6b338f27c29c421f582afda3e03de00ac8a247440e6bbc0b0"
+    },
+    {
+      "path": "schemas/camera_director_debug.schema.json",
+      "bytes": 463,
+      "sha256": "43df594cd950f5940346dabfd6ce02da68dd765fd200d2e2481b3b4943c36c74"
+    },
+    {
+      "path": "schemas/camera_director_timeline.schema.json",
+      "bytes": 4684,
+      "sha256": "2f3b0494b478c8e5216c77418bb5483cc5929f2fb4d5dff3600b19f13e8ead9e"
+    },
+    {
+      "path": "scripts/configure_ollama.py",
+      "bytes": 3821,
+      "sha256": "da924b167c64ce311ba9875bc2206f8f0deecb6a80d6bb823af84a305e83c8da"
+    },
+    {
+      "path": "scripts/download_models.py",
+      "bytes": 2216,
+      "sha256": "33a9812f6473e32f3fd9a2df811443265548aac7bad09f63d179cbdfabbabd5e"
+    },
+    {
+      "path": "scripts/generate_director_fixture.py",
+      "bytes": 3199,
+      "sha256": "0e1ae471718ffc40ed8651066bda5f88579702a8199020e691b9251ab2e3600d"
+    },
+    {
+      "path": "scripts/test_gpu.py",
+      "bytes": 2309,
+      "sha256": "0780d1f89b7187bcb5a07ba44556d0442e49caa036cd1a0861c47c0d34a39cfc"
+    },
+    {
+      "path": "src/ldporto/__init__.py",
+      "bytes": 103,
+      "sha256": "a912dda65b0df9c2c6576fad6668db707bd6399bd0504e624dd3004d37526b17"
+    },
+    {
+      "path": "src/ldporto/active_speaker.py",
+      "bytes": 8866,
+      "sha256": "5f45005394f8baa772a59a9f85ecd3099a53e7018fa483595cdb1af7ac85b079"
+    },
+    {
+      "path": "src/ldporto/analysis_quality.py",
+      "bytes": 2007,
+      "sha256": "c0e99326dd2e981ed63fdf2c6cbde2302cf1a3dbcc11a23dd55f40f5db78e030"
+    },
+    {
+      "path": "src/ldporto/audio.py",
+      "bytes": 9744,
+      "sha256": "4659170e949524081183362e22b448d4ca721ea9871efe09863f969f1cbb9ceb"
+    },
+    {
+      "path": "src/ldporto/camera_director.py",
+      "bytes": 31481,
+      "sha256": "470d65fc9c5029f3d1921447c7ab607ca1a1504dbdb747fa9232dc989f73da10"
+    },
+    {
+      "path": "src/ldporto/camera_geometry.py",
+      "bytes": 4002,
+      "sha256": "6e22b88f471bbd860feeb17650eab5c8d20d400c67bdfff37514a00007039638"
+    },
+    {
+      "path": "src/ldporto/camera_motion.py",
+      "bytes": 2706,
+      "sha256": "0460ec96f9a193dca1c3a87d5cf4ab0b9699ff2441de8b68b735c409623bd24a"
+    },
+    {
+      "path": "src/ldporto/camera_timeline.py",
+      "bytes": 4058,
+      "sha256": "9ce5c6c6146505984b0af41248fdeee2cb017b9762a18e5cb2a573ccc250899f"
+    },
+    {
+      "path": "src/ldporto/config.py",
+      "bytes": 8557,
+      "sha256": "f7eec9129e522873d682032fb5a63cf209a1d703a76cdd6ad657da8d4a27b8f0"
+    },
+    {
+      "path": "src/ldporto/core.py",
+      "bytes": 7815,
+      "sha256": "ad905bedbf04d7ebe4a9c5d61d84182f18be506f107cb91d0287f1153c30d649"
+    },
+    {
+      "path": "src/ldporto/diarization.py",
+      "bytes": 8670,
+      "sha256": "05f3497fc8522de9523a5f77679698b12c04a046178c119958df0c1624774b66"
+    },
+    {
+      "path": "src/ldporto/director_config.py",
+      "bytes": 6283,
+      "sha256": "75629329157fe45c5e788798e8e61d9b2e941fc91ce4abd6b51fe25bad122383"
+    },
+    {
+      "path": "src/ldporto/director_integration.py",
+      "bytes": 5566,
+      "sha256": "ecd25cb2a07feec75514abb7d978303c89c7f1e9f80089f9f03cd444c7ffc28f"
+    },
+    {
+      "path": "src/ldporto/gpu_runtime.py",
+      "bytes": 3117,
+      "sha256": "dc46319f2707913083763ef795dc7d31bb9b9212a08b07c95f59beb906290100"
+    },
+    {
+      "path": "src/ldporto/handoff.py",
+      "bytes": 7042,
+      "sha256": "e325cdae63e31411f4eaafe0ef522908cbce893567407d0446b80781f50b3914"
+    },
+    {
+      "path": "src/ldporto/master_timeline.py",
+      "bytes": 4785,
+      "sha256": "036777f1afd30213296f4389d77e72643f36a3c1d7a7e82fb73477cba9486ec6"
+    },
+    {
+      "path": "src/ldporto/media.py",
+      "bytes": 5645,
+      "sha256": "35fc7f69fcb927d499a7b5c3935f8112a5950d965a9a0c988774cf58261d9a7f"
+    },
+    {
+      "path": "src/ldporto/ocr.py",
+      "bytes": 2431,
+      "sha256": "4b006aeb7d6cd23d23648151e711b96a2217407062c81cd2c112b04c7d0aa6dd"
+    },
+    {
+      "path": "src/ldporto/ollama_local.py",
+      "bytes": 6074,
+      "sha256": "98d4e13e7403e130cf4a3314f0f4ff5cb8abeafcaa6e4cfe3810bce6dc7c8415"
+    },
+    {
+      "path": "src/ldporto/person_motion.py",
+      "bytes": 3972,
+      "sha256": "5ccd2d4ad33cf3ce6c8082790b3ed1abfa47d55f9cb94b34020f698c356e0c72"
+    },
+    {
+      "path": "src/ldporto/person_reid.py",
+      "bytes": 2161,
+      "sha256": "a4390ef51f69008ac455a3bde6721247277abda975ce29ce6919e93e014c8784"
+    },
+    {
+      "path": "src/ldporto/pipeline.py",
+      "bytes": 15094,
+      "sha256": "c28301dc7dd0db6a0488456513d5ad411fdc36ae959ad60e5e3cca4d70eb69c4"
+    },
+    {
+      "path": "src/ldporto/reports.py",
+      "bytes": 22710,
+      "sha256": "d970250d3d5d8238a6d16099b0a4142d97be8d2b1096f08e7157bcda18e0e33e"
+    },
+    {
+      "path": "src/ldporto/scenes.py",
+      "bytes": 1774,
+      "sha256": "49004be0419f701c1bc767bebb08287f14315febe2dbcb96931fea165a168bff"
+    },
+    {
+      "path": "src/ldporto/semantic.py",
+      "bytes": 22154,
+      "sha256": "3fe4c58073e1c95bf1fc4dfd599d125972db49e5642e0ba93ba35bb688548a14"
+    },
+    {
+      "path": "src/ldporto/shots.py",
+      "bytes": 5706,
+      "sha256": "2080f9af88446762fa5b5e08888b99d687cabb0b79bb3867d0d65078c1263bad"
+    },
+    {
+      "path": "src/ldporto/temporal.py",
+      "bytes": 2962,
+      "sha256": "074a5105cc7fac734ba3134a66412f009cb13ec862961b8c805c83bea38fb3da"
+    },
+    {
+      "path": "src/ldporto/timeline.py",
+      "bytes": 8784,
+      "sha256": "56bb96b2a7835cc67a8a66c8a814cc96d617057beb0d37fea779d2e759edf4da"
+    },
+    {
+      "path": "src/ldporto/transcription.py",
+      "bytes": 17160,
+      "sha256": "d1f8558c770173043a065b39ee76dc3fd6b184d98a63f3c40590bd872b968610"
+    },
+    {
+      "path": "src/ldporto/understanding.py",
+      "bytes": 19515,
+      "sha256": "2afb0edf30d4b174d0824f650ba47ef2d5135a62f314f647d4a5b11cfdc60675"
+    },
+    {
+      "path": "src/ldporto/vision.py",
+      "bytes": 29355,
+      "sha256": "57b573eb6d4c091cc20db0de86675ffa93977d7ab53c03f08be4fc69b55fd42a"
+    },
+    {
+      "path": "src/ldporto/visual_sampling.py",
+      "bytes": 1397,
+      "sha256": "b9cc3f430d3ac238a7f35639ba90f42b2091020225ddc03100ce724ce6c7d2d4"
+    },
+    {
+      "path": "src/tests/director_fixtures.py",
+      "bytes": 2370,
+      "sha256": "3563ed6ce0c309d587ddff0569550db4832890139f2190ccc0ccdd66249687cf"
+    },
+    {
+      "path": "src/tests/test_camera_director.py",
+      "bytes": 11242,
+      "sha256": "ddb169c17276a4edc80e6d2c431d0fd679e1b690a5405bec47a480d429490ad8"
+    },
+    {
+      "path": "src/tests/test_director_integration.py",
+      "bytes": 10000,
+      "sha256": "a9cf414c9d39d37cb141048dacc00f729ef7704a7dcf2b6df59ce003e997ead7"
+    },
+    {
+      "path": "src/tests/test_v2_perception.py",
+      "bytes": 10788,
+      "sha256": "d243746b650b4d186414e7cb514637d456af91bdbf58fab85f1fd8f77ab3b8c0"
+    }
+  ]
+}

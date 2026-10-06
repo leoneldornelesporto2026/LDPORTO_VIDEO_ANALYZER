@@ -223,7 +223,7 @@ nova análise inteira por feature. `DIRECTOR_BENCHMARK.json` traz medida sintét
 ## Testes
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements/dev.txt
 .\.venv\Scripts\python.exe -m pytest src\tests -q
 .\.venv\Scripts\python.exe analyze.py --doctor
 ```

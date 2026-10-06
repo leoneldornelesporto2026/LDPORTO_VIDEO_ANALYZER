@@ -90,7 +90,10 @@ class VisionCheckpointStore:
         for pid, row in tracker.tracks.items():
             tracks[pid] = {**row, 'embedding': emb(row.get('embedding'))}
         return {'tracks': tracks, 'gallery': {pid: emb(v) for pid,v in tracker.gallery.items()},
-                'next_id': tracker.next_id, 'next_track_id': tracker.next_track_id}
+                'next_id': tracker.next_id, 'next_track_id': tracker.next_track_id,
+                'completed_tracks': tracker.completed_tracks,
+                'association_count': tracker.association_count,
+                'conflicting_embedding_count': tracker.conflicting_embedding_count}
 
     @staticmethod
     def restore_tracker(tracker, payload):
@@ -100,6 +103,9 @@ class VisionCheckpointStore:
         tracker.gallery = {pid: np.asarray(v, dtype=float) for pid,v in (payload.get('gallery') or {}).items() if v is not None}
         tracker.next_id = int(payload.get('next_id') or 1)
         tracker.next_track_id = int(payload.get('next_track_id') or 1)
+        tracker.completed_tracks = list(payload.get('completed_tracks') or [])
+        tracker.association_count = int(payload.get('association_count') or 0)
+        tracker.conflicting_embedding_count = int(payload.get('conflicting_embedding_count') or 0)
 
     def save(self, chunk_index, start, end, observations, frames, thumbnails, people,
              tracker, last_gray, last_scene, next_sample, frame_index, backend, sampling_state=None):

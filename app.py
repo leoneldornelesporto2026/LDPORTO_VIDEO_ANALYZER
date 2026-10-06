@@ -6,12 +6,16 @@ import shutil
 import subprocess
 import sys
 import threading
+import json
+import time
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import webbrowser
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT/"src"))
+from ldporto.progress import WeightedProgress, STAGE_WEIGHTS, STAGE_LABELS, EVENT_PREFIX, human_duration
+from ldporto.core import scrub
 
 
 class App:
@@ -29,6 +33,11 @@ class App:
         style.map('TButton',background=[('focus','#4c4c59')],foreground=[('focus','#ffffff')])
         style.map('TCheckbutton',background=[('focus','#3c3c49')])
         outer = ttk.Frame(window, padding=24)
+        self.configuration_frame = outer
+        self.in_execution = False
+        self.closing_requested = False
+        self.progress_model = WeightedProgress()
+        self.package_path = None
         outer.pack(fill="both", expand=True)
         ttk.Label(outer, text="L.D.PORTO · VIDEO ANALYZER", font=("Segoe UI", 24, "bold"),
                   foreground="#fb505a").pack(anchor="w")
@@ -93,6 +102,14 @@ class App:
         ttk.Entry(self.camera_advanced, textvariable=self.camera_zoom, width=7).pack(side="left", padx=6)
         ttk.Button(camera_row, text="Configuração avançada", command=self.toggle_camera_settings).pack(side="left")
         ttk.Button(camera_row, text="Reprocessar só câmera", command=self.resume_camera).pack(side="left", padx=8)
+        smart_row = ttk.Frame(outer)
+        smart_row.pack(fill='x', pady=4)
+        self.smart_zoom = tk.BooleanVar(value=(camera_cfg.get('smart_zoom') or {}).get('enabled', True))
+        self.smart_profile = tk.StringVar(value=(camera_cfg.get('smart_zoom') or {}).get('profile', 'natural'))
+        ttk.Checkbutton(smart_row, text='Smart Zoom', variable=self.smart_zoom).pack(side='left')
+        ttk.Combobox(smart_row, textvariable=self.smart_profile, values=['conservative', 'natural', 'dynamic'], width=18, state='readonly').pack(side='left', padx=8)
+        self.include_previews = tk.BooleanVar(value=False)
+        ttk.Checkbutton(smart_row, text='Previews no pacote de midia separado', variable=self.include_previews).pack(side='left', padx=10)
         self.camera_summary = tk.StringVar(value="Camera Director: aguardando análise")
         ttk.Label(outer, textvariable=self.camera_summary, font=("Segoe UI", 9), wraplength=980).pack(anchor="w")
         self.force = tk.BooleanVar(value=False)
@@ -109,11 +126,11 @@ class App:
         ttk.Label(outer, textvariable=self.preflight_status, wraplength=980).pack(anchor="w")
         token_row = ttk.Frame(outer)
         token_row.pack(fill="x", pady=6)
-        ttk.Label(token_row, text="HF_TOKEN (Community-1 online exige token + aceite; somente nesta sessao)").pack(side="left")
+        ttk.Label(token_row, text="HF_TOKEN (somente nesta sessao)").pack(side="left")
         self.hf_token = tk.StringVar(value=os.environ.get("HF_TOKEN", ""))
         ttk.Entry(token_row, textvariable=self.hf_token, show="*", width=42).pack(side="left", padx=8)
         ttk.Label(outer, text="Large-v3 prioriza fidelidade. Em NVIDIA, use CUDA; falha de GPU nao cai silenciosamente para CPU."
-                  "\nDiarização exige extras + HF_TOKEN. Veja LEIA_PRIMEIRO.md.",
+                  "\nDiarização exige extras + HF_TOKEN. Veja README.md.",
                   font=("Segoe UI", 10)).pack(anchor="w", pady=10)
         buttons = ttk.Frame(outer)
         buttons.pack(fill="x", pady=10)
@@ -132,6 +149,7 @@ class App:
         self.log = tk.Text(outer, bg="#222229", fg="#eeeeee", insertbackground="white",
                            wrap="word", font=("Consolas", 10))
         self.log.pack(fill="both", expand=True)
+        self.build_execution_screens()
         window.after(150, self.poll)
         window.after(500, self.refresh_ollama)
         window.protocol("WM_DELETE_WINDOW", self.close)
@@ -141,6 +159,167 @@ class App:
         if path:
             self.source.set(path)
 
+    def build_execution_screens(self):
+        self.execution_frame = ttk.Frame(self.window, padding=24)
+        ttk.Label(self.execution_frame, text='L.D.PORTO VIDEO ANALYZER', font=('Segoe UI', 19, 'bold'), foreground='#fb505a').pack(anchor='w')
+        self.execution_title = tk.StringVar(value='Processando')
+        self.execution_metadata = tk.StringVar(value='')
+        ttk.Label(self.execution_frame, textvariable=self.execution_title, font=('Segoe UI', 15, 'bold'), wraplength=920).pack(anchor='w', pady=(12, 3))
+        ttk.Label(self.execution_frame, textvariable=self.execution_metadata).pack(anchor='w', pady=(0, 14))
+        self.overall_text = tk.StringVar(value='Progresso geral: 0%')
+        ttk.Label(self.execution_frame, textvariable=self.overall_text).pack(anchor='w')
+        self.overall_bar = ttk.Progressbar(self.execution_frame, maximum=100)
+        self.overall_bar.pack(fill='x', pady=(5, 14))
+        self.stage_text = tk.StringVar(value='Preflight')
+        ttk.Label(self.execution_frame, textvariable=self.stage_text, font=('Segoe UI', 12, 'bold')).pack(anchor='w')
+        self.stage_bar = ttk.Progressbar(self.execution_frame, maximum=100)
+        self.stage_bar.pack(fill='x', pady=6)
+        self.elapsed_text = tk.StringVar(value='Decorrido: <1m | ETA etapa: calculando... | ETA total: calculando...')
+        self.next_stage_text = tk.StringVar(value='')
+        ttk.Label(self.execution_frame, textvariable=self.elapsed_text, wraplength=920).pack(anchor='w', pady=4)
+        ttk.Label(self.execution_frame, textvariable=self.next_stage_text).pack(anchor='w', pady=(0, 10))
+        stage_area = ttk.Frame(self.execution_frame)
+        stage_area.pack(fill='both', expand=True)
+        self.stage_tree = ttk.Treeview(stage_area, columns=('status', 'elapsed'), show='tree headings', height=12)
+        self.stage_tree.heading('#0', text='Etapa')
+        self.stage_tree.heading('status', text='Estado')
+        self.stage_tree.heading('elapsed', text='Tempo')
+        self.stage_tree.column('#0', width=430, stretch=True)
+        self.stage_tree.column('status', width=150, stretch=False)
+        self.stage_tree.column('elapsed', width=90, stretch=False)
+        scrollbar = ttk.Scrollbar(stage_area, command=self.stage_tree.yview)
+        self.stage_tree.configure(yscrollcommand=scrollbar.set)
+        self.stage_tree.pack(side='left', fill='both', expand=True)
+        scrollbar.pack(side='right', fill='y')
+        for stage, label in STAGE_LABELS.items():
+            self.stage_tree.insert('', 'end', iid=stage, text=label, values=('Pendente', ''))
+        self.execution_log = tk.Text(self.execution_frame, height=5, bg='#222229', fg='#eeeeee', wrap='word', font=('Consolas', 9))
+        self.execution_log.pack(fill='x', pady=10)
+        self.execution_diagnostic = tk.StringVar(value='')
+        ttk.Label(self.execution_frame, textvariable=self.execution_diagnostic, wraplength=920, foreground='#ffc857').pack(anchor='w')
+        ttk.Button(self.execution_frame, text='Solicitar parada segura', command=self.stop).pack(anchor='e', pady=8)
+        self.final_frame = ttk.Frame(self.window, padding=24)
+        self.final_heading = tk.StringVar(value='Analise finalizada')
+        ttk.Label(self.final_frame, textvariable=self.final_heading, font=('Segoe UI', 20, 'bold'), foreground='#fb505a').pack(anchor='w', pady=(0, 18))
+        self.final_summary = tk.StringVar(value='')
+        ttk.Label(self.final_frame, textvariable=self.final_summary, wraplength=920, font=('Segoe UI', 12), justify='left').pack(anchor='w', pady=12)
+        self.final_readiness = tk.StringVar(value='')
+        ttk.Label(self.final_frame, textvariable=self.final_readiness, justify='left', wraplength=920).pack(anchor='w', pady=12)
+        self.final_package = tk.StringVar(value='Pacote indisponivel')
+        ttk.Label(self.final_frame, textvariable=self.final_package, wraplength=920, font=('Consolas', 10), foreground='#70d6c8').pack(anchor='w', pady=16)
+        final_buttons = ttk.Frame(self.final_frame)
+        final_buttons.pack(fill='x', pady=12)
+        ttk.Button(final_buttons, text='Abrir pasta', command=self.open_package_folder).pack(side='left')
+        ttk.Button(final_buttons, text='Copiar caminho', command=self.copy_package_path).pack(side='left', padx=8)
+        ttk.Button(final_buttons, text='Ver resumo', command=self.open_results).pack(side='left', padx=8)
+        ttk.Button(final_buttons, text='Nova analise', command=self.new_analysis).pack(side='right')
+
+    def show_execution(self):
+        self.configuration_frame.pack_forget()
+        self.final_frame.pack_forget()
+        self.execution_frame.pack(fill='both', expand=True)
+        self.in_execution = True
+        weights = dict(STAGE_WEIGHTS)
+        if not self.ollama.get():
+            weights['15_semantic'] = 2.
+        if not self.vision.get():
+            for stage in ('07_people_tracking', '08_person_reid', '09_person_motion', '10_active_speaker'):
+                weights[stage] = 0.
+        if not self.diarization.get():
+            weights['05_diarization'] = 0.
+        self.progress_model = WeightedProgress(weights)
+        self.execution_title.set(self.source.get() or 'Processando evidencias salvas')
+        self.execution_log.delete('1.0', 'end')
+        self.execution_diagnostic.set('')
+
+    def handle_stage_event(self, event):
+        self.progress_model.update(event)
+        metadata = event.get('metadata')
+        if metadata:
+            self.execution_title.set((metadata.get('source') or {}).get('title') or metadata.get('filename') or self.source.get())
+            self.execution_metadata.set(human_duration(metadata.get('duration')) + ' | ' + str(metadata.get('width')) + 'x' + str(metadata.get('height')) + ' | ' + str(metadata.get('fps')) + ' fps')
+        status = event.get('status')
+        if status in ('partial', 'unavailable', 'failed', 'blocked', 'degraded'):
+            stage = event.get('stage')
+            label = STAGE_LABELS.get(stage) if stage else None
+            if not label:
+                label = {
+                    'run_failed': 'Execucao',
+                    'run_cancelled': 'Execucao',
+                    'run_completed': 'Execucao',
+                }.get(event.get('event')) or stage or 'Execucao'
+            cause = event.get('cause') or 'Consulte o diagnostico de qualidade; fallback permanece explicito.'
+            self.execution_diagnostic.set(f'{label}: {status}. {cause}')
+        self.refresh_execution()
+
+    def refresh_execution(self):
+        if not self.in_execution:
+            return
+        snapshot = self.progress_model.snapshot()
+        self.overall_bar['value'] = snapshot['overall_fraction'] * 100
+        self.overall_text.set('Progresso geral: ' + f"{snapshot['overall_fraction'] * 100:.1f}%")
+        if snapshot['stage_fraction'] is None and snapshot['status'] == 'running':
+            if str(self.stage_bar.cget('mode')) != 'indeterminate':
+                self.stage_bar.configure(mode='indeterminate')
+                self.stage_bar.start(30)
+        else:
+            self.stage_bar.stop()
+            self.stage_bar.configure(mode='determinate')
+            self.stage_bar['value'] = (snapshot['stage_fraction'] or 0) * 100
+        units = '' if snapshot['total'] is None else f" | {snapshot['current']} / {snapshot['total']}"
+        self.stage_text.set(str(snapshot['stage_label'] or 'Preparando') + units + (' | ' + snapshot['substage'] if snapshot['substage'] else ''))
+        eta_range = snapshot['stage_eta_range_seconds']
+        stage_eta = human_duration(snapshot['stage_eta_seconds'], True) if not eta_range else human_duration(eta_range[0], True) + ' - ' + human_duration(eta_range[1], True)
+        self.elapsed_text.set('Decorrido: ' + human_duration(snapshot['elapsed_seconds']) + ' | ETA etapa: ' + stage_eta + ' | ETA total: ' + human_duration(snapshot['total_eta_seconds'], True))
+        self.next_stage_text.set('Proxima etapa: ' + str(snapshot['next_stage_label'] or 'aguardando'))
+        status_labels = {'running':'Em execucao', 'ok':'Concluido', 'partial':'Degradado', 'degraded':'Degradado',
+                         'skipped':'Desativado', 'unavailable':'Indisponivel', 'failed':'Falhou', 'blocked':'Bloqueado', 'cancelled':'Interrompido'}
+        for stage, state in snapshot['stage_states'].items():
+            if self.stage_tree.exists(stage):
+                self.stage_tree.item(stage, values=(status_labels.get(state.get('status'), state.get('status')), human_duration(state.get('elapsed_seconds'))))
+                if stage == snapshot['stage']:
+                    self.stage_tree.see(stage)
+
+    def show_completion(self, code=0):
+        self.in_execution = False
+        self.stage_bar.stop()
+        self.execution_frame.pack_forget()
+        self.configuration_frame.pack_forget()
+        self.final_frame.pack(fill='both', expand=True)
+        package, quality, manifest = {}, {}, {}
+        if self.output_folder:
+            for name, target in (('second_curation_export.json', package), ('analysis_quality.json', quality), ('run_manifest.json', manifest)):
+                try:
+                    if name != 'second_curation_export.json' or code == 0:
+                        target.update(json.loads((self.output_folder / name).read_text(encoding='utf-8')))
+                except (OSError, ValueError):
+                    pass
+        self.package_path = Path(package['path']) if package.get('path') else None
+        self.final_heading.set('Execucao interrompida' if code == 130 else 'Analise finalizada' if code == 0 else 'Analise terminou com erro')
+        self.final_summary.set('Tempo: ' + human_duration(self.progress_model.snapshot()['elapsed_seconds']) + '\nStatus: ' + str(manifest.get('analysis_status', 'unavailable')) +
+            '\nCandidatos: ' + str(package.get('candidate_count', 'n/d')) + ' | Shortlist: ' + str(package.get('shortlist_count', 'n/d')) +
+            '\nSmart Camera: ' + str(quality.get('smart_camera_decision_count', 'n/d')) + ' decisoes | Smart Zoom: ' + str(quality.get('zoom_event_count', 'n/d')) + ' eventos')
+        labels = {'editorial_ready':'Editorial', 'transcript_ready':'Transcricao', 'visual_ready':'Visual',
+                  'speaker_person_ready':'Speaker/person', 'camera_ready':'Camera', 'preview_ready':'Preview'}
+        self.final_readiness.set('\n'.join(label + ': ' + ('pronta' if package.get('readiness', {}).get(key) else 'indisponivel/degradada') for key, label in labels.items()) +
+            ('\nCamera preservando source: speaker/person ou crop ainda insuficiente.' if not package.get('readiness', {}).get('camera_ready') else ''))
+        self.final_package.set(str(self.package_path) + '\n' + f"{package.get('bytes', 0) / 1024 ** 2:.2f} MB | {package.get('state', 'FAILED')}" if self.package_path else 'Pacote indisponivel; artifacts locais foram preservados para diagnostico/resume.')
+
+    def new_analysis(self):
+        self.final_frame.pack_forget()
+        self.execution_frame.pack_forget()
+        self.configuration_frame.pack(fill='both', expand=True)
+        self.start_button.configure(state='normal')
+
+    def open_package_folder(self):
+        folder = self.package_path.parent if self.package_path else self.output_folder
+        if folder and folder.exists():
+            os.startfile(str(folder)) if os.name == 'nt' else webbrowser.open(folder.as_uri())
+
+    def copy_package_path(self):
+        if self.package_path:
+            self.window.clipboard_clear()
+            self.window.clipboard_append(str(self.package_path))
     def launch(self, args):
         if self.proc and self.proc.poll() is None:
             messagebox.showinfo("Em execução", "Aguarde o processamento atual.")
@@ -154,16 +333,26 @@ class App:
                     creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
                     start_new_session=os.name != "nt")
         self.start_button.configure(state="disabled")
+        if '--doctor' not in args:
+            self.show_execution()
         self.warning_count=0
         self.status.set("Processando… acompanhe as etapas abaixo.")
         proc = self.proc
         def read():
             for line in proc.stdout:
-                self.messages.put(("line", line))
+                if line.startswith(EVENT_PREFIX):
+                    try:
+                        self.messages.put(('event', json.loads(line[len(EVENT_PREFIX):])))
+                        continue
+                    except ValueError:
+                        pass
+                self.messages.put(("line", scrub(line)))
             self.messages.put(("done", proc.wait()))
         threading.Thread(target=read, daemon=True).start()
 
     def start(self):
+        if self.proc and self.proc.poll() is None:
+            return
         source = self.source.get().strip()
         if not source:
             messagebox.showinfo("Entrada", "Selecione um vídeo ou cole um link.")
@@ -187,6 +376,22 @@ class App:
         tag = hashlib.sha256(source.encode()).hexdigest()[:12]
         self.output_folder = ROOT/"analysis"/f"video_{tag}"
         args[2] = str(self.output_folder)
+        if (self.output_folder / 'run_manifest.json').is_file() and not self.force.get():
+            try:
+                previous = json.loads((self.output_folder / 'run_manifest.json').read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                previous = {}
+            if previous.get('analysis_status') == 'partial':
+                valid = previous.get('modules_still_valid', [])
+                last = valid[-1] if valid else 'nenhuma etapa valida'
+                choice = messagebox.askyesnocancel('Analise incompleta encontrada', 'Ultima etapa valida: ' + last + '\nContinuar a analise? Nao = reprocessar; cancelar = voltar.')
+                if choice is None:
+                    return
+                if choice is False:
+                    args.append('--force')
+        (self.output_folder / 'CANCEL_REQUESTED').unlink(missing_ok=True)
+        if self.include_previews.get():
+            args.append('--include-candidate-previews')
         try:
             args += self.camera_args()
         except ValueError:
@@ -195,7 +400,9 @@ class App:
         self.launch(args)
 
     def camera_args(self):
-        args = ["--camera-profile", self.camera_profile.get()]
+        args = ["--camera-profile", self.camera_profile.get(), '--smart-zoom-profile', self.smart_profile.get()]
+        if not self.smart_zoom.get():
+            args.append('--no-smart-zoom')
         if not self.camera_enabled.get():
             args.append("--no-camera-director")
         for flag, var in (("--camera-min-hold", self.camera_hold), ("--camera-max-zoom", self.camera_zoom)):
@@ -273,7 +480,7 @@ class App:
         if os.name == "nt" and bat.is_file():
             os.startfile(str(bat))
         else:
-            messagebox.showinfo("Ollama", "Veja LEIA_PRIMEIRO.md para instalar o Ollama e baixar um modelo.")
+            messagebox.showinfo("Ollama", "Veja docs/setup/LEIA_PRIMEIRO.md para instalar o Ollama e baixar um modelo.")
 
 
     def repair_gpu(self):
@@ -301,11 +508,11 @@ class App:
         try:
             while True:
                 kind, value = self.messages.get_nowait()
-                if kind == "line":
+                if kind == 'event':
+                    self.handle_stage_event(value)
+                elif kind == "line":
                     if 'WARNING' in value or 'fallback' in value.casefold():
                         self.warning_count+=1
-                    if 'iniciando' in value or 'retomado do cache' in value:
-                        self.run_state.set(value.strip()+' | Avisos: '+str(self.warning_count))
                     # Generated by GitHub Copilot - Oct-05-2026
                     if "00_preflight: READY" in value:
                         self.preflight_status.set(value.strip())
@@ -315,29 +522,34 @@ class App:
                         self.camera_summary.set(value.strip())
                     self.log.insert("end", value)
                     self.log.see("end")
+                    if self.in_execution and not any(fragment in value for fragment in ('Clearcut', 'Created TensorFlow Lite XNNPACK delegate')):
+                        self.execution_log.insert('end', value)
+                        self.execution_log.see('end')
+                        if int(self.execution_log.index('end-1c').split('.')[0]) > 80:
+                            self.execution_log.delete('1.0', '20.0')
                 else:
                     self.start_button.configure(state="normal")
                     if value == 0:
                         self.update_camera_summary()
                     self.status.set("Finalizado. Consulte os avisos no relatório." if value == 0
                                     else "Processamento terminou com erro/interrupção. Veja o log.")
+                    if self.in_execution:
+                        self.show_completion(value)
+                    if self.closing_requested:
+                        self.window.destroy()
+                        return
         except queue.Empty:
             pass
+        self.refresh_execution()
         self.window.after(150, self.poll)
 
     def stop(self):
         if self.proc and self.proc.poll() is None:
-            if os.name == "nt":
-                subprocess.run(["taskkill", "/PID", str(self.proc.pid), "/T", "/F"],
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else:
-                import signal
-                os.killpg(self.proc.pid, signal.SIGTERM)
-            # Process tree has stopped. Completed checkpoints remain; stale run lock is removable.
-            self.proc.wait()
             if self.output_folder:
-                (self.output_folder/"RUNNING.lock").unlink(missing_ok=True)
-            self.status.set("Interrompido; etapas concluídas podem ser retomadas.")
+                self.output_folder.mkdir(parents=True, exist_ok=True)
+                (self.output_folder / 'CANCEL_REQUESTED').write_text('safe_stop_requested', encoding='ascii')
+            self.status.set('Solicitando parada segura; finalizando unidade atual e salvando checkpoint.')
+            self.execution_diagnostic.set(self.status.get())
 
     def open_results(self):
         folder = self.output_folder or ROOT/"analysis"
@@ -355,9 +567,13 @@ class App:
             if not messagebox.askyesno("Fechar", "Há processamento em curso. Interromper e fechar?"):
                 return
             self.stop()
+            self.closing_requested = True
+            return
         self.window.destroy()
 
 
 if __name__ == "__main__":
+    if sys.version_info[:2] != (3, 11):
+        raise SystemExit('Use a .venv Python 3.11.x deste projeto. Veja README.md.')
     App(tk.Tk())
     tk.mainloop()

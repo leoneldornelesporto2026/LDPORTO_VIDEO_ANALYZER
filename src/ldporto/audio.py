@@ -152,7 +152,7 @@ def sound_events(ctx, audio, transcript):
         from panns_inference import AudioTagging
         from panns_inference.config import labels
     except ImportError:
-        raise Unavailable("Instale requirements-audio-events.txt para classificar sons.")
+        raise Unavailable("Instale requirements/audio-events.txt para classificar sons.")
     model = AudioTagging(checkpoint_path=str(asset_path(cfg["checkpoint"])), device="cpu")
     temporary = ctx.cache / "events_32k.wav"
     ffmpeg_audio(audio["original"], temporary, sample_rate=32000)

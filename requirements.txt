@@ -1,5 +1,6 @@
 # Python 3.11/3.12. pyannote-core 6 requires NumPy 2.
 numpy>=2,<2.3
+scipy>=1.14,<2
 PyYAML>=6.0.1,<7
 opencv-contrib-python>=4.11,<4.12
 soundfile>=0.12.1,<0.14

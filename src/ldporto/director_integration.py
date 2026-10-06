@@ -23,6 +23,7 @@ def run_planner_stage(ctx, metadata, vision, shots, camera_timeline, active, sem
             ctx.config['camera_director'], active, semantic, understanding),
         code_files=PLANNER_CODE, output_version='4.0', requires=['12_camera_timeline'])
     ctx.states.update({k:v for k,v in scoped.states.items() if k == '18b_global_camera_planner'})
+    ctx.stage_metrics.update(scoped.stage_metrics)
     ctx.issues.extend(i for i in scoped.issues if i.get('stage') == '18b_global_camera_planner')
     return result
 
@@ -46,6 +47,7 @@ def run_director_stage(ctx, metadata, vision, shots, active, motion, semantic, u
         code_files=DIRECTOR_CODE, output_version='3.0',
         requires=['12_camera_timeline', '18b_global_camera_planner'] if ctx.config['camera_director'].get('enabled',True) else [])
     ctx.states.update(scoped.states)
+    ctx.stage_metrics.update(scoped.stage_metrics)
     ctx.issues.extend(scoped.issues)
     metrics = result.get('metrics', {})
     ctx.logger.info('Camera Director: %s; intervalos=%s; trocas/min=%.2f; suprimidas=%s; cobertura=%.1f%%',
@@ -61,10 +63,11 @@ def attach_director(analysis, director):
     from .analysis_quality import camera_quality_metrics
     metrics = {**director.get('metrics', {}), **camera_quality_metrics(
         rows, analysis.get('metadata', {}).get('duration', 0), director.get('metrics', {}).get('switches_suppressed'))}
-    analysis['camera_director_schema_version'] = '3.0'
+    analysis['camera_director_schema_version'] = '4.3'
     analysis['camera_director_timeline'] = rows
     analysis['camera_director_debug'] = director.get('debug')
     analysis['camera_director_config'] = director.get('config')
+    analysis['smart_zoom_events'] = director.get('zoom_events', [])
     old_metrics = ((analysis.get('video_understanding') or {}).get('camera_director') or {}).get('metrics', {})
     for key in old_metrics:
         analysis.setdefault('analysis_quality', {}).pop(key, None)

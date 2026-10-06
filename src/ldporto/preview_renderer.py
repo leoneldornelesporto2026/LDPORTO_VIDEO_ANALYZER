@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tempfile
 from .core import ok, run_command
+from .media_runtime import find_media_tool
 
 
 def select_canary_intervals(timeline, duration, max_count=6, seconds=4.0):
@@ -26,6 +27,15 @@ def select_canary_intervals(timeline, duration, max_count=6, seconds=4.0):
             risk += 3; reasons.append('split')
         if row.get('layout') == 'two_shot':
             risk += 2; reasons.append('two_shot')
+        if row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'}:
+            risk += 4; reasons.append(row['camera_mode'])
+        for reason in ('HOOK_EMPHASIS', 'PAYOFF_EMPHASIS', 'SOURCE_ALREADY_CLOSE', 'MICRO_INTERRUPTION_SUPPRESSED'):
+            if reason in (row.get('decision') or {}).get('reasons', []):
+                risk += 1; reasons.append(reason)
+        if row.get('reaction'):
+            risk += 2; reasons.append('reaction')
+        if row.get('conversation_mode') == 'MONOLOGUE' and row['end'] - row['start'] >= 10:
+            risk += .25; reasons.append('long_monologue')
         if max(zooms, default=1) > 1.15:
             risk += 2 + max(zooms)-1.15; reasons.append('zoom')
         if max(speeds, default=0) > .02:
@@ -114,6 +124,56 @@ def _row_at(timeline, starts, timestamp):
     return row if float(row['start'])-1e-6 <= timestamp < float(row['end'])+1e-6 else None
 
 
+def build_contact_sheet(source, candidate, output, timeline=None):
+    import cv2
+    import numpy as np
+    from .core import stamp
+    source, output = Path(source), Path(output)
+    if not source.is_file():
+        return {'status': 'unavailable', 'reason': 'source_media_unavailable'}
+    cap = cv2.VideoCapture(str(source))
+    if not cap.isOpened():
+        cap.release()
+        return {'status': 'unavailable', 'reason': 'source_not_decodable'}
+    start, end = candidate['start'], candidate['end']
+    fps = cap.get(cv2.CAP_PROP_FPS) or 25.
+    source_duration = (cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0) / fps
+    times = [start + (end - start) * fraction for fraction in (0., .25, .5, .75, .99)]
+    zoom_rows = [row for row in timeline or [] if row['start'] < end and row['end'] > start and row.get('camera_mode') in ('SMART_ZOOM_IN', 'SMART_ZOOM_OUT')]
+    times.append((max(start, zoom_rows[0]['start']) + min(end, zoom_rows[0]['end'])) / 2 if zoom_rows else (start + end) / 2)
+    canvas = np.full((2 * 206, 3 * 320, 3), 24, dtype=np.uint8)
+    frames = []
+    timeline = sorted(timeline or [], key=lambda row: row['start'])
+    starts = [row['start'] for row in timeline]
+    try:
+        for index, timestamp in enumerate(times):
+            timestamp = max(0., min(timestamp, max(0., source_duration - 1 / fps)))
+            cap.set(cv2.CAP_PROP_POS_MSEC, timestamp * 1000)
+            got, frame = cap.read()
+            if not got or frame.size == 0:
+                return {'status': 'unavailable', 'reason': 'candidate_frame_unavailable', 'time': timestamp}
+            source_row = _row_at(timeline, starts, timestamp)
+            if index and source_row and source_row.get('layout') in ('single_person', 'two_shot'):
+                rect = _interpolate_keyframes(source_row, timestamp, frame.shape[1], frame.shape[0], 540, 960)
+                frame = _crop(frame, rect, 180, 320, cv2)
+            tile = _fit(frame, 320, 180, cv2)
+            column, row_index = index % 3, index // 3
+            top, left = row_index * 206, column * 320
+            canvas[top:top + 180, left:left + 320] = tile
+            label = ('source ' if index == 0 else '') + stamp(timestamp)
+            cv2.putText(canvas, label, (left + 8, top + 197), cv2.FONT_HERSHEY_SIMPLEX, .43, (230, 230, 230), 1, cv2.LINE_AA)
+            frames.append({'time': timestamp, 'camera_mode': (source_row or {}).get('camera_mode', 'SOURCE_PRESERVE')})
+    finally:
+        cap.release()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    encoded, image = cv2.imencode('.jpg', canvas, [cv2.IMWRITE_JPEG_QUALITY, 84])
+    if not encoded:
+        return {'status': 'unavailable', 'reason': 'contact_sheet_encoding_failed'}
+    output.write_bytes(image.tobytes())
+    return {'status': 'ok', 'frame_count': len(frames), 'frames': frames,
+            'source_and_director_framing': True, 'width': 960, 'height': 412}
+
+
 def render_preview(source, timeline, metadata, output, interval=None, output_width=540, output_height=960):
     try:
         import cv2
@@ -185,7 +245,7 @@ def render_preview(source, timeline, metadata, output, interval=None, output_wid
         if frame_count == 0:
             return ok({}, 'unavailable', ['Preview não recebeu frames no intervalo solicitado.'])
         # Add source audio for the exact canary interval when ffmpeg is available.
-        ffmpeg = shutil.which('ffmpeg')
+        ffmpeg = find_media_tool('ffmpeg')
         if ffmpeg:
             cmd = [ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', '-ss', f'{start:.6f}', '-i', str(source),
                    '-i', str(silent), '-map', '1:v:0', '-map', '0:a?', '-c:v', 'copy', '-c:a', 'aac',

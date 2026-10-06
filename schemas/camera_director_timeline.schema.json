@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "L.D.PORTO camera_director_timeline v3",
+  "title": "L.D.PORTO camera_director_timeline v4.3 with v3 reader compatibility",
   "type": "array",
   "items": {
     "type": "object",
@@ -20,7 +20,7 @@
     ],
     "properties": {
       "schema_version": {
-        "const": "3.0"
+        "enum": ["3.0", "4.3"]
       },
       "director_id": {
         "type": "string",

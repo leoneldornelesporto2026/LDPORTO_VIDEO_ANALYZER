@@ -43,7 +43,7 @@ foi arquivado; a separação pode introduzir artefatos e destruir consoantes.
 Crie outro ambiente Python 3.11:
 
     py -3.11 -m venv venv-demucs
-    .\venv-demucs\Scripts\python.exe -m pip install -r requirements-demucs.txt
+    .\venv-demucs\Scripts\python.exe -m pip install -r requirements/demucs.txt
 
 No YAML:
 

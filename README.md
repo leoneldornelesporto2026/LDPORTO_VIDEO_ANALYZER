@@ -10,7 +10,16 @@
 Analisador Python local para a primeira fase de uma plataforma de cortes:
 **entender o vídeo inteiro antes de editar**.
 
-Comece por **LEIA_PRIMEIRO.md**.
+Comece por **[docs/setup/LEIA_PRIMEIRO.md](docs/setup/LEIA_PRIMEIRO.md)**.
+
+
+## V4.3 — Hardening profissional
+
+A V4.3 adiciona tracking/Re-ID mais estáveis, afinidade global speaker-person, filtros comerciais e editoriais mais fortes, cache/repair semântico, Smart Zoom com safety, Preview Verifier, progresso/ETA estruturado, replay downstream e geração automática do pacote compacto de segunda curadoria.
+
+Documentos atuais: [arquitetura V4.3](docs/V43_ARCHITECTURE.md), [benchmark/status](docs/V43_REAL_BENCHMARK.md), [performance](docs/V43_PERFORMANCE.md), [ledger](docs/V43_IMPLEMENTATION_LEDGER.md) e [auditoria](docs/WORKER_DISCOVERY_AUDIT_V43.md).
+
+Ao final de uma análise, o fluxo pode gerar em `pacotes_para_enviar/` um `SECOND_CURATION_READY_*.zip` ou `SECOND_CURATION_PARTIAL_*.zip`, além de mídia opcional separada. O pacote inclui `SECOND_CURATOR_BRIEF.json`, índice, catálogo completo de candidatos, transcrição, evidências e readiness por capacidade.
 
 ## V4.2: Readiness E Artefatos
 
@@ -84,32 +93,32 @@ backend de transcrição desta versão usa CPU/int8, não Metal/MPS.
 |---|---|
 | src/ldporto/ | Engines e pipeline |
 | config/ | Configuração YAML |
-| scripts/ | Download de modelos visuais |
+| scripts/ | Ferramentas Windows, export, benchmark e utilitários |
 | input/ | Vídeos locais e downloads |
 | analysis/ | Resultados por vídeo |
 | models/ | Modelos baixados ou fornecidos localmente |
 | docs/ | Arquitetura, validação, contrato e áudio avançado |
 | examples/ | Exemplos de formato explicitamente sintéticos |
-| tests/ | Verificação de regras e pipeline |
+| src/tests/ | Verificação de regras e pipeline |
 
 O programa mantém áudio, cache e logs dentro da pasta de análise de cada vídeo.
 Não sobrescreve o arquivo de entrada.
 
 ## Testes
 
-    python -m pip install -r requirements.txt -r requirements-dev.txt
+    python -m pip install -r requirements.txt -r requirements/dev.txt
     python -m pytest src/tests -q
 
 Os testes com mídia precisam de FFmpeg. Não precisam de conta nem de download de modelos.
 
 ## Extensões
 
-- requirements-diarization.txt: community-1 via pyannote.audio 4.
-- requirements-vision.txt: landmarks para correlação boca/áudio.
-- requirements-yolo.txt: corpos com YOLO em vez de HOG; ativar no YAML.
-- requirements-ocr.txt: wrapper Tesseract; executável externo e idiomas necessários.
-- requirements-audio-events.txt: PANNs, com checkpoint local explícito.
-- requirements-demucs.txt: separação **em outro ambiente Python**.
+- requirements/diarization.txt: community-1 via pyannote.audio 4.
+- requirements/vision.txt: landmarks para correlação boca/áudio.
+- requirements/yolo.txt: corpos com YOLO em vez de HOG; ativar no YAML.
+- requirements/ocr.txt: wrapper Tesseract; executável externo e idiomas necessários.
+- requirements/audio-events.txt: PANNs, com checkpoint local explícito.
+- requirements/demucs.txt: separação **em outro ambiente Python**.
 
 Não instale todos os extras sem necessidade. Demucs e pyannote 4 possuem
 dependências diferentes de PyTorch; por isso o processo de separação fica separado.
@@ -130,4 +139,4 @@ No Windows, depois da instalação base/avançada, execute:
 
 O launcher detecta os modelos locais, inicia por padrão com Ollama habilitado e `profile=max`.
 A análise semântica usa saída estruturada e produz uma revisão editorial global aterrada em IDs.
-Veja `LEIA_PRIMEIRO.md` para perfis, diagnóstico e fallback.
+Veja `docs/setup/LEIA_PRIMEIRO.md` para perfis, diagnóstico e fallback.

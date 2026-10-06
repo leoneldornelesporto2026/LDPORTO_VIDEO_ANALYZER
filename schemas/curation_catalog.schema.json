@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "L.D.PORTO Second Curation Compact Catalog v1",
+  "type": "object",
+  "required": ["schema_version", "candidates"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "candidates": {"type": "array", "items": {"type": "object", "required": ["candidate_id", "start", "end", "transcript_literal", "commercial_classification", "visual_refs", "file_refs"], "properties": {
+      "candidate_id": {"type": "string", "minLength": 1},
+      "start": {"type": "number", "minimum": 0}, "end": {"type": "number", "exclusiveMinimum": 0},
+      "transcript_literal": {"type": "string"}, "commercial_classification": {"type": "object"},
+      "visual_refs": {"type": "array", "items": {"type": "string"}}, "file_refs": {"type": "array", "items": {"type": "string"}}
+    }}}
+  }
+}

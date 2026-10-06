@@ -49,6 +49,8 @@ def doctor(cfg):
 def main():
     """Run the shared pipeline or readiness/camera-only routes with secret-safe errors."""
     configure_path()
+    if sys.version_info[:2] != (3, 11):
+        raise SystemExit('Runtime suportado: Python 3.11.x. Use .venv/Scripts/python.exe.')
     parser = argparse.ArgumentParser(description="L.D.PORTO VIDEO ANALYZER - analise local, sem renderizar cortes.")
     parser.add_argument("source", nargs="?", help="Caminho de video ou URL do YouTube")
     parser.add_argument("--output", help="Pasta de saida; padrao analysis/NOME_HASH/")
@@ -71,6 +73,13 @@ def main():
     parser.add_argument("--director-only", metavar="PASTA", help="Reprocessar apenas Director a partir de analysis.json")
     parser.add_argument("--camera-min-hold", type=float)
     parser.add_argument("--camera-max-zoom", type=float)
+    parser.add_argument('--smart-zoom-profile', choices=['conservative', 'natural', 'dynamic'])
+    parser.add_argument('--no-smart-zoom', action='store_true')
+    parser.add_argument('--include-candidate-previews', action='store_true')
+    parser.add_argument('--from-stage', choices=['active_speaker', 'semantic', 'understanding', 'ranking', 'camera_director', 'preview_verifier', 'handoff'])
+    parser.add_argument('--replay-analysis', metavar='PASTA', help='Artifacts compatíveis para replay downstream, sem reprocessar percepcao')
+    parser.add_argument('--allow-legacy-snapshot', action='store_true', help='Aceitar snapshot V4.2 explicitamente, sem chamar isso de cache de prompt atual')
+    parser.add_argument('--source-hash', help='Hash SHA256 esperado para validar a fonte do replay')
     args = parser.parse_args()
     try:
         from ldporto.config import load_config, configure_local_mode, validate
@@ -103,8 +112,26 @@ def main():
             cfg["camera_director"]["min_hold_seconds"] = args.camera_min_hold
         if args.camera_max_zoom is not None:
             cfg["camera_director"]["max_zoom_default"] = args.camera_max_zoom
+        if args.smart_zoom_profile:
+            cfg['camera_director']['smart_zoom']['profile'] = args.smart_zoom_profile
+        if args.no_smart_zoom:
+            cfg['camera_director']['smart_zoom']['enabled'] = False
+        if args.include_candidate_previews:
+            cfg['export']['include_candidate_previews'] = True
         validate(cfg)
         configure_local_mode(cfg)
+        if args.from_stage:
+            if not args.replay_analysis:
+                parser.error('--from-stage exige --replay-analysis.')
+            from ldporto.replay import replay_analysis
+            folder, analysis = replay_analysis(args.replay_analysis, cfg, args.from_stage, args.output, args.source,
+                args.source_hash, args.allow_legacy_snapshot, args.force)
+            from ldporto.progress import emit_event
+            emit_event({'event':'run_completed', 'analysis_status':analysis['analysis_status'],
+                        'package':analysis.get('second_curation_export'), 'package_path':(analysis.get('second_curation_export') or {}).get('path')})
+            print('Replay:', folder)
+            print('Pacote:', (analysis.get('second_curation_export') or {}).get('path') or 'FAILED')
+            return 0 if (analysis.get('second_curation_export') or {}).get('path') else 1
         if args.director_only:
             from ldporto.director_integration import resume_director
             folder, analysis = resume_director(args.director_only, cfg, args.force)
@@ -127,14 +154,21 @@ def main():
         ]
         print(" | ".join(counts))
         print("Qualidade:", analysis.get("quality_gate", {}).get("status", "not_measured"))
-        print("Para enviar ao ChatGPT:", folder / "CHATGPT_ANALYSIS_HANDOFF.compact.json")
+        print("Para enviar ao ChatGPT:", (analysis.get('second_curation_export') or {}).get('path') or 'Pacote indisponivel; confira o diagnostico.')
+        from ldporto.progress import EVENT_PREFIX
+        print(EVENT_PREFIX + json.dumps({'event':'run_completed', 'analysis_status':analysis['analysis_status'],
+                           'package':analysis.get('second_curation_export'), 'package_path':(analysis.get('second_curation_export') or {}).get('path')}), flush=True)
         print("Para revisar:", folder / "report.html")
-        return 0
+        return 1 if cfg['export']['second_curation_auto'] and not (analysis.get('second_curation_export') or {}).get('path') else 0
     except KeyboardInterrupt:
+        from ldporto.progress import emit_event
+        emit_event({'event':'run_cancelled', 'status':'cancelled'})
         print("\nInterrompido. Checkpoints concluidos foram preservados.", file=sys.stderr)
         return 130
     except Exception as exc:
         from ldporto.core import scrub
+        from ldporto.progress import emit_event
+        emit_event({'event':'run_failed', 'status':'failed', 'cause':scrub(exc)})
         print("\nERRO:", scrub(exc), file=sys.stderr)
         return 1
 

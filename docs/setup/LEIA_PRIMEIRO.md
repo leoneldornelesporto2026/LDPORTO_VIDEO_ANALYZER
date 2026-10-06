@@ -1,10 +1,11 @@
-> **Atualizacao V4.2:** o instalador normal inclui diarizacao/visao e preflight obrigatorio.
-> Leia [docs/V4_2_IMPLEMENTATION_REPORT.md](docs/V4_2_IMPLEMENTATION_REPORT.md).
+> **Atualizacao V4.3:** a orientacao principal e o [README](../../README.md).
+> Runtime oficial: Python 3.11.x. O instalador normal inclui diarizacao/visao e preflight obrigatorio.
+> Leia o [relatorio V4.2 historico](../V4_2_IMPLEMENTATION_REPORT.md).
 > As instrucoes historicas abaixo sobre fallback/instalacao avancada nao substituem
 > o contrato V4.2: recurso habilitado quebrado aborta ANTES de baixar/processar video.
-> **Camera Director v3:** leia [docs/CAMERA_DIRECTOR_V3.md](docs/CAMERA_DIRECTOR_V3.md).
+> **Camera Director v3 historico:** leia [CAMERA_DIRECTOR_V3.md](../CAMERA_DIRECTOR_V3.md).
 > Novo `camera_director_timeline.json`, perfis na GUI e `--director-only` para ajustar câmera sem repetir percepção.
-> Relatório atual: [docs/TEST_REPORT_V3.md](docs/TEST_REPORT_V3.md). Documentação v1/v2 abaixo preservada como referência.
+> Relatório historico: [TEST_REPORT_V3.md](../TEST_REPORT_V3.md). Documentação v1/v2 abaixo preservada como referência.
 
 # L.D.PORTO VIDEO ANALYZER — começar aqui
 
@@ -15,7 +16,7 @@ planejar a edição depois. Não renderiza Shorts, cortes, crops, títulos ou CT
 ## 1. Instalar no Windows
 
 1. Extraia o ZIP inteiro para uma pasta, por exemplo C:\LDPORTO_VIDEO_ANALYZER.
-2. Tenha **Python 3.11 ou 3.12, de 64 bits**, com o launcher "py" e suporte a Tcl/Tk.
+2. Tenha **Python 3.11.x, de 64 bits**, com o launcher "py" e suporte a Tcl/Tk.
    Instalações oficiais: https://www.python.org/downloads/windows/
 3. Execute **INSTALAR_WINDOWS.bat**. Ele cria um ambiente isolado, instala os
    pacotes e tenta instalar FFmpeg e Deno via winget quando faltarem.
@@ -129,7 +130,7 @@ Arquivos principais:
 | analysis.json | Metadados e referencias com checksum; modo completo apenas por opcao explicita |
 | people_observations.json | Caixas e amostras de tracking para o editor futuro |
 
-**Depois do processamento, use o ZIP do exportador e CHATGPT_ANALYSIS_HANDOFF.compact.json.** Se houver dúvidas
+**Depois do processamento, use SECOND_CURATION_READY/PARTIAL em pacotes_para_enviar/.** Se houver dúvidas
 visuais, envie as miniaturas relevantes e, para palavras incertas, o trecho de áudio.
 
 ## 5. Limites desta versão
@@ -153,15 +154,17 @@ visuais, envie as miniaturas relevantes e, para palavras incertas, o trecho de �
   evidência. Volume não é usado para inventar essas métricas.
 - Nenhum vídeo final é criado. Não há envio a redes sociais nem seleção definitiva.
 
-## 6. O que foi validado
+## 6. Historico De Validacao
 
 Veja docs/VALIDACAO.md. Os testes automatizados usam vídeo e áudio sintéticos e
 anotações explícitas. Isso valida o pipeline, sincronismo, cache e regras de
 incerteza. Não substitui validar os modelos no seu computador com uma entrevista real.
 
-A interface nativa Windows, CUDA, reconhecimento real large-v3, diarização real,
+Na entrega historica V4.2, a interface nativa Windows, CUDA, reconhecimento real large-v3, diarização real,
 MediaPipe com vídeo real, Ollama e downloads de vídeo não foram executados em
 ponta a ponta neste ambiente de entrega. As integrações foram implementadas com
 APIs verificadas e diagnósticos para conferir essas etapas no seu computador.
 
-Mais detalhes: docs/ARQUITETURA.md e docs/AUDIO_AVANCADO.md.
+Na V4.3, Tk/GUI e previews sinteticos foram exercitados em Windows/Python 3.11.
+Consulte o README e docs/V43_REAL_BENCHMARK.md para separar replay real de modelos nao reexecutados.
+Mais detalhes: docs/ARQUITETURA.md e docs/AUDIO_AVANCADO.md, a partir da raiz do projeto.

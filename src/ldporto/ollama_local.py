@@ -5,10 +5,11 @@ import os
 import re
 import shutil
 import subprocess
+import time
 import urllib.error
 import urllib.request
 from urllib.parse import urlsplit
-from .core import scrub
+from .core import scrub, digest
 
 
 LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
@@ -142,6 +143,12 @@ def profile_options(cfg: dict) -> dict:
     return options
 
 
+class OllamaContentError(ValueError):
+    def __init__(self, message, metadata):
+        super().__init__(message)
+        self.metadata = metadata
+
+
 def chat(url: str, model: str, messages: list[dict], schema: dict, cfg: dict) -> tuple[dict, dict]:
     options = profile_options(cfg)
     payload = {
@@ -152,13 +159,15 @@ def chat(url: str, model: str, messages: list[dict], schema: dict, cfg: dict) ->
         "options": options,
         "keep_alive": cfg.get("keep_alive", "30m"),
     }
+    if cfg.get('think') is not None:
+        payload['think'] = cfg['think']
     timeout = float(cfg.get("timeout_seconds", 600))
+    started = time.monotonic()
     result = _request_json(url, "/api/chat", payload=payload, timeout=timeout)
-    content = (result.get("message") or {}).get("content")
-    if not content:
-        raise ValueError("Ollama retornou resposta sem message.content.")
-    parsed = json.loads(content,parse_constant=lambda value: (_ for _ in ()).throw(ValueError('JSON nao finito: '+value)))
+    message = result.get('message') or {}
+    content = message.get("content")
     meta = {
+        "request_id": digest(payload)[:20], "duration_seconds": time.monotonic() - started,
         "model": result.get("model") or model,
         "profile": cfg.get("profile", "max"),
         "options": options,
@@ -166,11 +175,20 @@ def chat(url: str, model: str, messages: list[dict], schema: dict, cfg: dict) ->
         "load_duration_ns": result.get("load_duration"),
         "prompt_eval_count": result.get("prompt_eval_count"),
         "eval_count": result.get("eval_count"),
+        "eval_duration_ns": result.get("eval_duration"),
+        "prompt_eval_duration_ns": result.get("prompt_eval_duration"),
+        "thinking_chars": len(message.get('thinking') or ''), "thinking_requested": cfg.get('think'),
+        "response_fields": sorted(message),
         "done_reason": result.get("done_reason"),
         "input_chars":sum(len(message.get('content','')) for message in messages),
-        "output_chars":len(content),
+        "output_chars":len(content or ''),
         "confidence_is_calibrated":False,
     }
+    if not isinstance(content, str) or not content.strip():
+        meta['failure_category'] = 'empty_thinking_only' if message.get('thinking') else 'empty_content'
+        meta['recommended_action'] = 'disable_thinking_or_reduce_structured_output_budget' if result.get('done_reason') == 'length' else 'check_model_and_api_contract'
+        raise OllamaContentError('Ollama retornou resposta sem message.content; done_reason=' + str(result.get('done_reason')) + '; ' + meta['failure_category'], meta)
+    parsed = json.loads(content,parse_constant=lambda value: (_ for _ in ()).throw(ValueError('JSON nao finito: '+value)))
     return parsed, meta
 
 

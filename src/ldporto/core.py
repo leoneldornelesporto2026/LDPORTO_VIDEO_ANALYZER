@@ -101,7 +101,14 @@ def write_json(path, data):
                 handle.write(chunk)
             handle.flush()
             os.fsync(handle.fileno())
-        temporary.replace(path)
+        for attempt in range(5):
+            try:
+                temporary.replace(path)
+                break
+            except PermissionError as exc:
+                if os.name != 'nt' or getattr(exc, 'winerror', None) not in (5, 32) or attempt == 4:
+                    raise
+                time.sleep(.01 * (attempt + 1))
     finally:
         if temporary:
             temporary.unlink(missing_ok=True)
@@ -159,6 +166,12 @@ def terminate_process_tree(process):
 def run_command(args, logger=None, *, timeout=7200, output_limit_bytes=8 * 1024 ** 2):
     """Bound subprocess time and output memory; untrusted arguments never become shell code."""
     command=[str(argument) for argument in args]
+    if command and command[0] in ('ffmpeg', 'ffprobe'):
+        from .media_runtime import find_media_tool
+        executable = find_media_tool(command[0])
+        if not executable:
+            raise FileNotFoundError(command[0] + ' unavailable: configure media_tools or PATH.')
+        command[0] = executable
     flags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name=='nt' else 0
     with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
         with subprocess.Popen(command,stdout=stdout,stderr=stderr,shell=False,
@@ -182,7 +195,7 @@ def run_command(args, logger=None, *, timeout=7200, output_limit_bytes=8 * 1024 
 
 def versions():
     out = {}
-    for package in ["numpy", "opencv-contrib-python", "opencv-python", "opencv-python-headless", "faster-whisper",
+    for package in ["numpy", "scipy", "opencv-contrib-python", "opencv-python", "opencv-python-headless", "faster-whisper",
                     "ctranslate2", "scenedetect", "pyannote.audio", "torch", "torchaudio", "torchcodec",
                     "soundfile", "mediapipe", "ultralytics", "pytesseract", "panns-inference", "yt-dlp"]:
         try:
@@ -193,6 +206,10 @@ def versions():
 
 
 class Unavailable(RuntimeError):
+    pass
+
+
+class RunCancelled(KeyboardInterrupt):
     pass
 
 
@@ -212,6 +229,41 @@ class Context:
     states: dict = field(default_factory=dict)
     issues: list = field(default_factory=list)
     stage_metrics: dict = field(default_factory=dict)
+    progress_callback: object = None
+    progress_state: dict = field(default_factory=dict)
+    progress_started: dict = field(default_factory=dict)
+
+    def progress(self, stage, current=None, total=None, status="running", **details):
+        from .progress import EVENT_PREFIX
+        now = time.monotonic()
+        self.progress_started.setdefault(stage, now)
+        previous = self.progress_state.get(stage, {})
+        if status != 'running' and current is None:
+            current = previous.get('total') or 1
+            total = current
+        event = {'event': 'stage_progress', 'stage': stage, 'current': current, 'total': total,
+                 'elapsed_seconds': now - self.progress_started[stage], 'status': status,
+                 'timestamp': time.time(), **details}
+        self.progress_state[stage] = event
+        encoded = scrub(json.dumps(sanitize_json_numbers(event), ensure_ascii=False, allow_nan=False, default=str))
+        self.output.mkdir(parents=True, exist_ok=True)
+        with (self.output / 'progress.jsonl').open('a', encoding='utf-8') as handle:
+            handle.write(encoded + '\n')
+        if self.progress_callback:
+            self.progress_callback(json.loads(encoded))
+        else:
+            print(EVENT_PREFIX + encoded, flush=True)
+        return event
+
+    def check_cancel(self, stage):
+        if not (self.output / 'CANCEL_REQUESTED').is_file():
+            return
+        self.states.setdefault(stage, {})['status'] = 'cancelled'
+        self.progress(stage, status='cancelled', cause='user_requested_safe_stop', resume_available=True)
+        from .run_status import build_run_manifest
+        write_json(self.output / 'run_manifest.json', build_run_manifest(
+            {'sha256': self.signature, 'filename': self.video.name, 'analyzer_version': __version__}, self.states, self.issues))
+        raise RunCancelled('Parada segura: checkpoints salvos; retome a analise com a mesma configuracao.')
 
     @property
     def cache(self):
@@ -228,6 +280,8 @@ class Context:
         default preserves compatibility for third-party callers, while the v2 pipeline
         passes explicit module names.
         """
+        self.check_cancel(name)
+        self.progress(name, current=0, status='running')
         module_dir = Path(__file__).parent
         requires = list(requires or [])
         blockers = []
@@ -247,6 +301,7 @@ class Context:
             self.states[name] = {"key": key, "status": "blocked", "blocked_by": blockers}
             self._notes(name, result)
             self.logger.warning("%s: blocked (%s)", name, reason)
+            self.progress(name, status='blocked', cause=reason)
             return {}
         if code_files:
             selected = []
@@ -278,12 +333,13 @@ class Context:
                 cached = read_json(checkpoint)
                 if cached["key"] == key and cached["status"] in ("ok", "partial", "skipped") and cached.get("data_checksum") == digest(cached["data"]) and all(
                     Path(p).is_file() for p in cached.get("artifacts", [])
-                ):
+                ) and all(Path(path).is_file() and file_hash(path) == checksum for path, checksum in cached.get('artifact_checksums', {}).items()):
                     self.logger.info("%s: retomado do cache", name)
                     self.states[name] = {"key": key, "status": cached["status"]}
                     self.stage_metrics[name] = {"cache_hit": True, "elapsed_seconds": 0.0,
                                                 "original_elapsed_seconds": cached.get("elapsed_seconds")}
                     self._notes(name, cached)
+                    self.progress(name, status=cached['status'], cache_hit=True)
                     return cached["data"]
             except (ValueError, KeyError, OSError):
                 pass
@@ -313,15 +369,24 @@ class Context:
                 raise RuntimeError(f"Falha em {name}: {scrub(exc)}") from exc
             result = ok({}, "failed", [scrub(exc)])
             result["error"] = {k: diagnostic[k] for k in ("exception_type", "message", "config_hash", "last_checkpoint")}
-        result.update(key=key, input_hash=self.signature, config_hash=config_hash,
-                      output_version=output_version,
-                  data_checksum=digest(result["data"]),
-                      elapsed_seconds=round(time.monotonic() - started, 3))
+        result.update(
+            key=key, input_hash=self.signature, config_hash=config_hash, output_version=output_version,
+            data_checksum=digest(result['data']), elapsed_seconds=round(time.monotonic() - started, 3),
+        )
+        result['artifact_checksums'] = {
+            path: file_hash(path) for path in result.get('artifacts', [])
+            if Path(path).is_file() and Path(path).suffix.lower() in {'.zip', '.json', '.jsonl', '.jpg', '.png'}
+        }
+        from .runtime_metrics import resource_snapshot
+        resources = resource_snapshot()
         write_json(checkpoint, result)
         self.states[name] = {"key": key, "status": result["status"]}
         self.stage_metrics[name] = {"cache_hit": False, "elapsed_seconds": result["elapsed_seconds"]}
+        self.stage_metrics[name].update(resources)
         self._notes(name, result)
         self.logger.info("%s: %s (%.1fs)", name, result["status"], result["elapsed_seconds"])
+        self.progress(name, status=result['status'], cache_hit=False)
+        self.check_cancel(name)
         return result["data"]
 
     def _notes(self, name, result):

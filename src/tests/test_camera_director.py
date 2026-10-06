@@ -117,12 +117,11 @@ def test_zoom_no_window_oscillation():
     assert all(b >= a-1e-5 for a, b in zip(z, z[1:]))
 
 
-def test_long_speech_breathing_is_contextual():
+def test_long_speech_without_editorial_beat_remains_stable():
     d = run(fixture(45))
-    assert any('long_speech_visual_breathing' in r['decision']['reasons'] for r in d['timeline'])
-    early = next(r for r in d['timeline'] if r['focus_person'])
-    late = d['timeline'][-1]
-    assert late['camera']['zoom_end'] < max(k['zoom'] for k in early['camera']['keyframes'])
+    assert not any('long_speech_visual_breathing' in r['decision']['reasons'] for r in d['timeline'])
+    assert all(key['zoom'] == 1 for row in d['timeline'] for key in row['camera']['keyframes'])
+    assert d['metrics']['zoom_event_count'] == 0
 
 
 def test_hard_cut_reset_no_lookahead_leak():

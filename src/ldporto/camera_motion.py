@@ -1,10 +1,126 @@
 """Jerk/acceleration/speed limited camera recommendations in source coordinates."""
 from dataclasses import dataclass
+from collections import deque
 import math
 
 
 def clamp(x, lo, hi):
     return max(lo, min(hi, x))
+
+
+def ease_in_out(fraction):
+    fraction = clamp(fraction, 0., 1.)
+    return fraction * fraction * (3. - 2. * fraction)
+
+
+class SmartZoomState:
+    def __init__(self):
+        self.current_camera_mode = 'SOURCE_PRESERVE'
+        self.current_target = None
+        self.current_zoom = self.target_zoom = 1.
+        self.state_entered_at = self.last_switch_at = 0.
+        self.last_zoom_event_at = -math.inf
+        self.events = []
+        self.event_times = deque()
+        self.used_beats = set()
+        self.transition = None
+        self.hold_until = 0.
+
+    def reset_shot(self, time):
+        self.current_target = None
+        self.current_zoom = self.target_zoom = 1.
+        self.transition = None
+        self.hold_until = time
+        self.state_entered_at = time
+
+    def curve(self, time):
+        if not self.transition:
+            return self.target_zoom
+        start, duration, before, after = self.transition
+        if time >= start + duration:
+            self.transition = None
+            return after
+        return before + (after - before) * ease_in_out((time - start) / duration)
+
+    def decide(self, time, *, target, confidence, safe, zoom_cap, face_size,
+               source_close, source_motion, speech_seconds, remaining_seconds,
+               beat, micro_interruption, cfg, max_speed=.035):
+        reasons = []
+        while self.event_times and self.event_times[0] <= time - 60:
+            self.event_times.popleft()
+        if not target or not safe:
+            reasons.append('CROP_UNSAFE' if target else 'INSUFFICIENT_CONFIDENCE')
+            if self.current_target and self.current_zoom > 1.001:
+                reasons.append('TARGET_LOST_DURING_ZOOM')
+            self.current_target, self.target_zoom, self.transition = None, 1., None
+            self.current_camera_mode = 'SOURCE_PRESERVE'
+            return {'zoom': 1., 'requested_zoom': 1., 'mode': self.current_camera_mode,
+                    'reason_codes': reasons, 'digital_motion_allowed': False}
+        if target != self.current_target:
+            self.current_target = target
+            self.current_zoom = self.target_zoom = 1.
+            self.transition = None
+            self.state_entered_at = self.last_switch_at = time
+            self.hold_until = time
+        if not cfg['enabled']:
+            reasons.append('SMART_ZOOM_DISABLED')
+        if source_close or face_size >= cfg['max_face_size']:
+            reasons.append('SOURCE_ALREADY_CLOSE')
+        if face_size < cfg['min_face_size']:
+            reasons.append('FACE_TOO_SMALL')
+        if source_motion > cfg['max_source_motion']:
+            reasons.append('SOURCE_CAMERA_MOVING')
+        if confidence < cfg['min_confidence'] and not micro_interruption:
+            reasons.append('INSUFFICIENT_CONFIDENCE')
+        blocked = bool(reasons)
+        if micro_interruption:
+            reasons.append('MICRO_INTERRUPTION_SUPPRESSED')
+        goal = min(cfg['max_zoom_factor'], max(1., zoom_cap))
+        beat_key = (beat or {}).get('id'), target
+        request = self.target_zoom
+        if beat and not blocked and not micro_interruption and beat_key not in self.used_beats and speech_seconds >= cfg['min_speaker_persistence']:
+            if len(self.event_times) >= cfg['max_zoom_events_per_minute']:
+                reasons.append('ZOOM_RATE_LIMIT')
+            elif time < self.hold_until:
+                reasons.append('MINIMUM_ZOOM_DWELL')
+            else:
+                request = cfg['max_zoom_factor']
+                if goal < request:
+                    reasons.append('UPSCALE_OR_CROP_LIMIT')
+                duration = max(cfg['min_zoom_duration'], cfg['transition_duration'], 1.6 * abs(goal - self.current_zoom) / max_speed)
+                if remaining_seconds < duration:
+                    reasons.append('INSUFFICIENT_ZOOM_DURATION')
+                elif goal - self.current_zoom > .035:
+                    self.transition = (time, duration, self.current_zoom, goal)
+                    self.target_zoom = goal
+                    self.hold_until = time + duration + cfg['min_hold_duration']
+                    self.last_zoom_event_at = time
+                    self.event_times.append(time)
+                    self.used_beats.add(beat_key)
+                    self.events.append({'start': time, 'end': time + duration, 'zoom_start': self.current_zoom,
+                        'zoom_end': goal, 'mode': 'SMART_ZOOM_IN', 'target_person_id': target,
+                        'reason_codes': [(beat or {})['reason'], 'ACTIVE_SPEAKER_FOCUS'], 'beat_id': beat_key[0]})
+                    reasons.append((beat or {})['reason'])
+        if blocked:
+            self.target_zoom, self.transition = 1., None
+        elif not beat and not micro_interruption and self.target_zoom > 1.035 and time >= self.hold_until and len(self.event_times) < cfg['max_zoom_events_per_minute']:
+            duration = max(cfg['min_zoom_duration'], cfg['transition_duration'], 1.6 * abs(self.current_zoom - 1.) / max_speed)
+            if remaining_seconds >= duration:
+                self.transition = (time, duration, self.current_zoom, 1.)
+                self.target_zoom = 1.
+                self.event_times.append(time)
+                self.hold_until = time + duration + cfg['min_hold_duration']
+                self.events.append({'start': time, 'end': time + duration, 'zoom_start': self.current_zoom,
+                    'zoom_end': 1., 'mode': 'SMART_ZOOM_OUT', 'target_person_id': target,
+                    'reason_codes': ['EDITORIAL_EMPHASIS_COMPLETE']})
+                reasons.append('EDITORIAL_EMPHASIS_COMPLETE')
+        zoom = self.curve(time)
+        mode = ('SMART_ZOOM_IN' if self.transition and self.transition[3] > self.transition[2] else
+                'SMART_ZOOM_OUT' if self.transition else 'STATIC_CLOSE' if self.current_zoom * face_size >= cfg['close_face_min'] else 'STATIC_MEDIUM')
+        self.current_camera_mode = mode
+        return {'zoom': zoom, 'requested_zoom': request, 'mode': mode,
+                'reason_codes': reasons or ['STABLE_EDITORIAL_FRAMING'], 'digital_motion_allowed': not blocked,
+                'limited_by_quality': goal + 1e-6 < request}
 
 
 @dataclass

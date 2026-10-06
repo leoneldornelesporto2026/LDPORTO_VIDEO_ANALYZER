@@ -1,7 +1,55 @@
 """Validated style parameters for the one shared camera director engine."""
 import math
+from copy import deepcopy
+
+SMART_ZOOM_DEFAULTS = {
+    'enabled': True, 'profile': 'natural', 'max_zoom_factor': 1.2,
+    'max_upscale_ratio': 2.0, 'min_zoom_duration': 6.0,
+    'min_hold_duration': 7.0, 'transition_duration': 6.0,
+    'min_face_size': .08, 'max_face_size': .42,
+    'medium_face_min': .12, 'medium_face_max': .26,
+    'close_face_min': .26, 'close_face_max': .42,
+    'min_confidence': .8, 'max_zoom_events_per_minute': 2,
+    'min_speaker_persistence': 1.5, 'max_source_motion': .08,
+}
+SMART_ZOOM_PROFILES = {
+    'conservative': {'max_zoom_factor': 1.12, 'min_hold_duration': 12., 'transition_duration': 8.},
+    'natural': {},
+    'dynamic': {'max_zoom_factor': 1.3, 'min_hold_duration': 5., 'max_zoom_events_per_minute': 4},
+}
+
+
+def resolve_smart_zoom(raw=None):
+    raw = raw or {}
+    if not isinstance(raw, dict) or set(raw) - set(SMART_ZOOM_DEFAULTS):
+        raise ValueError('smart_zoom possui opcoes invalidas')
+    profile = raw.get('profile', 'natural')
+    if profile not in SMART_ZOOM_PROFILES:
+        raise ValueError('smart_zoom.profile invalido')
+    cfg = {**SMART_ZOOM_DEFAULTS, **SMART_ZOOM_PROFILES[profile], **raw}
+    for key, default in SMART_ZOOM_DEFAULTS.items():
+        value = cfg[key]
+        if isinstance(default, bool):
+            if not isinstance(value, bool):
+                raise ValueError('smart_zoom.' + key + ' deve ser booleano')
+        elif isinstance(default, (int, float)):
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+                raise ValueError('smart_zoom.' + key + ' deve ser positivo finito')
+    if not 1 <= cfg['max_zoom_factor'] <= 1.4 or not 1 <= cfg['max_upscale_ratio'] <= 3:
+        raise ValueError('Smart zoom/upscale fora dos limites de seguranca')
+    if not 0 < cfg['min_confidence'] <= 1 or not 0 < cfg['min_face_size'] < cfg['max_face_size'] <= .8:
+        raise ValueError('Smart zoom confidence/face size invalido')
+    for low, high in (('medium_face_min', 'medium_face_max'), ('close_face_min', 'close_face_max')):
+        if not 0 < cfg[low] < cfg[high] <= .8:
+            raise ValueError('Smart zoom framing range invalido')
+    if not isinstance(cfg['max_zoom_events_per_minute'], int) or not 1 <= cfg['max_zoom_events_per_minute'] <= 6:
+        raise ValueError('Smart zoom event rate deve estar em [1,6]')
+    if cfg['min_zoom_duration'] < 3 or max(cfg['min_zoom_duration'], cfg['transition_duration'], cfg['min_hold_duration']) > 60:
+        raise ValueError('Smart zoom duracoes fora dos limites')
+    return cfg
 
 DEFAULTS = {
+    'smart_zoom': deepcopy(SMART_ZOOM_DEFAULTS),
     'enabled': True, 'profile': 'natural', 'lookahead_seconds': 1.8,
     'min_hold_seconds': 3.0, 'preferred_hold_seconds': 6.0,
     'switch_cooldown_seconds': 3.0, 'speaker_confirm_seconds': .9,
@@ -49,7 +97,8 @@ def resolve_config(raw=None):
     profile = raw.get('profile', 'natural')
     if not isinstance(profile, str) or profile not in PROFILES:
         raise ValueError('camera_director.profile inválido')
-    cfg = {**DEFAULTS, **PROFILES[profile], **{k: v for k, v in raw.items() if v is not None}}
+    cfg = {**deepcopy(DEFAULTS), **PROFILES[profile], **{k: v for k, v in raw.items() if v is not None}}
+    cfg['smart_zoom'] = resolve_smart_zoom(raw.get('smart_zoom'))
     for key, default in DEFAULTS.items():
         value = cfg[key]
         if isinstance(default, bool):

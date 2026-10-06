@@ -49,51 +49,103 @@ def get_scene(time, scenes):
 
 
 class Tracker:
-    """Short-term tracker plus anonymous within-video face re-identification.
-
-    ``person_id`` is the persistent anonymous identity. ``track_id`` identifies one
-    continuous visual track. A person can therefore own multiple tracks after cuts
-    while keeping the same PERSON id when face-embedding evidence is strong enough.
-    """
+    """Shot-local tracks; anonymous face hypotheses are consolidated by Re-ID."""
     def __init__(self, cfg):
         self.cfg, self.tracks, self.gallery = cfg, {}, {}
         self.next_id = 1
         self.next_track_id = 1
+        self.completed_tracks = []
+        self.association_count = 0
+        self.conflicting_embedding_count = 0
 
     def _new_track_id(self):
         value = f"TRACK_{self.next_track_id:05}"
         self.next_track_id += 1
         return value
 
+    def _gap_limit(self, track):
+        base = float(self.cfg["track_max_gap_seconds"])
+        if track.get("hits", 1) >= self.cfg.get("tracklet_min_observations", 3):
+            return max(base, min(3.0, self.cfg.get("track_occlusion_max_seconds", 2.0)))
+        return base
+
+    def _retire(self, person_id, reason):
+        track = self.tracks.pop(person_id)
+        self.completed_tracks.append({"track_id": track["track_id"], "person_id": person_id,
+            "state": "terminated_track", "shot_id": track["scene"],
+            "first_seen": track.get("first_seen", track["time"]), "last_seen": track["time"],
+            "observation_count": track.get("hits", 1), "termination_reason": reason})
+
+    def _association(self, detection, track, time):
+        gap = time - track["time"]
+        if gap < 0 or gap > self._gap_limit(track):
+            return None
+        face_pair = bool(detection.get("face_bbox") and track.get("face_bbox"))
+        if face_pair:
+            current_box, previous_box = detection["face_bbox"], track["face_bbox"]
+        elif detection.get("bbox_kind") == track.get("bbox_kind") or not track.get("bbox_kind"):
+            current_box, previous_box = detection["bbox"], track["bbox"]
+        else:
+            return None
+        similarity = None
+        if detection.get("embedding") is not None and track.get("embedding") is not None:
+            if len(detection["embedding"]) != len(track["embedding"]):
+                return None
+            similarity = finite_or_none(float(np.dot(detection["embedding"], track["embedding"])))
+            if similarity is not None and similarity < .3:
+                self.conflicting_embedding_count += 1
+                return None
+        current_center, previous_center = center(current_box), center(previous_box)
+        velocity = track.get("velocity", {"x": 0.0, "y": 0.0})
+        predicted = {axis: previous_center[axis] + velocity.get(axis, 0.0) * gap for axis in ("x", "y")}
+        distance = math.hypot(current_center["x"] - predicted["x"], current_center["y"] - predicted["y"])
+        limit = min(.45, max(.06, previous_box["width"] * 1.5) + .18 * gap)
+        size_ratio = max(current_box["width"] / max(previous_box["width"], 1e-6),
+                         previous_box["width"] / max(current_box["width"], 1e-6),
+                         current_box["height"] / max(previous_box["height"], 1e-6),
+                         previous_box["height"] / max(current_box["height"], 1e-6))
+        overlap_score = iou(current_box, previous_box)
+        if distance > limit or size_ratio > 3.0:
+            return None
+        strong_face = similarity is not None and similarity >= self.cfg["reid_threshold"]
+        if overlap_score < .25 and not strong_face:
+            return None
+        motion_score = max(0.0, 1.0 - distance / max(limit, 1e-6))
+        score = .55 * overlap_score + .25 * motion_score + .05 / size_ratio
+        if similarity is not None:
+            score += .15 * max(0.0, similarity)
+        return score, overlap_score, similarity
+
     def update(self, detections, time, scene_id):
-        # Assign globally by highest IoU first. Do not identify a person by frame position.
+        from scipy.optimize import linear_sum_assignment
+
+        for person_id, track in list(self.tracks.items()):
+            if track["scene"] != scene_id:
+                self._retire(person_id, "visual_shot_cut")
+            elif time - track["time"] > self._gap_limit(track):
+                self._retire(person_id, "occlusion_limit")
         assigned, used = {}, set()
-        pairs = []
-        for i, d in enumerate(detections):
-            for pid, track in self.tracks.items():
-                if track["scene"] != scene_id or time-track["time"] > self.cfg["track_max_gap_seconds"]:
+        person_ids = sorted(self.tracks)
+        matrix = np.full((len(detections), len(person_ids) + len(detections)), -1e6)
+        pairs = {}
+        if detections:
+            matrix[:, len(person_ids):] = 0.0
+            for detection_index, detection in enumerate(detections):
+                for person_index, person_id in enumerate(person_ids):
+                    evidence = self._association(detection, self.tracks[person_id], time)
+                    if evidence is not None:
+                        matrix[detection_index, person_index] = evidence[0]
+                        pairs[detection_index, person_index] = evidence
+            row_indices, columns = linear_sum_assignment(-matrix)
+            for detection_index, person_index in zip(row_indices, columns):
+                evidence = pairs.get((detection_index, person_index))
+                if evidence is None:
                     continue
-                score = iou(d["bbox"], track["bbox"])
-                face_similarity = None
-                if d.get("embedding") is not None and track.get("embedding") is not None:
-                    face_similarity = finite_or_none(float(np.dot(d["embedding"], track["embedding"])))
-                    if face_similarity is not None and face_similarity < 0.3:
-                        continue
-                if score >= 0.25:
-                    pairs.append((score, face_similarity, i, pid, track["track_id"]))
-        # ``face_similarity`` is legitimately nullable. Tuple sorting used to compare
-        # ``None`` with ``float`` whenever IoU tied, which crashed long analyses.
-        # The deterministic key uses a private sentinel only for ordering; the exported
-        # measurement remains ``None`` when it was not observed.
-        ordered_pairs = sorted(
-            pairs,
-            key=lambda item: (item[0], -math.inf if item[1] is None else item[1], -item[2], item[3], item[4]),
-            reverse=True,
-        )
-        for score, face_similarity, i, pid, track_id in ordered_pairs:
-            if i not in assigned and pid not in used:
-                assigned[i] = (pid, track_id, "temporal_iou", score, face_similarity)
-                used.add(pid)
+                person_id = person_ids[person_index]
+                assigned[detection_index] = (person_id, self.tracks[person_id]["track_id"],
+                    "shot_temporal_fusion", evidence[1], evidence[2])
+                used.add(person_id)
+                self.association_count += 1
         for i, d in enumerate(detections):
             if i in assigned:
                 continue
@@ -101,7 +153,7 @@ class Tracker:
             scores = []
             if emb is not None:
                 for pid, stored in self.gallery.items():
-                    if pid in used:
+                    if pid in used or pid in self.tracks or len(emb) != len(stored):
                         continue
                     similarity = finite_or_none(float(np.dot(emb, stored)))
                     if similarity is not None:
@@ -119,31 +171,49 @@ class Tracker:
         result = []
         for i, d in enumerate(detections):
             pid, track_id, method, iou_score, face_similarity = assigned[i]
-            # Generated by GitHub Copilot - Oct-05-2026
-            previous_track = self.tracks.get(pid)
-            new_template = d.get("embedding") is not None and (not previous_track or
-                           previous_track.get("track_id") != track_id or previous_track.get("embedding") is None)
+            previous_track = self.tracks.get(pid) or {}
+            continued = previous_track.get("track_id") == track_id
+            hits = previous_track.get("hits", 1) + 1 if continued else 1
+            first_seen = previous_track.get("first_seen", previous_track.get("time", time)) if continued else time
+            confirmed = hits >= self.cfg.get("tracklet_min_observations", 3) and time - first_seen >= self.cfg.get("tracklet_min_visual_seconds", 1.0)
+            anchor = d.get("face_bbox") or d["bbox"]
+            previous_anchor = previous_track.get("face_bbox") or previous_track.get("bbox")
+            velocity = {"x": 0.0, "y": 0.0}
+            if continued and previous_anchor and time > previous_track["time"]:
+                before, after = center(previous_anchor), center(anchor)
+                velocity = {axis: max(-.65, min(.65, (after[axis] - before[axis]) / (time - previous_track["time"]))) for axis in ("x", "y")}
+            embedding = d.get("embedding")
+            observed_embedding = embedding is not None
+            if embedding is None and continued:
+                embedding = previous_track.get("embedding")
             self.tracks[pid] = {"bbox": d["bbox"], "time": time,
-                                "scene": scene_id, "embedding": d.get("embedding"),
-                                "track_id": track_id}
+                                "bbox_kind": d.get("bbox_kind"), "face_bbox": d.get("face_bbox"),
+                                "scene": scene_id, "embedding": embedding, "velocity": velocity,
+                                "track_id": track_id, "hits": hits, "first_seen": first_seen,
+                                "state": "confirmed_track" if confirmed else "tentative_track"}
             if d.get("embedding") is not None:
-                # Preserve a stable gallery template. Avoid uncontrolled drift from low-quality samples.
                 self.gallery.setdefault(pid, d["embedding"])
             identity_confidence = None
             if method == "anonymous_face_embedding":
                 identity_confidence = max(0.0, min(1.0, face_similarity)) if face_similarity is not None else None
             result.append({**{k: v for k, v in d.items() if k != "embedding"},
                            "person_id": pid, "track_id": track_id,
+                           "shot_id": scene_id, "track_state": self.tracks[pid]["state"],
+                           "raw_detection_state": "raw_detection", "track_observation_count": hits,
+                           "occlusion_recovered": continued and previous_track.get("state") == "temporarily_lost",
                            "tracking_method": method,
                            "tracking_confidence": iou_score,
                            "tracking_similarity": face_similarity,
                            "same_person_confidence": identity_confidence,
                            "identity_is_inference": method == "anonymous_face_embedding",
-                           "face_embedding_available": d.get("embedding") is not None,
-                           "face_embedding": np.asarray(d["embedding"]).tolist() if new_template else None,
-                           "embedding_method": "opencv_sface" if d.get("embedding") is not None else None})
-        self.tracks = {p: t for p, t in self.tracks.items()
-                       if time-t["time"] <= self.cfg["track_max_gap_seconds"]}
+                           "face_embedding_available": embedding is not None,
+                           "face_embedding_observed": observed_embedding,
+                           "embedding_reused": embedding is not None and not observed_embedding,
+                           "face_embedding": np.asarray(d["embedding"]).tolist() if observed_embedding else None,
+                           "embedding_method": "opencv_sface" if embedding is not None else None})
+        for person_id, track in self.tracks.items():
+            if person_id not in used:
+                track["state"] = "temporarily_lost"
         return result
 
 
@@ -152,6 +222,10 @@ class PersonDetectionEngine:
         import cv2
         self.cv2, self.cfg, self.notes = cv2, cfg, notes
         self.phase_seconds=defaultdict(float)
+        self.calls = defaultdict(int)
+        self.face_history = []
+        self.last_body_time = -math.inf
+        self.last_shot = None
         self.face = self.sface = self.hog = self.yolo = None
         yunet, sface = asset_path(cfg["yunet_model"]), asset_path(cfg["sface_model"])
         if yunet.is_file():
@@ -180,13 +254,26 @@ class PersonDetectionEngine:
                 notes.append("HOG identifica melhor corpos inteiros. Pessoas sentadas podem "
                              "aparecer somente com caixa de rosto; não foi inventada caixa de corpo.")
 
-    def detect(self, frame):
+    def set_frame_context(self, time, shot_id):
+        self.frame_context = (time, shot_id)
+
+    def detect(self, frame, time=None, shot_id=None):
         cv2 = self.cv2
+        if time is None:
+            time, shot_id = getattr(self, "frame_context", (None, None))
         # Generated by GitHub Copilot - Oct-05-2026
         face_started=perf_counter()
         embedding_seconds=0.0
         height, width = frame.shape[:2]
         faces, bodies = [], []
+        cascade = self.cfg.get("detector_cascade", False) and time is not None
+        if not hasattr(self, "calls"):
+            self.calls = defaultdict(int)
+            self.face_history, self.last_body_time, self.last_shot = [], -math.inf, None
+        if shot_id != self.last_shot:
+            self.face_history, self.last_body_time = [], -math.inf
+        self.calls["face_detection_calls"] += 1
+        used_history = set()
         if isinstance(self.face, cv2.CascadeClassifier):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             for values in self.face.detectMultiScale(gray, 1.1, 5, minSize=(30, 30)):
@@ -197,26 +284,53 @@ class PersonDetectionEngine:
             _, detections = self.face.detect(frame)
             for row in detections if detections is not None else []:
                 embedding = None
-                if self.sface:
+                face_box = bbox(row[:4], width, height)
+                history_matches = [(iou(face_box, previous["bbox"]), index, previous)
+                                   for index, previous in enumerate(self.face_history)
+                                   if index not in used_history and iou(face_box, previous["bbox"]) >= .8]
+                matched = max(history_matches, key=lambda match: match[0], default=None)
+                embedding_due = not cascade or matched is None or time - matched[2]["embedding_time"] >= self.cfg.get("embedding_interval_seconds", 1.0)
+                if matched:
+                    used_history.add(matched[1])
+                if self.sface and embedding_due:
                     embedding_started=perf_counter()
-                    aligned = self.sface.alignCrop(frame, row)
-                    embedding = self.sface.feature(aligned).reshape(-1)
-                    embedding = embedding/max(np.linalg.norm(embedding), 1e-9)
+                    self.calls["embedding_calls"] += 1
+                    try:
+                        aligned = self.sface.alignCrop(frame, row)
+                        embedding = self.sface.feature(aligned).reshape(-1)
+                        norm = float(np.linalg.norm(embedding))
+                        if not np.isfinite(embedding).all() or norm < 1e-9:
+                            raise ValueError("Face embedding nao finito ou degenerado")
+                        embedding = embedding / norm
+                        self.calls["successful_embeddings"] += 1
+                    except (cv2.error, ValueError):
+                        embedding = None
+                        self.calls["failed_embeddings"] += 1
                     embedding_seconds+=perf_counter()-embedding_started
-                faces.append({"face_bbox": bbox(row[:4], width, height),
+                elif self.sface:
+                    self.calls["embedding_calls_avoided"] += 1
+                faces.append({"face_bbox": face_box,
                               "confidence": finite_or_none(float(row[14])), "embedding": embedding,
+                              "embedding_time": time if embedding is not None else matched[2]["embedding_time"] if matched else -math.inf,
                               "eyes": [{"x": float(row[i])/width, "y": float(row[i+1])/height}
                                        for i in (4, 6)]})
         self.phase_seconds['face_embedding']+=embedding_seconds
         self.phase_seconds['face_detection']+=max(0.0,perf_counter()-face_started-embedding_seconds)
         body_started=perf_counter()
-        if self.yolo:
+        run_body = (not cascade or not faces or any((face.get("confidence") or 0) < .9 for face in faces) or
+                    time - self.last_body_time >= self.cfg.get("body_refresh_seconds", .5))
+        if run_body and (self.yolo or self.hog):
+            self.calls["body_detection_calls"] += 1
+            self.last_body_time = time if time is not None else -math.inf
+        elif self.yolo or self.hog:
+            self.calls["body_detection_calls_avoided"] += 1
+        if self.yolo and run_body:
             out = self.yolo.predict(frame, classes=[0], verbose=False, conf=0.5, device="cpu")[0]
             for row in out.boxes:
                 x1, y1, x2, y2 = row.xyxy[0].cpu().numpy()
                 bodies.append({"bbox": bbox([x1, y1, x2-x1, y2-y1], width, height),
                                "confidence": finite_or_none(float(row.conf[0]))})
-        elif self.hog and width >= 64 and height >= 128:
+        elif self.hog and run_body and width >= 64 and height >= 128:
             values, scores = self.hog.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.08)
             order = sorted(zip(values, scores), key=lambda pair: float(pair[1]), reverse=True)
             for values, score in order:
@@ -224,6 +338,10 @@ class PersonDetectionEngine:
                 if all(iou(box, b["bbox"]) < 0.5 for b in bodies):
                     bodies.append({"bbox": box, "confidence": None, "hog_score": float(score)})
         self.phase_seconds['body_detection']+=perf_counter()-body_started
+        self.calls["successful_faces"] += len(faces)
+        self.calls["frames_without_face"] += int(not faces)
+        self.face_history = [{"bbox": face["face_bbox"], "embedding_time": face.get("embedding_time", -math.inf)} for face in faces]
+        self.last_shot = shot_id
         detections = []
         used_bodies = set()
         for f in faces:
@@ -291,6 +409,8 @@ class VisionEngine:
             raise Unavailable("Instale opencv-python para análise visual.")
         notes = []
         detector = PersonDetectionEngine(cfg, notes, ctx.config["offline"])
+        detector_counters = getattr(detector, "calls", None)
+        detector_calls = detector_counters if isinstance(detector_counters, dict) else defaultdict(int)
         tracker = Tracker(cfg)
         lips = None
         if cfg["active_speaker"]:
@@ -342,6 +462,7 @@ class VisionEngine:
             scheduler.last_visible_count=resumed.get('sampling_state',{}).get('last_visible_count')
             scheduler.last_missing_lip_burst=float(resumed.get('sampling_state',{}).get('last_missing_lip_burst',-10))
         last_log, thumb_scenes = -60.0, {t.get("scene_id") for t in frames if t.get("scene_id")}
+        last_progress = -3.
         checkpoint_seconds = float(cfg.get("checkpoint_seconds", 0) or 0)
         next_checkpoint = chunk_start + checkpoint_seconds if checkpoint_seconds > 0 else math.inf
         checkpoint_backend = {"face": type(detector.face).__name__ if detector.face is not None else None,
@@ -405,6 +526,8 @@ class VisionEngine:
                            "visible_people": []}
                 timings['motion_estimation']+=perf_counter()-motion_started
                 phase_started=perf_counter()
+                if hasattr(detector, "set_frame_context"):
+                    detector.set_frame_context(time, scene_id)
                 detections = detector.detect(frame)
                 timings['face_body_embedding_detection']+=perf_counter()-phase_started
                 phase_started=perf_counter()
@@ -412,6 +535,7 @@ class VisionEngine:
                 timings['tracker_association']+=perf_counter()-phase_started
                 phase_started=perf_counter()
                 mouth = lips.detect(frame) if lips else []
+                detector_calls["landmark_calls"] += int(lips is not None)
                 timings['landmark_inference']+=perf_counter()-phase_started
                 for obs in current:
                     box, face = obs["bbox"], obs["face_bbox"]
@@ -495,6 +619,10 @@ class VisionEngine:
                     chunk_index += 1; chunk_start = time
                     obs_mark, frame_mark, thumb_mark = len(observations), len(frames), len(thumbnails)
                     next_checkpoint = chunk_start + checkpoint_seconds
+                    ctx.check_cancel('07_people_tracking')
+                if time - last_progress >= 3:
+                    ctx.progress('07_people_tracking', current=time, total=metadata['duration'], unit='video_seconds', substage='visual_detection_and_tracking')
+                    last_progress = time
                 if time-last_log >= 60:
                     ctx.logger.info("Visão: %.1f / %.1fs; %s tracks", time, metadata["duration"], len(people))
                     last_log = time
@@ -545,6 +673,16 @@ class VisionEngine:
                    "sample_fps": cfg["sample_fps"], "speech_sample_fps": cfg["speech_sample_fps"],
                    "performance": {'elapsed_seconds':perf_counter()-stage_started,'phase_seconds':{**dict(timings),**dict(getattr(detector,'phase_seconds',{}))},
                                    'decoded_frames':frame_index,'sampled_frames':len(frames),
+                                   **dict(detector_calls), 'candidate_tracks':tracker.next_track_id - 1,
+                                   'association_count':tracker.association_count,
+                                   'embedding_success_ratio':detector_calls['successful_embeddings']/detector_calls['embedding_calls'] if detector_calls['embedding_calls'] else None,
+                                   'useful_detection_ratio':sum(bool(frame['visible_people']) for frame in frames)/len(frames),
+                                   'frames_per_second':len(frames)/max(perf_counter()-stage_started,1e-9),
+                                   'call_rates':{name:{'calls_per_second':count/max(perf_counter()-stage_started,1e-9),
+                                       'ms_per_call':({**dict(timings),**dict(getattr(detector,'phase_seconds',{}))}).get(
+                                           {'embedding_calls':'face_embedding','landmark_calls':'landmark_inference'}.get(name,name.removesuffix('_calls')),0)*1000/count if count else None}
+                                       for name,count in detector_calls.items() if name.endswith('_calls')},
+                                   'gpu_time_seconds':None,'gpu_time_reason':'not_instrumented',
                                    'phase_accounting':'detector_subphases_partition_combined_detection; do_not_sum_both'},
                    "quality": {"sample_count": len(frames), "actual_width": width, "actual_height": height,
                                "mean_brightness": float(np.mean([f["brightness"] for f in frames])),
@@ -575,15 +713,30 @@ class ActiveSpeakerEngine:
                 tracks[obs["person_id"]].append(obs)
         track_times = {pid: [r["time"] for r in rows] for pid, rows in tracks.items()}
         rate = sf.info(audio["mono"]).samplerate
+        evidence_cfg = ctx.config.get("active_speaker", {})
         with sf.SoundFile(audio["mono"]) as f:
-            # Independent local windows retain evidence through long turns and source cuts.
             windows = []
-            for turn in diarization.get("turns", []):
-                a = turn["start"]
-                while a < turn["end"]:
-                    b = min(turn["end"], a+3.)
-                    windows.append({**turn, "start": a, "end": b})
-                    a = b
+            turns = diarization.get("turns", [])
+            boundaries = {row[key] for row in vision.get("scene_intervals", []) for key in ("start", "end")}
+            previous_scene = None
+            for frame in vision.get("frames", []):
+                if frame.get("scene_id") != previous_scene:
+                    boundaries.add(frame["time"])
+                    previous_scene = frame.get("scene_id")
+            overlap_rows = diarization.get("overlaps", [])
+            boundaries.update(row[key] for row in overlap_rows for key in ("start", "end"))
+            for turn_index, turn in enumerate(turns):
+                cuts = sorted({turn["start"], turn["end"]} | {boundary for boundary in boundaries if turn["start"] < boundary < turn["end"]})
+                for left, right in zip(cuts, cuts[1:]):
+                    start = left
+                    while start < right:
+                        end = min(right, start + evidence_cfg.get("evidence_window_seconds", 3.))
+                        simultaneous = any(other is not turn and other.get("speaker") != turn.get("speaker") and
+                                           overlap(start, end, other["start"], other["end"]) > 0 for other in turns)
+                        windows.append({**turn, "start": start, "end": end, "overlap": simultaneous,
+                                        "turn_id": turn.get("turn_id") or f"TURN_{turn_index:06}",
+                                        "evidence_window_id": f"ASD_WINDOW_{len(windows):06}"})
+                        start = end
             for turn in windows:
                 start, end, speaker = turn["start"], turn["end"], turn["speaker"]
                 supplied = [m for m in manual if m["speaker"] == speaker and m["start"] <= start and m["end"] >= end]
@@ -599,30 +752,38 @@ class ActiveSpeakerEngine:
                                      "inference": False, "needs_review": False})
                     continue
                 candidates = []
-                if not turn.get("overlap") and end-start >= 2.0:
+                if not turn.get("overlap") and end-start >= evidence_cfg.get("min_audio_window_seconds", 1.5):
+                    audio_start = max(0, start - .08)
+                    f.seek(max(0, round(audio_start * rate)))
+                    window_audio = f.read(max(1, round((end - audio_start + .08) * rate)), dtype="float32")
                     for pid, rows in tracks.items():
                         times = track_times[pid]
                         selected = rows[bisect.bisect_left(times, start):bisect.bisect_left(times, end)]
-                        if len(selected) < 12 or selected[-1]["time"]-selected[0]["time"] < (end-start)*0.7:
+                        if len(selected) < evidence_cfg.get("min_evidence_samples", 8) or selected[-1]["time"]-selected[0]["time"] < (end-start)*0.7:
                             continue
                         if len({r["scene_id"] for r in selected}) > 1:
                             continue
                         values, rms = [], []
                         for r in selected:
-                            f.seek(max(0, round((r["time"]-0.08)*rate)))
-                            samples = f.read(round(0.16*rate), dtype="float32")
+                            offset = max(0, round((r["time"] - .08 - audio_start) * rate))
+                            samples = window_audio[offset:offset + round(.16 * rate)]
                             rms.append(float(np.sqrt(np.mean(samples**2))) if samples.size else 0)
                             values.append(r["lip_opening"])
                         if np.std(values) < 0.008 or np.std(rms) < 1e-5:
                             continue
                         correlation = float(np.corrcoef(values, rms)[0, 1])
                         if math.isfinite(correlation):
+                            lower_bound = math.tanh(math.atanh(max(-.999999, min(.999999, correlation))) - 1.96 / math.sqrt(max(1, len(selected) - 3)))
                             candidates.append({"person_id": pid, "correlation": correlation,
                                                "sample_count": len(selected),
+                                               "correlation_lower_bound_proxy": lower_bound,
+                                               "visibility_coverage": (selected[-1]["time"] - selected[0]["time"]) / (end - start),
+                                               "track_stability": 1 / max(1, len({row.get('track_id') for row in selected})),
+                                               "source_shot_id": selected[0].get("scene_id"),
                                                "mouth_activity_mean": float(np.mean([r.get("mouth_activity") or 0 for r in selected]))})
                 candidates.sort(key=lambda c: c["correlation"], reverse=True)
                 chosen = None
-                if candidates and candidates[0]["correlation"] >= cfg["association_min_correlation"]:
+                if candidates and candidates[0]["correlation"] >= cfg["association_min_correlation"] and candidates[0]["correlation_lower_bound_proxy"] > 0:
                     if len(candidates) == 1 or candidates[0]["correlation"]-candidates[1]["correlation"] >= cfg["association_min_margin"]:
                         chosen = candidates[0]["person_id"]
                 top_score = candidates[0]["correlation"] if candidates else None
@@ -634,6 +795,8 @@ class ActiveSpeakerEngine:
                         margin = top_score-candidates[1]["correlation"]
                         confidence *= max(0.0, min(1.0, margin/max(cfg["association_min_margin"], 1e-9)))
                 mappings.append({"start": start, "end": end, "speaker": speaker,
+                                 "evidence_window_id": turn["evidence_window_id"], "turn_id": turn["turn_id"],
+                                 "overlap": turn.get("overlap", False),
                                  "speaker_id": speaker, "visible_person": chosen, "person_id": chosen,
                                  "association_confidence": confidence, "confidence": confidence,
                                  "association_evidence_score": top_score,
@@ -644,4 +807,4 @@ class ActiveSpeakerEngine:
                                  "needs_review": True})
         notes.append("Correlação boca/áudio é heurística, não um modelo ASD calibrado. "
                      "Um rosto sozinho ou centralizado não basta; associação incerta fica null.")
-        return ok({"mappings": mappings}, "partial", notes)
+        return ok({"mappings": mappings}, "partial" if not any(row.get("person_id") for row in mappings) else "ok", notes)

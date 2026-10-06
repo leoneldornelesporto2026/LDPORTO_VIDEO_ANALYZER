@@ -61,7 +61,7 @@ PySceneDetect 0.7.1, SoundFile 0.13.1, FFmpeg/FFprobe disponíveis.
 
 ## Executar no seu ambiente
 
-    .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+    .\.venv\Scripts\python.exe -m pip install -r requirements/dev.txt
     .\.venv\Scripts\python.exe -m pytest tests -q
     .\.venv\Scripts\python.exe analyze.py --doctor
 

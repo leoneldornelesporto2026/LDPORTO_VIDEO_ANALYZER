@@ -5,10 +5,51 @@ import math
 import shutil
 import subprocess
 from .core import ok, finite_or_none
+from .media_runtime import find_media_tool
+
+
+def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
+    events, samples = [], []
+    target_loss = upscale_violations = 0
+    for row in timeline or []:
+        keys = (row.get('camera') or {}).get('keyframes', [])
+        samples.extend((key.get('time', row['start']), float(key.get('zoom', 1))) for key in keys)
+        if row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'}:
+            events.append(row)
+        target_loss += int('TARGET_LOST_DURING_ZOOM' in (row.get('decision') or {}).get('reasons', []))
+        crop = row.get('crop') or {}
+        ratio = crop.get('upscale_ratio')
+        upscale_violations += int(isinstance(ratio, (int, float)) and ratio > crop.get('max_upscale_ratio', 2.) + 1e-6)
+    samples = sorted(set(samples))
+    directions = []
+    slopes = []
+    for (before_time, before), (after_time, after) in zip(samples, samples[1:]):
+        if after_time <= before_time:
+            continue
+        delta = after - before
+        slopes.append(delta / (after_time - before_time))
+        if abs(delta) >= .015:
+            directions.append((after_time, 1 if delta > 0 else -1))
+    reversals = sum(first[1] != second[1] and second[0] - first[0] < min_zoom_duration + 1
+                    for first, second in zip(directions, directions[1:]))
+    short = sum(row['end'] - row['start'] < min_zoom_duration - .5 for row in events)
+    duration = duration or max((row['end'] for row in timeline or []), default=0)
+    metrics = {'zoom_event_count': len(events), 'zoom_events_per_minute': len(events) * 60 / duration if duration else None,
+               'short_zoom_count': short, 'rapid_zoom_reversal_count': reversals,
+               'zoom_pumping_score': reversals / max(1, len(directions)),
+               'zoom_jitter_score': sum(abs(second - first) for first, second in zip(slopes, slopes[1:])) / max(1, len(slopes) - 1),
+               'zoom_target_loss_count': target_loss, 'upscale_limit_violation_count': upscale_violations,
+               'zoom_metrics_method': 'delivered_keyframe_temporal_diagnostics_not_perceptual_accuracy'}
+    issues = []
+    for count, kind in ((short, 'SHORT_ZOOM'), (reversals, 'ZOOM_PUMPING'), (target_loss, 'ZOOM_TARGET_LOST'), (upscale_violations, 'UPSCALE_LIMIT_VIOLATION')):
+        if count:
+            issues.append({'issue_type': kind, 'severity': 'error' if kind in {'ZOOM_TARGET_LOST', 'UPSCALE_LIMIT_VIOLATION'} else 'warning',
+                           'evidence': {'count': count}, 'suggested_repair': 'DISABLE_ZOOM_OR_FORCE_SOURCE'})
+    return metrics, issues
 
 
 def _ffprobe(path):
-    exe = shutil.which('ffprobe')
+    exe = find_media_tool('ffprobe')
     if not exe:
         return None
     proc = subprocess.run([exe, '-v','error','-show_streams','-show_format','-of','json',str(path)],
@@ -45,6 +86,8 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
     duration = frame_count/fps if fps > 0 else None
     issues, sampled, flow_peak = [], 0, 0.0
+    face_frames, clipped_frames, focused_frames, focused_face_frames = 0, 0, 0, 0
+    face_sizes, headrooms = [], []
     face = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
     previous = None
     stride = max(1, round(fps/5))
@@ -70,10 +113,16 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
                                'evidence': {'frame': index, 'black_edge_fraction': black_fraction},
                                'suggested_repair': 'FORCE_SOURCE_OR_REDUCE_CROP'})
             faces = face.detectMultiScale(gray, 1.1, 5, minSize=(24,24)) if not face.empty() else []
+            face_frames += int(len(faces) > 0)
+            focused_frames += int(bool(source_row.get('focus_person')))
+            focused_face_frames += int(bool(source_row.get('focus_person')) and len(faces) > 0)
             for face_x, face_y, face_width, face_height in faces:
+                face_sizes.append(float(face_height / height))
+                headrooms.append(float(face_y / height))
                 margin = thresholds['edge_face_margin']
                 if (face_x/width < margin or face_y/height < margin or
                         (face_x+face_width)/width > 1-margin or (face_y+face_height)/height > 1-margin):
+                    clipped_frames += 1
                     issues.append({'interval': None, 'severity':'error', 'issue_type':'FACE_OR_HEAD_CLIPPED',
                                    'evidence': {'frame':index,'bbox':[int(face_x),int(face_y),int(face_width),int(face_height)]},
                                    'suggested_repair':'REDUCE_ZOOM_OR_FORCE_SOURCE'})
@@ -97,6 +146,15 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
         cap.release()
     if not sampled:
         issues.append({'interval':None,'severity':'error','issue_type':'NO_RENDERED_FRAMES'})
+    if focused_frames and not focused_face_frames:
+        issues.append({'interval':None, 'severity':'warning', 'issue_type':'TARGET_VISIBILITY_UNVERIFIED',
+                       'evidence':{'focused_samples': focused_frames, 'detected_face_samples': 0},
+                       'suggested_repair':'REVIEW_OR_FORCE_SOURCE'})
+    start = expected.get('source_start', 0)
+    selected_timeline = [row for row in timeline or [] if row['start'] < start + (duration or 0) and row['end'] > start]
+    zoom_metrics, zoom_issues = zoom_diagnostics(selected_timeline, duration,
+                                                expected.get('min_zoom_duration', 6.))
+    issues.extend(zoom_issues)
     if expected.get('width') and width != int(expected['width']) or expected.get('height') and height != int(expected['height']):
         issues.append({'interval':None,'severity':'error','issue_type':'OUTPUT_DIMENSIONS',
                        'evidence':{'actual':[width,height],'expected':[expected.get('width'),expected.get('height')]},
@@ -126,6 +184,14 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     issues = list(unique.values())
     status = 'partial' if issues else 'ok'
     return ok({'schema_version':'1.0','preview':str(path.resolve()),'sampled_frames':sampled,
+               **zoom_metrics,
+               'face_visible_fraction': face_frames / sampled if sampled else None,
+               'target_visible_fraction': None,
+               'target_visibility_reason': 'generic_face_detector_cannot_verify_person_identity',
+               'focused_frame_face_presence_fraction': focused_face_frames / focused_frames if focused_frames else None,
+               'mean_face_size': sum(face_sizes) / len(face_sizes) if face_sizes else None,
+               'mean_headroom': sum(headrooms) / len(headrooms) if headrooms else None,
+               'edge_cutoff_count': clipped_frames,
                'output_dimensions':[width,height],'duration':finite_or_none(duration),
                'av_duration_delta':finite_or_none(av_delta),'estimated_pan_flow_peak_px_per_second':finite_or_none(flow_peak),
                'issues':issues,'issue_count':len(issues),'verifier_uses_rendered_frames':True}, status,
@@ -134,18 +200,26 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
 
 def conservative_repair(timeline, validation):
     """One bounded closed-loop repair: severe crop errors fall back to source."""
-    severe = {i.get('issue_type') for i in validation.get('issues', [])
-              if i.get('severity') in ('error','critical')}
-    repairable = severe & {'FACE_OR_HEAD_CLIPPED'}
+    from copy import deepcopy
+    severe = {issue.get('issue_type') for issue in validation.get('issues', [])}
+    repairable = severe & {'FACE_OR_HEAD_CLIPPED', 'EXCESSIVE_ZOOM', 'SHORT_ZOOM', 'ZOOM_PUMPING', 'ZOOM_TARGET_LOST', 'UPSCALE_LIMIT_VIOLATION', 'TARGET_VISIBILITY_UNVERIFIED'}
     if not repairable:
         return list(timeline), []
     out, repaired = [], []
     for row in timeline:
-        new = dict(row)
-        if row.get('layout') != 'full_frame':
+        new = deepcopy(row)
+        affected = [issue for issue in validation.get('issues', []) if issue.get('issue_type') in repairable and
+                (not issue.get('interval') or row['start'] < issue['interval'][1] and row['end'] > issue['interval'][0])]
+        if row.get('layout') != 'full_frame' and affected:
             new['layout'] = 'full_frame'
             new['focus_person'] = None
             new['split'] = None
+            new['camera_mode'] = 'SOURCE_PRESERVE'
+            new['zoom_mode'] = 'SOURCE_PRESERVE'
+            if new.get('camera'):
+                new['camera'].update(zoom_start=1., zoom_end=1., zoom_target=1., movement_style='hold', tracking_mode='source_preserve')
+                for key in new['camera'].get('keyframes', []):
+                    key.update(zoom=1., target=[.5, .5, 1.], center=[.5, .5], velocity=[0., 0., 0.], acceleration=[0., 0., 0.])
             new['crop'] = {**(row.get('crop') or {}), 'safe': False, 'rect_end': None,
                            'full_frame_policy':'fit_with_padding'}
             new['repair'] = {'origin':'preview_verifier','action':'conservative_source_fallback',

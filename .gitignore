@@ -119,10 +119,13 @@ runtime/
 # Generated review/export packages
 # ------------------------------------------------------------
 pacotes_para_enviar/
-exports/
-export/
+/exports/
+/export/
 review_packages/
 reviews_generated/
+/PROJECT_EXPORT_*
+/WORK_PACKAGE_*
+benchmark_inputs/
 
 CHATGPT_REVIEW_*.zip
 LDPORTO_PROJETO_ATUAL_*.zip

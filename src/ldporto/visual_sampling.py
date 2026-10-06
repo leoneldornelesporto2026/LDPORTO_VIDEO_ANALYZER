@@ -1,4 +1,12 @@
 """Causal scheduling in the shared visual pass, without repeated video decoding."""
+from .core import digest
+
+
+def speaker_sampling_fingerprint(transcript):
+    return digest([{key: segment.get(key) for key in ("start", "end", "speaker")}
+                   for segment in transcript.get("segments", [])])
+
+
 class SamplingScheduler:
     def __init__(self, cfg):
         self.cfg = cfg

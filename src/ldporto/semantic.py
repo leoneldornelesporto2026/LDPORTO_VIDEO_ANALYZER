@@ -1,4 +1,5 @@
 from collections import Counter
+from copy import deepcopy
 import json
 import re
 import unicodedata
@@ -15,6 +16,9 @@ CATEGORIES = ["hook", "curiosity", "controversy", "emotion", "humor", "surprise"
 METRICS = ["hook_strength", "standalone_context", "emotional_intensity",
            "controversy", "curiosity", "clarity", "humor"]
 STANDALONE = ["excellent", "good", "needs_context", "poor"]
+PROMPT_VERSION = '4.3.0'
+SCHEMA_VERSION = '4.3.0'
+GLOBAL_PROMPT_VERSION = '4.3.0'
 STOPWORDS = set("a o as os de do da dos das em no na nos nas um uma e ou que eu tu ele ela "
                 "voce voces nos eles elas pra pro por com ao aos isso esse essa este esta "
                 "se sim nao mas muito mais como quando ja aqui la tem tinha foi ser "
@@ -48,7 +52,6 @@ def inferred_labels(text):
     t = normalized(text)
     categories, evidence = [], []
     rules = [
-        ("question", r"\?|^(como|por que|quem|onde|qual|voce confiaria)\b"),
         ("strong_opinion", r"\b(nunca|jamais|com certeza|sem duvida|eu acho|na minha opiniao)\b"),
         ("emotion", r"\b(saudade|saudades|chorei|chorar|meu filho|minha filha|minha mae|meu pai|morreu)\b"),
         ("curiosity", r"\b(sabia|segredo|ninguem sabe|incrivel|imagine|imagina)\b"),
@@ -60,6 +63,10 @@ def inferred_labels(text):
         if match:
             categories.append(category)
             evidence.append({"category": category, "lexical_match": match.group(0)})
+    question = classify_question(text)
+    if question['answer_expected']:
+        categories.append('question')
+        evidence.append({'category': 'question', 'question_type': question['question_type']})
     # No humor or controversy from a generic keyword: absence of evidence is null.
     return categories, evidence
 
@@ -141,8 +148,10 @@ apenas none, helpful, required ou unresolved. Nunca forneca timestamps novos."""
 def call_ollama(cfg, group):
     items = [{key: s.get(key) for key in ("segment_id", "start", "end", "speaker", "text")}
              for s in group]
-    schema = ollama_schema()
-    prompt = PROMPT + "\nSchema obrigatório: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
+    schema = range_schema(group) if cfg.get('structured_ranges', True) else ollama_schema()
+    range_rule = (' Use start_segment_id/end_segment_id para cada intervalo; a expansao para IDs intermediarios e feita pelo programa. '
+                  'O primeiro topic comeca no primeiro segmento e o ultimo termina no ultimo; intervalos sao adjacentes, nao sobrepostos.') if cfg.get('structured_ranges', True) else ''
+    prompt = PROMPT + range_rule + "\nSchema obrigatório: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
     data, meta = ollama_chat(
         cfg["ollama_url"], cfg.get("_resolved_model") or cfg["model"],
         [{"role": "system", "content": prompt},
@@ -151,18 +160,104 @@ def call_ollama(cfg, group):
     return data, meta
 
 
+def range_schema(group):
+    schema = deepcopy(ollama_schema())
+    references = [segment['segment_id'] for segment in group]
+    for key in ('topics', 'moments'):
+        item = schema['properties'][key]['items']
+        item['properties'].pop('segment_ids')
+        item['required'].remove('segment_ids')
+        item['properties'].update(start_segment_id={'type': 'string', 'enum': references},
+                                  end_segment_id={'type': 'string', 'enum': references})
+        item['required'].extend(('start_segment_id', 'end_segment_id'))
+    return schema
+
+
+def expand_reference_ranges(data, group):
+    if not any('start_segment_id' in item for key in ('topics', 'moments') for item in data.get(key, [])):
+        return data
+    import jsonschema
+    jsonschema.validate(data, range_schema(group))
+    references = [segment['segment_id'] for segment in group]
+    positions = {reference: index for index, reference in enumerate(references)}
+    expanded = deepcopy(data)
+    for key in ('topics', 'moments'):
+        for item in expanded[key]:
+            start, end = positions[item.pop('start_segment_id')], positions[item.pop('end_segment_id')]
+            if end < start:
+                raise ValueError('LLM reference range is reversed.')
+            item['segment_ids'] = references[start:end + 1]
+    return expanded
+
+
+def semantic_cache_key(cfg, group, model_fingerprint):
+    from .ollama_local import profile_options
+    normalized_input = [{key: segment.get(key) for key in ('segment_id', 'start', 'end', 'speaker', 'text')} for segment in group]
+    return digest({'cache_contract': '4.3', 'input': normalized_input,
+                   'prompt_version': PROMPT_VERSION, 'prompt_digest': digest(PROMPT),
+                   'schema_version': SCHEMA_VERSION, 'schema': range_schema(group) if cfg.get('structured_ranges', True) else ollama_schema(),
+                   'model': cfg.get('_resolved_model') or cfg['model'], 'model_fingerprint': model_fingerprint,
+                   'options': profile_options(cfg), 'think': cfg.get('think'),
+                   'structured_ranges': cfg.get('structured_ranges', True)})
+
+
 def repair_ollama_output(cfg, group, invalid_data, error):
     """One bounded structural repair. It may only reuse segment IDs already supplied."""
+    import jsonschema
     schema = ollama_schema()
     valid_ids = [row.get("segment_id") for row in group]
+    positions = {reference: index for index, reference in enumerate(valid_ids)}
+    try:
+        original = expand_reference_ranges(invalid_data, group)
+    except Exception:
+        original = invalid_data
+    editable = isinstance(original, dict) and original.get('locale') == 'pt-BR' and all(isinstance(original.get(key), list) for key in ('topics', 'moments'))
+    invalid_indices = {'topics': [], 'moments': []}
+    if editable:
+        for key in invalid_indices:
+            for index, item in enumerate(original[key]):
+                try:
+                    jsonschema.validate(item, schema['properties'][key]['items'])
+                    ids = item['segment_ids']
+                    offsets = [positions[reference] for reference in ids]
+                    if len(set(ids)) != len(ids) or offsets != list(range(min(offsets), max(offsets) + 1)):
+                        raise ValueError('Invalid reference order or duplicates')
+                    require_pt_br([item['reason']] if key == 'moments' else [item['topic'], item['summary']])
+                except (ValueError, KeyError, TypeError, jsonschema.ValidationError):
+                    invalid_indices[key].append(index)
+        covered = [reference for item in original['topics'] if isinstance(item, dict) for reference in item.get('segment_ids', [])]
+        if covered != valid_ids and not invalid_indices['topics']:
+            invalid_indices['topics'] = list(range(len(original['topics'])))
     system = ("Corrija SOMENTE a estrutura JSON. Não altere a transcrição, não crie IDs, não crie timestamps, "
               "não acrescente fatos. Use exclusivamente os segment_id válidos fornecidos e respeite a ordem/consecutividade. "
-              "Reescreva somente metadata em PT-BR, sem traduzir fala literal. Responda apenas no schema JSON. Schema: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":")))
-    payload = {"validation_error": scrub(error), "valid_segment_ids": valid_ids, "invalid_output": invalid_data}
+              "Reescreva somente metadata em PT-BR, sem traduzir fala literal. Devolva apenas os itens invalidos; use arrays vazios para colecoes sem reparo. "
+              "Responda apenas no schema JSON. Schema: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":")))
+    payload = {"validation_error": scrub(error), "valid_segment_ids": valid_ids,
+               "repair_scope": {key: invalid_indices[key] for key in invalid_indices},
+               "invalid_output": {'locale': 'pt-BR', **{key: [original[key][index] for index in invalid_indices[key]] for key in invalid_indices}} if editable else invalid_data}
     data, meta = ollama_chat(
         cfg["ollama_url"], cfg.get("_resolved_model") or cfg["model"],
         [{"role":"system","content":system},
          {"role":"user","content":json.dumps(payload, ensure_ascii=False)}], schema, cfg)
+    if editable:
+        combined = deepcopy(original)
+        for key, indices in invalid_indices.items():
+            if not indices:
+                continue
+            replacement = data.get(key, []) if isinstance(data, dict) else []
+            if len(indices) == len(original[key]):
+                combined[key] = replacement
+            elif len(replacement) == len(original[key]):
+                for index in indices:
+                    combined[key][index] = replacement[index]
+            elif len(replacement) == len(indices):
+                for index, item in zip(indices, replacement):
+                    combined[key][index] = item
+            else:
+                raise ValueError('Targeted repair did not return the expected invalid items.')
+        meta = {**meta, 'repair_scope': invalid_indices,
+                'preserved_item_count': sum(len(original[key]) - len(indices) for key, indices in invalid_indices.items())}
+        return combined, meta
     return data, meta
 
 
@@ -178,6 +273,7 @@ def global_review_schema():
             "context_note": {"type": "string"},
             "evidence_segment_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
             "literal_excerpt": {"type": ["string", "null"]},
+            "quote_ref": {"type": ["string", "null"]},
         },
         "required": ["moment_id", "editorial_score", "why", "hook_text", "title_idea", "context_note", "evidence_segment_ids"],
         "additionalProperties": False,
@@ -215,8 +311,9 @@ houver evidência), de 0 a 1. hook_text e title_idea são TEXTO EDITORIAL NOVO e
 apresentados como fala original. Use somente moment_id fornecido. Prefira trechos que funcionem
 sozinhos e explique quando contexto adicional e necessario. Nao promova anuncios.
 Responda em PT-BR (locale=pt-BR), inclusive overview, why, hook_text, title_idea e notes.
-evidence_segment_ids devem pertencer ao proprio momento; literal_excerpt deve ser copia
-exata da evidencia desse momento. Nao declare metricas que nao foram fornecidas.
+evidence_segment_ids devem pertencer ao proprio momento. Selecione quote_ref do catalogo
+fornecido ou null. NUNCA reproduza quote livre: a citacao literal e resolvida pelo programa.
+Nao declare metricas que nao foram fornecidas.
 Responda somente no schema JSON."""
 
 
@@ -229,6 +326,61 @@ def _pre_score(moment):
     return min(1.0, base + bonus + standalone)
 
 
+def prepare_quote_catalog(candidates):
+    catalog = {}
+    seen = set()
+    for candidate in candidates:
+        moment_id = candidate.get('moment_id')
+        refs = candidate.get('evidence_segment_ids') or []
+        if not moment_id or moment_id in seen or not refs or len(set(refs)) != len(refs):
+            raise ValueError('Global review prevalidation: invalid candidate or segment refs.')
+        seen.add(moment_id)
+        literal = candidate.get('text') or ''
+        if not literal.strip():
+            continue
+        excerpt = literal if len(literal) <= 300 else literal[:300].rsplit(' ', 1)[0]
+        reference = 'QUOTE_' + digest([moment_id, refs, excerpt])[:16]
+        catalog[reference] = {'quote_ref': reference, 'moment_id': moment_id,
+                              'evidence_segment_ids': list(refs), 'literal_excerpt': excerpt}
+    return catalog
+
+
+def _global_request_schema():
+    schema = deepcopy(global_review_schema())
+    item = schema['properties']['top_moments']['items']
+    item['properties'].pop('literal_excerpt')
+    item['required'].append('quote_ref')
+    return schema
+
+
+def _partition_global_review(data, candidates):
+    import jsonschema
+    if not isinstance(data, dict) or not isinstance(data.get('top_moments'), list) or not isinstance(data.get('content_angles'), list):
+        raise ValueError('Global review envelope is invalid.')
+    if len(data['top_moments']) > 20 or len(data['content_angles']) > 12:
+        raise ValueError('Global review item limit exceeded.')
+    header = {**data, 'top_moments': [], 'content_angles': []}
+    jsonschema.validate(header, global_review_schema())
+    require_pt_br([header['overview'], *header['notes']])
+    valid, invalid, angles, invalid_angles, seen = [], [], [], [], set()
+    for row in data['top_moments']:
+        try:
+            validate_global_review({**header, 'top_moments': [row]}, candidates)
+            if row['moment_id'] in seen:
+                raise ValueError('Duplicate global moment_id.')
+            seen.add(row['moment_id'])
+            valid.append(row)
+        except (ValueError, jsonschema.ValidationError, KeyError, TypeError) as exc:
+            invalid.append({'item': row, 'reason': scrub(exc)[:1000]})
+    for row in data['content_angles']:
+        try:
+            validate_global_review({**header, 'content_angles': [row]}, candidates)
+            angles.append(row)
+        except (ValueError, jsonschema.ValidationError, KeyError, TypeError) as exc:
+            invalid_angles.append({'item': row, 'reason': scrub(exc)[:1000]})
+    return header, valid, invalid, angles, invalid_angles
+
+
 def call_global_review(cfg, topics, moments):
     if not moments:
         return None, None
@@ -238,7 +390,7 @@ def call_global_review(cfg, topics, moments):
     for moment in sorted(moments, key=_pre_score, reverse=True):
         # Generated by GitHub Copilot - Oct-05-2026
         content = classify_content(moment.get("text", ""), moment.get("evidence_segment_ids", []))
-        if content["content_type"] in {"advertisement", "sponsor_read", "merchandising"} and not cfg.get("allow_commercial_candidates", False):
+        if content["eligibility"] != 'eligible' and not cfg.get("allow_commercial_candidates", False):
             continue
         cost = min(len(moment.get("text", "")), 1800) + 350
         if selected and (len(selected) >= limit or used + cost > char_budget):
@@ -257,7 +409,10 @@ def call_global_review(cfg, topics, moments):
     } for m in selected]
     topic_rows = [{**{k: topic.get(k) for k in ("topic_id", "start", "end", "topic")},
                    "summary": (topic.get("summary") or "")[:500]} for topic in topics]
-    schema = global_review_schema()
+    quote_catalog = prepare_quote_catalog(selected)
+    for candidate in compact:
+        candidate['quote_refs'] = [reference for reference, quote in quote_catalog.items() if quote['moment_id'] == candidate['moment_id']]
+    schema = _global_request_schema()
     system = GLOBAL_REVIEW_PROMPT + "\nSchema obrigatório: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
     # Generated by GitHub Copilot - Oct-05-2026
     budget=char_budget-len(system)
@@ -266,43 +421,87 @@ def call_global_review(cfg, topics, moments):
     topic_ids={topic.get('topic_id') for topic in topics if any(
         overlap(moment['start'],moment['end'],topic['start'],topic['end'])>0 for moment in selected)}
     topic_rows=[topic for topic in topic_rows if topic['topic_id'] in topic_ids][:30]
-    user_payload={'topics':topic_rows,'moments':compact}
+    user_payload={'topics':topic_rows,'moments':compact, 'quote_catalog': list(quote_catalog.values())}
     while len(json.dumps(user_payload,ensure_ascii=False,separators=(',',':')))>budget:
         if user_payload['topics']:
             user_payload['topics'].pop()
         elif len(user_payload['moments'])>1:
-            user_payload['moments'].pop()
+            removed = user_payload['moments'].pop()
+            user_payload['quote_catalog'] = [quote for quote in user_payload['quote_catalog'] if quote['moment_id'] != removed['moment_id']]
         else:
             raise ValueError('global_max_chars insuficiente para um candidato com evidencia; nao cortar fala arbitrariamente.')
     included_ids={moment['moment_id'] for moment in user_payload['moments']}
     selected=[moment for moment in selected if moment['moment_id'] in included_ids]
     compact=user_payload['moments']
+    cache_path = None
+    if cfg.get('_global_cache_dir'):
+        from pathlib import Path
+        cache_key = digest({'prompt_version': GLOBAL_PROMPT_VERSION, 'prompt': GLOBAL_REVIEW_PROMPT,
+                            'schema': schema, 'input': user_payload, 'model': cfg.get('_resolved_model') or cfg['model'],
+                            'model_fingerprint': cfg.get('_model_fingerprint'),
+                            'options': __import__('ldporto.ollama_local', fromlist=['profile_options']).profile_options(cfg),
+                            'think': cfg.get('think')})
+        cache_path = Path(cfg['_global_cache_dir']) / (cache_key[:24] + '.json')
+        if cache_path.is_file() and not cfg.get('_force'):
+            try:
+                cached = read_json(cache_path)
+                if cached.get('key') == cache_key and cached.get('checksum') == digest(cached['data']):
+                    return cached['data'], {'cache_hit': True, 'validation_success': cached['data'].get('status') == 'ok',
+                                             'invalid_item_count': len(cached['data'].get('invalid_items', [])),
+                                             'original_call_metadata': cached.get('metadata')}
+            except (OSError, ValueError, KeyError, TypeError):
+                pass
     data, meta = ollama_chat(
         cfg["ollama_url"], cfg.get("_resolved_model") or cfg["model"],
         [{"role": "system", "content": system},
          {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False,separators=(',',':'))}],
         schema, cfg)
-    # Generated by GitHub Copilot - Oct-05-2026
-    repair_attempted = False
-    try:
-        validate_global_review(data, selected)
-    except Exception as exc:
-        repair_attempted = True
-        data, repair_meta = ollama_chat(
-            cfg["ollama_url"], cfg.get("_resolved_model") or cfg["model"],
-            [{"role": "system", "content": system + " Corrija uma vez IDs, idioma e citacoes conforme a evidencia; nao crie fatos."},
-             {"role": "user", "content": json.dumps({"validation_error": scrub(exc), "moments": compact, "invalid_output": data}, ensure_ascii=False)}],
-            schema, cfg)
-        validate_global_review(data, selected)
-        meta = {**meta, "repair_call": repair_meta}
-    meta.update(repair_attempted=repair_attempted, repair_success=repair_attempted, validation_success=True)
+    header, valid, invalid, angles, invalid_angles = _partition_global_review(data, selected)
+    repair_attempted = bool(invalid or invalid_angles)
+    invalid_before = len(invalid) + len(invalid_angles)
+    if repair_attempted:
+        invalid_ids = {row['item'].get('moment_id') for row in invalid if isinstance(row['item'], dict)}
+        invalid_ids |= {reference for row in invalid_angles if isinstance(row['item'], dict) for reference in row['item'].get('moment_ids', [])}
+        repair_candidates = [candidate for candidate in selected if candidate['moment_id'] in invalid_ids]
+        payload = {'invalid_items': invalid, 'invalid_angles': invalid_angles,
+                   'moments': [candidate for candidate in compact if candidate['moment_id'] in invalid_ids],
+                   'quote_catalog': [quote for quote in user_payload['quote_catalog'] if quote['moment_id'] in invalid_ids]}
+        try:
+            if len(system) + len(json.dumps(payload, ensure_ascii=False)) > char_budget:
+                raise ValueError('Targeted global repair exceeds configured input budget.')
+            repaired, repair_meta = ollama_chat(
+                cfg['ollama_url'], cfg.get('_resolved_model') or cfg['model'],
+                [{'role': 'system', 'content': system + ' Corrija apenas os itens invalidos fornecidos; preserve os demais fora desta chamada.'},
+                 {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False)}], schema, cfg)
+            _, replacements, rejected, replacement_angles, rejected_angles = _partition_global_review(repaired, repair_candidates)
+            replacement_ids = {row['moment_id'] for row in replacements}
+            valid.extend(replacements)
+            invalid = [row for row in invalid if not isinstance(row['item'], dict) or row['item'].get('moment_id') not in replacement_ids]
+            angles.extend(replacement_angles)
+            if replacement_angles and not rejected_angles:
+                invalid_angles = []
+            meta = {**meta, 'repair_call': repair_meta, 'repair_rejected_items': len(rejected) + len(rejected_angles)}
+        except Exception as exc:
+            meta = {**meta, 'repair_error': scrub(exc)}
+    data = {**header, 'top_moments': valid, 'content_angles': angles,
+            'invalid_items': invalid, 'invalid_angles': invalid_angles,
+            'status': 'partial' if invalid or invalid_angles else 'ok', 'quote_catalog': user_payload['quote_catalog']}
+    meta.update(repair_attempted=repair_attempted, repair_success=repair_attempted and len(invalid) + len(invalid_angles) < invalid_before,
+                validation_success=not invalid and not invalid_angles, invalid_item_count=len(invalid) + len(invalid_angles))
     for row in data["top_moments"]:
+        quote = quote_catalog.get(row.get('quote_ref'))
+        if quote:
+            row['literal_excerpt'] = quote['literal_excerpt']
+            row['literal_excerpt_kind'] = 'resolved_transcript_quote_reference'
         row.update(hook_text_kind="generated_editorial_copy", title_idea_kind="generated_editorial_copy",
                    rationale_method="model_rationale_linked_to_supplied_candidate_requires_review")
     data["method"] = "ollama_global_review"
     data["inference"] = True
     data["needs_review"] = True
     data["candidate_pool_size"] = len(selected)
+    if cache_path is not None:
+        write_json(cache_path, {'key': cache_key, 'checksum': digest(data), 'data': data,
+                               'metadata': meta, 'schema_version': '4.3'})
     return data, meta
 
 
@@ -313,6 +512,7 @@ def validate_global_review(data, candidates):
     json.dumps(data, allow_nan=False)
     jsonschema.validate(data, global_review_schema())
     by_id = {candidate["moment_id"]: candidate for candidate in candidates}
+    quotes = prepare_quote_catalog(candidates)
     seen = set()
     metadata = [data["overview"], *data["notes"]]
     for row in data["top_moments"]:
@@ -321,6 +521,8 @@ def validate_global_review(data, candidates):
             raise ValueError("Revisao global citou moment_id invalido ou duplicado.")
         seen.add(moment_id)
         candidate = by_id[moment_id]
+        if row.get('quote_ref') and (row['quote_ref'] not in quotes or quotes[row['quote_ref']]['moment_id'] != moment_id):
+            raise ValueError('quote_ref is absent or belongs to another candidate.')
         if not set(row["evidence_segment_ids"]) <= set(candidate.get("evidence_segment_ids", [])):
             raise ValueError("Justificativa mistura evidencia de outro momento.")
         excerpt = row.get("literal_excerpt")
@@ -340,6 +542,7 @@ def ground_model_output(data, group, index):
     import jsonschema
     # Generated by GitHub Copilot - Oct-05-2026
     json.dumps(data, allow_nan=False)
+    data = expand_reference_ranges(data, group)
     jsonschema.validate(data, ollama_schema())
     by_id = {s["segment_id"]: s for s in group}
     ordered = [s["segment_id"] for s in group]
@@ -389,32 +592,97 @@ def ground_model_output(data, group, index):
 
 
 # Generated by GitHub Copilot - Oct-05-2026
+def classify_question(text):
+    value = normalized(text).strip()
+    interrogative = bool(re.search(r'\?', value) or re.match(r'^(como|por que|quem|onde|qual|quando|quanto)\b', value))
+    if not interrogative:
+        kind = 'statement'
+    elif re.match(r'^(?:tudo (?:bem|bacana|certo)|como (?:vai|voce esta)|bom dia|boa tarde|boa noite)\b', value):
+        kind = 'greeting_question'
+    elif re.search(r'\b(?:eu me pergunto|me perguntei|pergunto a mim)\b', value):
+        kind = 'self_question'
+    elif re.match(r'^(?:quem (?:nunca|diria|nao)|como pode|pode uma coisa dessas)\b', value) and len(value.split()) <= 12:
+        kind = 'rhetorical_question'
+    elif re.search(r'\b(?:ne|nao e|certo|entendeu|sabe)\s*\?[.!]*$', value) and not re.match(r'^(?:como|por que|quem|onde|qual|quando|quanto)\b', value):
+        kind = 'tag_question'
+    elif len(value.split()) <= 2:
+        kind = 'banter'
+    elif re.match(r'^(?:voce|voces|ele|ela|isso|e verdade|tem|foi|era|pode|deve|seria)\b', value):
+        kind = 'yes_no_question'
+    else:
+        kind = 'direct_question'
+    expected = kind in {'direct_question', 'yes_no_question'}
+    return {'question_type': kind, 'answer_expected': expected,
+            'method': 'pt_br_interrogative_context_heuristic', 'confidence': None, 'needs_review': True}
+
+
+def classify_hook(text):
+    value = normalized(text).strip()
+    question = classify_question(text)
+    if question['question_type'] in {'greeting_question', 'banter', 'tag_question'}:
+        kind, strength = 'generic_question', .1
+    elif question['question_type'] in {'rhetorical_question', 'self_question'}:
+        kind, strength = 'rhetorical_question', .25
+    elif re.search(r'\b(ninguem sabe|nunca contei|vou revelar|o segredo|descobri)\b', value):
+        kind, strength = 'reveal', .8
+    elif re.search(r'\b(chorei|morreu|perdi meu|minha maior dor|me emocionei)\b', value):
+        kind, strength = 'emotional_statement', .75
+    elif re.search(r'\b(nunca|jamais|ninguem|com certeza|e impossivel)\b', value) and len(value.split()) >= 5:
+        kind, strength = 'strong_claim', .65
+    elif question['answer_expected']:
+        kind, strength = 'genuine_question', .6
+    elif re.search(r'\b(um dia|naquela epoca|quando comecei|aconteceu comigo)\b', value):
+        kind, strength = 'story_opening', .6
+    elif re.match(r'^(?:bom|entao|assim|tipo|olha)[, .]*$', value):
+        kind, strength = 'filler', 0.
+    else:
+        kind, strength = 'unresolved', None
+    return {'hook_type': kind, 'hook_strength': strength, 'method': 'grounded_hook_cues_not_probability', 'needs_review': True}
+
+
 def questions_answers(segments):
-    """Retain unresolved question records; require grounded subsequent answer evidence."""
+    """Link relevant multi-turn answers while retaining non-answer diagnostics."""
     pairs = []
     for i, s in enumerate(segments):
-        if "?" not in s["text"]:
+        classification = classify_question(s['text'])
+        if classification['question_type'] == 'statement':
             continue
-        answers = []
-        for next_s in segments[i+1:i+9]:
-            if next_s["start"]-s["end"] > 3 or "?" in next_s["text"]:
+        answers, interruptions = [], []
+        expected = classification['answer_expected']
+        for next_s in segments[i+1:i+17] if expected else []:
+            if next_s['end'] - s['end'] > 120 or not answers and next_s['start'] - s['end'] > 8:
                 break
             if next_s.get("speaker") is None or s.get("speaker") is None:
+                if s.get('speaker') and next_s['end'] - next_s['start'] <= 2 and len(next_s['text'].split()) <= 4:
+                    interruptions.append(next_s['segment_id'])
+                    continue
                 break
-            if next_s["speaker"] == s["speaker"]:
+            next_question = classify_question(next_s['text'])
+            if next_question['answer_expected']:
                 break
-            if answers and next_s["speaker"] != answers[0]["speaker"]:
+            same_answerer = answers and next_s['speaker'] == answers[0]['speaker']
+            if same_answerer:
+                if next_s['start'] - answers[-1]['end'] > 8:
+                    break
+                answers.append(next_s)
+                continue
+            if (not answers and next_s['speaker'] == s['speaker']) or (answers and not same_answerer):
+                if next_s['end'] - next_s['start'] <= 2.5 and len(next_s['text'].split()) <= 8:
+                    interruptions.append(next_s['segment_id'])
+                    continue
                 break
             answers.append(next_s)
         answer_text = " ".join(a["text"] for a in answers) if answers else None
-        relevance = bool(answer_text and (terms(s["text"]) & terms(answer_text) or
-                         re.match(r"^(sim|nao|porque|me chamo|eu sou)\b", normalized(answer_text).strip())))
-        unresolved_reason = ("missing_speaker_evidence" if not s.get("speaker") else
+        shared = terms(s['text']) & terms(answer_text or '')
+        direct = bool(answer_text and re.match(r'^(?:sim|nao|porque|pois|me chamo|eu sou|olha[, ]|eu (?:acho|diria|comecei|aprendi|fiz))\b', normalized(answer_text).strip()))
+        relevance = bool(answer_text and (shared or direct))
+        unresolved_reason = ('answer_not_expected' if not expected else "missing_speaker_evidence" if not s.get("speaker") else
                              "no_subsequent_answer_span" if not answers else "answer_relevance_unresolved" if not relevance else None)
         if not relevance:
             answers, answer_text = [], None
         answer_closes = bool(answer_text and answer_text.rstrip().endswith((".", "?", "!")))
         pairs.append({"question_id": f"Q_{len(pairs):04}",
+                      **classification,
                       "question": s["text"], "question_start": s["start"],
                       "question_end": s["end"], "question_speaker": s.get("speaker"),
                       "question_segment_id": s["segment_id"],
@@ -424,6 +692,11 @@ def questions_answers(segments):
                       "answer": answer_text,
                       "answer_segment_ids": [a["segment_id"] for a in answers],
                       "answer_closes_itself": answer_closes,
+                      "answer_status": 'linked_candidate' if answers else 'not_expected' if not expected else 'unresolved',
+                      "answer_completeness": 'sentence_complete_requires_review' if answers and answer_closes else 'partial' if answers else None,
+                      "answer_relevance": {'shared_terms': sorted(shared), 'direct_response_marker': direct} if answers else None,
+                      "answer_span": {'start': answers[0]['start'], 'end': answers[-1]['end']} if answers else None,
+                      "interruption_count": len(interruptions), "intervening_segment_ids": interruptions,
                       "question_answer_complete": bool(answers and answer_closes),
                       "association_status": "answered_candidate" if answers else "unresolved",
                       "unresolved_reason": unresolved_reason,
@@ -437,10 +710,13 @@ def questions_answers(segments):
 # Generated by GitHub Copilot - Oct-05-2026
 def qa_contract(records):
     """Expose detected questions separately from actually associated answer pairs."""
+    diagnostics = [record for record in records if record.get('answer_expected') is False]
+    records = [record for record in records if record.get('answer_expected') is not False]
     answered = [record for record in records if record.get("answer") and record.get("answer_segment_ids")]
     durations = [record["answer_end"] - record["answer_start"] for record in answered]
-    return {"question_candidates": records, "question_answer_pairs": answered,
+    return {"question_candidates": records, "question_answer_pairs": answered, 'question_diagnostics': diagnostics,
             "qa_metrics": {"question_candidate_count": len(records), "answered_question_count": len(answered),
+                           'non_answer_question_count': len(diagnostics),
                            "unresolved_question_count": len(records) - len(answered),
                            "complete_qa_count": sum(bool(record.get("question_answer_complete")) for record in answered),
                            "qa_coverage": len(answered) / len(records) if records else None,
@@ -467,16 +743,18 @@ class SemanticEngine:
             cfg["_resolved_model"] = resolve_model(cfg.get("model"), service.get("models", []))
         model_fingerprint = next((entry.get("digest") for entry in (service or {}).get("models", [])
                                   if entry.get("name") == (cfg.get("_resolved_model") or cfg["model"])), None)
+        cfg.update(_model_fingerprint=model_fingerprint, _global_cache_dir=str(ctx.cache / 'global_review'), _force=ctx.force)
         duration = transcript["segments"][-1]["end"] if transcript["segments"] else 0
         call_budget = max(4, math.ceil(duration / 3600 * cfg.get("max_calls_per_hour", 80)))
         used_calls = fallback_count = heuristic_count = 0
-        chunk_cfg = {key: value for key, value in cfg.items() if not key.startswith("global_") and key not in ("allow_commercial_candidates", "fallback_warning_fraction")}
         for index, group in enumerate(groups):
             ctx.logger.info("Semantica: bloco %s/%s", index + 1, len(groups))
+            ctx.progress('15_semantic', current=index, total=len(groups), unit='chunks', substage='local_grounded_extraction')
             chunk_started = time.monotonic()
             input_chars = len(json.dumps(group, ensure_ascii=False))
             options = __import__("ldporto.ollama_local", fromlist=["profile_options"]).profile_options(cfg)
             entry = {"chunk_id": f"SEMANTIC_{index:05}", "input_chars": input_chars,
+                     "purpose": 'local_grounded_extraction', 'prompt_version': PROMPT_VERSION, 'schema_version': SCHEMA_VERSION,
                      "estimated_input_tokens": math.ceil(input_chars / 4), "token_estimate_method": "chars_div_4_not_tokenizer",
                      "output_chars": 0, "model": cfg.get("_resolved_model") or cfg["model"], "profile": cfg["profile"],
                      "num_ctx": options["num_ctx"], "num_predict": options["num_predict"], "options": options,
@@ -485,15 +763,13 @@ class SemanticEngine:
                      "initial_invalid": False, "error_category": None}
             result = None
             if requested_backend == "ollama":
-                key = digest({"version": "4.2", "source": ctx.signature, "config": chunk_cfg,
-                              "model_fingerprint": model_fingerprint, "group": group, "schema": ollama_schema(),
-                              "code": file_hash(__file__), "editorial_code": file_hash(__import__("ldporto.editorial", fromlist=["__file__"]).__file__)})
+                key = semantic_cache_key(cfg, group, model_fingerprint)
                 record = ctx.cache / "semantic_chunks" / f"{key[:24]}.json"
                 model_output = None
                 if record.exists() and not ctx.force:
                     try:
                         cached = read_json(record)
-                        if cached.get("version") == "4.2" and cached.get("key") == key and cached.get("checksum") == digest(cached["data"]):
+                        if cached.get("version") == "4.3" and cached.get("key") == key and cached.get("checksum") == digest(cached["data"]):
                             model_output = cached["data"]
                             entry["cache_hit"] = True
                     except (ValueError, KeyError, OSError, TypeError):
@@ -518,10 +794,12 @@ class SemanticEngine:
                         result = ground_model_output(model_output, group, index)
                         entry.update(repair_success=True, repair_call=repair_meta)
                     entry.update(validation_success=True, output_chars=len(json.dumps(model_output, ensure_ascii=False)))
-                    write_json(record, {"version": "4.2", "key": key, "checksum": digest(model_output), "data": model_output,
+                    write_json(record, {"version": "4.3", "key": key, "checksum": digest(model_output), "data": model_output,
                                         "source_hash": ctx.signature, "progress_index": index, "model_fingerprint": model_fingerprint})
                 except Exception as exc:
                     entry.update(fallback=True, fallback_used=True, error_category=type(exc).__name__, error=scrub(exc))
+                    if hasattr(exc, 'metadata'):
+                        entry['call'] = exc.metadata
                     notes.append(f"Bloco semantico {index + 1}: {scrub(exc)}; fallback sinalizado.")
                     fallback_count += 1
             if result is None:
@@ -531,10 +809,13 @@ class SemanticEngine:
             call_meta.append(entry)
             topics.extend(result["topics"])
             moments.extend(normalize_moment(moment) for moment in result["moments"])
+            ctx.progress('15_semantic', current=index + 1, total=len(groups), unit='chunks', cache_hit=entry['cache_hit'])
+            ctx.check_cancel('15_semantic')
         topics, sections, primary, secondary, topic_quality = topic_hierarchy(topics, transcript["segments"])
         editorial_review, review_meta = None, None
         review_started = time.monotonic()
         if requested_backend == "ollama" and cfg.get("global_review") and moments and service and service.get("reachable") and used_calls + 2 <= call_budget:
+            ctx.progress('15_semantic', current=len(groups), total=len(groups), substage='global_review')
             try:
                 editorial_review, review_meta = call_global_review(cfg, topics, moments)
             except Exception as exc:
@@ -546,6 +827,7 @@ class SemanticEngine:
         total = len(groups)
         repairs = sum(entry["repair_attempted"] for entry in call_meta)
         metrics = {"semantic_valid_chunk_ratio": sum(entry["validation_success"] for entry in call_meta) / total if total and requested_backend == "ollama" else None,
+                   'semantic_initial_valid_ratio': sum(entry['validation_success'] and not entry['initial_invalid'] for entry in call_meta) / total if total and requested_backend == 'ollama' else None,
                    "semantic_repair_attempt_ratio": repairs / total if total else None,
                    "semantic_repair_success_ratio": sum(entry["repair_success"] for entry in call_meta) / repairs if repairs else None,
                    "semantic_fallback_ratio": fallback_count / total if total else None,
@@ -553,15 +835,33 @@ class SemanticEngine:
                    "semantic_seconds": round(time.monotonic() - started, 6), "global_review_seconds": global_seconds,
                    "semantic_call_budget": call_budget, "semantic_inference_call_count": used_calls,
                    "model_fingerprint": model_fingerprint,
-                   "global_review_status":'unavailable' if global_failed else 'ok' if editorial_review else 'skipped'}
+                   "global_review_status":'unavailable' if global_failed else editorial_review.get('status', 'ok') if editorial_review else 'skipped'}
+        durations = sorted(entry['duration_seconds'] for entry in call_meta if not entry['cache_hit'])
+        metrics.update(semantic_call_p50_seconds=durations[int((len(durations)-1)*.5)] if durations else None,
+                       semantic_call_p90_seconds=durations[int((len(durations)-1)*.9)] if durations else None,
+                       semantic_call_p95_seconds=durations[int((len(durations)-1)*.95)] if durations else None,
+                       semantic_repair_cost_seconds=sum((entry.get('repair_call') or {}).get('duration_seconds', 0) for entry in call_meta),
+                       slowest_semantic_calls=[{'chunk_id': entry['chunk_id'], 'duration_seconds': entry['duration_seconds']} for entry in sorted(call_meta, key=lambda row: row['duration_seconds'], reverse=True)[:5]])
+        inference_records = [record for entry in call_meta for record in (entry.get('call'), entry.get('repair_call')) if record]
+        if review_meta and not review_meta.get('cache_hit') and not review_meta.get('skipped'):
+            inference_records.extend(record for record in (review_meta, review_meta.get('repair_call')) if record)
+        generated_tokens = sum(record.get('eval_count') or 0 for record in inference_records)
+        generation_seconds = sum((record.get('eval_duration_ns') or 0) / 1e9 for record in inference_records)
+        metrics.update(global_review_cache_hit=bool((review_meta or {}).get('cache_hit')),
+                       total_inference_call_count=used_calls + (0 if not review_meta or review_meta.get('cache_hit') or review_meta.get('skipped') else 1 + int('repair_call' in review_meta)),
+                       semantic_tokens_per_second=generated_tokens / generation_seconds if generation_seconds else None,
+                       semantic_generated_tokens=generated_tokens or None)
         if total and fallback_count / total > cfg.get("fallback_warning_fraction", .1):
             notes.append("semantic_fallback_threshold_exceeded: revise metadata antes da curadoria.")
-        hooks = [{"timestamp": moment["start"], "text": moment["text"], "hook_type": moment["categories"][0],
+        hooks = [{"timestamp": moment["start"], "text": moment["text"], **classify_hook(moment['text']),
                   "moment_id": moment["moment_id"], "context_required": moment["context_required"], "method": moment["method"], "inference": True}
-                 for moment in moments if set(moment["categories"]) & {"hook", "curiosity", "strong_opinion", "question", "surprise"}]
-        endings = [{"timestamp": moment["end"], "text": moment["text"], "moment_id": moment["moment_id"], "type": category,
-                    "complete_sentence": True, "method": moment["method"], "inference": True}
-                   for moment in moments for category in moment["categories"] if category in ("conclusion", "punchline", "answer") and moment["complete_sentence"]]
+             for moment in moments if classify_hook(moment['text'])['hook_strength'] is not None and classify_hook(moment['text'])['hook_strength'] >= .5]
+        from .editorial import ending_quality
+        moment_by_segment = {reference: moment['moment_id'] for moment in moments for reference in moment['evidence_segment_ids']}
+        endings = [{'timestamp': segment['end'], 'text': segment['text'], 'segment_id': segment['segment_id'],
+                'moment_id': moment_by_segment.get(segment['segment_id']), 'type': 'natural_sentence_closure',
+                'complete_sentence': True, 'method': 'canonical_sentence_boundary', 'inference': True,
+                'needs_review': True} for segment in transcript['segments'] if ending_quality(segment)['clean']]
         qas = questions_answers(transcript["segments"])
         return ok({"topics": topics, "moments": moments, "program_sections": sections, "primary_editorial_theme": primary,
                    "secondary_editorial_themes": secondary, "topic_quality": topic_quality,
@@ -574,5 +874,5 @@ class SemanticEngine:
                    "editorial_metrics_are_subjective": True,
                    "structural_repair": {"initial_invalid": any(entry["initial_invalid"] for entry in call_meta),
                                          "repair_attempted": bool(repairs), "repair_success": any(entry["repair_success"] for entry in call_meta),
-                                         "fallback_used": bool(fallback_count)}}, "partial" if fallback_count or global_failed or not groups else "ok", notes)
+                                         "fallback_used": bool(fallback_count)}}, "partial" if fallback_count or global_failed or (editorial_review or {}).get('status') == 'partial' or not groups else "ok", notes)
 

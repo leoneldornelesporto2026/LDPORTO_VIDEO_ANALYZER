@@ -48,7 +48,9 @@ def test_failed_repair_render_never_reports_ok(tmp_path, monkeypatch):
         {"sampled_frames": 1, "verifier_uses_rendered_frames": True,
          "issues": [{"severity": "error", "issue_type": "FACE_OR_HEAD_CLIPPED"}]}, "partial"))
     timeline = [{"director_id": "D", "start": 0, "end": 4, "layout": "single_person", "focus_person": "P"}]
-    result = preview.build_preview_package(SimpleNamespace(video=Path("fixture.mp4"), output=tmp_path),
+    source = tmp_path / "fixture.mp4"
+    source.write_bytes(b"synthetic source for mocked renderer")
+    result = preview.build_preview_package(SimpleNamespace(video=source, output=tmp_path),
         {"duration": 4}, {"timeline": timeline}, {"enabled": True, "max_canaries": 1, "canary_seconds": 4,
          "output_width": 180, "output_height": 320, "max_repair_iterations": 1})
     assert result["status"] != "ok"

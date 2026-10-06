@@ -5,6 +5,7 @@ import math
 import re
 import shutil
 from .core import run_command, file_hash, read_json, write_json, ok, Unavailable
+from .media_runtime import find_media_tool
 
 
 def youtube_id(source):
@@ -90,7 +91,7 @@ def resolve_input(source, cfg, root):
 
 def inspect(video):
     for tool in ("ffmpeg", "ffprobe"):
-        if not shutil.which(tool):
+        if not find_media_tool(tool):
             raise Unavailable(f"{tool} não encontrado no PATH.")
     out, _ = run_command(["ffprobe", "-v", "error", "-show_streams",
                           "-show_format", "-of", "json", video])

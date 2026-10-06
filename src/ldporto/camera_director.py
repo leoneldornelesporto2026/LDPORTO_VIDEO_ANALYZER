@@ -8,7 +8,7 @@ from .core import ok
 from .director_config import resolve_config
 from .temporal import IntervalCursor, VisualIndex, SampleIndex, number
 from .camera_geometry import geometry, crop_rect, contains, base_size
-from .camera_motion import CameraMotion
+from .camera_motion import CameraMotion, SmartZoomState
 
 PRESERVE = {'broll', 'b_roll', 'screen', 'screen_capture', 'screen_content',
             'logo', 'title_card', 'empty', 'black'}
@@ -21,6 +21,26 @@ def _confidence(row):
 def _candidate(name, layout, focus, components, **extra):
     return {'candidate': name, 'layout': layout, 'focus': focus,
             'score': sum(components.values()), 'components': components, **extra}
+
+
+def _editorial_zoom_beat(time, moments, arcs):
+    for moment in moments:
+        refs = moment.get('evidence_segment_ids') or []
+        if not refs:
+            continue
+        categories = set(moment.get('categories') or [])
+        core = moment.get('core_moment') or moment
+        start = number(core.get('start'))
+        score = number(moment.get('hook_score', moment.get('hook_strength', (moment.get('editorial') or {}).get('hook_strength'))))
+        if categories & {'hook', 'reveal', 'surprise', 'strong_opinion'} and start <= time < start + 5 and score >= .7:
+            return {'id': moment['moment_id'] + '_HOOK', 'reason': 'HOOK_EMPHASIS', 'evidence_refs': refs}
+        if categories & {'payoff', 'punchline', 'emotion'} and number(core.get('start')) <= time < number(core.get('end')):
+            return {'id': moment['moment_id'] + '_PAYOFF', 'reason': 'PAYOFF_EMPHASIS', 'evidence_refs': refs}
+    for arc in arcs:
+        payoff = arc.get('payoff') or {}
+        if payoff.get('segment_ids') and payoff.get('start') is not None and payoff['start'] <= time < payoff.get('end', payoff['start']):
+            return {'id': arc['story_arc_id'] + '_PAYOFF', 'reason': 'STORY_CLIMAX', 'evidence_refs': payoff['segment_ids']}
+    return None
 
 
 def _prepare(metadata, vision, shots, active, cfg):
@@ -90,6 +110,7 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
     hold_until = 0.
     previous_mode, last_stable_person, last_valid_crop = None, None, None
     controller = CameraMotion()
+    smart_state = SmartZoomState()
     previous_motion = {}
     side_assignments = {}
     split_anchor = None
@@ -106,6 +127,7 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
         reasons, suppressed = [], None
         transition = 'hold'
         if reset:
+            smart_state.reset_shot(t)
             source_id, shot_since, layout_since = sid, t, t
             current_focus, current_layout, current_pair = None, 'full_frame', ()
             controller = CameraMotion()
@@ -293,21 +315,22 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                     future_voice = future['speakers'][0]
                     break
                 j += 1
-        breathing = (person and current_focus == person and speech_run >= cfg['breathing_after_seconds']
-                     and (arows or mode == 'QUESTION_ANSWER' or shot.get('shot_type') in {'medium', 'wide', 'two_shot'}))
-        desired_zoom = cfg['normal_zoom']
-        if shot.get('shot_type') in {'close_up', 'medium_close_up'}:
-            desired_zoom = min(desired_zoom, 1.05)
-            reasons.append('respect_source_close')
-        if breathing:
-            desired_zoom = cfg['breathing_zoom']
-            reasons.append('long_speech_visual_breathing')
-        if strong_moment and person == current_focus and not near_cut:
-            desired_zoom = cfg['payoff_zoom']
-            reasons.append('grounded_editorial_payoff')
-        if future_voice:
-            desired_zoom = min(desired_zoom, cfg['breathing_zoom'])
-            reasons.append('lookahead_prepare_open')
+        beat = _editorial_zoom_beat(mid, mrows, arows)
+        if quick or item['overlap'] or near_cut:
+            beat = None
+        baseline_geo = geometry([obs[current_focus]], metadata, cfg) if current_focus in obs else {'safe': False}
+        face_size = number((obs.get(current_focus, {}).get('face_bbox') or {}).get('height'))
+        source_motion_data = (item['frame'] or {}).get('source_camera_motion')
+        source_motion_value = number((source_motion_data or {}).get('magnitude'), number((item['frame'] or {}).get('camera_motion_proxy')))
+        smart_decision = smart_state.decide(t, target=current_focus if current_layout == 'single_person' else None,
+            confidence=confidence if current_focus == person else 0., safe=baseline_geo.get('safe', False),
+            zoom_cap=baseline_geo.get('max_zoom', 1.), face_size=face_size,
+            source_close=shot.get('shot_type') in {'close_up', 'medium_close_up'}, source_motion=source_motion_value,
+            speech_seconds=speech_run, remaining_seconds=next_cut - t, beat=beat,
+            micro_interruption=bool(person and person != current_focus and suppressed),
+            cfg=cfg['smart_zoom'], max_speed=cfg['max_zoom_speed'])
+        desired_zoom = smart_decision['zoom']
+        reasons.extend(smart_decision['reason_codes'])
         motion = motion_index.near(current_focus, mid, shot.get('start', t), next_cut) if current_focus else None
         geo = geometry([obs[current_focus]], metadata, cfg, desired_zoom, motion) if current_focus in obs else (
             geometry([obs[p] for p in current_pair], metadata, cfg) if current_layout == 'two_shot' else {'safe': False})
@@ -364,50 +387,73 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
             controller = CameraMotion()
             rect = None
         end_state = controller.snapshot(end)
+        smart_state.current_zoom = end_state['zoom']
         movement = ('slow_push_in' if end_state['zoom']-start_state['zoom'] > 1e-5 else
                     'slow_pull_out' if start_state['zoom']-end_state['zoom'] > 1e-5 else
                     'pan' if math.dist(start_state['center'], end_state['center']) > 1e-5 else 'hold')
         framing = ('original' if current_layout == 'full_frame' else 'two_shot' if current_layout == 'two_shot'
-                   else 'split' if split else 'medium' if breathing else 'medium_close_up')
+               else 'split' if split else 'close' if face_size * end_state['zoom'] >= cfg['smart_zoom']['close_face_min'] else 'medium')
+        camera_mode = ('SOURCE_FULL' if current_layout == 'full_frame' and preserve else 'SOURCE_PRESERVE' if current_layout == 'full_frame' else
+                   'STATIC_TWO_SHOT' if current_layout == 'two_shot' else 'SPLIT' if split else 'REACTION' if mode == 'REACTION' else
+                   'SMART_RECENTER' if movement == 'pan' and smart_decision['mode'] in {'STATIC_MEDIUM', 'STATIC_CLOSE'} else smart_decision['mode'])
         reasons = list(dict.fromkeys(reasons or ['stable_decision']))
         focus_conf = max((_confidence(r) for r in item['voices'] if r.get('person_id') == current_focus), default=0.) if current_focus else None
-        decision = {'confidence': focus_conf, 'confidence_is_calibrated': False,
-                    'reasons': reasons, 'switch_suppressed': suppressed is not None,
-                    'switch_suppressed_reason': suppressed, 'selected_candidate': chosen['candidate']}
-        sig = (sid, mode, current_layout, current_focus, current_pair, framing,
-               planned.get('planner_id') if planned else None)
-        row = {'schema_version': '3.0', 'start': t, 'end': end,
-               'conversation_mode': mode, 'source_shot_id': sid,
-               'audio_speaker': voice, 'audio_speakers': speakers,
-               'audio_events': [{'start': t, 'end': end, 'speaker_ids': speakers}],
-               'focus_person': current_focus, 'focus_confidence': focus_conf,
-               'visible_people': sorted(obs), 'visibility_is_sampled': True,
-               'visual_observed_at_start': item['frame']['time'] if item['frame'] else None,
-               'visual_observed_at_end': item['frame']['time'] if item['frame'] else None,
-               'layout': current_layout, 'framing': framing,
-               'camera': {'center_start': start_state['center'], 'center_end': end_state['center'],
-                          'zoom_start': start_state['zoom'], 'zoom_end': end_state['zoom'],
-                          'zoom_target': controller.target[2], 'movement_style': movement,
-                          'tracking_mode': 'deadzone_follow' if current_focus else 'source_preserve',
-                          'transition_in': transition, 'transition_out': 'hold',
-                          'keyframes': [start_state, end_state]},
-               'crop': {'safe': bool(geo.get('safe')), 'rect_end': rect,
-                        'quality_limited_max_zoom': geo.get('quality_limited_max_zoom', 1.),
-                        'max_allowed': geo.get('max_zoom', 1.),
-                        'baseline_requires_upscale': geo.get('baseline_requires_upscale'),
-                        'quality_unknown': geo.get('quality_unknown'),
-                        'full_frame_policy': 'fit_with_padding' if current_layout == 'full_frame' else None},
-               'split': split, 'reaction': {'emotion': None, 'audio_person': person,
-                       'evidence': ['listener_motion_spike', 'face_visible', 'crop_safe']} if mode == 'REACTION' else None,
-               'decision': decision, 'speaker_switch_rate': {'changes_5s': rate5, 'changes_10s': rate10,
-                    'mean_recent_turn_seconds': sum(recent_turn_durations)/len(recent_turn_durations) if recent_turn_durations else None},
-               'continuous_speech_duration': speech_run,
-               'global_plan': ({'planner_id': planned.get('planner_id'), 'state': planned.get('state'),
-                                'layout': planned.get('layout'), 'focus_person': planned.get('focus_person'),
-                                'reason_code': planned.get('reason_code')} if planned else None),
-               'context': {'question_ids': [q.get('question_id') for q in qrows],
-                           'story_arc_ids': [a.get('story_arc_id') for a in arows],
-                           'moment_ids': [m.get('moment_id') for m in mrows]}}
+        decision = {
+            'confidence': focus_conf, 'confidence_is_calibrated': False,
+            'reasons': reasons, 'switch_suppressed': suppressed is not None,
+            'switch_suppressed_reason': suppressed, 'selected_candidate': chosen['candidate'],
+        }
+        sig = (sid, mode, current_layout, current_focus, current_pair, framing, camera_mode, planned.get('planner_id') if planned else None)
+        row = {
+            'schema_version': '4.3', 'start': t, 'end': end,
+            'camera_mode': camera_mode, 'zoom_mode': smart_decision['mode'],
+            'smart_zoom': {
+                **smart_decision, 'target_person_id': current_focus,
+                'source_camera_motion': source_motion_data, 'beat': beat,
+                'state_entered_at': smart_state.state_entered_at,
+                'last_zoom_event_at': smart_state.last_zoom_event_at if math.isfinite(smart_state.last_zoom_event_at) else None,
+            },
+            'conversation_mode': mode, 'source_shot_id': sid,
+            'audio_speaker': voice, 'audio_speakers': speakers,
+            'audio_events': [{'start': t, 'end': end, 'speaker_ids': speakers}],
+            'focus_person': current_focus, 'focus_confidence': focus_conf,
+            'visible_people': sorted(obs), 'visibility_is_sampled': True,
+            'visual_observed_at_start': item['frame']['time'] if item['frame'] else None,
+            'visual_observed_at_end': item['frame']['time'] if item['frame'] else None,
+            'layout': current_layout, 'framing': framing,
+            'camera': {
+                'center_start': start_state['center'], 'center_end': end_state['center'],
+                'zoom_start': start_state['zoom'], 'zoom_end': end_state['zoom'],
+                'zoom_target': controller.target[2], 'movement_style': movement,
+                'tracking_mode': 'deadzone_follow' if current_focus else 'source_preserve',
+                'transition_in': transition, 'transition_out': 'hold', 'keyframes': [start_state, end_state],
+            },
+            'crop': {
+                'safe': bool(geo.get('safe')), 'rect_end': rect,
+                'quality_limited_max_zoom': geo.get('quality_limited_max_zoom', 1.),
+                'max_allowed': geo.get('max_zoom', 1.), 'baseline_requires_upscale': geo.get('baseline_requires_upscale'),
+                'upscale_ratio': end_state['zoom'] / max(min((base_size(metadata, cfg) or (0, 0, 0, 0))[0] * metadata.get('width', 0) / cfg['output_width'], (base_size(metadata, cfg) or (0, 0, 0, 0))[1] * metadata.get('height', 0) / cfg['output_height']), 1e-9) if current_layout != 'full_frame' else None,
+                'max_upscale_ratio': cfg['smart_zoom']['max_upscale_ratio'],
+                'requested_zoom': smart_decision['requested_zoom'], 'actual_zoom': end_state['zoom'],
+                'limited_by_quality': bool(smart_decision.get('limited_by_quality') or geo.get('limited_by_quality')),
+                'quality_unknown': geo.get('quality_unknown'),
+                'full_frame_policy': 'fit_with_padding' if current_layout == 'full_frame' else None,
+            },
+            'split': split,
+            'reaction': {'emotion': None, 'audio_person': person, 'evidence': ['listener_motion_spike', 'face_visible', 'crop_safe']} if mode == 'REACTION' else None,
+            'decision': decision,
+            'speaker_switch_rate': {
+                'changes_5s': rate5, 'changes_10s': rate10,
+                'mean_recent_turn_seconds': sum(recent_turn_durations)/len(recent_turn_durations) if recent_turn_durations else None,
+            },
+            'continuous_speech_duration': speech_run,
+            'global_plan': {'planner_id': planned.get('planner_id'), 'state': planned.get('state'), 'layout': planned.get('layout'), 'focus_person': planned.get('focus_person'), 'reason_code': planned.get('reason_code')} if planned else None,
+            'context': {
+                'question_ids': [question.get('question_id') for question in qrows],
+                'story_arc_ids': [arc.get('story_arc_id') for arc in arows],
+                'moment_ids': [moment.get('moment_id') for moment in mrows],
+            },
+        }
         # Compact decisions while retaining non-linear motion and changes in audio.
         if rows and sig == last_signature and transition == 'hold':
             prior = rows[-1]
@@ -486,6 +532,14 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
     fractions = {layout: sum(r['end']-r['start'] for r in rows if r['layout'] == layout)/duration
                  for layout in ('split_candidate', 'two_shot', 'full_frame')}
     metrics = {'camera_director_coverage': evidence_seconds/duration,
+                'smart_zoom_enabled': cfg['smart_zoom']['enabled'],
+                'zoom_event_count': len(smart_state.events), 'zoom_events_per_minute': len(smart_state.events) * 60 / duration,
+                'mean_zoom_factor': sum((row['camera']['zoom_start'] + row['camera']['zoom_end']) / 2 * (row['end'] - row['start']) for row in rows) / duration,
+                'max_zoom_factor': max((key['zoom'] for row in rows for key in row['camera']['keyframes']), default=1.),
+                'zoom_target_loss_count': sum('TARGET_LOST_DURING_ZOOM' in row['decision']['reasons'] for row in rows),
+                'smart_camera_decision_count': sum(row['camera_mode'] not in {'SOURCE_FULL', 'SOURCE_PRESERVE'} for row in rows),
+                'safe_zoom_fraction': sum(row['end'] - row['start'] for row in rows if row['crop']['safe'] and row['camera']['zoom_end'] > 1.001) /
+                    max(1e-9, sum(row['end'] - row['start'] for row in rows if row['camera']['zoom_end'] > 1.001)),
                'camera_director_timeline_coverage': sum(r['end']-r['start'] for r in rows)/duration,
                'unresolved_focus_fraction': unresolved_seconds/duration,
                'director_switches_per_minute': counts['director_switches']*60/duration,
@@ -505,4 +559,5 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                'coverage_note': 'Visual coverage is sampled; timeline coverage includes explicit full-frame fallback.'}
     status = 'unavailable' if not evidence_seconds else 'partial' if unresolved_seconds or evidence_seconds < .8*duration else 'ok'
     return ok({'timeline': rows, 'metrics': metrics, 'debug': {'schema_version': '3.0', 'events': debug, 'counts': dict(counts)} if cfg['debug_output'] else None,
+               'zoom_events': smart_state.events,
                'config': cfg}, status, ['Camera Director: recomendações editoriais conservadoras; confidence não é probabilidade calibrada.'])

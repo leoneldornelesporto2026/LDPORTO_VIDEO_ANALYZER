@@ -56,11 +56,14 @@ def geometry(observations, metadata, cfg, requested_zoom=1., motion=None):
     known_quality = all(o.get('sharpness') is not None for o in observations)
     resolution = min(base[0]*base[2]/cfg['output_width'], base[1]*base[3]/cfg['output_height'])
     crop_max = min(base[0]/max(union[2]-union[0], 1e-9), base[1]/max(union[3]-union[1], 1e-9))
-    cap = min(cfg['max_zoom_default'], cfg['max_zoom_hard'], max(1., resolution), crop_max)
+    upscale_limit = cfg.get('smart_zoom', {}).get('max_upscale_ratio', 2.)
+    quality_cap = resolution * upscale_limit
+    cap = min(cfg['max_zoom_default'], cfg['max_zoom_hard'], quality_cap, crop_max)
     if not known_quality:
         cap = min(cap, 1.)
     if cap < 1.:
-        return {'safe': False, 'reason': 'subjects_do_not_fit_vertical_crop', 'max_zoom': 1.}
+        return {'safe': False, 'reason': 'upscale_limit' if quality_cap < 1 else 'subjects_do_not_fit_vertical_crop', 'max_zoom': 1.,
+            'upscale_ratio': 1 / max(resolution, 1e-9), 'limited_by_quality': quality_cap < 1}
     zoom = min(requested_zoom, cap)
     x, y = (union[0]+union[2])/2, (union[1]+union[3])/2
     if motion and number(motion.get('movement_intensity')) > .08:
@@ -71,6 +74,9 @@ def geometry(observations, metadata, cfg, requested_zoom=1., motion=None):
     return {'safe': contains(rect, union), 'reason': 'measured_geometry',
             'center': [rect['x']+rect['width']/2, rect['y']+rect['height']/2],
             'rect': rect, 'subject_bounds': union, 'zoom': zoom, 'max_zoom': cap,
-            'quality_limited_max_zoom': min(cfg['max_zoom_default'], max(1., resolution)) if known_quality else 1.,
+            'quality_limited_max_zoom': min(cfg['max_zoom_default'], quality_cap) if known_quality else 1.,
+            'requested_zoom': requested_zoom, 'actual_zoom': zoom,
+            'upscale_ratio': zoom / max(resolution, 1e-9), 'max_upscale_ratio': upscale_limit,
+            'limited_by_quality': requested_zoom > quality_cap,
             'crop_safe_max_zoom': crop_max, 'baseline_requires_upscale': resolution < 1.,
             'quality_unknown': not known_quality, 'base': base[:2]}

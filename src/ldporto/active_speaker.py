@@ -11,59 +11,113 @@ def _row_confidence(row):
     return max(0., min(1., number(row.get('association_confidence', row.get('confidence')))))
 
 
+def build_global_affinity(turns, known_people, raw_mappings, cfg):
+    support = defaultdict(lambda: defaultdict(list))
+    for row in raw_mappings:
+        speaker = row.get('speaker_id') or row.get('speaker')
+        if not speaker or row.get('overlap') or row.get('method') == 'user_verified':
+            continue
+        candidates = list(row.get('candidates') or [])
+        chosen = row.get('person_id') or row.get('visible_person')
+        if chosen and not any(candidate.get('person_id') == chosen for candidate in candidates):
+            candidates.append({'person_id': chosen, 'correlation': row.get('association_evidence_score'),
+                               'confidence': _row_confidence(row)})
+        for candidate in candidates:
+            person = candidate.get('person_id')
+            if person not in known_people:
+                continue
+            correlation = number(candidate.get('correlation'), None)
+            confidence = correlation if correlation is not None else number(candidate.get('confidence'), None)
+            if candidate.get('correlation_lower_bound_proxy') is not None and candidate['correlation_lower_bound_proxy'] <= 0:
+                continue
+            if confidence is None:
+                continue
+            confidence *= number(candidate.get('track_stability'), 1.)
+            support[speaker][person].append({**row, 'mouth_audio_score': correlation,
+                'affinity_score': max(-1., min(1., confidence)),
+                'evidence_window_id': row.get('evidence_window_id') or
+                    f"WINDOW_{speaker}_{row['start']:.6f}_{row['end']:.6f}"})
+    summaries, stable, affinity = [], {}, []
+    for speaker in sorted({turn.get('speaker') for turn in turns if turn.get('speaker')}):
+        ranking = []
+        for person, evidence in support[speaker].items():
+            independent, seen, last_end = [], set(), -1.
+            for row in sorted(evidence, key=lambda value: (value['start'], value['end'])):
+                window_id = row['evidence_window_id']
+                if window_id in seen or row['start'] < last_end or row['end'] - row['start'] < cfg.get('min_evidence_window_seconds', .5):
+                    continue
+                independent.append(row)
+                seen.add(window_id)
+                last_end = row['end']
+            positive = [row for row in independent if row['affinity_score'] >= cfg.get('min_confidence', .55)]
+            negative = [row for row in independent if row['affinity_score'] <= -.2]
+            weight = max(0., sum((row['end'] - row['start']) * row['affinity_score'] for row in positive) -
+                            sum((row['end'] - row['start']) * abs(row['affinity_score']) for row in negative))
+            mean = sum(row['affinity_score'] for row in positive) / len(positive) if positive else 0.
+            pair = {'speaker_id': speaker, 'person_id': person, 'support': weight,
+                    'evidence_windows': len(independent), 'positive_windows': len(positive),
+                    'negative_windows': len(negative), 'conflicting_windows': 0,
+                    'support_seconds': union_duration(positive), 'visibility_coverage': None,
+                    'mouth_audio_score': mean if positive else None, 'confidence': None,
+                    'method': 'global_mouth_audio_affinity', 'confidence_is_calibrated': False,
+                    'evidence_refs': [row['evidence_window_id'] for row in independent]}
+            affinity.append(pair)
+            ranking.append((weight, person, positive, negative, mean, pair))
+        ranking.sort(key=lambda value: (-value[0], value[1]))
+        total = sum(value[0] for value in ranking)
+        best = ranking[0] if ranking else (0., None, [], [], 0., {})
+        weight, person, positive, negative, mean, pair = best
+        share = weight / total if total else 0.
+        accepted = (len(positive) >= int(cfg.get('min_consensus_windows', 2)) and
+                    share >= cfg.get('min_consensus_share', .67) and
+                    len(negative) < len(positive) and weight > 0 and
+                    (len(ranking) < 2 or weight > ranking[1][0]))
+        confidence = min(1., share * mean) if accepted else None
+        if accepted:
+            stable[speaker] = (person, confidence)
+            pair['confidence'] = confidence
+        alternatives = [{'person_id': value[1], 'weight': value[0], 'windows': len(value[2]),
+                         'negative_windows': len(value[3])} for value in ranking[1:]]
+        reason = None if accepted else 'ambiguous_global_affinity' if len(ranking) > 1 and share < cfg.get('min_consensus_share', .67) else 'insufficient_independent_evidence'
+        summaries.append({'speaker_id': speaker, 'person_id': person if accepted else None,
+            'confidence': confidence, 'support_share': share, 'evidence_windows': len(positive),
+            'evidence_count': len(positive), 'positive_windows': len(positive), 'negative_windows': len(negative),
+            'conflicting_windows': sum(len(value[2]) for value in ranking[1:]),
+            'visibility_coverage': None, 'mouth_audio_score': mean if positive else None,
+            'temporal_consistency': share if total else None, 'support_seconds_weighted': weight,
+            'support_seconds': union_duration(positive), 'alternatives': alternatives,
+            'method': 'global_multi_evidence_affinity' if accepted else 'insufficient_consensus',
+            'source': 'diarization_and_independent_mouth_audio_windows', 'unresolved_reason': reason,
+            'evidence_refs': [row['evidence_window_id'] for row in positive],
+            'evidence': ['diarization', 'mouth_audio_synchrony', 'independent_windows'] if accepted else [],
+            'needs_review': True, 'confidence_is_calibrated': False})
+    colliding = set()
+    for index, left in enumerate(summaries):
+        if not left['person_id']:
+            continue
+        for right in summaries[index + 1:]:
+            if left['person_id'] != right['person_id']:
+                continue
+            left_turns = [turn for turn in turns if turn['speaker'] == left['speaker_id']]
+            right_turns = [turn for turn in turns if turn['speaker'] == right['speaker_id']]
+            if any(min(first['end'], second['end']) > max(first['start'], second['start']) for first in left_turns for second in right_turns):
+                colliding.update((left['speaker_id'], right['speaker_id']))
+    for summary in summaries:
+        if summary['speaker_id'] in colliding:
+            stable.pop(summary['speaker_id'], None)
+            summary.update(person_id=None, confidence=None, unresolved_reason='simultaneous_speaker_person_conflict')
+    return summaries, stable, affinity
+
+
 def build_active_speaker(diarization, vision, raw_mappings, cfg):
     turns = diarization.get('turns', [])
     raw = deepcopy(raw_mappings or [])
     if not turns:
         return ok({'mappings': raw, 'mapping_summary': [], 'intervals': [], 'coverage': 0.},
                   'unavailable', ['Sem diarização: active_person permanece null.'])
-    support = defaultdict(lambda: defaultdict(list))
     known = {person['person_id'] for person in vision.get('people', []) if person.get('person_id')}
     known |= {observation['person_id'] for observation in vision.get('observations', []) if observation.get('person_id')}
-    for row in raw:
-        speaker = row.get('speaker_id') or row.get('speaker')
-        person = row.get('person_id') or row.get('visible_person')
-        if speaker and person and person in known and row.get('method') != 'user_verified' and not row.get('overlap'):
-            support[speaker][person].append(row)
-    summaries, stable = [], {}
-    for speaker in sorted({t.get('speaker') for t in turns if t.get('speaker')}):
-        ranking = []
-        for person, evidence in support[speaker].items():
-            # Duplicate/overlapping windows cannot manufacture consensus.
-            independent, last_end = [], -1.
-            for r in sorted(evidence, key=lambda r: (r['start'], r['end'])):
-                if r['start'] >= last_end and r['end'] > r['start']:
-                    independent.append(r)
-                    last_end = r['end']
-            weight = sum((r['end']-r['start'])*_row_confidence(r) for r in independent)
-            ranking.append((weight, person, independent))
-        ranking.sort(key=lambda x: (-x[0], x[1]))
-        total = sum(w for w, _, _ in ranking)
-        best = ranking[0] if ranking else (0., None, [])
-        weight, person, evidence = best
-        share = weight/total if total else 0.
-        mean = sum(_row_confidence(r) for r in evidence)/len(evidence) if evidence else 0.
-        accepted = (len(evidence) >= int(cfg.get('min_consensus_windows', 2)) and
-                    share >= cfg.get('min_consensus_share', .67) and
-                    (len(ranking) < 2 or weight > ranking[1][0]) and
-                    mean >= cfg.get('min_confidence', .55))
-        confidence = share*mean if accepted else None
-        if accepted:
-            stable[speaker] = (person, confidence)
-        correlations = [number(r.get('association_evidence_score'), None) for r in evidence]
-        correlations = [v for v in correlations if v is not None]
-        summaries.append({'speaker_id': speaker, 'person_id': person if accepted else None,
-            'confidence': confidence, 'support_share': share, 'evidence_windows': len(evidence),
-            'evidence_count': len(evidence), 'positive_windows': len(evidence),
-            'conflicting_windows': sum(len(rs) for _, _, rs in ranking[1:]),
-            'visibility_coverage': None, 'mouth_audio_score': sum(correlations)/len(correlations) if correlations else None,
-            'temporal_consistency': share if total else None, 'support_seconds_weighted': weight,
-            'alternatives': [{'person_id': p, 'weight': w, 'windows': len(rs)} for w, p, rs in ranking[1:]],
-            'method': 'multi_window_consensus' if accepted else 'insufficient_consensus',
-            'source': 'diarization_and_lip_audio_windows',
-            'unresolved_reason': None if accepted else 'insufficient_or_conflicting_independent_windows',
-            'evidence': ['diarization', 'lip_audio_correlation', 'multiple_independent_windows'] if accepted else [],
-            'needs_review': True, 'confidence_is_calibrated': False})
+    summaries, stable, affinity = build_global_affinity(turns, known, raw, cfg)
     duration = max(t['end'] for t in turns)
     bounds = {0., duration}
     for collection in (turns, raw):
@@ -128,7 +182,7 @@ def build_active_speaker(diarization, vision, raw_mappings, cfg):
                 speaker_state = 'KNOWN_PERSON'
             elif active and not frame:
                 speaker_state = 'INSUFFICIENT_EVIDENCE'
-            elif active and frame and not observed:
+            elif active and frame and (not observed or unresolved == 'mapped_person_not_visually_available'):
                 speaker_state = 'OFFSCREEN_SPEAKER'
             elif active:
                 speaker_state = 'UNKNOWN_PERSON' if direct or stable.get(speaker) else 'NO_CLEAR_SPEAKER'
@@ -172,17 +226,23 @@ def build_active_speaker(diarization, vision, raw_mappings, cfg):
     ages=sorted(row['observation_age'] for row in intervals if row.get('observation_age') is not None)
     metrics={'diarized_speech_seconds':speech,'known_person_speech_seconds':covered,
              'active_speaker_coverage':covered/speech if speech else None,
+             'speaker_person_mapping_coverage':union_duration([turn for turn in turns if turn['speaker'] in stable])/speech if speech else None,
+             'speaker_person_high_confidence_coverage':union_duration([turn for turn in turns if turn['speaker'] in stable and stable[turn['speaker']][1] >= .8])/speech if speech else None,
+             'active_speaker_high_confidence_coverage':union_duration([row for row in intervals if row['person_id'] and (row['confidence'] or 0) >= .8])/speech if speech else None,
+             'ambiguous_mapping_fraction':union_duration([turn for turn in turns if any(summary['speaker_id'] == turn['speaker'] and summary['unresolved_reason'] == 'ambiguous_global_affinity' for summary in summaries)])/speech if speech else None,
              'offscreen_speaker_fraction':union_duration([row for row in intervals if row['state']=='OFFSCREEN_SPEAKER'])/speech if speech else None,
              'unknown_person_fraction':union_duration([row for row in intervals if not row['person_id']])/speech if speech else None,
              'conflicting_mapping_fraction':union_duration([row for row in intervals if row.get('unresolved_reason')=='conflicting_manual_mapping'])/speech if speech else None,
              'mapping_support_windows':sum(summary['evidence_windows'] for summary in summaries),
+             'mapping_support_window_count':len({reference for summary in summaries for reference in summary['evidence_refs']}),
              'observation_age_mean':sum(ages)/len(ages) if ages else None,
              'observation_age_p25':ages[int((len(ages)-1)*.25)] if ages else None,
              'observation_age_p50':ages[int((len(ages)-1)*.5)] if ages else None,
              'observation_age_p75':ages[int((len(ages)-1)*.75)] if ages else None,
              'observation_age_p95':ages[int((len(ages)-1)*.95)] if ages else None,
              'observation_age_method':'sample_distance_seconds'}
-    return ok({'mappings': mappings, 'mapping_summary': summaries, 'intervals': intervals,
+    return ok({'mappings': mappings, 'mapping_summary': summaries, 'affinity': affinity,
+               'active_speaker_evidence': raw, 'intervals': intervals,
                'coverage': covered/speech if speech else 0.,'metrics':metrics},
               'ok' if speech and covered >= .8*speech else 'partial',
               ['Active speaker: consenso de janelas independentes + presença contemporânea; scores heurísticos, não calibrados.'])

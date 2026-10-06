@@ -56,7 +56,7 @@ Exige `analysis.json` completo com evidências salvas. Não exige vídeo dispon�
 4. Abra `ABRIR_ANALYZER.bat`, teste vídeo local e cada perfil; em seguida reexecute somente câmera e confirme status/cache e exports.
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements/dev.txt
 .\.venv\Scripts\python.exe -m pytest src\tests -q
 .\.venv\Scripts\python.exe analyze.py --doctor
 ```

@@ -15,6 +15,12 @@ def build_preview_package(ctx, metadata, director, cfg):
     if not timeline:
         return ok({'canaries': [], 'validation': {'schema_version':'1.0','issues':[]},
                    'closed_loop': {'attempted': False}}, 'unavailable', ['Camera Director sem timeline para preview.'])
+    if not Path(ctx.video).is_file():
+        return ok({'canaries': [], 'validation': {'schema_version':'1.0', 'issues':[], 'status':'unavailable',
+                   'verifier_uses_rendered_frames':False, 'unresolved_reason':'source_media_unavailable'},
+                   'closed_loop': {'attempted': False, 'iterations':0, 'repair_accepted':False,
+                                   'repaired_director_ids':[], 'second_validation':None},
+                   'repaired_timeline':None}, 'unavailable', ['Source media unavailable; no rendered-frame verification was performed.'])
     intervals = select_canary_intervals(timeline, metadata.get('duration') or 0,
                                         int(cfg.get('max_canaries', 4)), float(cfg.get('canary_seconds', 4.0)))
     preview_dir = ctx.output/'previews'
@@ -38,6 +44,7 @@ def build_preview_package(ctx, metadata, director, cfg):
                 issue['canary_id'] = item['canary_id']
             item['validation'] = data
             item['validation_status'] = validation.get('status')
+            item['accepted_preview_path'] = str(target) if validation.get('status') == 'ok' else None
             all_issues.extend(data.get('issues', []))
         else:
             item['validation'] = {'issues': [{'severity':'error','issue_type':'PREVIEW_RENDER_FAILED',
@@ -73,6 +80,8 @@ def build_preview_package(ctx, metadata, director, cfg):
                         issue['canary_id'] = f'CANARY_{i:02d}_REPAIRED'
                     second_issues.extend(recheck.get('data',{}).get('issues',[]))
                     successful_rechecks += int(recheck.get('status') == 'ok' and recheck.get('data',{}).get('sampled_frames',0) > 0)
+                    canaries[i]['repaired_validation'] = recheck.get('data', {})
+                    canaries[i]['accepted_preview_path'] = str(target) if recheck.get('status') == 'ok' and recheck.get('data',{}).get('sampled_frames',0) > 0 else None
                 else:
                     second_issues.append({'severity':'error','issue_type':'PREVIEW_REPAIR_RENDER_FAILED',
                                           'evidence': {'canary_id': f'CANARY_{i:02d}_REPAIRED'}})
@@ -84,7 +93,8 @@ def build_preview_package(ctx, metadata, director, cfg):
                            second_validation['successful_rechecks'] == len(intervals))
     if repair_accepted:
         status = 'ok'
-    return ok({'canaries':canaries,'validation':validation,
+    final_validation = {**second_validation, 'status':'ok', 'canary_count':len(canaries), 'source_preserving_repair_used':True} if repair_accepted else validation
+    return ok({'canaries':canaries,'validation':final_validation, 'initial_validation':validation,
                'closed_loop':{'attempted':attempted,'iterations':1 if attempted else 0, 'repair_accepted':repair_accepted,
                               'repaired_director_ids':repaired_ids,
                               'second_validation':second_validation},

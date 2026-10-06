@@ -8,6 +8,8 @@ import sys
 import venv
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "src"))
+from ldporto.paths import optional_requirement
 
 
 def run(args):
@@ -24,14 +26,17 @@ def main():
     p.add_argument("--no-model-download", action="store_true", help="Modo offline: preflight exige modelos locais completos")
     p.add_argument("--ollama", action="store_true", help="Instalar Ollama no Windows quando ausente")
     args = p.parse_args()
-    if sys.version_info[:2] not in ((3, 11), (3, 12)) or platform.architecture()[0] != "64bit":
-        raise SystemExit("Use Python 3.11 ou 3.12 de 64 bits. Veja LEIA_PRIMEIRO.md.")
+    print("Selected executable:", sys.executable, flush=True)
+    print("Selected version:", sys.version.split()[0], flush=True)
+    if sys.version_info[:2] != (3, 11) or platform.architecture()[0] != "64bit":
+        raise SystemExit("Use Python 3.11.x de 64 bits. Veja README.md.")
     extras = [s.strip() for s in args.extras.split(",") if s.strip()]
     allowed = {"diarization", "vision", "ocr", "yolo", "audio-events"}
     if not set(extras) <= allowed:
         raise SystemExit("Extras inválidos: "+", ".join(set(extras)-allowed))
     env = ROOT/".venv"
     python = env/("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    print("Project venv:", env, flush=True)
     if not python.is_file():
         print("Criando ambiente Python isolado…", flush=True)
         venv.EnvBuilder(with_pip=True).create(env)
@@ -42,11 +47,11 @@ def main():
     run([python, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"])
     args_pip = [python, "-m", "pip", "install", "-r", ROOT/"requirements.txt"]
     for name in extras:
-        args_pip += ["-r", ROOT/f"requirements-{name}.txt"]
+        args_pip += ["-r", optional_requirement(name, ROOT)]
     run(args_pip)
     if args.windows_tools and os.name == "nt":
         if not shutil.which("winget"):
-            print("winget ausente; instale FFmpeg manualmente conforme LEIA_PRIMEIRO.md.")
+            print("winget ausente; instale FFmpeg manualmente conforme README.md.")
         else:
             if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
                 run(["winget", "install", "--id", "Gyan.FFmpeg", "--exact",
@@ -61,7 +66,7 @@ def main():
         run([python, ROOT/"scripts"/"download_models.py"])
     print("\nDependencias preparadas. Isso nao comprova prontidao dos modelos/GPU. Reabra o terminal para atualizar o PATH.")
     print("Execute ABRIR_ANALYZER.bat ou: .venv/Scripts/python.exe analyze.py --doctor")
-    print("Diarização precisa de HF_TOKEN + aceite do modelo; veja LEIA_PRIMEIRO.md.")
+    print("Diarização precisa de HF_TOKEN + aceite do modelo; veja docs/setup/LEIA_PRIMEIRO.md.")
 
 
 if __name__ == "__main__":

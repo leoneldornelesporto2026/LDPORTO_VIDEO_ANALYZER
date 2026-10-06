@@ -145,6 +145,7 @@ def create_compact_artifacts(analysis, folder, cfg=None):
                                           'video_analysis.json',chunks,maximum)
     manifest = analysis.get('run_manifest') or {}
     summary = {'schema_version':'4.2','producer_version':__version__,'metadata':analysis.get('metadata'),
+               'execution_scope':analysis.get('execution_scope', 'full_pipeline'),
                'analysis_status':analysis.get('analysis_status'),'root_cause_stage':manifest.get('root_cause_stage'),
                'counts':{key:len(value) for key,value in analysis.items() if isinstance(value,list)},
                'analysis_quality':analysis.get('analysis_quality',{}),'qa_metrics':analysis.get('qa_metrics',{}),

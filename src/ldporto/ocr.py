@@ -12,7 +12,7 @@ class OcrEngine:
             import cv2
             import pytesseract
         except ImportError:
-            raise Unavailable("Instale requirements-ocr.txt e Tesseract com por/eng.")
+            raise Unavailable("Instale requirements/ocr.txt e Tesseract com por/eng.")
         if cfg["tesseract_cmd"]:
             pytesseract.pytesseract.tesseract_cmd = cfg["tesseract_cmd"]
         texts = []

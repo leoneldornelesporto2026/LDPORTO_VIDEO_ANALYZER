@@ -1,0 +1,2149 @@
+Você é um engenheiro sênior de IA, visão computacional, processamento de áudio e edição automatizada de vídeo.
+
+Sua missão é criar um sistema Python LOCAL chamado:
+
+# L.D.PORTO VIDEO ANALYZER
+
+Este sistema será a primeira etapa de uma futura plataforma semelhante ao OpusClip.
+
+IMPORTANTE:
+
+Nesta etapa NÃO devemos gerar cortes finais, Shorts, Reels ou TikToks.
+
+O objetivo desta primeira aplicação é ANALISAR COMPLETAMENTE um vídeo original e produzir uma representação estruturada extremamente detalhada do conteúdo.
+
+O resultado será posteriormente entregue a outro agente/LLM, que escolherá os melhores cortes.
+
+Portanto:
+
+ANALISAR PRIMEIRO.
+EDITAR DEPOIS.
+
+---
+
+# 1. OBJETIVO PRINCIPAL
+
+Dado um vídeo:
+
+input/video.mp4
+
+o sistema deverá compreender:
+
+- tudo que foi falado;
+- quando cada palavra foi falada;
+- quem está falando;
+- quais pessoas aparecem;
+- onde cada pessoa está localizada no frame;
+- qual pessoa provavelmente corresponde ao locutor atual;
+- quando duas ou mais pessoas aparecem simultaneamente;
+- quando duas pessoas participam ativamente de uma conversa;
+- mudanças de câmera;
+- mudanças de cena;
+- mudanças de assunto;
+- textos visíveis;
+- perguntas;
+- respostas;
+- frases impactantes;
+- momentos emocionais;
+- momentos engraçados;
+- declarações controversas;
+- informação importante;
+- possíveis hooks;
+- possíveis conclusões;
+- trechos que fazem sentido isoladamente;
+- trechos que dependem demais do contexto anterior;
+- silêncios;
+- pausas;
+- interrupções;
+- sobreposição de fala;
+- risadas;
+- música;
+- ruído;
+- qualidade do áudio;
+- qualidade visual.
+
+O Analyzer deve gerar um MAPA TEMPORAL COMPLETO do vídeo.
+
+---
+
+# 2. PRINCÍPIO FUNDAMENTAL
+
+O sistema NÃO deve tentar criar Shorts imediatamente.
+
+Primeiro deve responder:
+
+"O que acontece neste vídeo inteiro?"
+
+Depois:
+
+"Quem participa?"
+
+Depois:
+
+"Quem fala em cada momento?"
+
+Depois:
+
+"Onde essa pessoa está na imagem?"
+
+Depois:
+
+"Quais momentos possuem potencial editorial?"
+
+Somente um segundo programa utilizará essas informações para renderizar os vídeos.
+
+---
+
+# 3. PIPELINE PRINCIPAL
+
+Implementar o processamento aproximadamente nesta ordem:
+
+1. inspeção do arquivo;
+2. extração do áudio;
+3. normalização temporária do áudio;
+4. transcrição;
+5. timestamps por palavra;
+6. diarização dos locutores;
+7. alinhamento transcript + speaker;
+8. detecção de cenas;
+9. detecção de rostos/pessoas;
+10. tracking das pessoas;
+11. associação entre pessoa visível e locutor;
+12. análise da posição das pessoas;
+13. detecção de texto/OCR quando relevante;
+14. análise semântica;
+15. segmentação por assunto;
+16. identificação de momentos editoriais;
+17. geração dos arquivos estruturados;
+18. relatório final.
+
+---
+
+# 4. TRANSCRIÇÃO
+
+A transcrição é prioridade absoluta.
+
+Idioma principal:
+
+Português brasileiro.
+
+O sistema deve produzir uma transcrição o mais fiel possível ao áudio.
+
+NÃO:
+
+- resumir falas;
+- corrigir conteúdo;
+- reescrever frases;
+- inventar palavras;
+- transformar fala informal em português formal.
+
+Preservar:
+
+- gírias;
+- repetições;
+- hesitações relevantes;
+- nomes;
+- palavrões;
+- expressões regionais;
+- frases incompletas quando realmente ocorrerem.
+
+Cada palavra precisa possuir:
+
+- texto;
+- timestamp inicial;
+- timestamp final;
+- confidence;
+- speaker;
+- segment_id.
+
+Exemplo:
+
+{
+  "word": "cirurgia",
+  "start": 23.421,
+  "end": 23.910,
+  "confidence": 0.982,
+  "speaker": "SPEAKER_01",
+  "segment_id": "SEG_00034"
+}
+
+Não arredondar excessivamente os timestamps.
+
+---
+
+# 5. PALAVRAS DE BAIXA CONFIANÇA
+
+Palavras com baixa confiança devem ser marcadas.
+
+Exemplo:
+
+"needs_review": true
+
+Não substituir automaticamente uma palavra duvidosa por uma palavra inventada.
+
+Adicionar uma lista:
+
+low_confidence_words
+
+contendo:
+
+- palavra;
+- timestamp;
+- confidence;
+- contexto anterior;
+- contexto posterior.
+
+---
+
+# 6. DIARIZAÇÃO DE LOCUTORES
+
+Identificar os diferentes locutores como:
+
+SPEAKER_00
+SPEAKER_01
+SPEAKER_02
+...
+
+Não inventar nomes reais.
+
+Registrar:
+
+- início da fala;
+- fim;
+- speaker;
+- confiança quando disponível;
+- overlap de fala.
+
+Exemplo:
+
+{
+  "start": 21.4,
+  "end": 29.8,
+  "speaker": "SPEAKER_01",
+  "overlap": false
+}
+
+---
+
+# 7. PESSOAS VISÍVEIS
+
+Detectar pessoas/rostos presentes no vídeo.
+
+Criar identidades persistentes:
+
+PERSON_001
+PERSON_002
+PERSON_003
+...
+
+A mesma pessoa aparecendo novamente deverá, sempre que tecnicamente possível, manter o mesmo PERSON_ID.
+
+Não tentar identificar automaticamente celebridades ou descobrir identidade civil pela aparência.
+
+O sistema pode posteriormente associar nome somente se houver evidência textual explícita no próprio vídeo, transcrição ou metadados fornecidos.
+
+---
+
+# 8. TRACKING
+
+Para cada pessoa visível registrar ao longo do tempo:
+
+- PERSON_ID;
+- frame/time;
+- bounding box;
+- centro X;
+- centro Y;
+- largura;
+- altura;
+- percentual aproximado do frame ocupado;
+- face_visible;
+- body_visible;
+- tracking_confidence.
+
+Bounding boxes devem preferencialmente utilizar valores normalizados entre 0 e 1.
+
+Exemplo:
+
+{
+  "person_id": "PERSON_001",
+  "time": 27.42,
+  "bbox": {
+    "x": 0.12,
+    "y": 0.08,
+    "width": 0.48,
+    "height": 0.84
+  },
+  "center": {
+    "x": 0.36,
+    "y": 0.50
+  }
+}
+
+---
+
+# 9. QUEM ESTÁ FALANDO?
+
+Este é um dos pontos mais importantes do sistema.
+
+O Analyzer deverá tentar associar:
+
+SPEAKER_XX
+
+com
+
+PERSON_XXX
+
+por intervalo temporal.
+
+Usar sinais disponíveis como:
+
+- presença da pessoa;
+- movimento labial;
+- atividade facial;
+- posição;
+- continuidade temporal;
+- mudança de câmera;
+- diarização;
+- active speaker detection.
+
+Gerar algo como:
+
+{
+  "start": 23.0,
+  "end": 31.5,
+  "speaker": "SPEAKER_01",
+  "visible_person": "PERSON_003",
+  "association_confidence": 0.91
+}
+
+Se não houver confiança suficiente:
+
+"visible_person": null
+
+Nunca inventar associação.
+
+---
+
+# 10. ACTIVE SPEAKER
+
+Em cada intervalo relevante determinar:
+
+- quem está falando;
+- se essa pessoa está visível;
+- se existe apenas uma pessoa;
+- se existem múltiplas;
+- qual delas deve receber foco editorial.
+
+Exemplo:
+
+{
+  "time": 42.5,
+  "active_speaker": "SPEAKER_02",
+  "active_person": "PERSON_004",
+  "visible_people": [
+    "PERSON_004",
+    "PERSON_006"
+  ]
+}
+
+---
+
+# 11. COMPOSIÇÃO VISUAL
+
+Para cada segmento registrar uma recomendação visual.
+
+Possíveis valores:
+
+single_focus
+speaker_follow
+two_person_scene
+split_screen_candidate
+wide_scene
+group_scene
+object_focus
+screen_content
+unknown
+
+IMPORTANTE:
+
+NÃO executar crop.
+
+NÃO renderizar split screen.
+
+Somente recomendar o layout que o futuro editor poderá utilizar.
+
+---
+
+# 12. DUAS PESSOAS CONVERSANDO
+
+Quando duas pessoas estiverem participando ativamente de uma conversa, avaliar:
+
+- ambas aparecem simultaneamente?
+- aparecem em câmeras diferentes?
+- há alternância frequente?
+- há fala sobreposta?
+- uma pessoa reage visualmente enquanto a outra fala?
+- vale preservar ambas no frame?
+
+Se fizer sentido registrar:
+
+"recommended_layout": "split_screen_candidate"
+
+Também registrar:
+
+"primary_person"
+"secondary_person"
+
+Exemplo:
+
+{
+  "start": 55.2,
+  "end": 67.8,
+  "primary_person": "PERSON_001",
+  "secondary_person": "PERSON_002",
+  "recommended_layout": "split_screen_candidate",
+  "reason": "conversation between two visually active participants"
+}
+
+O processamento visual definitivo será realizado pelo segundo programa.
+
+---
+
+# 13. PESSOA PRINCIPAL
+
+Para cada trecho definir:
+
+primary_person
+
+com base principalmente em QUEM ESTÁ FALANDO.
+
+A pessoa principal NÃO deve ser escolhida apenas porque é maior ou está centralizada.
+
+Ordem de prioridade:
+
+1. pessoa falando;
+2. pessoa diretamente relacionada à fala;
+3. pessoa reagindo;
+4. pessoa visualmente dominante;
+5. composição original.
+
+---
+
+# 14. ROSTO E REGIÃO DE SEGURANÇA
+
+Registrar informações que futuramente permitirão converter horizontal para vertical.
+
+Para cada pessoa:
+
+- bbox;
+- face_bbox;
+- eyes_position quando disponível;
+- head_center;
+- body_center;
+- distance_to_left;
+- distance_to_right;
+- safe_crop_possible;
+- estimated_vertical_crop.
+
+Não executar o crop ainda.
+
+---
+
+# 15. CENAS
+
+Detectar mudanças visuais importantes.
+
+Cada cena deverá possuir:
+
+- scene_id;
+- start;
+- end;
+- duration;
+- keyframe;
+- visible_people;
+- predominant_person;
+- scene_type.
+
+Possíveis scene_type:
+
+close_up
+medium_shot
+wide_shot
+two_shot
+group
+screen_capture
+broll
+title_card
+unknown
+
+---
+
+# 16. SHOT CHANGE VS CONTENT CHANGE
+
+Não confundir:
+
+mudança de câmera
+
+com
+
+mudança de assunto.
+
+Registrar separadamente:
+
+visual_scene_change
+
+semantic_topic_change
+
+Uma entrevista pode trocar de câmera 20 vezes dentro do mesmo assunto.
+
+---
+
+# 17. TEXTO NA TELA
+
+Detectar textos relevantes quando possível.
+
+Exemplos:
+
+- nome do entrevistado;
+- título;
+- legenda existente;
+- profissão;
+- localização;
+- pergunta;
+- placa;
+- manchete.
+
+Registrar:
+
+{
+  "start": 12.1,
+  "end": 17.4,
+  "text": "Robô vs Médico",
+  "bbox": {...},
+  "confidence": 0.94
+}
+
+OCR não deve dominar o pipeline.
+
+---
+
+# 18. ANÁLISE SEMÂNTICA
+
+Separar o vídeo em blocos semânticos.
+
+Cada bloco deve possuir:
+
+- topic_id;
+- início;
+- fim;
+- assunto;
+- resumo factual;
+- pessoas;
+- speakers;
+- perguntas;
+- respostas;
+- contexto necessário;
+- frases importantes.
+
+Exemplo:
+
+{
+  "topic_id": "TOPIC_003",
+  "start": 84.2,
+  "end": 121.8,
+  "topic": "Confiança em cirurgia robótica",
+  "summary": "Participantes discutem se confiariam uma cirurgia a um robô ou médico humano."
+}
+
+---
+
+# 19. PERGUNTAS E RESPOSTAS
+
+Detectar estruturas de entrevista.
+
+Registrar:
+
+question
+question_start
+question_end
+question_speaker
+
+answer_start
+answer_end
+answer_speaker
+
+Se possível associar pessoas visíveis.
+
+Exemplo:
+
+{
+  "question": "Você confiaria sua cirurgia a um robô?",
+  "question_start": 24.3,
+  "question_end": 27.2,
+  "answer_start": 27.6,
+  "answer_end": 39.1
+}
+
+---
+
+# 20. MOMENTOS EDITORIAIS
+
+O Analyzer poderá identificar POSSÍVEIS momentos interessantes.
+
+Mas NÃO deve decidir definitivamente quais serão publicados.
+
+Detectar categorias:
+
+hook
+curiosity
+controversy
+emotion
+humor
+surprise
+strong_opinion
+educational
+storytelling
+reveal
+conflict
+question
+answer
+punchline
+conclusion
+call_to_action
+
+---
+
+# 21. POTENCIAL DE CLIPE
+
+Para cada trecho semanticamente completo gerar métricas editoriais independentes.
+
+Exemplo:
+
+{
+  "hook_strength": 0.91,
+  "standalone_context": 0.84,
+  "emotional_intensity": 0.63,
+  "controversy": 0.77,
+  "curiosity": 0.92,
+  "clarity": 0.88
+}
+
+Não criar um único "viral score" como verdade absoluta.
+
+Preservar métricas separadas para que outro sistema possa tomar a decisão.
+
+---
+
+# 22. TRECHO AUTOSSUFICIENTE
+
+Uma informação fundamental:
+
+standalone_context
+
+Representa o quanto um trecho consegue ser entendido sem assistir aos minutos anteriores.
+
+Classificar também:
+
+excellent
+good
+needs_context
+poor
+
+---
+
+# 23. POSSÍVEIS INÍCIOS DE CLIPE
+
+Detectar frases que poderiam funcionar como começo.
+
+Exemplo:
+
+{
+  "timestamp": 182.21,
+  "text": "Eu nunca deixaria um robô me operar.",
+  "hook_type": "strong_opinion",
+  "context_required": false
+}
+
+Também identificar quando é possível começar alguns segundos ANTES de uma resposta para preservar a pergunta.
+
+---
+
+# 24. POSSÍVEIS FINAIS
+
+Identificar:
+
+- conclusão;
+- punchline;
+- resposta completa;
+- reação;
+- frase final forte;
+- mudança clara de assunto.
+
+Não terminar automaticamente um trecho no meio de uma frase.
+
+---
+
+# 25. PAUSAS E SILÊNCIOS
+
+Detectar:
+
+- silence_start;
+- silence_end;
+- duration.
+
+Marcar como:
+
+natural_pause
+possible_edit_point
+awkward_pause
+unknown
+
+Isso será usado posteriormente para cortes mais naturais.
+
+---
+
+# 26. SOBREPOSIÇÃO DE VOZ
+
+Identificar quando duas pessoas falam simultaneamente.
+
+Registrar:
+
+speech_overlap
+
+e speakers envolvidos.
+
+Isso é particularmente importante para entrevistas.
+
+---
+
+# 27. EVENTOS DE ÁUDIO
+
+Quando possível identificar:
+
+speech
+music
+laughter
+applause
+noise
+silence
+other
+
+Não precisa classificar centenas de sons específicos.
+
+---
+
+# 28. QUALIDADE DE ÁUDIO
+
+Gerar informações gerais:
+
+audio_quality
+speech_clarity
+background_noise_level
+clipping_detected
+music_under_speech
+possible_transcription_difficulty
+
+---
+
+# 29. QUALIDADE VISUAL
+
+Registrar:
+
+resolution
+fps
+orientation
+brightness
+blur
+camera_motion
+possible_black_frames
+possible_freeze_frames
+
+---
+
+# 30. KEYFRAMES
+
+Gerar thumbnails úteis:
+
+analysis/thumbnails/
+
+Sugestão:
+
+- início de cada cena;
+- pessoa nova;
+- mudança importante;
+- candidato editorial;
+- mudança de tópico.
+
+Não extrair milhares de imagens desnecessárias.
+
+---
+
+# 31. TIMELINE UNIFICADA
+
+Criar uma timeline que combine:
+
+transcrição
+speaker
+person
+scene
+topic
+visual composition
+
+Exemplo:
+
+{
+  "start": 23.12,
+  "end": 31.84,
+  "scene_id": "SCENE_014",
+  "topic_id": "TOPIC_003",
+  "speaker": "SPEAKER_01",
+  "active_person": "PERSON_002",
+  "visible_people": [
+    "PERSON_002"
+  ],
+  "text": "Você confiaria sua cirurgia a um robô ou a um médico humano?",
+  "recommended_layout": "single_focus"
+}
+
+Essa timeline será um dos arquivos mais importantes.
+
+---
+
+# 32. ARQUIVO PRINCIPAL
+
+Criar:
+
+analysis/analysis.json
+
+Estrutura sugerida:
+
+{
+  "metadata": {},
+  "audio_analysis": {},
+  "video_analysis": {},
+  "speakers": [],
+  "people": [],
+  "scenes": [],
+  "topics": [],
+  "words": [],
+  "transcript_segments": [],
+  "speaker_person_mapping": [],
+  "questions_answers": [],
+  "editorial_moments": [],
+  "candidate_hooks": [],
+  "candidate_endings": [],
+  "silences": [],
+  "audio_events": [],
+  "timeline": [],
+  "summary": {}
+}
+
+---
+
+# 33. RESUMO FINAL
+
+Gerar também:
+
+analysis/video_summary.json
+
+Deve possuir:
+
+- duração;
+- quantidade de speakers;
+- quantidade de pessoas;
+- assunto principal;
+- assuntos secundários;
+- formato percebido;
+- estrutura narrativa;
+- participantes principais;
+- melhores momentos potenciais;
+- perguntas principais;
+- respostas relevantes;
+- momentos emocionais;
+- momentos engraçados;
+- momentos controversos;
+- possíveis hooks;
+- possíveis finais;
+- trechos que exigem contexto.
+
+---
+
+# 34. HUMAN READABLE REPORT
+
+Gerar:
+
+analysis/report.md
+
+Formato:
+
+# VIDEO ANALYSIS
+
+## Metadados
+
+## Participantes
+
+## Locutores
+
+## Relação speaker/pessoa
+
+## Resumo geral
+
+## Assuntos encontrados
+
+## Timeline
+
+## Perguntas e respostas
+
+## Frases fortes
+
+## Momentos de humor
+
+## Momentos emocionais
+
+## Momentos controversos
+
+## Possíveis hooks
+
+## Possíveis finais
+
+## Trechos com potencial de corte
+
+## Problemas de transcrição
+
+## Observações visuais
+
+---
+
+# 35. TRANSCRIÇÃO LEGÍVEL
+
+Gerar também:
+
+analysis/transcript.txt
+
+Formato:
+
+[00:23.120 - 00:26.840]
+SPEAKER_01 / PERSON_002
+Você confiaria sua cirurgia a um robô ou a um médico humano?
+
+[00:26.910 - 00:30.250]
+SPEAKER_02 / PERSON_004
+Eu prefiro médico. Sem dúvida.
+
+---
+
+# 36. SRT
+
+Gerar:
+
+analysis/transcript.srt
+
+Não fazer linhas enormes.
+
+Quebrar frases respeitando:
+
+- pontuação;
+- ritmo;
+- respiração;
+- leitura natural.
+
+---
+
+# 37. LEGENDAS FUTURAS
+
+Embora ainda não seja necessário renderizar legendas, produzir:
+
+analysis/caption_segments.json
+
+Cada segmento deve ser otimizado para futuras legendas modernas de vídeo curto.
+
+Exemplo:
+
+{
+  "start": 23.12,
+  "end": 24.84,
+  "text": "VOCÊ CONFIARIA",
+  "words": [...]
+}
+
+Regras:
+
+- poucas palavras por bloco;
+- fácil leitura;
+- sincronização próxima da fala;
+- permitir word highlighting posteriormente.
+
+---
+
+# 38. ESTRUTURA DE DIRETÓRIOS
+
+Criar:
+
+LDPORTO_VIDEO_ANALYZER/
+
+input/
+
+analysis/
+    analysis.json
+    video_summary.json
+    timeline.json
+    transcript.txt
+    transcript.srt
+    words.json
+    speakers.json
+    people.json
+    scenes.json
+    topics.json
+    questions_answers.json
+    editorial_moments.json
+    caption_segments.json
+    report.md
+    thumbnails/
+
+cache/
+
+logs/
+
+config/
+
+src/
+
+---
+
+# 39. CACHE
+
+Processamentos caros devem possuir cache.
+
+Se já existirem:
+
+- áudio extraído;
+- transcrição;
+- diarização;
+- tracking;
+- cenas;
+
+não repetir processamento sem necessidade.
+
+Criar assinatura baseada no vídeo para invalidar cache quando o arquivo mudar.
+
+---
+
+# 40. CHECKPOINT
+
+Cada fase precisa salvar seu resultado.
+
+Exemplo:
+
+01_metadata.json
+02_audio.json
+03_transcription.json
+04_diarization.json
+05_scenes.json
+06_people.json
+07_tracking.json
+08_active_speaker.json
+09_semantic.json
+10_analysis.json
+
+Assim uma falha posterior não obriga reprocessar o vídeo inteiro.
+
+---
+
+# 41. LOGS
+
+Logs claros como:
+
+[1/10] Analisando vídeo
+[2/10] Extraindo áudio
+[3/10] Transcrevendo
+[4/10] Identificando locutores
+[5/10] Detectando cenas
+[6/10] Detectando pessoas
+[7/10] Tracking
+[8/10] Associando locutores
+[9/10] Análise semântica
+[10/10] Gerando relatório
+
+Mostrar progresso quando possível.
+
+---
+
+# 42. CONFIGURAÇÃO
+
+Criar config.yaml.
+
+Exemplo:
+
+language: pt
+device: auto
+compute_type: auto
+
+transcription:
+  word_timestamps: true
+
+diarization:
+  enabled: true
+
+vision:
+  people_tracking: true
+  face_detection: true
+  active_speaker: true
+
+scenes:
+  enabled: true
+
+ocr:
+  enabled: true
+
+semantic_analysis:
+  enabled: true
+
+editorial_analysis:
+  enabled: true
+
+---
+
+# 43. CPU/GPU
+
+O programa deve detectar automaticamente:
+
+NVIDIA CUDA
+Apple Silicon quando aplicável
+CPU
+
+Escolher implementação adequada.
+
+Não exigir GPU obrigatoriamente.
+
+---
+
+# 44. PROCESSAMENTO LONGO
+
+Suportar vídeos grandes.
+
+Nunca carregar o vídeo inteiro descompactado na RAM.
+
+Processar por:
+
+frames
+chunks
+segments
+
+Liberar memória periodicamente.
+
+---
+
+# 45. MODELOS
+
+A arquitetura deve ser modular.
+
+Não espalhar chamadas de modelo pelo código.
+
+Exemplo:
+
+TranscriptionEngine
+DiarizationEngine
+SceneEngine
+PersonDetectionEngine
+TrackingEngine
+ActiveSpeakerEngine
+SemanticEngine
+ReportEngine
+
+Cada engine deverá poder ser substituído futuramente.
+
+---
+
+# 46. RESILIÊNCIA
+
+Caso uma funcionalidade falhe:
+
+não abortar todo o pipeline se não for indispensável.
+
+Exemplo:
+
+OCR falhou
+
+Continuar:
+
+transcrição
+diarização
+tracking
+análise.
+
+Registrar o problema no relatório.
+
+---
+
+# 47. SEM ALUCINAÇÕES
+
+Regra essencial:
+
+O sistema deve distinguir:
+
+OBSERVAÇÃO
+
+de
+
+INFERÊNCIA.
+
+Exemplo:
+
+observação:
+PERSON_001 está visível.
+
+inferência:
+PERSON_001 provavelmente corresponde a SPEAKER_02.
+
+Adicionar confidence para inferências.
+
+Não tratar inferência incerta como fato.
+
+---
+
+# 48. NÃO IDENTIFICAR PESSOAS SEM EVIDÊNCIA
+
+Não afirmar:
+
+"Esta pessoa é Fulano"
+
+apenas por reconhecimento facial.
+
+Usar:
+
+PERSON_001
+
+até que exista evidência explícita fornecida pelo vídeo, metadados ou usuário.
+
+---
+
+# 49. PREPARAÇÃO PARA O PRÓXIMO SISTEMA
+
+O Analyzer deve produzir dados suficientes para um segundo software executar:
+
+- seleção de cortes;
+- transformação 16:9 → 9:16;
+- face tracking;
+- active speaker crop;
+- split screen;
+- zoom;
+- legendas animadas;
+- título inicial;
+- overlays;
+- CTA;
+- renderização.
+
+Mas nenhuma dessas transformações deve ocorrer nesta primeira aplicação.
+
+---
+
+# 50. FUTURO SPLIT SCREEN
+
+Quando duas pessoas precisarem ser exibidas juntas, registrar dados suficientes para o futuro editor criar:
+
+┌───────────────┐
+│   PERSON_01   │
+├───────────────┤
+│   PERSON_02   │
+└───────────────┘
+
+ou outro layout apropriado.
+
+Para isso precisamos saber:
+
+- bbox de ambas;
+- intervalo;
+- speaker ativo;
+- pessoa secundária;
+- qualidade de cada crop;
+- continuidade.
+
+---
+
+# 51. FOCO EDITORIAL
+
+Apesar de registrar todas as pessoas, o princípio visual futuro será:
+
+FOCAR PRINCIPALMENTE EM QUEM ESTÁ FALANDO.
+
+Se SPEAKER_01 corresponde a PERSON_04:
+
+PERSON_04 recebe prioridade visual.
+
+Quando SPEAKER_02 começar a falar:
+
+o futuro editor poderá mudar o foco para PERSON_07.
+
+Quando os dois forem relevantes simultaneamente:
+
+split_screen_candidate.
+
+---
+
+# 52. INSIGHTS PARA O LLM
+
+Criar um arquivo especialmente pensado para ser enviado posteriormente a um LLM:
+
+analysis/llm_insights.json
+
+Ele deve evitar dados extremamente pesados de visão computacional.
+
+Deve conter somente informações editoriais importantes:
+
+- timeline;
+- transcrição;
+- speakers;
+- pessoas associadas;
+- tópicos;
+- perguntas;
+- respostas;
+- cenas;
+- hooks;
+- emoções;
+- controvérsias;
+- humor;
+- momentos fortes;
+- contexto;
+- possíveis pontos de entrada;
+- possíveis pontos de saída;
+- layout recomendado.
+
+Este será o principal arquivo que será enviado ao ChatGPT.
+
+---
+
+# 53. EXEMPLO DE LLM_INSIGHTS
+
+{
+  "video": {
+    "duration": 5432.4,
+    "main_topic": "Tecnologia e medicina"
+  },
+
+  "participants": [
+    {
+      "person_id": "PERSON_001",
+      "speaker_id": "SPEAKER_00",
+      "screen_presence": 0.42
+    }
+  ],
+
+  "segments": [
+    {
+      "id": "INSIGHT_001",
+      "start": 23.12,
+      "end": 48.74,
+
+      "topic": "Robô versus médico",
+
+      "speakers": [
+        "SPEAKER_00",
+        "SPEAKER_01"
+      ],
+
+      "people": [
+        "PERSON_001",
+        "PERSON_002"
+      ],
+
+      "transcript": "...",
+
+      "question": "...",
+
+      "answer": "...",
+
+      "editorial": {
+        "hook_strength": 0.94,
+        "standalone_context": 0.90,
+        "curiosity": 0.91,
+        "emotion": 0.44,
+        "humor": 0.12,
+        "controversy": 0.62
+      },
+
+      "recommended_layout": "speaker_follow",
+
+      "possible_start": 23.12,
+      "possible_end": 48.74
+    }
+  ]
+}
+
+---
+
+# 54. PERFORMANCE
+
+Não executar análise de visão em todos os frames quando não for necessário.
+
+Usar estratégias como:
+
+- sampling;
+- tracking entre detecções;
+- scene boundaries;
+- keyframes.
+
+Active speaker pode utilizar uma frequência maior apenas nos intervalos de fala.
+
+---
+
+# 55. INTERFACE INICIAL
+
+A primeira versão pode funcionar pelo terminal:
+
+python analyze.py video.mp4
+
+ou:
+
+python analyze.py video.mp4 --output ./analysis
+
+Mostrar progresso.
+
+---
+
+# 56. EXECUÇÃO IDEAL
+
+Exemplo:
+
+python analyze.py input/panico.mp4
+
+Resultado:
+
+Vídeo: 01:42:17
+Speakers encontrados: 6
+Pessoas rastreadas: 11
+Cenas: 248
+Tópicos: 37
+Perguntas: 54
+Momentos editoriais: 82
+Possíveis hooks: 31
+
+Analysis complete.
+
+Arquivo principal:
+
+analysis/llm_insights.json
+
+---
+
+# 57. PRIORIDADES DO MVP
+
+Prioridade 1:
+transcrição extremamente boa.
+
+Prioridade 2:
+timestamp por palavra.
+
+Prioridade 3:
+diarização.
+
+Prioridade 4:
+scene detection.
+
+Prioridade 5:
+pessoas + tracking.
+
+Prioridade 6:
+quem está falando.
+
+Prioridade 7:
+timeline unificada.
+
+Prioridade 8:
+segmentação semântica.
+
+Prioridade 9:
+insights editoriais.
+
+Prioridade 10:
+OCR.
+
+Não sacrificar a qualidade das primeiras prioridades para implementar funcionalidades secundárias.
+
+---
+
+# 58. CRITÉRIO DE SUCESSO
+
+O Analyzer estará funcionando corretamente quando alguém conseguir abrir apenas:
+
+analysis/llm_insights.json
+
+e compreender praticamente todo o conteúdo relevante do vídeo sem precisar reassistir ao material completo.
+
+Também deverá ser possível determinar:
+
+- quem estava falando;
+- quem estava visível;
+- onde estava a pessoa;
+- sobre o que falava;
+- quais outras pessoas participavam;
+- qual era a composição visual;
+- qual trecho poderia iniciar uma história;
+- onde poderia terminar;
+- se uma futura edição deveria focar uma pessoa ou duas.
+
+---
+
+# 59. RESTRIÇÃO MAIS IMPORTANTE
+
+NÃO IMPLEMENTAR O EDITOR FINAL AINDA.
+
+Não criar automaticamente:
+
+- mp4 vertical;
+- crop final;
+- zoom;
+- split screen renderizado;
+- música;
+- efeitos;
+- título;
+- CTA.
+
+Somente gerar inteligência e metadados para permitir que isso seja feito posteriormente com precisão.
+
+---
+
+# 60. RESULTADO QUE QUEREMOS
+
+Pipeline final desta fase:
+
+VIDEO.MP4
+
+↓
+
+ÁUDIO
+
+↓
+
+TRANSCRIÇÃO COM TIMESTAMP DE PALAVRA
+
+↓
+
+DIARIZAÇÃO
+
+↓
+
+PESSOAS
+
+↓
+
+TRACKING
+
+↓
+
+ACTIVE SPEAKER
+
+↓
+
+CENAS
+
+↓
+
+ASSUNTOS
+
+↓
+
+INSIGHTS
+
+↓
+
+TIMELINE COMPLETA
+
+↓
+
+LLM_INSIGHTS.JSON
+
+↓
+
+CHATGPT ANALISA
+
+↓
+
+CUT_PLAN.JSON
+
+↓
+
+[SEGUNDO SOFTWARE — FUTURO]
+
+↓
+
+SHORT / REEL / TIKTOK
+
+A implementação deve ser limpa, modular, comentada apenas onde necessário, tolerante a falhas e preparada para evolução futura.
+
+# 61. PREPARAÇÃO DE ÁUDIO PARA TRANSCRIÇÃO
+
+Antes da transcrição, o sistema deve criar diferentes representações do áudio.
+
+NUNCA modificar ou sobrescrever o áudio original.
+
+Gerar:
+
+audio/original.wav
+audio/speech_clean.wav
+audio/speech_isolated.wav quando necessário
+
+O objetivo é obter a MELHOR transcrição possível sem destruir informações importantes do áudio.
+
+---
+
+## 61.1 ÁUDIO ORIGINAL
+
+Extrair do vídeo uma cópia lossless ou de alta qualidade.
+
+Este áudio será a referência principal para:
+
+- sincronização;
+- diarização;
+- detecção de speakers;
+- overlap de fala;
+- eventos de áudio;
+- análise posterior;
+- validação da transcrição.
+
+Nunca descartar esta trilha.
+
+---
+
+## 61.2 SPEECH CLEAN
+
+Criar uma versão otimizada especificamente para reconhecimento de fala.
+
+Aplicar de forma conservadora:
+
+- normalização;
+- remoção de DC offset quando necessária;
+- redução de ruído;
+- redução de hum;
+- high-pass leve para ruídos graves;
+- redução de reverberação quando tecnicamente segura;
+- controle de volume;
+- speech enhancement.
+
+Não aplicar processamento exagerado que possa destruir:
+
+- consoantes;
+- sibilância;
+- respiração;
+- finais de palavras;
+- vozes mais graves;
+- vozes mais agudas.
+
+speech_clean.wav deverá ser a fonte preferencial para ASR quando apresentar melhor qualidade.
+
+---
+
+# 62. DETECÇÃO DE MÚSICA SOB A FALA
+
+Analisar se existe:
+
+- instrumental;
+- background music;
+- trilha;
+- vinheta;
+- música alta cobrindo locução.
+
+Registrar:
+
+music_under_speech: true/false
+
+music_level_relative_to_speech
+
+Quando música interferir significativamente na inteligibilidade, criar uma trilha adicional:
+
+audio/speech_isolated.wav
+
+---
+
+# 63. SEPARAÇÃO DE VOZ / INSTRUMENTAL
+
+Quando necessário utilizar source separation para reduzir:
+
+- instrumental;
+- música de fundo;
+- efeitos musicais.
+
+O objetivo NÃO é produzir um vocal musical perfeito.
+
+O objetivo é facilitar o reconhecimento das PALAVRAS.
+
+A separação deve preservar o máximo possível:
+
+- consoantes;
+- sílabas;
+- transientes de voz;
+- inteligibilidade.
+
+Não usar automaticamente speech_isolated para todas as situações.
+
+Source separation pode introduzir artefatos.
+
+---
+
+# 64. ESTRATÉGIA ADAPTATIVA DE TRANSCRIÇÃO
+
+O sistema poderá possuir até três fontes:
+
+ORIGINAL
+SPEECH_CLEAN
+SPEECH_ISOLATED
+
+Escolher automaticamente a melhor fonte para ASR.
+
+Regra preferencial:
+
+fala limpa + pouco ruído
+→ SPEECH_CLEAN
+
+fala com música significativa
+→ comparar SPEECH_CLEAN e SPEECH_ISOLATED
+
+se source separation gerar artefatos
+→ utilizar SPEECH_CLEAN ou ORIGINAL
+
+Nunca presumir que uma voz isolada é automaticamente melhor.
+
+---
+
+# 65. TRANSCRIÇÃO MULTIPASS
+
+Para trechos difíceis, permitir executar reconhecimento em mais de uma versão do áudio.
+
+Exemplo:
+
+PASS 1:
+speech_clean.wav
+
+PASS 2:
+speech_isolated.wav
+
+Somente para regiões nas quais:
+
+- confidence seja baixo;
+- exista música forte;
+- exista ruído;
+- existam palavras incompreensíveis;
+- o primeiro reconhecimento esteja inconsistente.
+
+Comparar resultados.
+
+Não fazer múltiplos passes no vídeo inteiro desnecessariamente.
+
+---
+
+# 66. CONSENSO DE TRANSCRIÇÃO
+
+Quando dois passes produzirem resultados diferentes, comparar:
+
+- confidence por palavra;
+- contexto linguístico;
+- alinhamento temporal;
+- consistência com palavras próximas;
+- qualidade estimada da fonte de áudio.
+
+Não substituir palavras simplesmente porque uma segunda hipótese "parece melhor".
+
+Registrar alternativas quando houver incerteza.
+
+Exemplo:
+
+{
+  "start": 34.82,
+  "end": 35.41,
+  "selected": "cirurgia",
+  "alternatives": [
+    {
+      "text": "cirurgia",
+      "source": "speech_clean",
+      "confidence": 0.94
+    },
+    {
+      "text": "cirúrgica",
+      "source": "speech_isolated",
+      "confidence": 0.61
+    }
+  ]
+}
+
+---
+
+# 67. QUALIDADE POR TRECHO
+
+Calcular aproximadamente para cada intervalo:
+
+speech_quality
+background_music_level
+background_noise_level
+speech_to_background_ratio
+transcription_difficulty
+
+Isso permitirá direcionar processamento adicional somente aos trechos difíceis.
+
+---
+
+# 68. NÃO USAR VOZ ISOLADA PARA TUDO
+
+IMPORTANTE:
+
+A versão com instrumental removido é uma ferramenta auxiliar para transcrição.
+
+Ela NÃO deverá substituir o áudio original para:
+
+- diarização definitiva;
+- análise de overlap;
+- reconhecimento de locutores;
+- sincronização audiovisual;
+- active speaker detection;
+- renderização futura.
+
+Para essas tarefas, utilizar:
+
+original.wav
+
+ou
+
+uma versão levemente tratada.
+
+---
+
+# 69. PIPELINE DE ÁUDIO RECOMENDADO
+
+VIDEO
+
+↓
+
+ORIGINAL.WAV
+│
+├── DIARIZAÇÃO
+├── AUDIO EVENTS
+├── OVERLAP
+├── ACTIVE SPEAKER
+│
+└── SPEECH ENHANCEMENT
+        ↓
+    SPEECH_CLEAN.WAV
+        │
+        ├── ASR PRINCIPAL
+        │
+        └── MUSIC DETECTION
+                ↓
+        se necessário
+                ↓
+        SOURCE SEPARATION
+                ↓
+        SPEECH_ISOLATED.WAV
+                ↓
+        ASR DE VERIFICAÇÃO
+
+↓
+
+CONSENSO / ALIGNMENT
+
+↓
+
+TRANSCRIÇÃO FINAL
+
+---
+
+# 70. PRINCÍPIO DE PRESERVAÇÃO
+
+Nunca destruir informação para facilitar uma etapa seguinte.
+
+Todos os derivados devem permanecer associados ao áudio original através dos mesmos timestamps.
+
+O timestamp 00:34.820 deverá representar exatamente o mesmo instante em:
+
+original.wav
+speech_clean.wav
+speech_isolated.wav
+video.mp4
+
+Nenhum processamento poderá alterar duração, velocidade ou alinhamento temporal.
+
+# 61. PREPARAÇÃO DE ÁUDIO PARA TRANSCRIÇÃO
+
+Antes da transcrição, o sistema deve criar diferentes representações do áudio.
+
+NUNCA modificar ou sobrescrever o áudio original.
+
+Gerar:
+
+audio/original.wav
+audio/speech_clean.wav
+audio/speech_isolated.wav quando necessário
+
+O objetivo é obter a MELHOR transcrição possível sem destruir informações importantes do áudio.
+
+---
+
+## 61.1 ÁUDIO ORIGINAL
+
+Extrair do vídeo uma cópia lossless ou de alta qualidade.
+
+Este áudio será a referência principal para:
+
+- sincronização;
+- diarização;
+- detecção de speakers;
+- overlap de fala;
+- eventos de áudio;
+- análise posterior;
+- validação da transcrição.
+
+Nunca descartar esta trilha.
+
+---
+
+## 61.2 SPEECH CLEAN
+
+Criar uma versão otimizada especificamente para reconhecimento de fala.
+
+Aplicar de forma conservadora:
+
+- normalização;
+- remoção de DC offset quando necessária;
+- redução de ruído;
+- redução de hum;
+- high-pass leve para ruídos graves;
+- redução de reverberação quando tecnicamente segura;
+- controle de volume;
+- speech enhancement.
+
+Não aplicar processamento exagerado que possa destruir:
+
+- consoantes;
+- sibilância;
+- respiração;
+- finais de palavras;
+- vozes mais graves;
+- vozes mais agudas.
+
+speech_clean.wav deverá ser a fonte preferencial para ASR quando apresentar melhor qualidade.
+
+---
+
+# 62. DETECÇÃO DE MÚSICA SOB A FALA
+
+Analisar se existe:
+
+- instrumental;
+- background music;
+- trilha;
+- vinheta;
+- música alta cobrindo locução.
+
+Registrar:
+
+music_under_speech: true/false
+
+music_level_relative_to_speech
+
+Quando música interferir significativamente na inteligibilidade, criar uma trilha adicional:
+
+audio/speech_isolated.wav
+
+---
+
+# 63. SEPARAÇÃO DE VOZ / INSTRUMENTAL
+
+Quando necessário utilizar source separation para reduzir:
+
+- instrumental;
+- música de fundo;
+- efeitos musicais.
+
+O objetivo NÃO é produzir um vocal musical perfeito.
+
+O objetivo é facilitar o reconhecimento das PALAVRAS.
+
+A separação deve preservar o máximo possível:
+
+- consoantes;
+- sílabas;
+- transientes de voz;
+- inteligibilidade.
+
+Não usar automaticamente speech_isolated para todas as situações.
+
+Source separation pode introduzir artefatos.
+
+---
+
+# 64. ESTRATÉGIA ADAPTATIVA DE TRANSCRIÇÃO
+
+O sistema poderá possuir até três fontes:
+
+ORIGINAL
+SPEECH_CLEAN
+SPEECH_ISOLATED
+
+Escolher automaticamente a melhor fonte para ASR.
+
+Regra preferencial:
+
+fala limpa + pouco ruído
+→ SPEECH_CLEAN
+
+fala com música significativa
+→ comparar SPEECH_CLEAN e SPEECH_ISOLATED
+
+se source separation gerar artefatos
+→ utilizar SPEECH_CLEAN ou ORIGINAL
+
+Nunca presumir que uma voz isolada é automaticamente melhor.
+
+---
+
+# 65. TRANSCRIÇÃO MULTIPASS
+
+Para trechos difíceis, permitir executar reconhecimento em mais de uma versão do áudio.
+
+Exemplo:
+
+PASS 1:
+speech_clean.wav
+
+PASS 2:
+speech_isolated.wav
+
+Somente para regiões nas quais:
+
+- confidence seja baixo;
+- exista música forte;
+- exista ruído;
+- existam palavras incompreensíveis;
+- o primeiro reconhecimento esteja inconsistente.
+
+Comparar resultados.
+
+Não fazer múltiplos passes no vídeo inteiro desnecessariamente.
+
+---
+
+# 66. CONSENSO DE TRANSCRIÇÃO
+
+Quando dois passes produzirem resultados diferentes, comparar:
+
+- confidence por palavra;
+- contexto linguístico;
+- alinhamento temporal;
+- consistência com palavras próximas;
+- qualidade estimada da fonte de áudio.
+
+Não substituir palavras simplesmente porque uma segunda hipótese "parece melhor".
+
+Registrar alternativas quando houver incerteza.
+
+Exemplo:
+
+{
+  "start": 34.82,
+  "end": 35.41,
+  "selected": "cirurgia",
+  "alternatives": [
+    {
+      "text": "cirurgia",
+      "source": "speech_clean",
+      "confidence": 0.94
+    },
+    {
+      "text": "cirúrgica",
+      "source": "speech_isolated",
+      "confidence": 0.61
+    }
+  ]
+}
+
+---
+
+# 67. QUALIDADE POR TRECHO
+
+Calcular aproximadamente para cada intervalo:
+
+speech_quality
+background_music_level
+background_noise_level
+speech_to_background_ratio
+transcription_difficulty
+
+Isso permitirá direcionar processamento adicional somente aos trechos difíceis.
+
+---
+
+# 68. NÃO USAR VOZ ISOLADA PARA TUDO
+
+IMPORTANTE:
+
+A versão com instrumental removido é uma ferramenta auxiliar para transcrição.
+
+Ela NÃO deverá substituir o áudio original para:
+
+- diarização definitiva;
+- análise de overlap;
+- reconhecimento de locutores;
+- sincronização audiovisual;
+- active speaker detection;
+- renderização futura.
+
+Para essas tarefas, utilizar:
+
+original.wav
+
+ou
+
+uma versão levemente tratada.
+
+---
+
+# 69. PIPELINE DE ÁUDIO RECOMENDADO
+
+VIDEO
+
+↓
+
+ORIGINAL.WAV
+│
+├── DIARIZAÇÃO
+├── AUDIO EVENTS
+├── OVERLAP
+├── ACTIVE SPEAKER
+│
+└── SPEECH ENHANCEMENT
+        ↓
+    SPEECH_CLEAN.WAV
+        │
+        ├── ASR PRINCIPAL
+        │
+        └── MUSIC DETECTION
+                ↓
+        se necessário
+                ↓
+        SOURCE SEPARATION
+                ↓
+        SPEECH_ISOLATED.WAV
+                ↓
+        ASR DE VERIFICAÇÃO
+
+↓
+
+CONSENSO / ALIGNMENT
+
+↓
+
+TRANSCRIÇÃO FINAL
+
+---
+
+# 70. PRINCÍPIO DE PRESERVAÇÃO
+
+Nunca destruir informação para facilitar uma etapa seguinte.
+
+Todos os derivados devem permanecer associados ao áudio original através dos mesmos timestamps.
+
+O timestamp 00:34.820 deverá representar exatamente o mesmo instante em:
+
+original.wav
+speech_clean.wav
+speech_isolated.wav
+video.mp4
+
+Nenhum processamento poderá alterar duração, velocidade ou alinhamento temporal.

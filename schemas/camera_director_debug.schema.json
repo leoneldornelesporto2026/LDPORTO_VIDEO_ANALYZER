@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "events",
+    "counts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "3.0"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "time",
+          "candidates",
+          "state"
+        ]
+      }
+    },
+    "counts": {
+      "type": "object"
+    }
+  }
+}

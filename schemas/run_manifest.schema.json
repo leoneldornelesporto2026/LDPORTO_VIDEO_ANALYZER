@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","title":"L.D.PORTO Run Manifest v1","type":"object",
+  "required":["schema_version","run_id","analysis_status","stage_status","modules_still_valid"],
+  "properties":{"schema_version":{"const":"1.0"},"run_id":{"type":"string"},"analysis_status":{"enum":["complete","partial"]},"root_cause_stage":{"type":["string","null"]},"descendants_affected":{"type":"array"},"modules_still_valid":{"type":"array"},"stage_status":{"type":"object"}}
+}

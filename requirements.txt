@@ -1,0 +1,13 @@
+# Python 3.11/3.12. pyannote-core 6 requires NumPy 2.
+numpy>=2,<2.3
+PyYAML>=6.0.1,<7
+opencv-contrib-python>=4.11,<4.12
+soundfile>=0.12.1,<0.14
+faster-whisper>=1.1,<2
+ctranslate2>=4.6,<5
+yt-dlp[default]>=2025.11.12
+scenedetect>=0.6.5,<0.8
+jsonschema>=4.21,<5
+
+# Evita RequestsDependencyWarning em dependências que usam requests.
+charset-normalizer>=3.3,<4

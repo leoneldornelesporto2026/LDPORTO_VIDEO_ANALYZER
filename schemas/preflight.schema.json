@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Capability Preflight V4.2","type":"object",
+  "required":["schema_version","status","ready","capabilities","runtime_target_match"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"status":{"enum":["READY","ERROR"]},"ready":{"type":"boolean"},
+    "runtime_target_match":{"type":"boolean"},
+    "capabilities":{"type":"object","additionalProperties":{"type":"object",
+      "required":["enabled","required","status","checks","action"],
+      "properties":{"enabled":{"type":"boolean"},"required":{"type":"boolean"},
+                    "status":{"enum":["READY","ERROR","DISABLED"]},"checks":{"type":"object"},"action":{"type":"string"}}}}
+  }
+}

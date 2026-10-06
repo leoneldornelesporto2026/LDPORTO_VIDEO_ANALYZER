@@ -1,0 +1,5 @@
+# A separate Python 3.11 venv avoids conflicting with pyannote.audio 4.
+numpy>=1.26,<2
+torch==2.3.1
+torchaudio==2.3.1
+demucs==4.0.1

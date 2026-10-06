@@ -1,0 +1,728 @@
+{
+  "project": "L.D.PORTO VIDEO ANALYZER",
+  "created_at_local": "2026-10-05T00:21:36",
+  "project_root": "/mnt/data/ldporto_work",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "latest_analysis_source": null,
+  "include_latest_analysis": false,
+  "included_file_count": 119,
+  "included_uncompressed_bytes": 696700,
+  "included": [
+    {
+      "path": "ABRIR_ANALYZER.bat",
+      "size_bytes": 396,
+      "sha256": "9bc15c15f29baa8692df3bfe0c298533962e13c0bff2da1429e9340286fc780d",
+      "source": "root_project_file"
+    },
+    {
+      "path": "analyze.py",
+      "size_bytes": 10632,
+      "sha256": "393c91a61d705524f9d882ffa44376fa6982eb454e0dbac0def4a0dd55cb1cfa",
+      "source": "root_project_file"
+    },
+    {
+      "path": "app.py",
+      "size_bytes": 16880,
+      "sha256": "81be0c84191f62fabbab6d5a4a5305ec3e43ee522dfa6c2cf24ca44a0cc80584",
+      "source": "root_project_file"
+    },
+    {
+      "path": "config/config.yaml",
+      "size_bytes": 2067,
+      "sha256": "e0c5086c4f59cad0664e682db1662c6b511882a4874364f054ae255e0075fb30",
+      "source": "project_source"
+    },
+    {
+      "path": "CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat",
+      "size_bytes": 2489,
+      "sha256": "79c661f9d44b45f6d08f8bf63663b6be353c0a6fda65aa58cb0332308cf2009b",
+      "source": "root_project_file"
+    },
+    {
+      "path": "CORRIGIR_GPU_WINDOWS.bat",
+      "size_bytes": 1773,
+      "sha256": "c30e695c8afb544a8db7e6b6c2da0feaa993df8c061cc6cf74890e75e8f3cb63",
+      "source": "root_project_file"
+    },
+    {
+      "path": "DELIVERY_MANIFEST.json",
+      "size_bytes": 16767,
+      "sha256": "4174554155b872172fa4ad8cb962247441149bb3d1594333be12980ac970e039",
+      "source": "root_text_file"
+    },
+    {
+      "path": "DELIVERY_MANIFEST_V4.json",
+      "size_bytes": 3960,
+      "sha256": "d1653c066f145c0e7d41febcd5682e57d26728376e9582dfc670155c6d46c8df",
+      "source": "root_project_file"
+    },
+    {
+      "path": "DIAGNOSTICO_GPU_WINDOWS.bat",
+      "size_bytes": 639,
+      "sha256": "e053db29ded29323f97b4296838ba3e3c3fe61177f33350e34ccd8325da63cf8",
+      "source": "root_project_file"
+    },
+    {
+      "path": "DIAGNOSTICO_WINDOWS.bat",
+      "size_bytes": 213,
+      "sha256": "3c996f2265e448242f17690f013ab9a3d114de0b29cd7f702f5ff1be222abab5",
+      "source": "root_project_file"
+    },
+    {
+      "path": "docs/ARQUITETURA.md",
+      "size_bytes": 7456,
+      "sha256": "c61a307aa1afbee4fa94abc94c6653b79a8a8612e67b6988d666db7991db7502",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/AUDIO_AVANCADO.md",
+      "size_bytes": 3577,
+      "sha256": "d7ae292791366b1b8a0685e165bd417dce6d7c4bad5aaad1ab5ea62474548ffd",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/CAMERA_DIRECTOR_V3.md",
+      "size_bytes": 14268,
+      "sha256": "914f2bc6f06a8f4a3e64486ad1b852bba46e746e2301b0bfe1b007db941f3dca",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/CAMERA_PARAMETERS.md",
+      "size_bytes": 2063,
+      "sha256": "62409c0c64688f2263009d8520c25dfb7c74e9d833ad118d291122ff1eaff69a",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/CONTRATO_DADOS.md",
+      "size_bytes": 3981,
+      "sha256": "21f4dbe1ef9e60805f3560478b45e6955dd6e6034b237b61c647838d3e0a5133",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/DIRECTOR_BENCHMARK.json",
+      "size_bytes": 1271,
+      "sha256": "3eb0ba87cc15fa0e0c12ec91905a6a01053348726a6d89233c4a198d875146d4",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/FILES_CHANGED_V3.md",
+      "size_bytes": 1907,
+      "sha256": "38b579e3d0087ce951bf12edbc823b2356068da4078cd3d758bd37599016e223",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/FONTES.md",
+      "size_bytes": 1924,
+      "sha256": "310fc5b10e1ccca61de5136a370e11a48d50ca9580adf9fee2e4707a91c50cff",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/REQUISITOS_RECEBIDOS.txt",
+      "size_bytes": 37458,
+      "sha256": "6224839dba64c9fd5d8ab1a91aea9feeb07e0538dc73cb8d9283b1e69950f897",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/TEST_REPORT_V3.md",
+      "size_bytes": 7632,
+      "sha256": "f06ad2c30c4685dcc6167424839fb9ab2f1adff31f4d3ada44fe11416d3b2461",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/TEST_RESULTS_V3.xml",
+      "size_bytes": 15096,
+      "sha256": "0f929204f8b976213409e336e5bb2ec743ff743c6284e4617422a1c163696646",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_ASD_CANDIDATES_20261004.md",
+      "size_bytes": 2117,
+      "sha256": "a2579bc50ae2d54649b244434b16142964af95854b841ce0035acfc9de28b066",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_CACHE_RESUME.md",
+      "size_bytes": 748,
+      "sha256": "fdb89d1e78c514355c62555d7528d97432380c2b30fefb56d532609da945a86f",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_FINAL_ARCHITECTURE.md",
+      "size_bytes": 2255,
+      "sha256": "4b1a9141c0dafa887330920872f55f62986279666bfb93c378160e61e0291b3c",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_GLOBAL_PLANNER.md",
+      "size_bytes": 978,
+      "sha256": "e2e008b6d3b88c573541f922d5323fd59bf1adcc8ca5c1484a84e914831aa598",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_IMPLEMENTATION_REPORT.md",
+      "size_bytes": 5797,
+      "sha256": "cbdad32df43b5dfa71bb7720aac5541593c964ca9e3260d031301ab6a4351e99",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_OVERRIDES.md",
+      "size_bytes": 677,
+      "sha256": "cf25985a5bdb360a1bd02a2ea277131cdf9f537f285276de249592ff88a1ba33",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_PREVIEW_RENDERER_VERIFIER.md",
+      "size_bytes": 1101,
+      "sha256": "2b5fe1a8331a20979491c01d19d6487f7fbff36708c5c3f51312829a2ec2ffc3",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_REQUIREMENT_MATRIX.md",
+      "size_bytes": 4210,
+      "sha256": "c2b41c4ba10a4f009fb6d7d1ff1a281642ca5a59d7719e5de692e2567aa1c109",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_SECOND_CURATION.md",
+      "size_bytes": 793,
+      "sha256": "fd59512e4f123e5e64610901dbcd91fcdeb67d0201c3e7f77cbc241b1084f3e9",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/V4_WINDOWS_PY311_HOMOLOGATION.md",
+      "size_bytes": 1513,
+      "sha256": "bcdc312b17520b29802bfd1bc431cd478f58896932e65ae7ca25881e1d88b579",
+      "source": "project_source"
+    },
+    {
+      "path": "docs/VALIDACAO.md",
+      "size_bytes": 3298,
+      "sha256": "a758d4db6be43dd5d1d7ffcf591f281f42b284f507498c9447af12a3e274dde1",
+      "source": "project_source"
+    },
+    {
+      "path": "examples/llm_insights_DEMONSTRACAO_SINTETICA.json",
+      "size_bytes": 15603,
+      "sha256": "f99e9c7532dfde8c9ac2aa9a102df0497a83b435535362867784b8d37462d9e9",
+      "source": "project_source"
+    },
+    {
+      "path": "examples/mapping_example.json",
+      "size_bytes": 307,
+      "sha256": "b48d07b7ed48060a95730866b712af7104e0e3b970159ee075c987ab2905748a",
+      "source": "project_source"
+    },
+    {
+      "path": "examples/README.md",
+      "size_bytes": 372,
+      "sha256": "9bfa9af2441cc01a4747aaff21afaf078ce407ccb8819a83ace85ece25821b0e",
+      "source": "project_source"
+    },
+    {
+      "path": "export_ldporto_project.py",
+      "size_bytes": 15375,
+      "sha256": "9086fb856750179b1463ed5012faa7cf03393c6668f02f140bb77b2bfd1f2a61",
+      "source": "root_text_file"
+    },
+    {
+      "path": "gerar_pacote_ldporto.py",
+      "size_bytes": 11285,
+      "sha256": "9287581bbd6399cb049fec060b93b548726678add6b0680a0f29b192667e4ec0",
+      "source": "root_text_file"
+    },
+    {
+      "path": "GPU_FIX_NOTES.md",
+      "size_bytes": 1033,
+      "sha256": "6cb8390f6eb17aaa950aadf5b247f78f2d9724f54ad7055754412f0dfecb2320",
+      "source": "root_project_file"
+    },
+    {
+      "path": "INSTALAR_AVANCADO_WINDOWS.bat",
+      "size_bytes": 428,
+      "sha256": "9d020312682bfbe5db0205f584f567a4ff52ccaa425c40422f67340e0b30e871",
+      "source": "root_project_file"
+    },
+    {
+      "path": "INSTALAR_WINDOWS.bat",
+      "size_bytes": 389,
+      "sha256": "4013ae78753c481e6075c64debd92b1fa2c6211c3e2fcb061c9160d7ade9e260",
+      "source": "root_project_file"
+    },
+    {
+      "path": "install.py",
+      "size_bytes": 3146,
+      "sha256": "92a64f7a7654cafe6f842f0c3ecbcb4e69e7f09aa112fabcece8685381344b60",
+      "source": "root_project_file"
+    },
+    {
+      "path": "LEIA_PRIMEIRO.md",
+      "size_bytes": 8664,
+      "sha256": "0ec38de6aed4d8d6efadc9e27339d0f708cd45d4438fd77e1acc7543e234463c",
+      "source": "root_project_file"
+    },
+    {
+      "path": "pack_analysis_for_chatgpt.py",
+      "size_bytes": 15851,
+      "sha256": "8f8e6c13524286c9793364cc15b7eb63209e5cada0574ed58d75b4489ae7e45e",
+      "source": "root_text_file"
+    },
+    {
+      "path": "pack_ldporto_for_work.py",
+      "size_bytes": 14159,
+      "sha256": "ad5fa26d7c125a2aff4d57c0d8b929919edf70d06598714805bb3e0f4e543132",
+      "source": "root_text_file"
+    },
+    {
+      "path": "PATCH_OLLAMA_MAXIMO.md",
+      "size_bytes": 1411,
+      "sha256": "62dab69de72a8df8d0bcfce3c470e4ab020702546e1dadc59cbd55b47707eb2f",
+      "source": "root_project_file"
+    },
+    {
+      "path": "pytest.ini",
+      "size_bytes": 48,
+      "sha256": "86600ed8842754524448bcbb5d5da53e1d665b5ae3593f4d9f8cfb5890ffe65a",
+      "source": "root_project_file"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 4297,
+      "sha256": "7803c39a1034a443fbba3ce4e39f8a72c7b003a13c182e69e7a7e40da5f51801",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-audio-events.txt",
+      "size_bytes": 106,
+      "sha256": "4e919210b57c02d3dcc0b8ee5da538888920d6451e93e804e24c6475937f6497",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-demucs.txt",
+      "size_bytes": 132,
+      "sha256": "a1bec1418f6b6ccf95d8816dabe7568447f2f5266160f4f0898492e7dd83b84a",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "size_bytes": 14,
+      "sha256": "26db60f3749b2d582ef13e54530725d1038086c5b72953678670871c2b85e15a",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-diarization.txt",
+      "size_bytes": 139,
+      "sha256": "b53324284ea4aabd974ecd20311f6cd4fae8dac9b5afc35652078a1d365e40be",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-gpu-windows.txt",
+      "size_bytes": 222,
+      "sha256": "e510a8b25e3365ce3290d7ca682b099a7a2fa5297f4e685425a9b63887d55356",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-ocr.txt",
+      "size_bytes": 25,
+      "sha256": "7145da21c3b0034e0cdf2418d19911dfc8e5ada9a72b1c31106aa0cbbd1f3d4c",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-vision.txt",
+      "size_bytes": 59,
+      "sha256": "4242a110c64ac87acbed75ae4a356018786ac40f5a70b55da86b5d4dfeadd1ea",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements-yolo.txt",
+      "size_bytes": 109,
+      "sha256": "1831fd51fd4afdde4e80ca366dc91aaa9bd4c38b565717a7b57fc571dc092543",
+      "source": "root_project_file"
+    },
+    {
+      "path": "requirements.txt",
+      "size_bytes": 348,
+      "sha256": "6d65520cd8b4f9c6b338f27c29c421f582afda3e03de00ac8a247440e6bbc0b0",
+      "source": "root_project_file"
+    },
+    {
+      "path": "schemas/camera_director_debug.schema.json",
+      "size_bytes": 463,
+      "sha256": "43df594cd950f5940346dabfd6ce02da68dd765fd200d2e2481b3b4943c36c74",
+      "source": "project_source"
+    },
+    {
+      "path": "schemas/camera_director_timeline.schema.json",
+      "size_bytes": 4684,
+      "sha256": "2f3b0494b478c8e5216c77418bb5483cc5929f2fb4d5dff3600b19f13e8ead9e",
+      "source": "project_source"
+    },
+    {
+      "path": "schemas/camera_plan.schema.json",
+      "size_bytes": 905,
+      "sha256": "c4a557d3b1759f12c8f22748f128f74d0402529074f0e6d3398a680ed0213732",
+      "source": "project_source"
+    },
+    {
+      "path": "schemas/preview_validation.schema.json",
+      "size_bytes": 497,
+      "sha256": "b258d1eaeb20048f9a0fde569a536678355691caea9931aa62af1054d6f9d734",
+      "source": "project_source"
+    },
+    {
+      "path": "schemas/review_overrides.schema.json",
+      "size_bytes": 613,
+      "sha256": "26574aff6a7ecf4054ba0dab28cd078ecb15611280aa906da2f327086cf46598",
+      "source": "project_source"
+    },
+    {
+      "path": "schemas/run_manifest.schema.json",
+      "size_bytes": 498,
+      "sha256": "67ded2e0f45afd59f965b88e5f38ee0ca53a8fbcfbd551e049789cbf67730683",
+      "source": "project_source"
+    },
+    {
+      "path": "schemas/second_curation_package.schema.json",
+      "size_bytes": 839,
+      "sha256": "3d7a97948067fdd79f8fbeca791de071c55ccb9657464f64487f9a81a319467a",
+      "source": "project_source"
+    },
+    {
+      "path": "scripts/configure_ollama.py",
+      "size_bytes": 3821,
+      "sha256": "da924b167c64ce311ba9875bc2206f8f0deecb6a80d6bb823af84a305e83c8da",
+      "source": "project_source"
+    },
+    {
+      "path": "scripts/download_models.py",
+      "size_bytes": 2216,
+      "sha256": "33a9812f6473e32f3fd9a2df811443265548aac7bad09f63d179cbdfabbabd5e",
+      "source": "project_source"
+    },
+    {
+      "path": "scripts/generate_director_fixture.py",
+      "size_bytes": 3199,
+      "sha256": "0e1ae471718ffc40ed8651066bda5f88579702a8199020e691b9251ab2e3600d",
+      "source": "project_source"
+    },
+    {
+      "path": "scripts/test_gpu.py",
+      "size_bytes": 2309,
+      "sha256": "0780d1f89b7187bcb5a07ba44556d0442e49caa036cd1a0861c47c0d34a39cfc",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/__init__.py",
+      "size_bytes": 103,
+      "sha256": "0dbbe26d4dff1c78ff9379ebfcc53a97e5bdee39478fd1cd37fce7c87df7ae08",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/active_speaker.py",
+      "size_bytes": 10480,
+      "sha256": "e32236de255eebd9fe9795114443c0023291a9049016054f65273068431965da",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/analysis_quality.py",
+      "size_bytes": 4582,
+      "sha256": "a69cd0e7dd0c64223857d7e2041521dc669f4bda0a3072772ff92e895c3279be",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/asd_backend.py",
+      "size_bytes": 1728,
+      "sha256": "6fb87e5500ab5df1f299e831e38d956aba5eebaff673dcf6ca200136d2f564ef",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/audio.py",
+      "size_bytes": 9744,
+      "sha256": "4659170e949524081183362e22b448d4ca721ea9871efe09863f969f1cbb9ceb",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/camera_director.py",
+      "size_bytes": 33023,
+      "sha256": "bc784ce80ad99004dcf4435434feb0f5997da65f5f99a0ac59bfb208521de9d4",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/camera_geometry.py",
+      "size_bytes": 4002,
+      "sha256": "6e22b88f471bbd860feeb17650eab5c8d20d400c67bdfff37514a00007039638",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/camera_motion.py",
+      "size_bytes": 2706,
+      "sha256": "0460ec96f9a193dca1c3a87d5cf4ab0b9699ff2441de8b68b735c409623bd24a",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/camera_timeline.py",
+      "size_bytes": 4058,
+      "sha256": "9ce5c6c6146505984b0af41248fdeee2cb017b9762a18e5cb2a573ccc250899f",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/config.py",
+      "size_bytes": 9553,
+      "sha256": "83275702ca5bd1e00c8ab46e2fad3fe7b454506e76b4e0a8fb7d428b434a6420",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/core.py",
+      "size_bytes": 11399,
+      "sha256": "dee09078975986f0c328c83b65cf990ef1ac541b48ef4535f0ddd8f965a42340",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/diarization.py",
+      "size_bytes": 8670,
+      "sha256": "05f3497fc8522de9523a5f77679698b12c04a046178c119958df0c1624774b66",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/director_config.py",
+      "size_bytes": 6283,
+      "sha256": "75629329157fe45c5e788798e8e61d9b2e941fc91ce4abd6b51fe25bad122383",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/director_integration.py",
+      "size_bytes": 7453,
+      "sha256": "7ffa26843fa91f79674fc06beed9eed449e858a22cc3027360734ddaa7d96c85",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/global_camera_planner.py",
+      "size_bytes": 12969,
+      "sha256": "01d30182baceb0de7dbf25350efde371e48dd1168f014b0d7b8628dcaeb0587c",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/gpu_runtime.py",
+      "size_bytes": 3117,
+      "sha256": "dc46319f2707913083763ef795dc7d31bb9b9212a08b07c95f59beb906290100",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/handoff.py",
+      "size_bytes": 7378,
+      "sha256": "5b7848b10e84d291e5b02352b6cb108f0dd05eba9ad8eb20137d37dc7f980938",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/master_timeline.py",
+      "size_bytes": 4785,
+      "sha256": "036777f1afd30213296f4389d77e72643f36a3c1d7a7e82fb73477cba9486ec6",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/media.py",
+      "size_bytes": 6702,
+      "sha256": "0583111dde62f0388f597caf7d199220672e4030e9bdb98a73c2272fc13b5df2",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/ocr.py",
+      "size_bytes": 2431,
+      "sha256": "4b006aeb7d6cd23d23648151e711b96a2217407062c81cd2c112b04c7d0aa6dd",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/ollama_local.py",
+      "size_bytes": 6074,
+      "sha256": "98d4e13e7403e130cf4a3314f0f4ff5cb8abeafcaa6e4cfe3810bce6dc7c8415",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/person_motion.py",
+      "size_bytes": 4914,
+      "sha256": "0475f42d232408e1c5ed601da6bff4e4bbb49b82017a831282307bf09eebefab",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/person_reid.py",
+      "size_bytes": 2161,
+      "sha256": "a4390ef51f69008ac455a3bde6721247277abda975ce29ce6919e93e014c8784",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/pipeline.py",
+      "size_bytes": 16292,
+      "sha256": "2b831c38b4a736677174edd2a566d02440e453b0e19b6b31cbc4c86d36e70ec7",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/preview_integration.py",
+      "size_bytes": 5450,
+      "sha256": "9fb8331253d206c8af029a2728814935044cdec27851bbbac33424ef376dc2a8",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/preview_renderer.py",
+      "size_bytes": 9974,
+      "sha256": "767b4707a730241b4c2bbdadcafcb36e7ce6fc135a3ad20992f41cac9f7c1848",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/preview_verifier.py",
+      "size_bytes": 7886,
+      "sha256": "7c4bb780697ee0479791b8e1882be70c1fb9e2b3da856757ab04257c22a6044e",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/reports.py",
+      "size_bytes": 24864,
+      "sha256": "378ade54286f229315d1705dad6514abccb0cf435ea08e94ee12fef604ea3f62",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/review_overrides.py",
+      "size_bytes": 2269,
+      "sha256": "c9f8382791199244e1e1eae55d5fbf2d6fbc5a6d351eb91dbde6cfb3aeedb8ca",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/run_status.py",
+      "size_bytes": 2682,
+      "sha256": "d3f0dff04c742488f4ffeceea36627d1cb0b8039ee960ec96d571ae6f3923c30",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/scenes.py",
+      "size_bytes": 1774,
+      "sha256": "49004be0419f701c1bc767bebb08287f14315febe2dbcb96931fea165a168bff",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/second_curation.py",
+      "size_bytes": 5971,
+      "sha256": "50e309a3e60eeda700025d3c68d30a12cd75f97657c0f7d8b689fb168771adf3",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/semantic.py",
+      "size_bytes": 24302,
+      "sha256": "f852d80f1cd941325ad32f9972163befd42c5f43794c6c01bcc4e7fdbe23aa17",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/shots.py",
+      "size_bytes": 5706,
+      "sha256": "2080f9af88446762fa5b5e08888b99d687cabb0b79bb3867d0d65078c1263bad",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/temporal.py",
+      "size_bytes": 2962,
+      "sha256": "074a5105cc7fac734ba3134a66412f009cb13ec862961b8c805c83bea38fb3da",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/timeline.py",
+      "size_bytes": 8784,
+      "sha256": "56bb96b2a7835cc67a8a66c8a814cc96d617057beb0d37fea779d2e759edf4da",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/transcription.py",
+      "size_bytes": 17160,
+      "sha256": "d1f8558c770173043a065b39ee76dc3fd6b184d98a63f3c40590bd872b968610",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/understanding.py",
+      "size_bytes": 19515,
+      "sha256": "2afb0edf30d4b174d0824f650ba47ef2d5135a62f314f647d4a5b11cfdc60675",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/vision.py",
+      "size_bytes": 34616,
+      "sha256": "9790667011edec3795e841ada376b27ab80a4b27082d480262a2c1c2004ef34a",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/vision_checkpoint.py",
+      "size_bytes": 4404,
+      "sha256": "f6fa90cdfdef35a49d9ff2214e36b7e6429507276696e06cd33458825f9aa3a7",
+      "source": "project_source"
+    },
+    {
+      "path": "src/ldporto/visual_sampling.py",
+      "size_bytes": 1397,
+      "sha256": "b9cc3f430d3ac238a7f35639ba90f42b2091020225ddc03100ce724ce6c7d2d4",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/director_fixtures.py",
+      "size_bytes": 2370,
+      "sha256": "3563ed6ce0c309d587ddff0569550db4832890139f2190ccc0ccdd66249687cf",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/llm_insights.json",
+      "size_bytes": 118,
+      "sha256": "6d06ffe9bff1b2e74020f4d7afba8e1cce36cfd3de3331bd619094133550c4f9",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/scenes.json",
+      "size_bytes": 161,
+      "sha256": "9bccf31ebd1d9ec6dd84c14168a39211256500b3a10f6c2d52cc248c9d22d8f0",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/speakers.json",
+      "size_bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/timeline.json",
+      "size_bytes": 635,
+      "sha256": "c903f4465ccc046be57fefe664db2ed2260bc6f61e2a3f691bd4bf109571829f",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/words.json",
+      "size_bytes": 65,
+      "sha256": "c80a56d5b829b48e03f619dae32fe68d25bdc33b7c2ee5e6cfdce44911664462",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/test_camera_director.py",
+      "size_bytes": 11242,
+      "sha256": "ddb169c17276a4edc80e6d2c431d0fd679e1b690a5405bec47a480d429490ad8",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/test_director_integration.py",
+      "size_bytes": 13038,
+      "sha256": "bc74067aa8f056364071b33e1a84975ec9c0a45549e98e88b7a2c7e4eb386e65",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/test_v2_perception.py",
+      "size_bytes": 13666,
+      "sha256": "0b8e52785a11af8c87c5068a64e43b9228908877c947d7d363a04110463289ef",
+      "source": "project_source"
+    },
+    {
+      "path": "src/tests/test_v4_final.py",
+      "size_bytes": 5202,
+      "sha256": "08eb35c40a00d9757403053148ff08ccad1afaf258c7179541b0bbffb77dac2c",
+      "source": "project_source"
+    },
+    {
+      "path": "TESTAR_WINDOWS.bat",
+      "size_bytes": 375,
+      "sha256": "1e12f0ed5a8e39823e5528a506fbd8f6057f4fa0181c3c7b2b1e3999a11d1760",
+      "source": "root_text_file"
+    }
+  ],
+  "skipped": [],
+  "security_note": "Arquivos com nomes que sugerem tokens/cookies/credentials foram excluidos. Mesmo assim, revise o pacote antes de compartilhar."
+}

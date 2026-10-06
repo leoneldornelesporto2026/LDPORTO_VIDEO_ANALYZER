@@ -1,0 +1,5 @@
+# Install in the analyzer venv. Do not install Demucs here.
+pyannote.audio>=4,<5
+torch>=2.8,<2.9
+torchaudio>=2.8,<2.9
+torchcodec>=0.7,<0.8

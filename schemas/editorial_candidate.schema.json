@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Grounded Editorial Candidate V4.2",
+  "type":"object",
+  "required":["moment_id","ideal_start","ideal_end","context_requirement","content_type","evidence_segment_ids","needs_review","ranking_version","score_components","penalties","editorial_score_final"],
+  "properties":{
+    "moment_id":{"type":"string","minLength":1},
+    "ideal_start":{"type":"number","minimum":0},"ideal_end":{"type":"number","minimum":0},
+    "context_requirement":{"enum":["none","helpful","required","unresolved"]},
+    "context_reason":{"type":["string","null"]},
+    "context_seconds_before":{"type":["number","null"],"minimum":0},
+    "context_seconds_after":{"type":["number","null"],"minimum":0},
+    "content_type":{"enum":["editorial_content","advertisement","sponsor_read","merchandising","housekeeping","intro_outro","station_identification","uncertain"]},
+    "metadata_locale":{"const":"pt-BR"},"needs_review":{"type":"boolean"},
+    "evidence_segment_ids":{"type":"array","items":{"type":"string"},"minItems":1,"uniqueItems":true},
+    "score_components":{"type":"object","additionalProperties":{"type":["number","null"],"minimum":0,"maximum":1}},
+    "penalties":{"type":"object","additionalProperties":{"type":"number","minimum":0,"maximum":1}},
+    "editorial_score_raw":{"type":["number","null"],"minimum":0,"maximum":1},
+    "editorial_score_final":{"type":["number","null"],"minimum":0,"maximum":1},
+    "ranking_version":{"type":"string"},"default_shortlist_eligible":{"type":"boolean"}
+  }
+}

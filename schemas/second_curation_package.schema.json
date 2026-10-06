@@ -1,0 +1,6 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"L.D.PORTO Second Curation Package v3 (v2 compatibility)","type":"object",
+  "required":["schema_version","candidate_count","candidates","resolvable_index"],
+  "properties":{"schema_version":{"enum":["2.0","3.0"]},"candidate_count":{"type":"integer","minimum":0},"candidates":{"type":"array","items":{"type":"object","required":["candidate_id","rank","start","end","transcript_literal","word_ids","speaker_ids","person_ids","evidence_references"],"properties":{"candidate_id":{"type":"string"},"rank":{"type":"integer","minimum":1},"start":{"type":"number","minimum":0},"end":{"type":"number","minimum":0},"transcript_literal":{"type":"string"},"word_ids":{"type":"array"},"speaker_ids":{"type":"array"},"person_ids":{"type":"array"},"context_requirement":{"enum":["none","helpful","required","unresolved"]},"content_type":{"enum":["editorial_content","advertisement","sponsor_read","merchandising","housekeeping","intro_outro","station_identification","uncertain"]},"evidence_references":{"type":"object"}}}},"resolvable_index":{"type":"object"}}
+}

@@ -1,0 +1,5 @@
+# Runtime NVIDIA CUDA 12 para faster-whisper/CTranslate2 no Windows x86-64.
+# As wheels atuais da NVIDIA incluem binarios win_amd64.
+nvidia-cuda-runtime-cu12>=12.8,<13
+nvidia-cublas-cu12>=12.8,<13
+nvidia-cudnn-cu12>=9,<10

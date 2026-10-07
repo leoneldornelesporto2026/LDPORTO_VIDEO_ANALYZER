@@ -1,3 +1,5 @@
+> **R4.7 — Rodada 4 Homologação e segurança editorial:** rechecagem comercial final para Stories/shortlist, consistência dos manifestos, bridge para Curator V2, diagnóstico de preview e prontidão explícita. Ver [docs/R4_FINAL_HOMOLOGACAO_20261007.md](docs/R4_FINAL_HOMOLOGACAO_20261007.md).
+
 > **R4.6 — Rodada 3B Performance segura:** cache semântico sem regravação, opções A/B de prompt compacto e HOG/face CPU (desligadas por padrão), instrumentação e benchmarks. Consulte [docs/R3B_PERFORMANCE_20261007.md](docs/R3B_PERFORMANCE_20261007.md).
 
 > **Build R4.5 — Rodada 3 Parte 1 (Câmera e Percepção).** Melhorias em aquisição de evidência nas cenas curtas, embeddings SFace quando disponível, filtros conservadores de associação speaker↔person para câmera e diagnóstico de oportunidade/ausência de Smart Zoom. Veja [docs/R3_CAMERA_PERCEPTION_PART1.md](docs/R3_CAMERA_PERCEPTION_PART1.md). Mantém versão de cache lógica 4.4.0; mudanças na etapa 07 invalidam seletivamente o cache visual, não a transcrição.

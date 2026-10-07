@@ -37,6 +37,8 @@ def _editorial_review_rows(value):
 def _understanding_integrity(analysis):
     state = (analysis.get('stage_status') or {}).get('16_understanding', {})
     status = state.get('status')
+    if status is None and (analysis.get('run_manifest') or {}).get('root_cause_stage') == '16_understanding':
+        return False, 'understanding_failed_or_unavailable_in_run_manifest'
     if status is None:
         return True, None
     if status in {'ok', 'partial'}:

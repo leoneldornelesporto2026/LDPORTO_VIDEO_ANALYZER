@@ -76,6 +76,14 @@ def main():
     parser.add_argument('--smart-zoom-profile', choices=['conservative', 'natural', 'dynamic'])
     parser.add_argument('--no-smart-zoom', action='store_true')
     parser.add_argument('--include-candidate-previews', action='store_true')
+    parser.add_argument('--social-aspect', choices=['9:16','4:5','1:1','16:9'])
+    parser.add_argument('--caption-preset', choices=['auto','no_caption','simple','karaoke','popline','deep_diver','think_media','pod_p','news','show_highlight','clean_bold','high_contrast','soft_subtitle','creator_style'])
+    parser.add_argument('--content-mode', choices=['auto','show','entrevista','podcast','programa_tv','reacao','educativo','humor','noticias'])
+    parser.add_argument('--story-count', type=int)
+    parser.add_argument('--caption-font')
+    parser.add_argument('--caption-size', type=float)
+    parser.add_argument('--caption-color')
+    parser.add_argument('--highlight-color')
     from ldporto.replay import REPLAY_STAGES
     parser.add_argument('--from-stage', choices=REPLAY_STAGES)
     parser.add_argument('--replay-analysis', metavar='PASTA', help='Artifacts compatíveis para replay downstream, sem reprocessar percepcao')
@@ -119,6 +127,22 @@ def main():
             cfg['camera_director']['smart_zoom']['enabled'] = False
         if args.include_candidate_previews:
             cfg['export']['include_candidate_previews'] = True
+        if args.social_aspect:
+            cfg['social_output']['aspect_ratio'] = args.social_aspect
+        if args.caption_preset:
+            cfg['social_output']['caption_preset'] = args.caption_preset
+        if args.content_mode:
+            cfg['social_output']['content_mode'] = args.content_mode
+        if args.story_count is not None:
+            cfg['social_output']['stories']['max_stories'] = args.story_count
+        if args.caption_font:
+            cfg['social_output']['caption_font'] = args.caption_font
+        if args.caption_size is not None:
+            cfg['social_output']['caption_size_scale'] = args.caption_size
+        if args.caption_color:
+            cfg['social_output']['caption_primary_color'] = args.caption_color
+        if args.highlight_color:
+            cfg['social_output']['caption_highlight_color'] = args.highlight_color
         validate(cfg)
         configure_local_mode(cfg)
         if args.from_stage:

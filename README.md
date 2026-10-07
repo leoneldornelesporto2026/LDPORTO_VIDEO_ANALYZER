@@ -160,3 +160,37 @@ No Windows, depois da instalação base/avançada, execute:
 O launcher detecta os modelos locais, inicia por padrão com Ollama habilitado e `profile=max`.
 A análise semântica usa saída estruturada e produz uma revisão editorial global aterrada em IDs.
 Veja `docs/setup/LEIA_PRIMEIRO.md` para perfis, diagnóstico e fallback.
+
+
+## Saída social / Stories (build R4-SOCIAL)
+
+A camada de saída social é **downstream**: mudar proporção, preset, fonte, cores ou quantidade de Stories não exige refazer Whisper, diarização, visão ou semântica. O Analyzer prepara o contrato; o `LDPORTO VIDEO CURATOR` continua responsável pelo render social final.
+
+- `Stories` significa **vários momentos independentes** escolhidos ao longo do vídeo, não uma única compilação de 60 segundos.
+- Duração padrão por Story: 15–60 s; seleção aplica diversidade temporal, de tópico e de categoria editorial.
+- Proporções suportadas: `9:16`, `4:5`, `1:1`, `16:9`.
+- Presets disponíveis incluem `Karaoke`, `Clean Bold`, `News`, `Show Highlight`, `Creator Style` e outros.
+- A GUI permite escolher proporção, preset, modo de conteúdo, quantidade de Stories, fonte, escala e cores.
+- O posicionamento de legenda é planejado para evitar rostos, boca e GC/lower-third; o Curator deve recalcular a safe-area depois do crop/câmera real.
+
+Artefatos novos:
+
+```text
+stories_manifest.json
+stories_candidates.json
+caption_style_recommendations.json
+title_suggestions.json
+social_render_profiles.json
+STORIES_PACKAGE/
+```
+
+O pacote de segunda curadoria também inclui `social/` com o mesmo contrato, para que candidatos promovidos pela segunda curadoria possam receber estilo/render sem nova inferência pesada.
+
+### Observabilidade visual/transcrição — R4.1-SOCIAL-OBS
+
+- `06_scenes` passa a aparecer como **Cenas visuais**; `Shot classification` continua sendo a etapa posterior de classificação de shot.
+- O artefato registra `scene_metrics`, distinguindo explicitamente **quantidade de cenas** de **quantidade de cortes/limites visuais**. N cortes produzem N+1 cenas.
+- Também registra densidade de cenas por janelas de 10 minutos e sinaliza regiões extremamente picotadas para contextualizar fragmentação do tracking.
+- `partial` na GUI passa a ser exibido como **Parcial**, enquanto `degraded` continua **Degradado**.
+- A transcrição parcial mostra resumo quantitativo (`needs_review`, baixa confiança, anomalias de timestamp e regiões suspeitas) em vez de um aviso genérico.
+- A revisão não altera a versão lógica `4.4.0`; build `R4.1-SOCIAL-OBS` preserva a estratégia de cache seletivo.

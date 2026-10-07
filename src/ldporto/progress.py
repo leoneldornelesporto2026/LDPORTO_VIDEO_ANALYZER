@@ -22,7 +22,7 @@ STAGE_WEIGHTS = {
 STAGE_LABELS = {
     '00_preflight': 'Preflight', '00_source': 'Obtendo midia', '01_metadata': 'Metadata', '02_audio': 'Audio',
     '03_audio_quality': 'Qualidade de audio', '04_transcription': 'Transcricao',
-    '05_diarization': 'Diarizacao', '06_scenes': 'Shots visuais',
+    '05_diarization': 'Diarizacao', '06_scenes': 'Cenas visuais',
     '07_people_tracking': 'Tracking visual', '08_person_reid': 'Re-ID',
     '09_person_motion': 'Movimento', '10_active_speaker': 'Active Speaker',
     '11_shots': 'Shot classification', '12_camera_timeline': 'Camera timeline',

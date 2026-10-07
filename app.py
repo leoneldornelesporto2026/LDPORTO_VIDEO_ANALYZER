@@ -9,7 +9,7 @@ import threading
 import json
 import time
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, filedialog, messagebox, colorchooser
 import webbrowser
 
 ROOT = Path(__file__).resolve().parent
@@ -22,7 +22,7 @@ class App:
     def __init__(self, window):
         self.window, self.proc, self.messages, self.output_folder = window, None, queue.Queue(), None
         window.title("L.D.PORTO VIDEO ANALYZER")
-        window.geometry("1060x840")
+        window.geometry("1100x900")
         window.configure(bg="#17171b")
         style = ttk.Style()
         style.theme_use("clam")
@@ -110,6 +110,41 @@ class App:
         ttk.Combobox(smart_row, textvariable=self.smart_profile, values=['conservative', 'natural', 'dynamic'], width=18, state='readonly').pack(side='left', padx=8)
         self.include_previews = tk.BooleanVar(value=False)
         ttk.Checkbutton(smart_row, text='Previews no pacote de midia separado', variable=self.include_previews).pack(side='left', padx=10)
+        try:
+            social_cfg = load_config(ROOT/"config"/"config.yaml")["social_output"]
+        except Exception:
+            social_cfg = {"aspect_ratio":"9:16","caption_preset":"auto","content_mode":"auto","caption_font":"Arial","caption_size_scale":1.0,
+                          "caption_primary_color":"#FFFFFF","caption_highlight_color":"#F4FF26","stories":{"max_stories":12}}
+        social_row = ttk.Frame(outer)
+        social_row.pack(fill='x', pady=4)
+        ttk.Label(social_row, text='Saída social').pack(side='left')
+        self.social_aspect = tk.StringVar(value=social_cfg.get('aspect_ratio','9:16'))
+        ttk.Combobox(social_row, textvariable=self.social_aspect, values=['9:16','4:5','1:1','16:9'], width=8, state='readonly').pack(side='left', padx=6)
+        self.caption_preset = tk.StringVar(value=social_cfg.get('caption_preset','auto'))
+        ttk.Combobox(social_row, textvariable=self.caption_preset,
+                     values=['auto','no_caption','simple','karaoke','popline','deep_diver','think_media','pod_p','news','show_highlight','clean_bold','high_contrast','soft_subtitle','creator_style'],
+                     width=18, state='readonly').pack(side='left', padx=6)
+        self.content_mode = tk.StringVar(value=social_cfg.get('content_mode','auto'))
+        ttk.Combobox(social_row, textvariable=self.content_mode,
+                     values=['auto','show','entrevista','podcast','programa_tv','reacao','educativo','humor','noticias'],
+                     width=14, state='readonly').pack(side='left', padx=6)
+        ttk.Label(social_row, text='Stories').pack(side='left', padx=(10,2))
+        self.story_count = tk.IntVar(value=int((social_cfg.get('stories') or {}).get('max_stories',12)))
+        ttk.Spinbox(social_row, from_=1, to=30, textvariable=self.story_count, width=4).pack(side='left')
+        social_row2 = ttk.Frame(outer)
+        social_row2.pack(fill='x', pady=4)
+        ttk.Label(social_row2, text='Fonte legenda').pack(side='left')
+        self.caption_font = tk.StringVar(value=social_cfg.get('caption_font','Arial'))
+        ttk.Combobox(social_row2, textvariable=self.caption_font, values=['Arial','Segoe UI','Montserrat','Inter','Roboto','Poppins','Impact'], width=18).pack(side='left', padx=6)
+        ttk.Label(social_row2, text='Tamanho').pack(side='left', padx=(10,2))
+        self.caption_size = tk.DoubleVar(value=float(social_cfg.get('caption_size_scale',1.0)))
+        ttk.Spinbox(social_row2, from_=0.6, to=2.0, increment=0.1, textvariable=self.caption_size, width=5).pack(side='left')
+        self.caption_color = tk.StringVar(value=social_cfg.get('caption_primary_color','#FFFFFF'))
+        self.highlight_color = tk.StringVar(value=social_cfg.get('caption_highlight_color','#F4FF26'))
+        ttk.Button(social_row2, text='Cor texto', command=lambda: self.pick_social_color(self.caption_color)).pack(side='left', padx=(10,3))
+        ttk.Button(social_row2, text='Destaque', command=lambda: self.pick_social_color(self.highlight_color)).pack(side='left', padx=3)
+        ttk.Button(social_row2, text='Configurar saída social', command=self.social_settings).pack(side='left', padx=8)
+        ttk.Label(social_row2, text='Stories = vários momentos independentes.', font=('Segoe UI',9)).pack(side='left', padx=6)
         self.camera_summary = tk.StringVar(value="Camera Director: aguardando análise")
         ttk.Label(outer, textvariable=self.camera_summary, font=("Segoe UI", 9), wraplength=980).pack(anchor="w")
         self.force = tk.BooleanVar(value=False)
@@ -250,7 +285,7 @@ class App:
                     'run_cancelled': 'Execucao',
                     'run_completed': 'Execucao',
                 }.get(event.get('event')) or stage or 'Execucao'
-            cause = event.get('cause') or 'Consulte o diagnostico de qualidade; fallback permanece explicito.'
+            cause = event.get('cause') or event.get('summary') or 'Consulte o diagnostico de qualidade; fallback permanece explicito.'
             self.execution_diagnostic.set(f'{label}: {status}. {cause}')
             if event.get('event') == 'run_failed' and 'Preflight reprovado' in cause and 'vision' in cause:
                 from ldporto.paths import MODELS_DIR
@@ -281,7 +316,7 @@ class App:
         total_eta = human_duration(snapshot['total_eta_seconds'], True) if not total_range else human_duration(total_range[0], True) + ' - ' + human_duration(total_range[1], True)
         self.elapsed_text.set('Decorrido: ' + human_duration(snapshot['elapsed_seconds']) + ' | ETA etapa: ' + stage_eta + ' | ETA total: ' + total_eta)
         self.next_stage_text.set('Proxima etapa: ' + str(snapshot['next_stage_label'] or 'aguardando'))
-        status_labels = {'running':'Em execucao', 'ok':'Concluido', 'partial':'Degradado', 'degraded':'Degradado',
+        status_labels = {'running':'Em execucao', 'ok':'Concluido', 'partial':'Parcial', 'degraded':'Degradado',
                          'skipped':'Desativado', 'unavailable':'Indisponivel', 'failed':'Falhou', 'blocked':'Bloqueado', 'cancelled':'Interrompido'}
         for stage, state in snapshot['stage_states'].items():
             if self.stage_tree.exists(stage):
@@ -401,6 +436,10 @@ class App:
         (self.output_folder / 'CANCEL_REQUESTED').unlink(missing_ok=True)
         if self.include_previews.get():
             args.append('--include-candidate-previews')
+        args += ['--social-aspect', self.social_aspect.get(), '--caption-preset', self.caption_preset.get(),
+                 '--content-mode', self.content_mode.get(), '--story-count', str(self.story_count.get()),
+                 '--caption-font', self.caption_font.get().strip() or 'Arial', '--caption-size', str(self.caption_size.get()),
+                 '--caption-color', self.caption_color.get(), '--highlight-color', self.highlight_color.get()]
         try:
             args += self.camera_args()
         except ValueError:
@@ -459,6 +498,51 @@ class App:
             self.run_state.set('Etapa: finalizada | Avisos: '+str(self.warning_count)+' | Qualidade: '+str(q.get('quality_status','nao medida')))
         except (OSError, ValueError):
             self.camera_summary.set("Camera Director: resultado ainda indisponível")
+
+    def pick_social_color(self, variable):
+        chosen = colorchooser.askcolor(color=variable.get(), parent=self.window)[1]
+        if chosen:
+            variable.set(chosen.upper())
+
+    def social_settings(self):
+        dialog = tk.Toplevel(self.window)
+        dialog.title('Saída social · Stories / Reels / Shorts')
+        dialog.geometry('720x520')
+        frame = ttk.Frame(dialog, padding=18)
+        frame.pack(fill='both', expand=True)
+        ttk.Label(frame, text='Formato de saída', font=('Segoe UI', 12, 'bold')).grid(row=0, column=0, sticky='w', pady=(0,6))
+        ttk.Combobox(frame, textvariable=self.social_aspect, values=['9:16','4:5','1:1','16:9'], state='readonly', width=14).grid(row=1,column=0,sticky='w')
+        ttk.Label(frame, text='Preset de legenda', font=('Segoe UI', 12, 'bold')).grid(row=0,column=1,sticky='w',padx=(20,0),pady=(0,6))
+        ttk.Combobox(frame, textvariable=self.caption_preset, values=['auto','no_caption','simple','karaoke','popline','deep_diver','think_media','pod_p','news','show_highlight','clean_bold','high_contrast','soft_subtitle','creator_style'], state='readonly', width=22).grid(row=1,column=1,sticky='w',padx=(20,0))
+        ttk.Label(frame, text='Modo de conteúdo').grid(row=2,column=0,sticky='w',pady=(18,4))
+        ttk.Combobox(frame, textvariable=self.content_mode, values=['auto','show','entrevista','podcast','programa_tv','reacao','educativo','humor','noticias'], state='readonly', width=18).grid(row=3,column=0,sticky='w')
+        ttk.Label(frame, text='Quantidade máxima de Stories').grid(row=2,column=1,sticky='w',padx=(20,0),pady=(18,4))
+        ttk.Spinbox(frame, from_=1, to=30, textvariable=self.story_count, width=8).grid(row=3,column=1,sticky='w',padx=(20,0))
+        ttk.Label(frame, text='Fonte').grid(row=4,column=0,sticky='w',pady=(18,4))
+        ttk.Combobox(frame, textvariable=self.caption_font, values=['Arial','Segoe UI','Montserrat','Inter','Roboto','Poppins','Impact'], width=20).grid(row=5,column=0,sticky='w')
+        ttk.Label(frame, text='Escala da legenda').grid(row=4,column=1,sticky='w',padx=(20,0),pady=(18,4))
+        ttk.Spinbox(frame, from_=0.6, to=2.0, increment=0.1, textvariable=self.caption_size, width=8).grid(row=5,column=1,sticky='w',padx=(20,0))
+        ttk.Label(frame, text='Cor principal').grid(row=6,column=0,sticky='w',pady=(18,4))
+        color_row = ttk.Frame(frame); color_row.grid(row=7,column=0,sticky='w')
+        ttk.Entry(color_row, textvariable=self.caption_color, width=12).pack(side='left')
+        ttk.Button(color_row, text='Escolher', command=lambda: self.pick_social_color(self.caption_color)).pack(side='left', padx=5)
+        ttk.Label(frame, text='Cor de destaque').grid(row=6,column=1,sticky='w',padx=(20,0),pady=(18,4))
+        high_row = ttk.Frame(frame); high_row.grid(row=7,column=1,sticky='w',padx=(20,0))
+        ttk.Entry(high_row, textvariable=self.highlight_color, width=12).pack(side='left')
+        ttk.Button(high_row, text='Escolher', command=lambda: self.pick_social_color(self.highlight_color)).pack(side='left', padx=5)
+        preview = tk.Label(frame, text='TÍTULO FORTE\nLegenda inteligente com DESTAQUE', bg='#242429', fg=self.caption_color.get(), font=(self.caption_font.get() or 'Arial', 18, 'bold'), padx=18, pady=18, justify='center')
+        preview.grid(row=8,column=0,columnspan=2,sticky='ew',pady=(26,8))
+        note = ('Stories 60s = vários momentos independentes escolhidos ao longo do vídeo.\n'
+                'O Analyzer só planeja estilo/layout; o Curator faz o render final e recalcula safe-area após crop/câmera.')
+        ttk.Label(frame, text=note, wraplength=650, justify='left').grid(row=9,column=0,columnspan=2,sticky='w',pady=8)
+        def refresh_preview(*_):
+            try:
+                preview.configure(fg=self.caption_color.get(), font=(self.caption_font.get() or 'Arial', max(10, int(18*float(self.caption_size.get()))), 'bold'))
+            except Exception:
+                pass
+        for var in (self.caption_color, self.caption_font, self.caption_size):
+            var.trace_add('write', refresh_preview)
+        ttk.Button(frame, text='Fechar', command=dialog.destroy).grid(row=10,column=1,sticky='e',pady=(18,0))
 
     def refresh_ollama(self):
         self.ollama_status.set("Ollama: verificando serviço local…")

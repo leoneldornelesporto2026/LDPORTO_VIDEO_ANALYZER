@@ -258,6 +258,16 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                                  'duration': candidate.get('duration'), 'reason': 'first_pass_eligibility_gate'})
             write(f'candidates/{candidate_id}.json', candidate)
         write('editorial/candidate_catalog.json', {'schema_version': SCHEMA_VERSION, 'candidates': candidates})
+        social_output = analysis.get('social_output') or {}
+        write('social/stories_manifest.json', social_output)
+        write('social/stories_candidates.json', social_output.get('stories', []))
+        write('social/title_suggestions.json', social_output.get('title_suggestions', []))
+        write('social/caption_style_recommendations.json', social_output.get('caption_style_recommendations', []))
+        write('social/render_profiles.json', {'selected_aspect_ratio': social_output.get('selected_aspect_ratio'),
+              'available_aspect_ratios': social_output.get('available_aspect_ratios', {}),
+              'selected_caption_preset': social_output.get('selected_caption_preset'),
+              'available_caption_presets': social_output.get('available_caption_presets', {}),
+              'render_contract': social_output.get('render_contract', {})})
         shortlist = [cid for cid in shortlist if next(r for r in candidates if r['candidate_id'] == cid)['commercial_classification']['eligibility'] == 'eligible']
         write('editorial/default_shortlist.json', {'candidate_ids': shortlist, 'rank_is_first_pass_not_final': True})
         write('editorial/excluded_candidates.json', excluded)
@@ -298,7 +308,9 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         index = {'schema_version': SCHEMA_VERSION, 'source': {'title': source_info.get('title') or metadata.get('filename'),
                  'url': source_info.get('url'), 'duration': metadata.get('duration')}, 'analysis_status': analysis.get('analysis_status'),
                  'second_curation_readiness': readiness, 'second_curation_readiness_reasons': readiness_reasons, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
-                 'candidate_catalog_ref': 'editorial/candidate_catalog.json', 'shortlist_ref': 'editorial/default_shortlist.json'}
+                 'candidate_catalog_ref': 'editorial/candidate_catalog.json', 'shortlist_ref': 'editorial/default_shortlist.json',
+                 'stories_ref': 'social/stories_manifest.json', 'story_candidate_count': len(social_output.get('stories', [])),
+                 'selected_aspect_ratio': social_output.get('selected_aspect_ratio')}
         write('CURATION_INDEX.json', index)
         brief = {'schema_version': '1.0', 'task': 'second_editorial_curation', 'source_id': source_id,
                  'source_title': index['source']['title'], 'source_url': index['source']['url'],
@@ -310,7 +322,8 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                  'capability_reasons': readiness_reasons,
                  'known_limitations': [key for key, value in readiness.items() if not value],
                  'recommended_entrypoints': ['CURATION_INDEX.json', 'editorial/default_shortlist.json',
-                                             'editorial/candidate_catalog.json', 'candidates/', 'visuals/']}
+                                             'editorial/candidate_catalog.json', 'social/stories_manifest.json',
+                                             'social/caption_style_recommendations.json', 'candidates/', 'visuals/']}
         write('SECOND_CURATOR_BRIEF.json', brief)
         readme = '# Second Curation\n\nSource: ' + str(index['source']['title']) + '\n\nStatus: ' + str(analysis.get('analysis_status')) + '\n'
         readme += '\nAnalyzer: ' + __version__ + '\nCandidates: ' + str(len(candidates)) + '\nShortlist: ' + str(len(shortlist)) + '\n'

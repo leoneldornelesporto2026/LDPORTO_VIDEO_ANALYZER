@@ -38,6 +38,7 @@ docs/V44_FINALIZATION.md
 docs/V44_FINAL_AUDIT.md
 docs/V44_IMPLEMENTATION_LEDGER.md
 docs/V44_R3_STABILIZATION.md
+docs/V44_R4_SOCIAL_OUTPUT.md
 docs/V4_2_BENCHMARK_COMPARISON.md
 docs/V4_2_IMPLEMENTATION_REPORT.md
 docs/V4_2_REAL_BENCHMARK_FINDINGS.md
@@ -94,6 +95,7 @@ schemas/review_overrides.schema.json
 schemas/run_manifest.schema.json
 schemas/second_curation_decisions.schema.json
 schemas/second_curation_package.schema.json
+schemas/social_output.schema.json
 scripts/README.md
 scripts/configure_ollama.py
 scripts/dev/compare_runs.py
@@ -172,6 +174,7 @@ src/ldporto/second_curation_decisions.py
 src/ldporto/second_curation_export.py
 src/ldporto/semantic.py
 src/ldporto/shots.py
+src/ldporto/social_output.py
 src/ldporto/speaker_signals.py
 src/ldporto/storage.py
 src/ldporto/storage_dialog.py
@@ -212,11 +215,13 @@ src/tests/test_v44_commercial.py
 src/tests/test_v44_compare.py
 src/tests/test_v44_diarization_cache.py
 src/tests/test_v44_failure_categories.py
+src/tests/test_v44_observability_patch.py
 src/tests/test_v44_ops.py
 src/tests/test_v44_perception.py
 src/tests/test_v44_replay_commercial.py
 src/tests/test_v44_reporting_robustness.py
 src/tests/test_v44_second_curation.py
 src/tests/test_v44_semantic_story.py
+src/tests/test_v44_social_output.py
 src/tests/test_v44_targeted_asr.py
 src/tests/test_v4_final.py

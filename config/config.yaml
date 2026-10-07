@@ -138,3 +138,28 @@ preview:
   output_width: 540
   output_height: 960
   max_repair_iterations: 1
+
+# Planejamento downstream para Curator; alterar isto nao exige refazer ASR/visao/semantica.
+social_output:
+  enabled: true
+  aspect_ratio: "9:16"
+  caption_preset: auto
+  content_mode: auto
+  caption_font: Arial
+  caption_size_scale: 1.0
+  caption_primary_color: "#FFFFFF"
+  caption_highlight_color: "#F4FF26"
+  title_auto: true
+  smart_camera: true
+  smart_zoom: true
+  avoid_faces: true
+  avoid_broadcast_graphics: true
+  stories:
+    enabled: true
+    min_seconds: 15
+    max_seconds: 60
+    max_stories: 12
+    min_spacing_seconds: 45
+    max_per_topic: 2
+    distribution_window_seconds: 600
+    max_per_window: 3

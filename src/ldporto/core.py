@@ -385,7 +385,27 @@ class Context:
         self.stage_metrics[name].update(resources)
         self._notes(name, result)
         self.logger.info("%s: %s (%.1fs)", name, result["status"], result["elapsed_seconds"])
-        self.progress(name, status=result['status'], cache_hit=False)
+        progress_details = {}
+        if name == '04_transcription':
+            quality = result.get('data', {}).get('quality_metrics', {})
+            word_count = int(quality.get('word_count') or 0)
+            review_count = int(quality.get('review_needed_word_count') or 0)
+            low_count = int(quality.get('low_confidence_word_count') or 0)
+            review_pct = (100.0 * review_count / word_count) if word_count else 0.0
+            low_pct = (100.0 * low_count / word_count) if word_count else 0.0
+            progress_details['summary'] = (
+                f'{review_pct:.1f}% das palavras sinalizadas para revisão; {low_pct:.1f}% baixa confiança; '
+                f'{int(quality.get("timestamp_anomaly_count") or 0)} anomalias de timestamp; '
+                f'{int(quality.get("suspected_hallucination_region_count") or 0)} regiões suspeitas.'
+            )
+        elif name == '06_scenes':
+            scene_metrics = result.get('data', {}).get('scene_metrics', {})
+            if scene_metrics:
+                progress_details['summary'] = (
+                    f'{scene_metrics.get("scene_count", 0)} cenas / '
+                    f'{scene_metrics.get("visual_boundary_count", 0)} cortes visuais.'
+                )
+        self.progress(name, status=result['status'], cache_hit=False, **progress_details)
         self.check_cancel(name)
         return result["data"]
 

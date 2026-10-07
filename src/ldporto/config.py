@@ -93,6 +93,16 @@ DEFAULTS = {
     "captions": {"max_words": 5, "max_chars": 38,
                  "max_seconds": 2.8, "max_gap_seconds": 0.45,
                  "uppercase_display": True},
+    "social_output": {
+        "enabled": True, "aspect_ratio": "9:16", "caption_preset": "auto", "content_mode": "auto",
+        "caption_font": "Arial", "caption_size_scale": 1.0,
+        "caption_primary_color": "#FFFFFF", "caption_highlight_color": "#F4FF26",
+        "title_auto": True, "smart_camera": True, "smart_zoom": True,
+        "avoid_faces": True, "avoid_broadcast_graphics": True,
+        "stories": {"enabled": True, "min_seconds": 15.0, "max_seconds": 60.0,
+                    "max_stories": 12, "min_spacing_seconds": 45.0, "max_per_topic": 2,
+                    "distribution_window_seconds": 600.0, "max_per_window": 3},
+    },
 }
 
 
@@ -258,6 +268,42 @@ def validate(cfg):
         raise ValueError("active_speaker.min_consensus_share deve estar entre 0 e 1.")
     if not 0 <= t["low_confidence"] <= 1:
         raise ValueError("low_confidence deve estar entre 0 e 1.")
+    social = cfg["social_output"]
+    if social["aspect_ratio"] not in ("9:16", "4:5", "1:1", "16:9"):
+        raise ValueError("social_output.aspect_ratio deve ser 9:16, 4:5, 1:1 ou 16:9")
+    if social["caption_preset"] not in ("auto", "no_caption", "simple", "karaoke", "popline", "deep_diver",
+                                         "think_media", "pod_p", "news", "show_highlight", "clean_bold",
+                                         "high_contrast", "soft_subtitle", "creator_style"):
+        raise ValueError("social_output.caption_preset invalido")
+    if social["content_mode"] not in ("auto", "show", "entrevista", "podcast", "programa_tv", "reacao",
+                                       "educativo", "humor", "noticias"):
+        raise ValueError("social_output.content_mode invalido")
+    if not isinstance(social["caption_font"], str) or not social["caption_font"].strip() or len(social["caption_font"]) > 120:
+        raise ValueError("social_output.caption_font invalida")
+    if isinstance(social["caption_size_scale"], bool) or not isinstance(social["caption_size_scale"], (int, float)) or not .6 <= social["caption_size_scale"] <= 2.0:
+        raise ValueError("social_output.caption_size_scale deve estar entre 0.6 e 2.0")
+    import re
+    for key in ("caption_primary_color", "caption_highlight_color"):
+        if not isinstance(social[key], str) or not re.fullmatch(r"#[0-9A-Fa-f]{6}", social[key]):
+            raise ValueError("social_output." + key + " deve ser cor hexadecimal #RRGGBB")
+    for key in ("enabled", "title_auto", "smart_camera", "smart_zoom", "avoid_faces", "avoid_broadcast_graphics"):
+        if not isinstance(social[key], bool):
+            raise ValueError("social_output." + key + " deve ser booleano")
+    stories = social["stories"]
+    if not isinstance(stories["enabled"], bool):
+        raise ValueError("social_output.stories.enabled deve ser booleano")
+    if not 5 <= stories["min_seconds"] <= stories["max_seconds"] <= 90:
+        raise ValueError("Stories exigem 5 <= min_seconds <= max_seconds <= 90")
+    if isinstance(stories["max_stories"], bool) or not isinstance(stories["max_stories"], int) or not 1 <= stories["max_stories"] <= 50:
+        raise ValueError("social_output.stories.max_stories deve estar entre 1 e 50")
+    if not 0 <= stories["min_spacing_seconds"] <= 1800:
+        raise ValueError("social_output.stories.min_spacing_seconds invalido")
+    if isinstance(stories["max_per_topic"], bool) or not isinstance(stories["max_per_topic"], int) or not 1 <= stories["max_per_topic"] <= 10:
+        raise ValueError("social_output.stories.max_per_topic deve estar entre 1 e 10")
+    if not 60 <= stories["distribution_window_seconds"] <= 7200:
+        raise ValueError("social_output.stories.distribution_window_seconds deve estar entre 60 e 7200")
+    if isinstance(stories["max_per_window"], bool) or not isinstance(stories["max_per_window"], int) or not 1 <= stories["max_per_window"] <= 20:
+        raise ValueError("social_output.stories.max_per_window deve estar entre 1 e 20")
     if not isinstance(cfg["preview"]["enabled"], bool):
         raise ValueError("preview.enabled deve ser booleano")
     repairs = cfg["preview"]["max_repair_iterations"]

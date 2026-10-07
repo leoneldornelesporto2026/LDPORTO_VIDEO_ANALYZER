@@ -1,10 +1,10 @@
 {
   "package_type": "LDPORTO_PROJECT_EXPORT",
-  "created_at_local": "2026-10-07T12:10:09.694317+00:00",
+  "created_at_local": "2026-10-07T13:00:23.112011+00:00",
   "packager_python": "3.13.5",
-  "source_root": "/mnt/data/v44_r3",
-  "included_file_count": 222,
-  "included_bytes": 1525947,
+  "source_root": "/mnt/data/r4_patch",
+  "included_file_count": 227,
+  "included_bytes": 1574244,
   "included_human": "1.5 MiB",
   "files": [
     {
@@ -29,21 +29,21 @@
     },
     {
       "path": "analyze.py",
-      "bytes": 10350,
-      "sha256": "6d3572722fa712eae50f53e8ea2b119acd1453dc77bdeaa33b3c21493e3ffc81",
+      "bytes": 11723,
+      "sha256": "85486a59fa102dba7424f1ba9e2014fdac9eb3a3208261b7d67333a1554ef152",
       "kind": "project",
       "included": true,
-      "original_bytes": 10350,
+      "original_bytes": 11723,
       "source_artifact": "analyze.py",
       "compact_equivalent": null
     },
     {
       "path": "app.py",
-      "bytes": 37794,
-      "sha256": "621733ae057bffd2c1a081f5f267748140d60a099d49782c69a0dfa40b849790",
+      "bytes": 45811,
+      "sha256": "0c89d91a304e2e5767eddda1340c1b72e0f3ef1e0b3a63a54e0e765ddf33c30a",
       "kind": "project",
       "included": true,
-      "original_bytes": 37794,
+      "original_bytes": 45811,
       "source_artifact": "app.py",
       "compact_equivalent": null
     },
@@ -69,11 +69,11 @@
     },
     {
       "path": "config/config.yaml",
-      "bytes": 3311,
-      "sha256": "00c21d77eb401910f45e1d0340381016ff59181ea1c627b2ab488b57a4ebc5f9",
+      "bytes": 3794,
+      "sha256": "0b6f4d4a16ace1e167b7915f7df5f5f4a1e2590a3278be53ba971030f6d635e8",
       "kind": "project",
       "included": true,
-      "original_bytes": 3311,
+      "original_bytes": 3794,
       "source_artifact": "config.yaml",
       "compact_equivalent": null
     },
@@ -438,6 +438,16 @@
       "compact_equivalent": null
     },
     {
+      "path": "docs/V44_R4_SOCIAL_OUTPUT.md",
+      "bytes": 1969,
+      "sha256": "568087e96cace4398771a50442a4010845241d2cc2167c5542907e571ad41502",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1969,
+      "source_artifact": "V44_R4_SOCIAL_OUTPUT.md",
+      "compact_equivalent": null
+    },
+    {
       "path": "docs/V4_2_BENCHMARK_COMPARISON.md",
       "bytes": 2981,
       "sha256": "624aea47336460b42403a8effa06107438f146fe73555852c78660f7302e8b23",
@@ -709,11 +719,11 @@
     },
     {
       "path": "README.md",
-      "bytes": 8566,
-      "sha256": "3d0d1fbfc3e50705daae8160a2b80b007299b841241ae78a08b7f9591587ec07",
+      "bytes": 10847,
+      "sha256": "b5b949fdf9540ea736cc22f85244c73faf554c5d884a1cc0cc46401b887156a6",
       "kind": "project",
       "included": true,
-      "original_bytes": 8566,
+      "original_bytes": 10847,
       "source_artifact": "README.md",
       "compact_equivalent": null
     },
@@ -955,6 +965,16 @@
       "included": true,
       "original_bytes": 1228,
       "source_artifact": "second_curation_package.schema.json",
+      "compact_equivalent": null
+    },
+    {
+      "path": "schemas/social_output.schema.json",
+      "bytes": 1097,
+      "sha256": "3730d9f3912d4773872719387fe0f45ee94f0e8f0168b99b049cfa4223ffc9af",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1097,
+      "source_artifact": "social_output.schema.json",
       "compact_equivalent": null
     },
     {
@@ -1219,11 +1239,11 @@
     },
     {
       "path": "src/ldporto/__init__.py",
-      "bytes": 164,
-      "sha256": "7d5e0d15cc20c480f1e92ea36f4ada636b911799d3ad5eeb6d1644442e2dfd57",
+      "bytes": 177,
+      "sha256": "8c5261c9506135ef97c6b85ddcb07f76610667fdab42dd49efbfc34d7e10f3d8",
       "kind": "project",
       "included": true,
-      "original_bytes": 164,
+      "original_bytes": 177,
       "source_artifact": "__init__.py",
       "compact_equivalent": null
     },
@@ -1359,21 +1379,21 @@
     },
     {
       "path": "src/ldporto/config.py",
-      "bytes": 19235,
-      "sha256": "c6d14550043bb759adddc47ccb8fe6a53e758d634446c7733fdf4780b36b0725",
+      "bytes": 22677,
+      "sha256": "caf8fdc2fb4350be76983989e5bf1e66783bfb71e60ca1758585ac90e908c855",
       "kind": "project",
       "included": true,
-      "original_bytes": 19235,
+      "original_bytes": 22677,
       "source_artifact": "config.py",
       "compact_equivalent": null
     },
     {
       "path": "src/ldporto/core.py",
-      "bytes": 23518,
-      "sha256": "9decf75190aa9e6ab8be2fcd5162ac63047e56927bdb80f2dd27119513f9a9e7",
+      "bytes": 24265,
+      "sha256": "2ac7bda4caf65e609b515cbf847e7e8364e71c2a02aff13d30689a8f1c4ea7d4",
       "kind": "project",
       "included": true,
-      "original_bytes": 23518,
+      "original_bytes": 24265,
       "source_artifact": "core.py",
       "compact_equivalent": null
     },
@@ -1449,11 +1469,11 @@
     },
     {
       "path": "src/ldporto/handoff.py",
-      "bytes": 9596,
-      "sha256": "3fad8e8fd0a4f8c0bb098bba154ad8c72ac6a33181896f29d3b53d5187a5c7be",
+      "bytes": 9881,
+      "sha256": "9c5dc0d15f10d9f3a4ebe5bd74ea3d80132a06dbdf9a253f1dd4ca1d95842409",
       "kind": "project",
       "included": true,
-      "original_bytes": 9596,
+      "original_bytes": 9881,
       "source_artifact": "handoff.py",
       "compact_equivalent": null
     },
@@ -1569,11 +1589,11 @@
     },
     {
       "path": "src/ldporto/pipeline.py",
-      "bytes": 25044,
-      "sha256": "87c0cfa30ef995ea11ea966258d79ce63305e0221c4b7d3a41e1c5bd19d46ab4",
+      "bytes": 25136,
+      "sha256": "3c3a49bcb7f4ef787b6efe388a89bffc7911d5d6950e01633053b2100c996bc8",
       "kind": "project",
       "included": true,
-      "original_bytes": 25044,
+      "original_bytes": 25136,
       "source_artifact": "pipeline.py",
       "compact_equivalent": null
     },
@@ -1619,11 +1639,11 @@
     },
     {
       "path": "src/ldporto/progress.py",
-      "bytes": 7704,
-      "sha256": "98e3fe1f4e07b6fb8afbf9caedde9decaa849a2f37406cb9aa6b7fc9277ae5c1",
+      "bytes": 7584,
+      "sha256": "7b8756c42abf3f144e23de340bf5e2d16e48ab219ec85c6c4bdecfef1797a5d7",
       "kind": "project",
       "included": true,
-      "original_bytes": 7704,
+      "original_bytes": 7584,
       "source_artifact": "progress.py",
       "compact_equivalent": null
     },
@@ -1639,11 +1659,11 @@
     },
     {
       "path": "src/ldporto/reports.py",
-      "bytes": 40638,
-      "sha256": "05a43d75e029835adcb0a52ef09c2f42447c51d087a7c6b6c53c2c41c4c25252",
+      "bytes": 43083,
+      "sha256": "348a8ed3a4750bbc3e32e23c06bc6a9496ca5ff7a1411272003f602eceb38dbb",
       "kind": "project",
       "included": true,
-      "original_bytes": 40638,
+      "original_bytes": 43083,
       "source_artifact": "reports.py",
       "compact_equivalent": null
     },
@@ -1679,11 +1699,11 @@
     },
     {
       "path": "src/ldporto/scenes.py",
-      "bytes": 1807,
-      "sha256": "2ecde42b9d96f7e04213b0099a492d6a0c158449d895b7252b4f619027b3b118",
+      "bytes": 5051,
+      "sha256": "228345a91a9581b4bfd5934d14fc7c4db10d115101cdbbd322f2119406571df2",
       "kind": "project",
       "included": true,
-      "original_bytes": 1807,
+      "original_bytes": 5051,
       "source_artifact": "scenes.py",
       "compact_equivalent": null
     },
@@ -1709,11 +1729,11 @@
     },
     {
       "path": "src/ldporto/second_curation_export.py",
-      "bytes": 33889,
-      "sha256": "8232a934ed4f7fe79028e167dde478ef3ced307ca19b5d96c83814a57fba10b9",
+      "bytes": 35098,
+      "sha256": "02459a76299c424734aedb5efe584fbd536ced7c279d5408271fab9120b14093",
       "kind": "project",
       "included": true,
-      "original_bytes": 33889,
+      "original_bytes": 35098,
       "source_artifact": "second_curation_export.py",
       "compact_equivalent": null
     },
@@ -1735,6 +1755,16 @@
       "included": true,
       "original_bytes": 6853,
       "source_artifact": "shots.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/ldporto/social_output.py",
+      "bytes": 15111,
+      "sha256": "5324592debf586c2453ad2889f33571ac758b23ed74f08a0470d69e1f10ae7e0",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 15111,
+      "source_artifact": "social_output.py",
       "compact_equivalent": null
     },
     {
@@ -2138,6 +2168,16 @@
       "compact_equivalent": null
     },
     {
+      "path": "src/tests/test_v44_observability_patch.py",
+      "bytes": 1151,
+      "sha256": "f9d2d5f4d76aaad230a3e1f907f285ba0cdb5affb8f756d4b9cadb761d733f86",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1151,
+      "source_artifact": "test_v44_observability_patch.py",
+      "compact_equivalent": null
+    },
+    {
       "path": "src/tests/test_v44_ops.py",
       "bytes": 3140,
       "sha256": "e62980c6805533c5f84f118d72cb645ecea82ebfd9218e380644d9a5b5c036b9",
@@ -2195,6 +2235,16 @@
       "included": true,
       "original_bytes": 5092,
       "source_artifact": "test_v44_semantic_story.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v44_social_output.py",
+      "bytes": 5458,
+      "sha256": "83bf2170f32accea1bf38e47d775a76ac903c3c00b4b604a061a6228723a08c1",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 5458,
+      "source_artifact": "test_v44_social_output.py",
       "compact_equivalent": null
     },
     {

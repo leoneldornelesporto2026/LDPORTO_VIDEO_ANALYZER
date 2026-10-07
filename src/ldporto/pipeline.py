@@ -121,6 +121,7 @@ def analyze(source, cfg, output=None, force=False):
             "duration": metadata["duration"], "scene_type": "unknown", "detected": False,
             "keyframe": None, "visible_people": [], "predominant_person": None,
         }]
+        scene_metrics = scene_data.get("scene_metrics", {})
 
         vision = ctx.step(
             "07_people_tracking", {"config": cfg["vision"], "external": external['07_people_tracking'],
@@ -251,7 +252,7 @@ def analyze(source, cfg, output=None, force=False):
             # Legacy contract
             "speakers": diarization.get("speakers", []), "speaker_turns": diarization.get("turns", []),
             "people": vision.get("people", []), "people_observations": vision.get("observations", []),
-            "scenes": scenes, "topics": semantic.get("topics", []),
+            "scenes": scenes, "scene_metrics": scene_metrics, "topics": semantic.get("topics", []),
             "words": transcript["words"], "transcript_segments": transcript["segments"],
             "speaker_person_mapping": mappings, "speech_overlaps": diarization.get("overlaps", []),
             "questions_answers": semantic.get("questions_answers", []),

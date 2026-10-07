@@ -140,6 +140,8 @@ class App:
         if os.name == "nt":
             ttk.Button(buttons, text="Reparar GPU", command=self.repair_gpu).pack(side="left", padx=4)
         ttk.Button(buttons, text="Abrir resultados", command=self.open_results).pack(side="left")
+        ttk.Button(buttons, text="Modelos visuais", command=self.visual_models).pack(side="left", padx=4)
+        ttk.Button(buttons, text="LIMPAR ARQUIVOS PESADOS", command=self.clean_heavy).pack(side="left", padx=4)
         ttk.Button(buttons, text="Interromper", command=self.stop).pack(side="right")
         self.status = tk.StringVar(value="Prontidao ainda nao verificada. Diagnostico verifica recursos habilitados.")
         ttk.Label(outer, textvariable=self.status).pack(anchor="w", pady=(8, 3))
@@ -250,6 +252,11 @@ class App:
                 }.get(event.get('event')) or stage or 'Execucao'
             cause = event.get('cause') or 'Consulte o diagnostico de qualidade; fallback permanece explicito.'
             self.execution_diagnostic.set(f'{label}: {status}. {cause}')
+            if event.get('event') == 'run_failed' and 'Preflight reprovado' in cause and 'vision' in cause:
+                from ldporto.paths import MODELS_DIR
+                visual_names = ['face_detection_yunet_2023mar.onnx', 'face_recognition_sface_2021dec.onnx', 'face_landmarker.task']
+                if any(not (MODELS_DIR / name).is_file() for name in visual_names):
+                    self.window.after_idle(self.visual_models)
         self.refresh_execution()
 
     def refresh_execution(self):
@@ -270,7 +277,9 @@ class App:
         self.stage_text.set(str(snapshot['stage_label'] or 'Preparando') + units + (' | ' + snapshot['substage'] if snapshot['substage'] else ''))
         eta_range = snapshot['stage_eta_range_seconds']
         stage_eta = human_duration(snapshot['stage_eta_seconds'], True) if not eta_range else human_duration(eta_range[0], True) + ' - ' + human_duration(eta_range[1], True)
-        self.elapsed_text.set('Decorrido: ' + human_duration(snapshot['elapsed_seconds']) + ' | ETA etapa: ' + stage_eta + ' | ETA total: ' + human_duration(snapshot['total_eta_seconds'], True))
+        total_range = snapshot.get('total_eta_range_seconds')
+        total_eta = human_duration(snapshot['total_eta_seconds'], True) if not total_range else human_duration(total_range[0], True) + ' - ' + human_duration(total_range[1], True)
+        self.elapsed_text.set('Decorrido: ' + human_duration(snapshot['elapsed_seconds']) + ' | ETA etapa: ' + stage_eta + ' | ETA total: ' + total_eta)
         self.next_stage_text.set('Proxima etapa: ' + str(snapshot['next_stage_label'] or 'aguardando'))
         status_labels = {'running':'Em execucao', 'ok':'Concluido', 'partial':'Degradado', 'degraded':'Degradado',
                          'skipped':'Desativado', 'unavailable':'Indisponivel', 'failed':'Falhou', 'blocked':'Bloqueado', 'cancelled':'Interrompido'}
@@ -522,7 +531,7 @@ class App:
                         self.camera_summary.set(value.strip())
                     self.log.insert("end", value)
                     self.log.see("end")
-                    if self.in_execution and not any(fragment in value for fragment in ('Clearcut', 'Created TensorFlow Lite XNNPACK delegate')):
+                    if self.in_execution and not any(fragment in value.lower() for fragment in ('clearcut', 'created tensorflow lite xnnpack delegate', 'portable_clearcut_uploader.cc')):
                         self.execution_log.insert('end', value)
                         self.execution_log.see('end')
                         if int(self.execution_log.index('end-1c').split('.')[0]) > 80:
@@ -561,6 +570,39 @@ class App:
                 os.startfile(str(folder))
             else:
                 webbrowser.open(folder.as_uri())
+
+    def visual_models(self):
+        dialog = tk.Toplevel(self.window)
+        dialog.title('Modelos visuais')
+        from ldporto.paths import MODELS_DIR
+        names = ['face_detection_yunet_2023mar.onnx', 'face_recognition_sface_2021dec.onnx', 'face_landmarker.task']
+        missing = [name for name in names if not (MODELS_DIR/name).is_file()]
+        ttk.Label(dialog, text=f'{len(missing)} modelos ausentes.\n' + '\n'.join(missing or ['Modelos presentes; o diagnóstico valida os checksums.']), padding=12).pack()
+        command = f'"{sys.executable}" "{ROOT / "scripts/download_models.py"}"'
+        def copy_command():
+            self.window.clipboard_clear()
+            self.window.clipboard_append(command)
+        def download():
+            def worker():
+                proc = subprocess.run([sys.executable, str(ROOT/'scripts/download_models.py')], cwd=ROOT,
+                                      capture_output=True, text=True, encoding='utf-8', errors='replace',
+                                      creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+                self.messages.put(('line', scrub(proc.stdout + proc.stderr)))
+            threading.Thread(target=worker, daemon=True).start()
+            dialog.destroy()
+        ttk.Button(dialog, text='Baixar modelos', command=download).pack(pady=4)
+        ttk.Button(dialog, text='Abrir pasta', command=lambda: os.startfile(str(MODELS_DIR))).pack(pady=4)
+        ttk.Button(dialog, text='Copiar comando', command=copy_command).pack(pady=4)
+
+    def clean_heavy(self):
+        if self.proc and self.proc.poll() is None:
+            messagebox.showinfo('Limpeza', 'Aguarde o processamento terminar.')
+            return
+        folder = self.output_folder or filedialog.askdirectory(title='Escolha a análise para visualizar a limpeza')
+        if not folder:
+            return
+        from ldporto.storage_dialog import show_cleanup
+        show_cleanup(self.window, folder)
 
     def close(self):
         if self.proc and self.proc.poll() is None:

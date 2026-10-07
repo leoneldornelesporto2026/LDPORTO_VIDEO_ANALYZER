@@ -280,6 +280,9 @@ a{color:#ff9299}footer{margin-top:35px;color:#aaa}[hidden]{display:none}
         '<a href="report.md">Relatório completo</a> · <a href="transcript.srt">SRT</a> · <a href="transcript.txt">Transcrição</a></p>'
         f"<details><summary>Limitações e avisos ({len(analysis['issues'])})</summary><ul>{notices}</ul></details>"
         f'<h2>Pessoas rastreadas</h2><div class="people">{portraits or "Nenhum track disponível."}</div>'
+        '<h2>Diagnóstico V4.4</h2><p><a href="diagnostic_dashboard.json">Dashboard e dependências</a> · '
+        '<a href="speaker_person_diagnostics.json">Speaker/person</a> · <a href="semantic_chunk_profile.json">Chunks semânticos</a> · '
+        '<a href="broadcast_graphics.json">Gráficos broadcast</a></p><p>Coverage amostrada não mede acurácia de identidade.</p>'+
         '<h2>Revisão editorial local (Ollama)</h2>'+review_html+
         '<h2>Transcrição</h2><input id="search" placeholder="Buscar uma palavra ou frase…" '
         'aria-label="Buscar na transcrição">'
@@ -332,6 +335,7 @@ class ReportEngine:
             "caption_segments.json": caption_segments,
             "speaker_person_mapping.json": analysis["speaker_person_mapping"],
             "transcription_alternatives.json": analysis["transcription_alternatives"],
+            "targeted_asr_repair.json": analysis.get('targeted_asr_repair', {}),
             "low_confidence_words.json": analysis["low_confidence_words"],
             "ocr_text.json": analysis["ocr_text"], "audio_analysis.json": analysis["audio_analysis"],
             "video_analysis.json": analysis["video_analysis"],
@@ -340,9 +344,12 @@ class ReportEngine:
             "person_motion.json": analysis.get("person_motion", []),
             "active_speaker.json": analysis.get("active_speaker", []),
             "speaker_person_summary.json": analysis.get("speaker_person_summary", []),
+            "speaker_person_diagnostics.json": analysis.get("speaker_person_diagnostics", []),
+            "diagnostic_dashboard.json": __import__('ldporto.diagnostic_dashboard', fromlist=['build_dashboard']).build_dashboard(analysis),
             "speaker_person_affinity.json": analysis.get("speaker_person_affinity", []),
             "active_speaker_evidence.json": analysis.get("active_speaker_evidence", []),
             "shots.json": analysis.get("shots", []),
+            "broadcast_graphics.json": analysis.get("broadcast_graphics", {}),
             "participants.json": analysis.get("participants", []),
             "participant_catalog.json": analysis.get("participant_catalog", []),
             "participant_metrics.json": analysis.get("participant_metrics", {}),
@@ -359,6 +366,7 @@ class ReportEngine:
             "thumbnail_candidates.json": analysis.get("thumbnail_candidates", []),
             "moment_frames.json":analysis.get('moment_frames',[]),
             "analysis_quality.json": analysis.get("analysis_quality", {}),
+            "semantic_chunk_profile.json": analysis.get("semantic_chunk_profile", []),
             "run_manifest.json": analysis.get("run_manifest", {}),
             "second_curation_package.json": analysis.get("second_curation_package", {}),
             "quality_issues.json": {"schema_version":"1.0","issues":analysis.get("issues",[])},
@@ -454,7 +462,9 @@ class ReportEngine:
                           [result['path']] + ([result['media_path']] if result.get('media_path') else []))
             package_result = ctx.step('21_second_curation_handoff', {'schema':'1.0', 'config':export_cfg,
                 'evidence':digest(analysis['second_curation_package']), 'preview':digest(analysis.get('preview_validation', {}))},
-                create_package, code_files=['second_curation.py', 'second_curation_export.py', 'preview_renderer.py'], output_version='1.0', requires=['20_handoff'])
+                create_package, code_files=['second_curation.py', 'second_curation_export.py', 'second_curation_decisions.py',
+                                            '../../schemas/second_curation_decisions.schema.json', 'preview_renderer.py'],
+                output_version='1.0', requires=['20_handoff'])
             if package_result.get('path'):
                 from .second_curation_export import validate_core_package
                 if validate_core_package(package_result['path'])['status'] != 'valid':

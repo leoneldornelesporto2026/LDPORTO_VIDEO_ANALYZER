@@ -1,5 +1,12 @@
 # V4.3 Implementation Ledger
 
+**Reconciliação local V4.4:** o full run V4.3 agora existe em
+`analysis/video_31329be78ca4` (`full_pipeline`, qualidade partial). Veja
+[baseline reconciliado](V44_BASELINE_RECONCILIATION.md) para métricas e a diferença
+5755 hipóteses online em 8231s versus 6085 tracklets finais. Runtime local atual
+3.11.9; as referências a 3.11.17 e full run pendente abaixo são históricas.
+Suíte anterior aos patches V4.4: 352 passed em Windows/Python 3.11.9.
+
 Updated: 2026-10-06. Working branch: feature/v4.3-professional-hardening.
 No commit, push, merge, rebase, destructive reset or cleanup is authorized.
 

@@ -14,7 +14,8 @@ def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
     for row in timeline or []:
         keys = (row.get('camera') or {}).get('keyframes', [])
         samples.extend((key.get('time', row['start']), float(key.get('zoom', 1))) for key in keys)
-        if row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'}:
+        # A state/request is not delivered motion. Count only observed zoom deltas.
+        if row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'} and keys and max(float(k.get('zoom', 1)) for k in keys) - min(float(k.get('zoom', 1)) for k in keys) > .001:
             events.append(row)
         target_loss += int('TARGET_LOST_DURING_ZOOM' in (row.get('decision') or {}).get('reasons', []))
         crop = row.get('crop') or {}
@@ -35,6 +36,8 @@ def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
     short = sum(row['end'] - row['start'] < min_zoom_duration - .5 for row in events)
     duration = duration or max((row['end'] for row in timeline or []), default=0)
     metrics = {'zoom_event_count': len(events), 'zoom_events_per_minute': len(events) * 60 / duration if duration else None,
+               'mean_zoom_factor': sum((float((r.get('camera') or {}).get('zoom_start', 1)) + float((r.get('camera') or {}).get('zoom_end', 1))) / 2 * (r['end'] - r['start']) for r in timeline or []) / duration if duration else None,
+               'max_zoom_factor': max((z for _, z in samples), default=1.),
                'short_zoom_count': short, 'rapid_zoom_reversal_count': reversals,
                'zoom_pumping_score': reversals / max(1, len(directions)),
                'zoom_jitter_score': sum(abs(second - first) for first, second in zip(slopes, slopes[1:])) / max(1, len(slopes) - 1),

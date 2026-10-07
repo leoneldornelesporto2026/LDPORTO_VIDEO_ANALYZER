@@ -77,6 +77,8 @@ def collect_run_metrics(value):
     if isinstance(raw,dict):
         metadata=metadata or raw.get('metadata') or {}
     director=records(read_optional(folder,'camera_director_timeline.json'),'timeline')
+    raw_people=records(read_optional(folder,'raw_people.json'),'raw_people')
+    raw_tracks=records(read_optional(folder,'raw_tracks.json'),'raw_tracks')
     duration=metadata.get('duration') or old_summary.get('duration')
     focus=quality.get('resolved_focus_coverage')
     if focus is None and director is not None and isinstance(duration,(int,float)) and duration>0:
@@ -103,7 +105,9 @@ def collect_run_metrics(value):
         'speaker_count':len(speakers) if speakers is not None else quality.get('speaker_count'),
         'diarization_coverage':quality.get('diarization_speech_coverage',quality.get('diarization_coverage')),
         'words_with_speaker_fraction':quality.get('words_with_speaker_fraction'),
-        'raw_track_count':quality.get('raw_track_count'), 'valid_track_count':quality.get('valid_track_count'),
+        'raw_track_count':len(raw_tracks) if raw_tracks is not None else quality.get('raw_track_count'),
+        'raw_online_person_hypotheses':len(raw_people) if raw_people is not None else None,
+        'valid_track_count':quality.get('valid_track_count'),
         'persistent_person_count':quality.get('persistent_person_count'),
         'meaningful_persistent_person_count':quality.get('meaningful_persistent_person_count'),
         'editorial_participant_count':len(participants) if has_editorial_layer else counts.get('editorial_participant_count'),
@@ -143,6 +147,7 @@ def collect_run_metrics(value):
     runtime = output.get('runtime_by_stage') or {}
     measured_stage_seconds = [row.get('elapsed_seconds') for row in runtime.values() if isinstance(row, dict) and isinstance(row.get('elapsed_seconds'), (int, float))]
     output['total_measured_stage_runtime_seconds'] = sum(measured_stage_seconds) if measured_stage_seconds else None
+    output['runtime_contains_cached_stages'] = any(isinstance(row, dict) and row.get('cache_hit') for row in runtime.values())
     output['execution_scope'] = summary.get('execution_scope') or metadata.get('execution_scope') or 'full_pipeline'
     for key in ('transcription_coverage', 'speech_coverage', 'timestamp_anomaly_count', 'segments_with_speaker_fraction',
                 'micro_track_count', 'confirmed_track_count', 'embedding_success_fraction', 'id_switch_count', 'probable_id_switch_count',
@@ -171,8 +176,12 @@ def collect_run_metrics(value):
                   second_curation_dangling_refs=(curation_export.get('validation') or {}).get('dangling_references'),
                   second_curation_visual_count=curation_export.get('visual_count'), second_curation_candidates=curation_export.get('candidate_count'),
                   second_curation_state=curation_export.get('state'))
+    output['actual_package_shortlist_count'] = curation_export.get('shortlist_count')
     for capability in ('editorial_ready', 'transcript_ready', 'visual_ready', 'speaker_person_ready', 'camera_ready', 'preview_ready'):
         output['second_curation_' + capability] = curation_export.get('readiness', {}).get(capability)
+    for key in ('dominant_face_coverage','known_speaker_focus_fraction','active_speaker_confirmed_coverage',
+                'active_speaker_probable_coverage','proposed_zoom_event_count','camera_director_visual_sample_coverage'):
+        output[key] = quality.get(key)
     curation = read_optional(folder, 'second_curation_package.json') or {}
     catalog = curation.get('candidates', [])
     if catalog:
@@ -214,6 +223,10 @@ def compare_runs(old,new):
         if before['metrics'].get('execution_scope') != after['metrics'].get('execution_scope') and any(term in key for term in ('runtime', 'seconds', 'semantic_inference_call_count', 'total_inference_call_count')):
             changes[key]['delta'] = None
             changes[key]['comparison_status'] = 'not_comparable_execution_scope'
+        elif key == 'total_measured_stage_runtime_seconds' and any(
+                run['metrics'].get('runtime_contains_cached_stages') for run in (before, after)):
+            changes[key]['delta'] = None
+            changes[key]['comparison_status'] = 'not_comparable_cached_stages'
     return {'schema_version':'1.0','same_source_confirmed':same_source,
             'comparison_type':'descriptive_artifact_comparison_not_accuracy_validation',
             'old':before,'new':after,'changes':changes,
@@ -233,6 +246,21 @@ def comparison_markdown(report):
             continue
         lines.append('| '+name+' | '+str(change['old'])+' | '+str(change['new'])+' | '+str(change['delta'])+' |')
     lines.extend(['','## Limitacoes','',*['- '+item for item in report['limitations']]])
+    old_runtime=report['old']['metrics'].get('runtime_by_stage') or {}
+    new_runtime=report['new']['metrics'].get('runtime_by_stage') or {}
+    if old_runtime or new_runtime:
+        lines.extend(['','## Runtime por estágio','', '| Estágio | V4.3 s | V4.4 s | Delta s |','|---|---:|---:|---:|'])
+        comparable=report['old']['metrics']['execution_scope']==report['new']['metrics']['execution_scope']
+        for name in sorted(set(old_runtime)|set(new_runtime)):
+            left,right=old_runtime.get(name) or {},new_runtime.get(name) or {}
+            a,b=left.get('elapsed_seconds'),right.get('elapsed_seconds')
+            cached=left.get('cache_hit') or right.get('cache_hit')
+            delta=b-a if comparable and not cached and isinstance(a,(int,float)) and isinstance(b,(int,float)) else None
+            if left.get('cache_hit'):
+                a=f"cache (original {left.get('original_elapsed_seconds')} s)"
+            if right.get('cache_hit'):
+                b=f"cache (original {right.get('original_elapsed_seconds')} s)"
+            lines.append(f'| {name} | {a} | {b} | {delta} |')
     return '\n'.join(lines)+'\n'
 
 
@@ -291,7 +319,11 @@ def main():
     parser.add_argument('new')
     parser.add_argument('--output-dir',default='benchmark_comparison')
     parser.add_argument('--audit-editorial',action='store_true',help='Aplicar regras deterministicas aos candidatos exportados, sem rerun do video')
+    parser.add_argument('--filename-stem', default='benchmark_comparison', help='Nome dos artefatos JSON/MD, ex.: V43_V44_COMPARE')
     args=parser.parse_args()
+    import re
+    if not re.fullmatch(r'[A-Za-z0-9_-]{1,80}', args.filename_stem):
+        parser.error('Nome de comparação inválido')
     output=Path(args.output_dir).expanduser().resolve()
     for source in (analysis_folder(args.old),analysis_folder(args.new)):
         if output==source or source in output.parents:
@@ -300,9 +332,9 @@ def main():
     if args.audit_editorial:
         report['existing_editorial_audit']=audit_existing_editorial(args.old)
     output.mkdir(parents=True,exist_ok=True)
-    write_json(output/'benchmark_comparison.json',report)
-    (output/'benchmark_comparison.md').write_text(comparison_markdown(report),encoding='utf-8')
-    print(output/'benchmark_comparison.md')
+    write_json(output/(args.filename_stem+'.json'),report)
+    (output/(args.filename_stem+'.md')).write_text(comparison_markdown(report),encoding='utf-8')
+    print(output/(args.filename_stem+'.md'))
     return 0
 
 

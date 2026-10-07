@@ -49,6 +49,8 @@ def resolve_smart_zoom(raw=None):
     return cfg
 
 DEFAULTS = {
+    'dominant_face_fallback': False, 'minimum_face_duration': 2., 'minimum_dominance_margin': .35,
+    'minimum_target_confidence': .85, 'minimum_face_visibility': .8, 'maximum_center_velocity': .10,
     'smart_zoom': deepcopy(SMART_ZOOM_DEFAULTS),
     'enabled': True, 'profile': 'natural', 'lookahead_seconds': 1.8,
     'min_hold_seconds': 3.0, 'preferred_hold_seconds': 6.0,
@@ -112,6 +114,7 @@ def resolve_config(raw=None):
             if isinstance(default, int) and (not isinstance(value, int) or value < 1):
                 raise ValueError(f'camera_director.{key} deve ser inteiro positivo')
     for key in ('switch_margin', 'switch_cost', 'persistence_bonus', 'enter_confidence',
+                'minimum_dominance_margin', 'minimum_target_confidence', 'minimum_face_visibility',
                 'exit_confidence', 'horizontal_deadzone', 'vertical_deadzone', 'zoom_deadzone',
                 'min_face_height', 'headroom', 'lead_room', 'reaction_threshold', 'reaction_delta'):
         if not 0 <= cfg[key] <= 1:

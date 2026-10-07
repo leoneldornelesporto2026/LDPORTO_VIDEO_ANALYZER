@@ -76,7 +76,8 @@ def main():
     parser.add_argument('--smart-zoom-profile', choices=['conservative', 'natural', 'dynamic'])
     parser.add_argument('--no-smart-zoom', action='store_true')
     parser.add_argument('--include-candidate-previews', action='store_true')
-    parser.add_argument('--from-stage', choices=['active_speaker', 'semantic', 'understanding', 'ranking', 'camera_director', 'preview_verifier', 'handoff'])
+    from ldporto.replay import REPLAY_STAGES
+    parser.add_argument('--from-stage', choices=REPLAY_STAGES)
     parser.add_argument('--replay-analysis', metavar='PASTA', help='Artifacts compatíveis para replay downstream, sem reprocessar percepcao')
     parser.add_argument('--allow-legacy-snapshot', action='store_true', help='Aceitar snapshot V4.2 explicitamente, sem chamar isso de cache de prompt atual')
     parser.add_argument('--source-hash', help='Hash SHA256 esperado para validar a fonte do replay')

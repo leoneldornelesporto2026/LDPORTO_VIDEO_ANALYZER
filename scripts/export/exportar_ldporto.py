@@ -1069,6 +1069,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--root", help="Raiz do projeto; auto-detectada por padrao.")
     parser.add_argument('--self-test',action='store_true',help='Validar exportador em pasta temporaria sem incluir dados pesados')
     parser.add_argument('--inspect-zip',help='Inspecionar integridade, colisoes e segredos de um ZIP existente sem modifica-lo')
+    parser.add_argument('--visuals-on-demand', metavar='ZIP', help='Novo pacote com visuais de candidatos promovidos')
+    parser.add_argument('--source-video', help='Fonte local para os visuais sob demanda')
+    parser.add_argument('--candidate', action='append', default=[], help='Candidate ID solicitado; repetir para vários')
+    parser.add_argument('--candidate-preview', action='store_true')
     parser.add_argument(
         "--mode",
         choices=("both", "project", "analysis"),
@@ -1120,6 +1124,14 @@ def main() -> int:
             else (root / "pacotes_para_enviar").resolve()
         )
         output_dir.mkdir(parents=True, exist_ok=True)
+        if args.visuals_on_demand:
+            if not args.source_video or not args.candidate:
+                raise ValueError('--visuals-on-demand exige --source-video e --candidate')
+            sys.path.insert(0, str(root / 'src'))
+            from ldporto.second_curation_export import generate_visuals_on_demand
+            report = generate_visuals_on_demand(args.visuals_on_demand, args.source_video, args.candidate, output_dir, args.candidate_preview)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+            return 0
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
         print("=" * 76)

@@ -186,6 +186,19 @@ STORIES_PACKAGE/
 
 O pacote de segunda curadoria também inclui `social/` com o mesmo contrato, para que candidatos promovidos pela segunda curadoria possam receber estilo/render sem nova inferência pesada.
 
+### Integridade editorial + identidade visual — R4.2-INTEGRITY-VISION
+
+Esta revisão mantém a versão lógica/cache `4.4.0` e endurece o caminho crítico sem invalidar ASR/visão/semântica por nome de build.
+
+- `Semantic -> Understanding` valida campos aninhados conhecidos e grava `understanding_contract_diagnostics.json` com o caminho exato de qualquer normalização.
+- Falha em `16_understanding` passa a bloquear publicação/Stories (`PROVISIONAL_UPSTREAM_INCOMPLETE`) em vez de deixar o downstream parecer editorialmente pronto.
+- `eligibility=excluded` é invariável: nunca pode aparecer como shortlist/Story elegível.
+- Commercial Gate usa contexto limitado para propagar um bloco publicitário apenas quando o próprio candidato já traz múltiplos sinais comerciais precursores; discussão neutra de marca continua permitida.
+- Micro-tracklets com embedding facial podem reentrar em identidade já estabelecida somente com threshold/margem mais estritos e sem conflito temporal; posição de tela continua proibida como prova de identidade.
+- Smart Zoom passa a medir oportunidades, pedidos, eventos aceitos, entregues, abortados e razões de bloqueio.
+
+A melhoria de micro-ReID é conservadora e precisa ser medida no benchmark real antes de qualquer claim de ganho de cobertura.
+
 ### Observabilidade visual/transcrição — R4.1-SOCIAL-OBS
 
 - `06_scenes` passa a aparecer como **Cenas visuais**; `Shot classification` continua sendo a etapa posterior de classificação de shot.
@@ -194,3 +207,37 @@ O pacote de segunda curadoria também inclui `social/` com o mesmo contrato, par
 - `partial` na GUI passa a ser exibido como **Parcial**, enquanto `degraded` continua **Degradado**.
 - A transcrição parcial mostra resumo quantitativo (`needs_review`, baixa confiança, anomalias de timestamp e regiões suspeitas) em vez de um aviso genérico.
 - A revisão não altera a versão lógica `4.4.0`; build `R4.1-SOCIAL-OBS` preserva a estratégia de cache seletivo.
+
+### Checkpoint Rodada 2 — R4.3-VISUAL-ID-R2
+
+Busca facial complementar conservadora para micro-tracklets que o indice de buckets nao recupera. Veja `docs/ROUND2_VISUAL_IDENTITY.md`. Sem full-run nesta revisao.
+
+
+## Visual Identity R2 concluída / R3 diagnósticos (outubro 2026)
+
+A etapa `08_person_reid` passa a conferir vizinhos faciais exatos nos
+*micro-tracklets* e faz recuperação estrita dos *tracklets* estáveis não
+associados pelo índice rápido. A margem considera identidades concorrentes;
+conflito temporal bloqueia associação, e uma única amostra facial exige
+cosine >= 0.86. Nunca há merge apenas por posição. Os parâmetros
+`micro_reid_threshold` e `micro_reid_margin` são incluídos no contrato da
+etapa (e no hash de cache). `09_person_motion`, `10_active_speaker`,
+`11_shots` e `12_camera_timeline` bloqueiam na falha do Re-ID.
+
+Replay offline (sem refazer vídeo ou GPU):
+
+```powershell
+python scripts/dev/replay_visual_identity_r2.py 'C:\caminho\files.zip' --output 'C:\caminho\reid_replay.json'
+```
+
+Medir gargalos e estimar limites conservadores de trabalhadores, **sem
+ativar concorrência**:
+
+```powershell
+python scripts/dev/performance_diagnostics_r3.py --stage-runtime 'C:\caminho\performance_summary.json' --camera-summary 'C:\caminho\camera_summary.json' --output 'C:\caminho\r3_advisor.json'
+```
+
+As recomendações não equivalem a performance comprovada. Um replay de
+Re-ID com o checkpoint real não valida identidade civil, acerto de câmera,
+`active speaker` nem segurança de recorte. O ganho real exige benchmark
+downstream e, posteriormente, um vídeo anotado de referência.

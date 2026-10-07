@@ -290,7 +290,10 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                 if archive.testzip() is not None or any(hashlib.sha256(archive.read(row['path'])).hexdigest() != row['sha256'] for row in media_manifest['files']):
                     raise ValueError('Optional media package checksum validation failed.')
         refs_resolved = package['reference_validation']['status'] == 'resolved'
-        editorial_ready = bool(candidates and segments and metadata.get('duration') and refs_resolved and all(candidate['transcript_literal'].strip() for candidate in candidates))
+        integrity_ready = bool(package.get('editorial_integrity_ready', True))
+        editorial_ready = bool(integrity_ready and candidates and segments and metadata.get('duration') and refs_resolved and
+                              all(candidate['transcript_literal'].strip() for candidate in candidates) and
+                              all(candidate.get('candidate_state') != 'PROVISIONAL_UPSTREAM_INCOMPLETE' for candidate in candidates))
         visual_ready = bool(shortlist and all(any(candidate['visual_refs']) for candidate in candidates if candidate['candidate_id'] in shortlist))
         readiness = {'editorial_ready': editorial_ready, 'transcript_ready': bool(segments and any(row.get('text') for row in segments)),
                      'visual_ready': visual_ready,
@@ -298,7 +301,9 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                      'camera_ready': (analysis.get('analysis_quality') or {}).get('resolved_focus_coverage', 0) > 0,
                      'preview_ready': (analysis.get('preview_validation') or {}).get('status') == 'ok' and bool((analysis.get('preview_validation') or {}).get('verifier_uses_rendered_frames'))}
         readiness_reasons = {
-            'editorial_ready': None if readiness['editorial_ready'] else ('no_candidates' if not candidates else 'missing_transcript_or_unresolved_references'),
+            'editorial_ready': None if readiness['editorial_ready'] else (
+                package.get('editorial_integrity_reason') if not integrity_ready else
+                'no_candidates' if not candidates else 'missing_transcript_or_unresolved_references'),
             'transcript_ready': None if readiness['transcript_ready'] else 'transcript_unavailable_or_empty',
             'visual_ready': None if readiness['visual_ready'] else ('shortlist_empty' if not shortlist else 'shortlist_visual_evidence_incomplete'),
             'speaker_person_ready': None if readiness['speaker_person_ready'] else 'speaker_person_mapping_unresolved',
@@ -310,7 +315,8 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                  'second_curation_readiness': readiness, 'second_curation_readiness_reasons': readiness_reasons, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
                  'candidate_catalog_ref': 'editorial/candidate_catalog.json', 'shortlist_ref': 'editorial/default_shortlist.json',
                  'stories_ref': 'social/stories_manifest.json', 'story_candidate_count': len(social_output.get('stories', [])),
-                 'selected_aspect_ratio': social_output.get('selected_aspect_ratio')}
+                 'selected_aspect_ratio': social_output.get('selected_aspect_ratio'),
+                 'story_readiness': social_output.get('story_readiness'), 'story_readiness_reason': social_output.get('story_readiness_reason')}
         write('CURATION_INDEX.json', index)
         brief = {'schema_version': '1.0', 'task': 'second_editorial_curation', 'source_id': source_id,
                  'source_title': index['source']['title'], 'source_url': index['source']['url'],

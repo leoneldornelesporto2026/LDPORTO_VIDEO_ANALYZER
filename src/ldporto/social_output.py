@@ -34,7 +34,7 @@ CAPTION_PRESETS = {
     "creator_style": {"label": "Creator Style", "font_family": "Arial", "weight": "black", "highlight": True, "background": "none", "motion": "keyword_pop"},
 }
 
-COMMERCIAL_TYPES = {"commercial", "advertisement", "sponsored_content", "ticket_sales", "betting", "store_offer", "product_offer"}
+from .editorial import COMMERCIAL_TYPES
 
 
 def _score(value, default=0.0):
@@ -97,7 +97,24 @@ def _category(candidate):
 
 def _commercial(candidate):
     row = candidate.get("commercial_classification") or {}
-    return bool(candidate.get("content_type") in COMMERCIAL_TYPES or row.get("eligibility") == "exclude" or _score(row.get("score")) >= .7)
+    score = row.get("commercial_score", row.get("score", candidate.get("commercial_score")))
+    return bool(
+        candidate.get("content_type") in COMMERCIAL_TYPES
+        or row.get("content_type") in COMMERCIAL_TYPES
+        or row.get("eligibility") == "excluded"
+        or _score(score) >= .7
+        or candidate.get("default_shortlist_eligible") is False and row.get("eligibility") == "excluded"
+    )
+
+
+def _critical_editorial_stage_ready(analysis):
+    stage = (analysis.get("stage_status") or {}).get("16_understanding", {})
+    status = stage.get("status")
+    if status is None:
+        return True, None
+    if status in {"ok", "partial"}:
+        return True, None
+    return False, f"understanding_{status}"
 
 
 def _story_score(candidate):
@@ -231,7 +248,17 @@ def build_social_output(analysis, cfg, package=None):
     social = cfg.get("social_output") or {}
     stories_cfg = social.get("stories") or {}
     candidates = (package or analysis.get("second_curation_package") or {}).get("candidates", [])
-    selected, metrics = select_story_set(candidates, stories_cfg)
+    editorial_ready, blocked_reason = _critical_editorial_stage_ready(analysis)
+    if editorial_ready:
+        selected, metrics = select_story_set(candidates, stories_cfg)
+    else:
+        selected = []
+        metrics = {
+            "eligible_count": 0, "selected_count": 0, "category_counts": {}, "topic_counts": {},
+            "distribution_window_seconds": float(stories_cfg.get("distribution_window_seconds", 600)),
+            "window_counts": {}, "blocked_reason": blocked_reason,
+            "provisional_candidate_count": len(candidates),
+        }
     content_mode = social.get("content_mode", "auto")
     preset_cfg = social.get("caption_preset", "auto")
     aspect = social.get("aspect_ratio", "9:16")
@@ -266,7 +293,10 @@ def build_social_output(analysis, cfg, package=None):
         caption_rows.append({"story_id": row["story_id"], "candidate_id": row["candidate_id"], **caption_plan})
     profiles = {key: {**value, "safe_area_recomputed_per_ratio": True} for key, value in ASPECT_RATIOS.items()}
     return {
-        "schema_version": "1.0", "mode": "multiple_independent_stories", "enabled": bool(stories_cfg.get("enabled", True)),
+        "schema_version": "1.1", "mode": "multiple_independent_stories", "enabled": bool(stories_cfg.get("enabled", True)),
+        "story_readiness": "READY" if editorial_ready else "BLOCKED",
+        "story_readiness_reason": blocked_reason,
+        "provisional_candidates_available": bool(candidates) and not editorial_ready,
         "selected_aspect_ratio": aspect, "available_aspect_ratios": profiles,
         "selected_caption_preset": preset_cfg, "available_caption_presets": CAPTION_PRESETS,
         "content_mode": content_mode, "caption_font": social.get("caption_font", "Arial"),

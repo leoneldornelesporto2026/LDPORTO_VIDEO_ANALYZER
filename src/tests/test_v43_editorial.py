@@ -247,3 +247,30 @@ def test_understanding_normalizes_semantic_contract_list_shapes(tmp_path):
     assert result['data']['main_moments']
     assert result['data']['main_moments'][0]['editorial_score'] is not None
     assert any('semantic_contract_normalized' in note for note in result['notes'])
+
+
+def test_understanding_deep_contract_normalizes_nested_lists_and_writes_diagnostics(tmp_path):
+    import logging
+    from ldporto.config import load_config
+    from ldporto.core import Context, read_json
+    from ldporto.understanding import run_understanding
+    cfg = load_config(); cfg['understanding']['extract_frames'] = False
+    ctx = Context(tmp_path / 'none.mp4', tmp_path, cfg, 'deep-contract', logging.getLogger('deep-contract'))
+    transcript = {'words': [], 'segments': [
+        {'segment_id': 'S0', 'start': 0.0, 'end': 5.0, 'speaker': 'SP', 'text': 'Um dia eu comecei e no final deu certo.'}]}
+    semantic = {
+        'topics': [{'topic_id': 'T0', 'start': 0.0, 'end': 5.0, 'topic': 'Historia', 'summary': 'Resumo',
+                    'method': 'ollama', 'evidence_segment_ids': ['S0'], 'speakers': ['SP']}],
+        'moments': [{'moment_id': 'M0', 'start': 0.0, 'end': 5.0, 'text': 'momento completo',
+                     'categories': ['storytelling'], 'editorial': [['bad nested provider row']],
+                     'standalone_class': 'good', 'context_requirement': 'none', 'evidence_segment_ids': ['S0']}],
+        'questions_answers': [], 'program_sections': [{'section_id': 'SEC', 'topic_ids': ['T0']}],
+        'editorial_review': {'top_moments': [['bad'], {'moment_id': 'M0', 'editorial_score': .8}],
+                             'content_angles': 'bad-string'}}
+    result = run_understanding(ctx, {'duration': 5.0}, transcript, {'speakers': []}, {'people': []}, {}, semantic, [], cfg['understanding'])
+    assert result['status'] == 'ok'
+    diagnostics = read_json(tmp_path / 'understanding_contract_diagnostics.json')
+    paths = {row['path'] for row in diagnostics['events']}
+    assert 'semantic.moments[0].editorial' in paths
+    assert 'semantic.editorial_review.top_moments' in paths
+    assert 'semantic.editorial_review.content_angles' in paths

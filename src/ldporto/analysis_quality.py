@@ -142,6 +142,9 @@ def quality_gate(analysis, cfg=None):
         required_missing.append('diarization_unavailable')
     if cfg.get('vision',{}).get('enabled',True) and not analysis.get('people_observations'):
         required_missing.append('visual_tracking_unavailable')
+    understanding_status = (analysis.get('stage_status') or {}).get('16_understanding', {}).get('status')
+    if understanding_status in {'failed', 'blocked', 'unavailable', 'cancelled'}:
+        required_missing.append('understanding_unavailable')
     issues.extend({'code':name,'severity':'high'} for name in required_missing)
     flags={
         'active_speaker_unavailable':cfg.get('vision',{}).get('active_speaker',True) and not any(row.get('person_id') for row in analysis.get('active_speaker',[])),
@@ -155,6 +158,7 @@ def quality_gate(analysis, cfg=None):
         'preview_skipped':not analysis.get('preview_validation',{}).get('verifier_uses_rendered_frames',False),
         'cross_file_references_unresolved':analysis.get('second_curation_package',{}).get('reference_validation',{}).get('status')=='unresolved',
         'primary_theme_unresolved':analysis.get('topic_quality',{}).get('primary_theme_status')=='unresolved_no_qualified_theme',
+        'social_output_blocked':(analysis.get('social_output') or {}).get('story_readiness') == 'BLOCKED',
     }
     issues.extend({'code':name,'severity':'medium' if name!='preview_skipped' else 'info'} for name,present in flags.items() if present)
     degraded=any(issue['severity'] in ('high','medium') for issue in issues)

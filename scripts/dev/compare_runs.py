@@ -150,7 +150,7 @@ def collect_run_metrics(value):
     output['runtime_contains_cached_stages'] = any(isinstance(row, dict) and row.get('cache_hit') for row in runtime.values())
     output['execution_scope'] = summary.get('execution_scope') or metadata.get('execution_scope') or 'full_pipeline'
     for key in ('transcription_coverage', 'speech_coverage', 'timestamp_anomaly_count', 'segments_with_speaker_fraction',
-                'micro_track_count', 'confirmed_track_count', 'embedding_success_fraction', 'id_switch_count', 'probable_id_switch_count',
+                'micro_track_count', 'micro_reid_attachment_count', 'micro_track_mapped_fraction', 'unmapped_micro_track_count', 'confirmed_track_count', 'embedding_success_fraction', 'id_switch_count', 'probable_id_switch_count',
                 'simultaneous_identity_conflict_count', 'reid_merge_count', 'reid_rejected_merge_count',
                 'speaker_person_mapping_coverage', 'speaker_person_high_confidence_coverage', 'active_speaker_high_confidence_coverage',
                 'ambiguous_mapping_fraction', 'conflicting_mapping_fraction', 'mapping_support_window_count',
@@ -158,6 +158,8 @@ def collect_run_metrics(value):
                 'story_payoff_coverage', 'duration_violation_count', 'excluded_commercial_count', 'excluded_eligibility_count',
                 'editorial_decision_coverage', 'fallback_camera_fraction', 'safe_crop_coverage', 'quality_status',
                 'smart_zoom_enabled', 'zoom_event_count', 'zoom_events_per_minute', 'mean_zoom_factor', 'max_zoom_factor',
+                'zoom_opportunity_window_count', 'zoom_request_window_count', 'zoom_accepted_event_count', 'zoom_delivered_event_count',
+                'zoom_aborted_window_count', 'zoom_delivery_fraction',
                 'rapid_zoom_reversal_count', 'short_zoom_count', 'zoom_pumping_score', 'zoom_jitter_score', 'zoom_target_loss_count',
                 'safe_zoom_fraction', 'source_preserve_fraction', 'preview_zoom_validation_fraction',
                 'candidate_topic_coverage', 'candidate_audio_quality_coverage', 'candidate_technical_quality_coverage'):

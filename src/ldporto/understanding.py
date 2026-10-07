@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 import math
 import re
-from .core import ok, overlap, run_command
+from .core import ok, overlap, run_command, write_json
 from .editorial import (GENERIC_TERMS, fold_text, normalize_moment, optimize_boundaries,
                         rank_candidate, deduplicate_candidates, classify_content)
 
@@ -35,32 +35,107 @@ def _dict_rows(value):
     return [row for row in value if isinstance(row, dict)]
 
 
+def _contract_issue(path, expected, value, action):
+    return {
+        "path": path,
+        "expected": expected,
+        "received": type(value).__name__,
+        "action": action,
+    }
+
+
+def _sanitize_list_field(row, key, path, diagnostics):
+    value = row.get(key, [])
+    if isinstance(value, list):
+        return value
+    diagnostics.append(_contract_issue(f"{path}.{key}", "list", value, "replaced_with_empty_list"))
+    return []
+
+
+def _sanitize_mapping_field(row, key, path, diagnostics):
+    value = row.get(key)
+    if value is None or isinstance(value, dict):
+        return value
+    diagnostics.append(_contract_issue(f"{path}.{key}", "object|null", value, "replaced_with_empty_object"))
+    return {}
+
+
 def _normalize_semantic_contract(semantic):
-    """Normalize the semantic->understanding boundary without inventing evidence."""
-    notes = []
+    """Normalize the semantic->understanding boundary without inventing evidence.
+
+    V4.4 real runs showed that provider/model output can preserve the top-level list
+    shape while one nested control field arrives as a list instead of an object.
+    The old normalizer only filtered top-level rows, so downstream code could still
+    crash on ``.get``.  This function now validates the known control-plane fields
+    and returns path-level diagnostics suitable for replay/debugging.
+    """
+    notes, diagnostics = [], []
     if not isinstance(semantic, dict):
+        diagnostics.append(_contract_issue("semantic", "object", semantic, "replaced_with_empty_contract"))
         notes.append(f"semantic_contract_normalized: root={type(semantic).__name__}; expected object")
         return {"topics": [], "moments": [], "questions_answers": [], "program_sections": [],
-                "editorial_review": None}, notes
+                "editorial_review": None}, notes, diagnostics
     data = dict(semantic)
     for key in ("topics", "moments", "questions_answers", "program_sections"):
         raw = data.get(key, [])
         rows = _dict_rows(raw)
         if not isinstance(raw, list) or len(rows) != len(raw):
             raw_count = len(raw) if isinstance(raw, list) else 0
+            diagnostics.append(_contract_issue(f"semantic.{key}", "list[object]", raw,
+                                               f"kept_{len(rows)}_valid_objects"))
             notes.append(f"semantic_contract_normalized: {key} valid_objects={len(rows)}/{raw_count}; expected list[object]")
-        data[key] = rows
+        clean = []
+        for index, original in enumerate(rows):
+            row = dict(original)
+            path = f"semantic.{key}[{index}]"
+            if key == "topics":
+                row["evidence_segment_ids"] = _sanitize_list_field(row, "evidence_segment_ids", path, diagnostics)
+                row["speakers"] = _sanitize_list_field(row, "speakers", path, diagnostics)
+            elif key == "moments":
+                row["evidence_segment_ids"] = _sanitize_list_field(row, "evidence_segment_ids", path, diagnostics)
+                row["categories"] = _sanitize_list_field(row, "categories", path, diagnostics)
+                row["editorial"] = _sanitize_mapping_field(row, "editorial", path, diagnostics) or {}
+            elif key == "questions_answers":
+                for field in ("answer_segment_ids", "question_segment_ids", "evidence_segment_ids"):
+                    if field in row:
+                        row[field] = _sanitize_list_field(row, field, path, diagnostics)
+            elif key == "program_sections":
+                row["topic_ids"] = _sanitize_list_field(row, "topic_ids", path, diagnostics)
+                if "evidence_segment_ids" in row:
+                    row["evidence_segment_ids"] = _sanitize_list_field(row, "evidence_segment_ids", path, diagnostics)
+            clean.append(row)
+        data[key] = clean
     review = data.get("editorial_review")
     if isinstance(review, list):
         valid = _dict_rows(review)
         data["editorial_review"] = {"top_moments": valid, "content_angles": [],
                                     "status": "partial", "needs_review": True,
                                     "method": "normalized_legacy_top_moments_list"}
+        diagnostics.append(_contract_issue("semantic.editorial_review", "object|null", review,
+                                           f"normalized_legacy_list_{len(valid)}_rows"))
         notes.append(f"semantic_contract_normalized: editorial_review list -> object ({len(valid)} valid rows)")
-    elif review is not None and not isinstance(review, dict):
+    elif isinstance(review, dict):
+        normalized_review = dict(review)
+        top = normalized_review.get("top_moments", [])
+        valid = _dict_rows(top)
+        if not isinstance(top, list) or len(valid) != len(top):
+            diagnostics.append(_contract_issue("semantic.editorial_review.top_moments", "list[object]", top,
+                                               f"kept_{len(valid)}_valid_objects"))
+            notes.append("semantic_contract_normalized: editorial_review.top_moments contained invalid rows")
+        normalized_review["top_moments"] = valid
+        content_angles = normalized_review.get("content_angles", [])
+        if not isinstance(content_angles, list):
+            diagnostics.append(_contract_issue("semantic.editorial_review.content_angles", "list", content_angles,
+                                               "replaced_with_empty_list"))
+            normalized_review["content_angles"] = []
+        data["editorial_review"] = normalized_review
+    elif review is not None:
+        diagnostics.append(_contract_issue("semantic.editorial_review", "object|null", review, "omitted"))
         notes.append(f"semantic_contract_normalized: editorial_review={type(review).__name__}; omitted")
         data["editorial_review"] = None
-    return data, notes
+    if diagnostics:
+        notes.append(f"semantic_contract_diagnostics: {len(diagnostics)} normalization event(s); see understanding_contract_diagnostics.json")
+    return data, notes, diagnostics
 
 
 def extract_entities(transcript):
@@ -532,8 +607,31 @@ def build_video_understanding(metadata, transcript, topics, participants, entiti
 
 
 def run_understanding(ctx, metadata, transcript, diarization, vision, active_data, semantic, shots, cfg):
-    semantic, contract_notes = _normalize_semantic_contract(semantic)
+    semantic, contract_notes, contract_diagnostics = _normalize_semantic_contract(semantic)
     active_data = active_data if isinstance(active_data, dict) else {}
+    transcript = dict(transcript) if isinstance(transcript, dict) else {}
+    transcript["segments"] = _dict_rows(transcript.get("segments", []))
+    transcript["words"] = _dict_rows(transcript.get("words", []))
+    diarization = dict(diarization) if isinstance(diarization, dict) else {}
+    diarization["speakers"] = _dict_rows(diarization.get("speakers", []))
+    vision = dict(vision) if isinstance(vision, dict) else {}
+    vision["people"] = _dict_rows(vision.get("people", []))
+    vision["observations"] = _dict_rows(vision.get("observations", []))
+    vision["thumbnails"] = _dict_rows(vision.get("thumbnails", []))
+    shots = _dict_rows(shots)
+    diagnostics_path = ctx.output / "understanding_contract_diagnostics.json"
+    write_json(diagnostics_path, {
+        "schema_version": "1.0",
+        "normalization_event_count": len(contract_diagnostics),
+        "events": contract_diagnostics,
+        "semantic_counts": {key: len(semantic.get(key, [])) for key in ("topics", "moments", "questions_answers", "program_sections")},
+        "input_types": {
+            "transcript_segments": type(transcript.get("segments")).__name__,
+            "diarization_speakers": type(diarization.get("speakers")).__name__,
+            "vision_people": type(vision.get("people")).__name__,
+            "shots": type(shots).__name__,
+        },
+    })
     entities = extract_entities(transcript)
     qas = semantic["questions_answers"]
     participants = build_participants(transcript, diarization, vision,
@@ -587,4 +685,4 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
                "editorial_shortlist": [candidate["moment_id"] for candidate in main_moments if candidate.get("default_shortlist_eligible", True)][:cfg.get("max_moments", 12)],
                "main_moments": main_moments, "thumbnail_candidates": thumbnails,
                "moment_frames": moment_frames, "video_understanding": video_understanding},
-              "ok" if transcript.get("segments") else "partial", notes, artifacts)
+              "ok" if transcript.get("segments") else "partial", notes, [*artifacts, diagnostics_path])

@@ -44,6 +44,7 @@ DEFAULTS = {
                "sface_model": "models/face_recognition_sface_2021dec.onnx",
                "landmarker_model": "models/face_landmarker.task",
                "reid_threshold": 0.55, "reid_margin": 0.08,
+               "micro_reid_threshold": 0.72, "micro_reid_margin": 0.12,
                "track_max_gap_seconds": 1.2, "checkpoint_seconds": 30.0,
                "track_occlusion_max_seconds": 2.0,
                "detector_cascade": True, "embedding_interval_seconds": 1.0,
@@ -73,7 +74,11 @@ DEFAULTS = {
                       "candidate_hard_max_seconds": 180.0, "allow_commercial_candidates": False,
                       "target_min_seconds": 30.0, "target_max_seconds": 90.0,
                       "hard_min_seconds": 8.0, "hard_max_seconds": 180.0, "allow_story_exception": True,
-                      "commercial_penalty": .5, "ranking_weights": dict(DEFAULT_WEIGHTS)},
+                      "commercial_penalty": .5,
+                      "commercial_block_context_before_seconds": 25.0,
+                      "commercial_block_context_after_seconds": 25.0,
+                      "commercial_block_min_precursor_signals": 2,
+                      "ranking_weights": dict(DEFAULT_WEIGHTS)},
     "ocr": {"enabled": False, "languages": "por+eng",
             "tesseract_cmd": None, "max_frames": 80},
     "audio_events": {"enabled": False, "checkpoint": None,
@@ -182,6 +187,13 @@ def validate(cfg):
         raise ValueError('semantic_analysis.fallback_warning_fraction fora de [0,1]')
     if not 0<=cfg['understanding']['commercial_penalty']<=1:
         raise ValueError('understanding.commercial_penalty fora de [0,1]')
+    for key in ('commercial_block_context_before_seconds','commercial_block_context_after_seconds'):
+        value=cfg['understanding'][key]
+        if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or not 0<=value<=180:
+            raise ValueError('understanding.'+key+' deve estar em [0,180]')
+    value=cfg['understanding']['commercial_block_min_precursor_signals']
+    if isinstance(value,bool) or not isinstance(value,int) or not 1<=value<=8:
+        raise ValueError('understanding.commercial_block_min_precursor_signals deve estar em [1,8]')
     for key,weight in cfg['understanding']['ranking_weights'].items():
         if isinstance(weight,bool) or not isinstance(weight,(int,float)) or not math.isfinite(weight) or not 0<=weight<=1:
             raise ValueError('Peso editorial invalido: '+key)
@@ -203,6 +215,14 @@ def validate(cfg):
         value = cfg["vision"][key]
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 3:
             raise ValueError("vision." + key + " deve estar em (0,3]")
+    for key in ("micro_reid_threshold", "micro_reid_margin"):
+        value = cfg["vision"][key]
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value <= 1:
+            raise ValueError("vision." + key + " deve estar em [0,1]")
+    if cfg["vision"]["micro_reid_threshold"] <= cfg["vision"]["reid_threshold"]:
+        raise ValueError("vision.micro_reid_threshold deve ser mais estrito que reid_threshold")
+    if cfg["vision"]["micro_reid_margin"] < cfg["vision"]["reid_margin"]:
+        raise ValueError("vision.micro_reid_margin nao pode ser menor que reid_margin")
     for k in ("window_seconds", "max_observation_gap_seconds"):
         v = cfg["active_speaker"][k]
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not .1 <= v <= 2:

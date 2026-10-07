@@ -97,3 +97,26 @@ def test_second_curation_core_exposes_social_story_contract(tmp_path):
         assert manifest['mode'] == 'multiple_independent_stories'
         assert index['stories_ref'] == 'social/stories_manifest.json'
         assert index['selected_aspect_ratio'] == '9:16'
+
+
+def test_story_filter_honors_canonical_excluded_eligibility_even_if_shortlist_flag_is_wrong():
+    ad = candidate('AD_CANONICAL', 0, commercial=False, score=.99)
+    ad['default_shortlist_eligible'] = True
+    ad['commercial_classification'] = {'eligibility': 'excluded', 'commercial_score': .95, 'content_type': 'advertisement'}
+    ad['content_type'] = 'advertisement'
+    selected, metrics = select_story_set([ad], {'min_seconds': 15, 'max_seconds': 60, 'max_stories': 4,
+                                                 'min_spacing_seconds': 45, 'max_per_topic': 2})
+    assert selected == []
+    assert metrics['eligible_count'] == 0
+
+
+def test_social_output_fails_closed_when_understanding_failed_but_preserves_diagnostic_candidates():
+    cfg = deepcopy(DEFAULTS)
+    package = {'candidates': [candidate('A', 0)]}
+    analysis = {'stage_status': {'16_understanding': {'status': 'failed'}},
+                'second_curation_package': package}
+    result = build_social_output(analysis, cfg, package)
+    assert result['stories'] == []
+    assert result['story_readiness'] == 'BLOCKED'
+    assert result['story_readiness_reason'] == 'understanding_failed'
+    assert result['provisional_candidates_available'] is True

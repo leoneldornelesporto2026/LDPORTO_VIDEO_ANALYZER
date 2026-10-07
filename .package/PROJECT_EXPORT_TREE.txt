@@ -24,6 +24,8 @@ docs/FILES_CHANGED_V3.md
 docs/FONTES.md
 docs/REPOSITORY_STRUCTURE.md
 docs/REQUISITOS_RECEBIDOS.txt
+docs/ROADMAP_R2_R3_20261007.md
+docs/ROUND2_VISUAL_IDENTITY.md
 docs/TEST_REPORT_V3.md
 docs/TEST_RESULTS_V3.xml
 docs/V43_ARCHITECTURE.md
@@ -38,6 +40,7 @@ docs/V44_FINALIZATION.md
 docs/V44_FINAL_AUDIT.md
 docs/V44_IMPLEMENTATION_LEDGER.md
 docs/V44_R3_STABILIZATION.md
+docs/V44_R4_2_INTEGRITY_VISION.md
 docs/V44_R4_SOCIAL_OUTPUT.md
 docs/V4_2_BENCHMARK_COMPARISON.md
 docs/V4_2_IMPLEMENTATION_REPORT.md
@@ -101,11 +104,13 @@ scripts/configure_ollama.py
 scripts/dev/compare_runs.py
 scripts/dev/finalize_v44.py
 scripts/dev/monitor_full_v44.py
+scripts/dev/performance_diagnostics_r3.py
 scripts/dev/replay_camera_v44.py
 scripts/dev/replay_commercial_v44.py
 scripts/dev/replay_perception_v44.py
 scripts/dev/replay_second_curation_v44.py
 scripts/dev/replay_targeted_asr_v44.py
+scripts/dev/replay_visual_identity_r2.py
 scripts/dev/report_full_v44.py
 scripts/dev/resume_full_v44_benchmark.py
 scripts/dev/run_full_v44_benchmark.py
@@ -224,4 +229,7 @@ src/tests/test_v44_second_curation.py
 src/tests/test_v44_semantic_story.py
 src/tests/test_v44_social_output.py
 src/tests/test_v44_targeted_asr.py
+src/tests/test_v45_r3_resource_budget.py
+src/tests/test_v45_visual_identity_final.py
+src/tests/test_v45_visual_identity_round2.py
 src/tests/test_v4_final.py

@@ -589,7 +589,27 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                'coverage_note': 'Visual coverage is sampled; timeline coverage includes explicit full-frame fallback.'}
     from .preview_verifier import zoom_diagnostics
     delivered_zoom, _ = zoom_diagnostics(rows, duration, cfg['smart_zoom']['min_zoom_duration'])
-    metrics.update(delivered_zoom, proposed_zoom_event_count=len(smart_state.events))
+    zoom_opportunity_rows = [row for row in rows if (row.get('smart_zoom') or {}).get('beat')]
+    zoom_requested_rows = [row for row in rows if number((row.get('smart_zoom') or {}).get('requested_zoom'), 1.0) > 1.001]
+    zoom_block_reasons = Counter(
+        reason
+        for row in zoom_opportunity_rows
+        for reason in (row.get('smart_zoom') or {}).get('reason_codes', [])
+        if reason not in {'STABLE_EDITORIAL_FRAMING'}
+    )
+    zoom_aborted_rows = [row for row in zoom_requested_rows
+                         if number((row.get('camera') or {}).get('zoom_end'), 1.0) <= 1.001]
+    metrics.update(delivered_zoom,
+                   proposed_zoom_event_count=len(smart_state.events),
+                   zoom_opportunity_window_count=len(zoom_opportunity_rows),
+                   zoom_request_window_count=len(zoom_requested_rows),
+                   zoom_accepted_event_count=len(smart_state.events),
+                   zoom_delivered_event_count=delivered_zoom.get('zoom_event_count', 0),
+                   zoom_aborted_window_count=len(zoom_aborted_rows),
+                   zoom_block_reason_counts=dict(zoom_block_reasons),
+                   zoom_delivery_fraction=(delivered_zoom.get('zoom_event_count', 0) / len(smart_state.events)
+                                           if smart_state.events else None),
+                   zoom_diagnostics_contract='opportunity_request_accepted_delivered_aborted_v1')
     status = 'unavailable' if not evidence_seconds else 'partial' if unresolved_seconds or evidence_seconds < .8*duration else 'ok'
     return ok({'timeline': rows, 'metrics': metrics, 'debug': {'schema_version': '3.0', 'events': debug, 'counts': dict(counts)} if cfg['debug_output'] else None,
                'zoom_events': smart_state.events,

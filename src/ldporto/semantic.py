@@ -151,7 +151,12 @@ def call_ollama(cfg, group):
     schema = range_schema(group) if cfg.get('structured_ranges', True) else ollama_schema()
     range_rule = (' Use start_segment_id/end_segment_id para cada intervalo; a expansao para IDs intermediarios e feita pelo programa. '
                   'O primeiro topic comeca no primeiro segmento e o ultimo termina no ultimo; intervalos sao adjacentes, nao sobrepostos.') if cfg.get('structured_ranges', True) else ''
-    prompt = PROMPT + range_rule + "\nSchema obrigatório: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
+    if cfg.get('compact_prompt', False):
+        # API /api/chat already receives the same JSON Schema via format=schema.
+        # Preserve the old mode by default until a real local A/B quality check.
+        prompt = PROMPT + range_rule + "\nResponda conforme o JSON Schema enviado no parametro format da API."
+    else:
+        prompt = PROMPT + range_rule + "\nSchema obrigatório: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
     data, meta = ollama_chat(
         cfg["ollama_url"], cfg.get("_resolved_model") or cfg["model"],
         [{"role": "system", "content": prompt},
@@ -198,7 +203,8 @@ def semantic_cache_key(cfg, group, model_fingerprint):
                    'schema_version': SCHEMA_VERSION, 'schema': range_schema(group) if cfg.get('structured_ranges', True) else ollama_schema(),
                    'model': cfg.get('_resolved_model') or cfg['model'], 'model_fingerprint': model_fingerprint,
                    'options': profile_options(cfg), 'think': cfg.get('think'),
-                   'structured_ranges': cfg.get('structured_ranges', True)})
+                   'structured_ranges': cfg.get('structured_ranges', True),
+                   **({'compact_prompt': True} if cfg.get('compact_prompt', False) else {})})
 
 
 def semantic_failure_category(error):
@@ -335,7 +341,8 @@ def repair_ollama_output(cfg, group, invalid_data, error):
     system = ("Corrija SOMENTE a estrutura JSON. Não altere a transcrição, não crie IDs, não crie timestamps, "
               "não acrescente fatos. Use exclusivamente os segment_id válidos fornecidos e respeite a ordem/consecutividade. "
               "Reescreva somente metadata em PT-BR, sem traduzir fala literal. Devolva apenas os itens invalidos; use arrays vazios para colecoes sem reparo. "
-              "Responda apenas no schema JSON. Schema: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":")))
+              "Responda apenas no schema JSON." + (" Schema: " + json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
+              if not cfg.get('compact_prompt', False) else " O schema obrigatorio ja foi enviado pela API."))
     payload = {"validation_error": scrub(error), "valid_segment_ids": valid_ids,
                "repair_scope": {key: invalid_indices[key] for key in invalid_indices},
                "invalid_output": {'locale': 'pt-BR', **{key: [original[key][index] for index in invalid_indices[key]] for key in invalid_indices}} if editable else invalid_data}
@@ -880,7 +887,8 @@ class SemanticEngine:
                      "num_ctx": options["num_ctx"], "num_predict": options["num_predict"], "options": options,
                      "cache_hit": False, "validation_success": False, "repair_attempted": False,
                      "repair_success": False, "fallback": False, "fallback_used": False,
-                     "initial_invalid": False, "error_category": None}
+                     "initial_invalid": False, "error_category": None,
+                     "compact_prompt": bool(cfg.get("compact_prompt", False))}
             result = None
             if requested_backend == "ollama":
                 key = semantic_cache_key(cfg, group, model_fingerprint)
@@ -915,8 +923,9 @@ class SemanticEngine:
                         result = ground_model_output(model_output, group, index)
                         entry.update(repair_success=True, repair_call=repair_meta)
                     entry.update(validation_success=True, output_chars=len(json.dumps(model_output, ensure_ascii=False)))
-                    write_json(record, {"version": "4.3", "key": key, "checksum": digest(model_output), "data": model_output,
-                                        "source_hash": ctx.signature, "progress_index": index, "model_fingerprint": model_fingerprint})
+                    if not entry["cache_hit"] or entry["repair_attempted"]:
+                        write_json(record, {"version": "4.3", "key": key, "checksum": digest(model_output), "data": model_output,
+                                            "source_hash": ctx.signature, "progress_index": index, "model_fingerprint": model_fingerprint})
                 except Exception as exc:
                     entry.update(fallback=True, fallback_used=True, error_category=semantic_failure_category(exc), error=scrub(exc))
                     result, preservation = salvage_semantic_components(model_output, group, index)
@@ -970,6 +979,9 @@ class SemanticEngine:
             inference_records.extend(record for record in (review_meta, review_meta.get('repair_call')) if record)
         generated_tokens = sum(record.get('eval_count') or 0 for record in inference_records)
         generation_seconds = sum((record.get('eval_duration_ns') or 0) / 1e9 for record in inference_records)
+        metrics.update(chunk_cache_hits=sum(bool(entry["cache_hit"]) for entry in call_meta),
+                       chunk_cache_rewrites_avoided=sum(bool(entry["cache_hit"] and not entry["repair_attempted"]) for entry in call_meta),
+                       prompt_mode="compact_schema_api_only" if cfg.get("compact_prompt", False) else "legacy_embedded_schema")
         metrics.update(global_review_cache_hit=bool((review_meta or {}).get('cache_hit')),
                        total_inference_call_count=used_calls + (0 if not review_meta or review_meta.get('cache_hit') or review_meta.get('skipped') else 1 + int('repair_call' in review_meta)),
                        semantic_tokens_per_second=generated_tokens / generation_seconds if generation_seconds else None,

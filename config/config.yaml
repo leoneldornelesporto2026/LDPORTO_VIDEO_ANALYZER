@@ -54,6 +54,8 @@ vision:
   detector_cascade: true
   embedding_interval_seconds: 1.0
   short_shot_extra_sampling: true
+  # CPU-only HOG em paralelo ao detector facial (opt-in após teste A/B local).
+  parallel_hog_with_face: false
   short_shot_max_seconds: 1.5
   body_refresh_seconds: 0.5
   track_occlusion_max_seconds: 2.0
@@ -93,6 +95,8 @@ semantic_analysis:
   timeout_seconds: 600
   max_chars: 24000
   keep_alive: 30m
+  # Remove copia redundante do schema no prompt; muda a saida do modelo, requer A/B.
+  compact_prompt: false
   global_review: true
   global_max_moments: 120
   global_max_chars: 80000

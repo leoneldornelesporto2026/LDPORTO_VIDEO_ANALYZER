@@ -227,6 +227,9 @@ class PersonDetectionEngine:
         self.last_body_time = -math.inf
         self.last_shot = None
         self.face = self.sface = self.hog = self.yolo = None
+        self._hog_pool = None
+        from .performance import cpu_overlap_budget
+        self.overlap_budget = cpu_overlap_budget(requested=cfg.get("parallel_hog_with_face", False))
         yunet, sface = asset_path(cfg["yunet_model"]), asset_path(cfg["sface_model"])
         if yunet.is_file():
             self.face = cv2.FaceDetectorYN.create(str(yunet), "", (320, 320), 0.85, 0.3, 5000)
@@ -251,8 +254,25 @@ class PersonDetectionEngine:
             if self.yolo is None:
                 self.hog = cv2.HOGDescriptor()
                 self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+                if self.overlap_budget["enabled"]:
+                    from concurrent.futures import ThreadPoolExecutor
+                    self._hog_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ldporto-hog-cpu")
                 notes.append("HOG identifica melhor corpos inteiros. Pessoas sentadas podem "
                              "aparecer somente com caixa de rosto; não foi inventada caixa de corpo.")
+
+    def close(self):
+        if getattr(self, "_hog_pool", None) is not None:
+            self._hog_pool.shutdown(wait=True, cancel_futures=False)
+            self._hog_pool = None
+
+    def _hog_boxes(self, frame, width, height):
+        values, scores = self.hog.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.08)
+        bodies = []
+        for coords, score in sorted(zip(values, scores), key=lambda pair: float(pair[1]), reverse=True):
+            box = bbox(coords, width, height)
+            if all(iou(box, b["bbox"]) < .5 for b in bodies):
+                bodies.append({"bbox": box, "confidence": None, "hog_score": float(score)})
+        return bodies
 
     def set_frame_context(self, time, shot_id, shot_duration=None):
         self.frame_context = (time, shot_id, shot_duration)
@@ -274,6 +294,12 @@ class PersonDetectionEngine:
         if shot_id != self.last_shot:
             self.face_history, self.last_body_time = [], -math.inf
         self.calls["face_detection_calls"] += 1
+        # Scheduled refresh is independent of face results. Overlap exactly the
+        # same HOG call with face work (no speculative extra detection calls).
+        scheduled_hog = bool(getattr(self, "_hog_pool", None) is not None and self.hog is not None and
+            width >= 64 and height >= 128 and
+            (not cascade or time - self.last_body_time >= self.cfg.get("body_refresh_seconds", .5)))
+        hog_future = self._hog_pool.submit(self._hog_boxes, frame, width, height) if scheduled_hog else None
         used_history = set()
         if isinstance(self.face, cv2.CascadeClassifier):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -337,12 +363,7 @@ class PersonDetectionEngine:
                 bodies.append({"bbox": bbox([x1, y1, x2-x1, y2-y1], width, height),
                                "confidence": finite_or_none(float(row.conf[0]))})
         elif self.hog and run_body and width >= 64 and height >= 128:
-            values, scores = self.hog.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.08)
-            order = sorted(zip(values, scores), key=lambda pair: float(pair[1]), reverse=True)
-            for values, score in order:
-                box = bbox(values, width, height)
-                if all(iou(box, b["bbox"]) < 0.5 for b in bodies):
-                    bodies.append({"bbox": box, "confidence": None, "hog_score": float(score)})
+            bodies.extend(hog_future.result() if hog_future else self._hog_boxes(frame, width, height))
         self.phase_seconds['body_detection']+=perf_counter()-body_started
         self.calls["successful_faces"] += len(faces)
         self.calls["frames_without_face"] += int(not faces)
@@ -648,6 +669,8 @@ class VisionEngine:
                     last_log = time
         finally:
             cap.release()
+            if hasattr(detector, "close"):
+                detector.close()
             if lips:
                 lips.close()
         if checkpoint_seconds > 0 and (len(frames) > frame_mark or len(observations) > obs_mark):
@@ -706,6 +729,9 @@ class VisionEngine:
                                        'ms_per_call':({**dict(timings),**dict(getattr(detector,'phase_seconds',{}))}).get(
                                            {'embedding_calls':'face_embedding','landmark_calls':'landmark_inference'}.get(name,name.removesuffix('_calls')),0)*1000/count if count else None}
                                        for name,count in detector_calls.items() if name.endswith('_calls')},
+                                   'cpu_hog_overlap': dict(getattr(detector, 'overlap_budget', {})),
+                                   'cpu_hog_overlap_enabled': bool(getattr(detector, '_hog_pool', None) or
+                                           getattr(detector, 'overlap_budget', {}).get('enabled')),
                                    'gpu_time_seconds':None,'gpu_time_reason':'not_instrumented',
                                    'phase_accounting':'detector_subphases_partition_combined_detection; do_not_sum_both'},
                    "quality": {"sample_count": len(frames), "actual_width": width, "actual_height": height,

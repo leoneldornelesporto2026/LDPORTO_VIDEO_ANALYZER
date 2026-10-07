@@ -1,4 +1,7 @@
 > **V4.2:** [relatorio atual](docs/V4_2_IMPLEMENTATION_REPORT.md), [matriz](docs/V4_2_REQUIREMENT_MATRIX.md),
+
+> **Build de estabilização atual:** V4.4 R3 (cache identity 4.4.0). Veja `docs/V44_R3_STABILIZATION.md`.
+
 > [auditoria independente](docs/WORKER_DISCOVERY_AUDIT.md), [benchmark](docs/V4_2_BENCHMARK_COMPARISON.md).
 > Alvo: Windows 10/11 + Python 3.11.x. Testes auxiliares em 3.13 NAO homologam 3.11.
 > **Camera Director v3:** leia [docs/CAMERA_DIRECTOR_V3.md](docs/CAMERA_DIRECTOR_V3.md).

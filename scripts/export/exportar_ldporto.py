@@ -959,9 +959,9 @@ Use este ZIP quando a tarefa for alterar, revisar ou evoluir o codigo.
             "legacy_exporters_excluded": sorted(LEGACY_EXPORTER_NAMES),
         },
         readme_text=readme,
-        manifest_name="PROJECT_EXPORT_MANIFEST.json",
-        tree_name="PROJECT_EXPORT_TREE.txt",
-        readme_name="PROJECT_EXPORT_README.txt",
+        manifest_name=".package/PROJECT_EXPORT_MANIFEST.json",
+        tree_name=".package/PROJECT_EXPORT_TREE.txt",
+        readme_name=".package/PROJECT_EXPORT_README.txt",
     )
 
 

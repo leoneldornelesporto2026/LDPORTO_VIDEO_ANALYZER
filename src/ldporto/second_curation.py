@@ -21,6 +21,19 @@ def _text(words):
     return ' '.join(parts).replace(' ,', ',').replace(' .','.').replace(' ?','?').replace(' !','!').strip()
 
 
+
+
+def _editorial_review_rows(value):
+    """Normalize optional editorial review without turning malformed rows into evidence."""
+    if isinstance(value, dict):
+        rows = value.get('top_moments', [])
+    elif isinstance(value, list):
+        rows = value
+    else:
+        rows = []
+    return [row for row in rows if isinstance(row, dict) and row.get('moment_id')]
+
+
 def _candidate_source(analysis):
     main=analysis.get('main_moments') or []
     if main:
@@ -53,7 +66,7 @@ def build_second_curation_package(analysis):
     participants=analysis.get('participants',[])
     topics=analysis.get('topics',[])
     topic_index = {topic['topic_id']: topic for topic in topics}
-    review={row['moment_id']: row for row in (analysis.get('ollama_editorial_review') or {}).get('top_moments',[])}
+    review={row['moment_id']: row for row in _editorial_review_rows(analysis.get('ollama_editorial_review'))}
     moment_frames={row['moment_id']:row.get('frames',{}) for row in analysis.get('moment_frames',[]) if row.get('moment_id')}
     candidates=[]
     for rank, m in enumerate(_candidate_source(analysis),1):

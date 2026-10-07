@@ -16,6 +16,23 @@ from .compact_artifacts import compact_analysis_document, create_compact_artifac
 from .analysis_quality import quality_gate
 
 
+
+
+def _editorial_review_mapping(value):
+    """Return a safe editorial-review mapping for reports/handoffs.
+
+    Provider or legacy payloads can occasionally surface a list.  Reports must
+    remain a read-only consumer and never crash the completed analysis because
+    of an optional editorial-review shape.
+    """
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, list):
+        return {"top_moments": [row for row in value if isinstance(row, dict)],
+                "status": "partial", "needs_review": True,
+                "method": "normalized_legacy_top_moments_list"}
+    return {}
+
 def compact_moment(moment):
     return {key: value for key, value in moment.items() if key != "layout_intervals"}
 
@@ -171,7 +188,7 @@ def markdown_report(analysis):
     for t in analysis["transcript_segments"]:
         lines += [f"[{stamp(t['start'])}–{stamp(t['end'])}] {t.get('speaker') or 'SPEAKER_UNKNOWN'}",
                   t["text"], ""]
-    review = analysis.get("ollama_editorial_review")
+    review = _editorial_review_mapping(analysis.get("ollama_editorial_review"))
     lines += ["## Revisão editorial local (Ollama)", ""]
     if review:
         lines += [review.get("overview") or "Sem overview.", ""]
@@ -246,7 +263,7 @@ def html_report(analysis):
     portraits = "".join(f'<figure><img src="{escape(person["portrait"], quote=True)}" alt="{escape(person["person_id"],quote=True)}">'
                         f'<figcaption>{escape(person["person_id"])}</figcaption></figure>'
                         for person in analysis["people"] if safe_image_reference(person.get("portrait")))
-    review = analysis.get("ollama_editorial_review") or {}
+    review = _editorial_review_mapping(analysis.get("ollama_editorial_review"))
     review_cards = []
     for row in review.get("top_moments", [])[:12]:
         review_cards.append(

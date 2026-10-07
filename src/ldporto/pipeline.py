@@ -2,7 +2,7 @@ from pathlib import Path
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import re
-from . import __version__
+from . import __version__, __build__
 from .config import ROOT, configure_local_mode
 from .core import Context, file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok, digest
 from .media import resolve_input, inspect
@@ -325,7 +325,7 @@ def analyze(source, cfg, output=None, force=False):
         analysis['analysis_quality'].update(understanding.get('candidate_metrics',{}))
         analysis['analysis_quality']['editorial_participant_count']=len(analysis.get('participants',[]))
         analysis['vision_performance']=vision.get('performance',{})
-        analysis['provenance']={'producer_version':__version__,'config_digest':__import__('ldporto.core',fromlist=['digest']).digest(cfg),
+        analysis['provenance']={'producer_version':__version__,'build_label':__build__,'config_digest':__import__('ldporto.core',fromlist=['digest']).digest(cfg),
                     'source_hash':signature,'python':__import__('sys').version.split()[0],
                     'platform':__import__('platform').platform(),'model_names':{
                     'asr':cfg['transcription']['model'],'diarization':cfg['diarization']['model'],'semantic':cfg['semantic_analysis']['model']},

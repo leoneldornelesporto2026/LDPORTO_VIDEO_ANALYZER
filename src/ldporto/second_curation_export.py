@@ -9,7 +9,7 @@ import tempfile
 import uuid
 import zipfile
 
-from . import __version__
+from . import __version__, __build__
 from .core import digest, file_hash, read_json, scrub, stamp, write_json
 from .paths import PACKAGE_OUTPUT_DIR, SCHEMA_DIR
 from .preview_renderer import build_contact_sheet, render_preview
@@ -287,18 +287,27 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                      'speaker_person_ready': any(row.get('person_id') for row in analysis.get('speaker_person_summary', [])),
                      'camera_ready': (analysis.get('analysis_quality') or {}).get('resolved_focus_coverage', 0) > 0,
                      'preview_ready': (analysis.get('preview_validation') or {}).get('status') == 'ok' and bool((analysis.get('preview_validation') or {}).get('verifier_uses_rendered_frames'))}
+        readiness_reasons = {
+            'editorial_ready': None if readiness['editorial_ready'] else ('no_candidates' if not candidates else 'missing_transcript_or_unresolved_references'),
+            'transcript_ready': None if readiness['transcript_ready'] else 'transcript_unavailable_or_empty',
+            'visual_ready': None if readiness['visual_ready'] else ('shortlist_empty' if not shortlist else 'shortlist_visual_evidence_incomplete'),
+            'speaker_person_ready': None if readiness['speaker_person_ready'] else 'speaker_person_mapping_unresolved',
+            'camera_ready': None if readiness['camera_ready'] else 'resolved_focus_coverage_zero',
+            'preview_ready': None if readiness['preview_ready'] else 'rendered_preview_not_verified',
+        }
         index = {'schema_version': SCHEMA_VERSION, 'source': {'title': source_info.get('title') or metadata.get('filename'),
                  'url': source_info.get('url'), 'duration': metadata.get('duration')}, 'analysis_status': analysis.get('analysis_status'),
-                 'second_curation_readiness': readiness, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
+                 'second_curation_readiness': readiness, 'second_curation_readiness_reasons': readiness_reasons, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
                  'candidate_catalog_ref': 'editorial/candidate_catalog.json', 'shortlist_ref': 'editorial/default_shortlist.json'}
         write('CURATION_INDEX.json', index)
         brief = {'schema_version': '1.0', 'task': 'second_editorial_curation', 'source_id': source_id,
                  'source_title': index['source']['title'], 'source_url': index['source']['url'],
-                 'analyzer_version': __version__, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
+                 'analyzer_version': __version__, 'analyzer_build': __build__, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
                  'goals': ['find_strongest_standalone_social_clips', 'reject_commercials', 'challenge_first_pass_ranking',
                            'optimize_boundaries', 'prefer_complete_payoff'],
                  'target_duration_seconds': {'preferred_min': 30, 'preferred_max': 90},
                  'capabilities': readiness,
+                 'capability_reasons': readiness_reasons,
                  'known_limitations': [key for key, value in readiness.items() if not value],
                  'recommended_entrypoints': ['CURATION_INDEX.json', 'editorial/default_shortlist.json',
                                              'editorial/candidate_catalog.json', 'candidates/', 'visuals/']}
@@ -312,9 +321,9 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         files = [{'path': file.relative_to(root).as_posix(), 'bytes': file.stat().st_size, 'sha256': file_hash(file)} for file in sorted(root.rglob('*'))
              if file.is_file() and 'optional_media' not in file.relative_to(root).parts]
         manifest = {'schema_version': SCHEMA_VERSION, 'second_curation_schema_version': '3.1', 'run_id': run_id,
-                    'source_hash': metadata.get('sha256'), 'analyzer_version': __version__, 'created_at': datetime.now(timezone.utc).isoformat(),
+                    'source_hash': metadata.get('sha256'), 'analyzer_version': __version__, 'analyzer_build': __build__, 'created_at': datetime.now(timezone.utc).isoformat(),
                     'files': files, 'file_count': len(files) + 1, 'uncompressed_bytes': sum(row['bytes'] for row in files),
-                    'readiness': readiness, 'missing_capabilities': [key for key, value in readiness.items() if not value],
+                    'readiness': readiness, 'readiness_reasons': readiness_reasons, 'missing_capabilities': [key for key, value in readiness.items() if not value],
                     'warnings': package.get('quality_warnings', []), 'reference_validation': package['reference_validation'],
                     'source_video_included': False, 'expensive_inference_executed': False}
         write('SECOND_CURATION_MANIFEST.json', manifest)
@@ -337,7 +346,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         result = {'state': state, 'path': str(zip_path), 'bytes': zip_path.stat().st_size, 'file_count': len(files) + 1,
                   'zip_sha256': file_hash(zip_path),
                   'uncompressed_bytes': manifest['uncompressed_bytes'], 'candidate_count': len(candidates), 'shortlist_count': len(shortlist),
-                  'visual_count': len(visuals), 'readiness': readiness, 'validation': final_validation,
+                  'visual_count': len(visuals), 'readiness': readiness, 'readiness_reasons': readiness_reasons, 'validation': final_validation,
                   'created_at': manifest['created_at'], 'run_id': run_id, 'expensive_inference_executed': False}
         result.update(media_path=str(media_path) if media_path else None,
                   media_bytes=media_path.stat().st_size if media_path else None,

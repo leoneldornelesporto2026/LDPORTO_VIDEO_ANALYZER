@@ -68,8 +68,9 @@ def test_work_package_has_single_derived_manifest_files(tmp_path):
     assert len(packages)==1
     with zipfile.ZipFile(packages[0]) as z:
         names=z.namelist()
-        for name in ('PROJECT_EXPORT_MANIFEST.json','PROJECT_EXPORT_TREE.txt','PROJECT_EXPORT_README.txt'):
+        for name in ('.package/PROJECT_EXPORT_MANIFEST.json','.package/PROJECT_EXPORT_TREE.txt','.package/PROJECT_EXPORT_README.txt'):
             assert names.count(name)==1
+        assert not any(name.startswith('PROJECT_EXPORT_') for name in names)
         assert len(names)==len(set(names))
         assert len(names)==len({name.casefold() for name in names})
         assert not any('.venv' in Path(name).parts for name in names)

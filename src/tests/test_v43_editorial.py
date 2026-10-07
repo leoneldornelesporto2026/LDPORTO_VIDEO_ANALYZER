@@ -212,3 +212,38 @@ def test_candidate_metrics_do_not_call_every_duration_exclusion_commercial(tmp_p
     assert result['candidate_metrics']['excluded_commercial_count'] == 0
     assert result['candidate_metrics']['excluded_eligibility_count'] == 1
     assert result['candidate_metrics']['final_shortlist_count'] == len(result['editorial_shortlist'])
+
+def test_understanding_normalizes_semantic_contract_list_shapes(tmp_path):
+    import logging
+    from ldporto.core import Context
+    from ldporto.understanding import run_understanding
+    from ldporto.config import load_config
+    cfg = load_config()
+    cfg['understanding']['extract_frames'] = False
+    ctx = Context(tmp_path / 'none.mp4', tmp_path, cfg, 'fixture-contract', logging.getLogger('understanding-contract'))
+    transcript = {'words': [], 'segments': [
+        {'segment_id': 'S0', 'start': 0.0, 'end': 4.0, 'speaker': 'SP', 'text': 'Um dia eu comecei este trabalho.'},
+        {'segment_id': 'S1', 'start': 4.0, 'end': 8.0, 'speaker': 'SP', 'text': 'Mas apareceu um problema.'},
+        {'segment_id': 'S2', 'start': 8.0, 'end': 12.0, 'speaker': 'SP', 'text': 'No final deu certo.'},
+    ]}
+    moment = {'moment_id': 'M0', 'start': 0.0, 'end': 12.0, 'text': 'historia completa',
+              'categories': ['storytelling'], 'editorial': {'hook_strength': .8, 'clarity': .9},
+              'standalone_class': 'good', 'context_requirement': 'none',
+              'evidence_segment_ids': ['S0', 'S1', 'S2']}
+    semantic = {
+        'topics': [
+            {'topic_id': 'T0', 'start': 0.0, 'end': 12.0, 'topic': 'Historia', 'summary': 'Resumo',
+             'method': 'ollama', 'evidence_segment_ids': ['S0', 'S1', 'S2']},
+            ['provider-nested-row-that-must-not-crash'],
+        ],
+        'moments': [moment],
+        'questions_answers': [],
+        'program_sections': [{'section_id': 'SEC0', 'topic_ids': ['T0']}],
+        'editorial_review': [{'moment_id': 'M0', 'editorial_score': .91}],
+    }
+    result = run_understanding(ctx, {'duration': 12.0}, transcript, {'speakers': []}, {'people': []},
+                               {}, semantic, [], cfg['understanding'])
+    assert result['status'] == 'ok'
+    assert result['data']['main_moments']
+    assert result['data']['main_moments'][0]['editorial_score'] is not None
+    assert any('semantic_contract_normalized' in note for note in result['notes'])

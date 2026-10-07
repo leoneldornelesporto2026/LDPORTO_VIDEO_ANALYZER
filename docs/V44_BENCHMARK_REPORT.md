@@ -1,24 +1,24 @@
 # V4.4 Benchmark Report
 
 Baseline real reconciliado em [V44_BASELINE_RECONCILIATION.md](V44_BASELINE_RECONCILIATION.md).
-Fonte e run V4.3 preservados. O full run V4.4 está IN_PROGRESS, retomando
-checkpoints da própria tentativa V4.4 após correção de acesso ao cache de
-diarização. A tentativa inicial terminou com parada segura (exit 130), após
+Fonte e run V4.3 preservados. O full run V4.4 está IN_PROGRESS, retomando checkpoints da própria tentativa V4.4 após correção de acesso ao cache de diarização. A retomada já concluiu diarização, tracking, Re-ID e active speaker; a última evidência conhecida da sessão do agente registrava 13/46 chunks semânticos concluídos. A tentativa inicial terminou com parada segura (exit 130), após
 ASR 731 s e cenas 894.6 s; seus logs e manifesto foram preservados. Nenhuma
 métrica dessa tentativa foi tratada como full-run validada. O wall time da
 retomada não será comparado isoladamente à execução completa V4.3.
 
-| Métrica | V4.3 full run | V4.4 full run | Delta |
-| --- | ---: | --- | --- |
-| Tracklets brutos | 6085 | não executado | não medido |
-| Hipóteses online no último log | 5755 em 8231s | não executado | não comparável a tracklets |
-| Tracklets válidos / micro | 1818 / 4267 | não executado | não medido |
-| Speaker/person | 3.2065% | não executado | não medido |
-| Active speaker | 2.4560% | não executado | não medido |
-| Foco de câmera / Smart Zoom | 0 / 0 | não executado | não medido |
-| Semantic fallback | 26.0870% | não executado | não medido |
-| Story payoff | 0 | não executado | não medido |
-| Candidatos / shortlist | 213 / 12 | não executado | não medido |
+| Métrica | V4.3 full run | V4.4 full run (parcial confirmado) | Delta / estado |
+| --- | ---: | ---: | --- |
+| Tracking runtime | 2670.282 s | 2754.265 s | +3.15% |
+| Tracklets brutos | 6085 | 6085 | 0 |
+| Tracklets válidos / micro | 1818 / 4267 | 1818 / 4267 | sem mudança |
+| Speaker/person | 3.2065% | 15.0490% | +11.8425 pp (~4.69x) |
+| Active speaker | 2.4560% | 9.6733% | +7.2173 pp (~3.94x) |
+| Active provável sem overlap | não separado | 8.0853% | nova métrica |
+| Active confirmado | não separado | 0% | sem evidência confirmada |
+| Foco de câmera / Smart Zoom entregue | 0 / 0 | aguardando etapa final | ainda não medido no full run |
+| Semantic fallback | 26.0870% | em processamento | 13/46 chunks concluídos no último checkpoint conhecido |
+| Story payoff | 0 | aguardando semântica completa | ainda não medido |
+| Candidatos / shortlist | 213 / 12 | aguardando editorial final | ainda não medido |
 
 Fixtures e replay serão relatados separadamente. Não há alegação de ganho de
 performance de vídeo inteiro derivada de mocks, fixtures ou replay.

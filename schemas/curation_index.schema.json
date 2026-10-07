@@ -2,12 +2,63 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "L.D.PORTO Second Curation Core Index v1",
   "type": "object",
-  "required": ["schema_version", "source", "analysis_status", "second_curation_readiness", "candidate_count", "default_shortlist_count"],
+  "required": [
+    "schema_version",
+    "source",
+    "analysis_status",
+    "second_curation_readiness",
+    "candidate_count",
+    "default_shortlist_count"
+  ],
   "properties": {
-    "schema_version": {"const": "1.0"},
-    "source": {"type": "object", "required": ["duration"], "properties": {"duration": {"type": ["number", "null"], "minimum": 0}}},
-    "candidate_count": {"type": "integer", "minimum": 0},
-    "default_shortlist_count": {"type": "integer", "minimum": 0},
-    "second_curation_readiness": {"type": "object", "required": ["editorial_ready", "transcript_ready", "visual_ready", "speaker_person_ready", "camera_ready", "preview_ready"], "additionalProperties": {"type": "boolean"}}
+    "schema_version": {
+      "const": "1.0"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "duration"
+      ],
+      "properties": {
+        "duration": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "candidate_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "default_shortlist_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "second_curation_readiness": {
+      "type": "object",
+      "required": [
+        "editorial_ready",
+        "transcript_ready",
+        "visual_ready",
+        "speaker_person_ready",
+        "camera_ready",
+        "preview_ready"
+      ],
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "second_curation_readiness_reasons": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
   }
 }

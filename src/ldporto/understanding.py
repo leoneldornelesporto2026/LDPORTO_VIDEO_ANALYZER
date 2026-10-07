@@ -22,6 +22,47 @@ _CUES = {
 }
 
 
+def _dict_rows(value):
+    """Return only mapping rows from a list-like stage contract.
+
+    Downstream editorial stages must not crash because one optional model/provider
+    returned a nested list or other non-object item.  Invalid rows are ignored here
+    and surfaced by ``run_understanding`` as a contract-normalization note instead
+    of being silently treated as evidence.
+    """
+    if not isinstance(value, list):
+        return []
+    return [row for row in value if isinstance(row, dict)]
+
+
+def _normalize_semantic_contract(semantic):
+    """Normalize the semantic->understanding boundary without inventing evidence."""
+    notes = []
+    if not isinstance(semantic, dict):
+        notes.append(f"semantic_contract_normalized: root={type(semantic).__name__}; expected object")
+        return {"topics": [], "moments": [], "questions_answers": [], "program_sections": [],
+                "editorial_review": None}, notes
+    data = dict(semantic)
+    for key in ("topics", "moments", "questions_answers", "program_sections"):
+        raw = data.get(key, [])
+        rows = _dict_rows(raw)
+        if not isinstance(raw, list) or len(rows) != len(raw):
+            raw_count = len(raw) if isinstance(raw, list) else 0
+            notes.append(f"semantic_contract_normalized: {key} valid_objects={len(rows)}/{raw_count}; expected list[object]")
+        data[key] = rows
+    review = data.get("editorial_review")
+    if isinstance(review, list):
+        valid = _dict_rows(review)
+        data["editorial_review"] = {"top_moments": valid, "content_angles": [],
+                                    "status": "partial", "needs_review": True,
+                                    "method": "normalized_legacy_top_moments_list"}
+        notes.append(f"semantic_contract_normalized: editorial_review list -> object ({len(valid)} valid rows)")
+    elif review is not None and not isinstance(review, dict):
+        notes.append(f"semantic_contract_normalized: editorial_review={type(review).__name__}; omitted")
+        data["editorial_review"] = None
+    return data, notes
+
+
 def extract_entities(transcript):
     """Conservative textual entities. No external recognition or face naming."""
     found = {}
@@ -327,7 +368,8 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
                          q["answer_end"] <= ideal_end for q in questions_answers)
         visual = [s.get("camera_score") for s in shots if overlap(start, end, s["start"], s["end"]) > 0 and
                   isinstance(s.get("camera_score"), (int, float))]
-        ed = moment.get("editorial") or {}
+        editorial_payload = moment.get("editorial")
+        ed = editorial_payload if isinstance(editorial_payload, dict) else {}
         from .semantic import classify_hook
         hook = classify_hook(' '.join(segment.get('text', '') for segment in segments if ideal_start <= segment['start'] < ideal_start + 15))
         cats = set(moment.get("categories") or [])
@@ -490,17 +532,21 @@ def build_video_understanding(metadata, transcript, topics, participants, entiti
 
 
 def run_understanding(ctx, metadata, transcript, diarization, vision, active_data, semantic, shots, cfg):
+    semantic, contract_notes = _normalize_semantic_contract(semantic)
+    active_data = active_data if isinstance(active_data, dict) else {}
     entities = extract_entities(transcript)
-    qas = semantic.get("questions_answers", [])
+    qas = semantic["questions_answers"]
     participants = build_participants(transcript, diarization, vision,
-                                      active_data.get("mapping_summary", []), qas, cfg, shots)
+                                      _dict_rows(active_data.get("mapping_summary", [])), qas, cfg, shots)
     participant_catalog = build_participants(transcript, diarization, vision,
-                                      active_data.get("mapping_summary", []), qas, cfg, shots, include_background=True)
-    story_arcs = build_story_arcs(transcript, semantic.get("topics", []), qas)
-    section_by_topic = {topic_id: section["section_id"] for section in semantic.get("program_sections", []) for topic_id in section["topic_ids"]}
+                                      _dict_rows(active_data.get("mapping_summary", [])), qas, cfg, shots, include_background=True)
+    story_arcs = build_story_arcs(transcript, semantic["topics"], qas)
+    section_by_topic = {topic_id: section["section_id"] for section in semantic["program_sections"]
+                        if isinstance(section.get("topic_ids"), list) and section.get("section_id")
+                        for topic_id in section["topic_ids"]}
     for arc in story_arcs:
         arc["section_id"] = section_by_topic.get(arc.get("topic_id"))
-    main_moments = build_main_moments(transcript, semantic.get("topics", []), semantic.get("moments", []),
+    main_moments = build_main_moments(transcript, semantic["topics"], semantic["moments"],
                                       qas, story_arcs, shots, semantic.get("editorial_review"), cfg)
     for candidate in main_moments:
         candidate["program_section_id"] = section_by_topic.get(candidate.get("topic_id"))
@@ -525,10 +571,11 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
         moment_frames = extract_moment_frames(ctx, main_moments, thumbnails, cfg)
     except Exception as exc:
         ctx.logger.warning("Frames dos momentos: %s: %s", type(exc).__name__, exc)
-    video_understanding = build_video_understanding(metadata, transcript, semantic.get("topics", []),
+    video_understanding = build_video_understanding(metadata, transcript, semantic["topics"],
                                                    participants, entities, story_arcs, main_moments, qas, shots)
     notes = ["Entidades são extraídas apenas de evidência textual; nomes não são inferidos por rosto.",
-             "Story arcs e papéis host/guest são heurísticas conservadoras e permanecem needs_review."]
+             "Story arcs e papéis host/guest são heurísticas conservadoras e permanecem needs_review.",
+             *contract_notes]
     artifacts = []
     for row in moment_frames:
         for relative in (row.get("frames") or {}).values():

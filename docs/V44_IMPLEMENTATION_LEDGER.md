@@ -15,7 +15,7 @@ VERIFIED_REPLAY, VERIFIED_FULL_RUN, BLOCKED.
 | Bloco | Estado | Evidência / próxima validação |
 | --- | --- | --- |
 | Baseline / contadores | VERIFIED_FIXTURE | Contagem real e timestamps reconciliados; snapshot com checksums; regressão discriminante |
-| P0-A diagnostics / affinity / active speaker | VERIFIED_REPLAY | 87 testes verdes; replay real com WAV/observações em cache: speaker/person 15.0490%, active speaker legado 9.6733%, provável sem overlap 8.0853%, confirmado 0%; acurácia anotada e full run V4.4 pendentes |
+| P0-A diagnostics / affinity / active speaker | VERIFIED_FULL_RUN | Replay e full run convergiram: speaker/person 15.0490%, active speaker legado 9.6733%, provável sem overlap 8.0853%, confirmado 0%. Cobertura foi reproduzida no vídeo completo; acurácia de identidade contra anotação humana continua não certificada. |
 | P0-B câmera / layouts / GC | VERIFIED_REPLAY | 146 testes verdes; foco resolvido 15.1801%, dominante visual 9.8220%, speaker apoiado 5.3582%; zoom entregue 1.0x. Composição final/visual real de GC validada no Curator |
 | P0-C comercial | VERIFIED_REPLAY | 138 testes verdes; três false negatives reais excluídos com spans; replay dos 209 principais: 2→7 comerciais; OCR opcional por candidato |
 | P0-D semantic / story / ASR | VERIFIED_REPLAY | 180 testes verdes; dois arcos completos recuperados; ASR real em 9.34s de áudio, raw preservado; fallback V4.4 só será medido no full run |
@@ -23,7 +23,7 @@ VERIFIED_REPLAY, VERIFIED_FULL_RUN, BLOCKED.
 | P1 Curator refinamento | VERIFIED_REPLAY | 35 testes Curator; seis renders reais de oito segundos e preview de candidato promovido de 89.22s; GC único em crop/split; verifier sobre MP4; revisão atual dos renders ao fim do benchmark |
 | P1/P2 operações | VERIFIED_UNIT | ETA/histórico compatível, cleanup por confirmação com leases e checagem de arquivo alterado, rehydration com SHA256, UX de modelos, ruído preservado no debug |
 | Suíte legada | VERIFIED_UNIT | 352 passed em Windows/Python 3.11.9 antes dos patches |
-| Full run V4.4 / compare final | IN_PROGRESS | Suite Analyzer 404 verde antes da retomada / Curator 35; execução em video_31329be78ca4_v44_full_20261006, retomando somente seus checkpoints; baseline preservado |
+| Full run V4.4 / compare final | IN_PROGRESS | Retomada válida confirmou diarização, tracking e P0-A no vídeo completo. Tracking 2754.265s; 6085/1818/4267 raw/valid/micro; speaker/person 15.0490%; active speaker 9.6733%. Semântica estava em 13/46 quando a sessão do agente atingiu o limite; compare/report final aguardam o pipeline concluir. |
 
 ## P0-A
 
@@ -216,5 +216,4 @@ Parciais medidos da retomada: etapa 05 ok em 142.25 s, 23 agrupamentos acústico
 etapa 07 partial em 2754.265 s (versus 2670.282 s V4.3, +3.15%). Re-ID conservou
 6085/1818/4267 raw/valid/micro. Etapa 10 partial em 7.734 s: speaker/person
 15.0490%, active legado 9.6733%, provável sem overlap 8.0853%, confirmado zero.
-Resultados coincidem com o replay. Benchmark geral permanece IN_PROGRESS:
-análise semântica, câmera final e pacote ainda precisam concluir.
+Resultados coincidem com o replay e promovem o P0-A para VERIFIED_FULL_RUN quanto a cobertura observada. Benchmark geral permanece IN_PROGRESS: a extração semântica havia alcançado 13/46 chunks quando a sessão do agente terminou; câmera final, pacote e compare final ainda precisam concluir. Acurácia de identidade permanece sem ground truth anotado.

@@ -53,3 +53,11 @@ Limites e evidências por bloco constam no Implementation Ledger.
 - Testes que dependem de display Tk ou metadata Git agora fazem skip explícito quando executados a partir de pacote exportado/headless, sem mascarar regressões no ambiente Windows/Git normal.
 - Adicionado build label `R3` sem alterar `__version__ = 4.4.0`, preservando compatibilidade de cache/resume. Proveniência e pacote de segunda curadoria carregam o build label.
 - Suíte de estabilização: 410 testes verdes, 2 skips ambientais; `compileall` verde e exportador validado em pacote limpo.
+
+## R4.2-INTEGRITY-VISION
+- Hardened nested Semantic -> Understanding contracts with path-level diagnostics.
+- Fail-closed downstream publication/Stories on Understanding failure.
+- Enforced commercial exclusion invariants and bounded commercial-block propagation.
+- Added conservative face-supported micro-track reentry to established identities.
+- Added causal Smart Zoom opportunity/request/accepted/delivered/aborted diagnostics.
+- Regression suite: 423 passed, 2 environment skips in the audit container.

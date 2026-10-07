@@ -79,6 +79,10 @@ def test_camera_director_delivers_real_gradual_hook_zoom_with_grounded_target():
     result = build_camera_director(metadata, vision, shots, [turn(0, 30)], [],
                                   {'output_width': 540, 'output_height': 960}, main_moments=[moment])['data']
     assert result['metrics']['zoom_event_count'] > 0
+    assert result['metrics']['zoom_opportunity_window_count'] > 0
+    assert result['metrics']['zoom_accepted_event_count'] > 0
+    assert result['metrics']['zoom_delivered_event_count'] == result['metrics']['zoom_event_count']
+    assert result['metrics']['zoom_diagnostics_contract'] == 'opportunity_request_accepted_delivered_aborted_v1'
     assert result['metrics']['max_zoom_factor'] > 1
     assert any(row['camera_mode'] == 'SMART_ZOOM_IN' for row in result['timeline'])
     assert all(row['crop']['upscale_ratio'] <= row['crop']['max_upscale_ratio'] + 1e-6 for row in result['timeline'] if row['crop']['safe'])
@@ -91,6 +95,9 @@ def test_director_source_close_up_does_not_receive_decorative_zoom():
     moment = {'moment_id': 'M1', 'start': 0, 'end': 8, 'evidence_segment_ids': ['SEG_1'], 'categories': ['hook'], 'hook_score': .9}
     result = build_camera_director(metadata, vision, shots, [turn(0, 30)], [], main_moments=[moment])['data']
     assert result['metrics']['zoom_event_count'] == 0
+    assert result['metrics']['zoom_opportunity_window_count'] > 0
+    assert result['metrics']['zoom_accepted_event_count'] == 0
+    assert result['metrics']['zoom_block_reason_counts'].get('SOURCE_ALREADY_CLOSE', 0) > 0
     assert all(key['zoom'] == 1 for row in result['timeline'] for key in row['camera']['keyframes'])
 
 

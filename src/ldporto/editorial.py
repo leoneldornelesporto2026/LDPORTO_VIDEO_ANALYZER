@@ -95,10 +95,10 @@ def classify_content(text, evidence_segment_ids=None, visual_evidence=None):
     offsets = [index for index, character in enumerate(literal) for _ in fold_text(character)]
     signals = {
         "price": r"\br\s*\$\s*\d[\d.,]*|\b\d[\d.,]*\s*(?:reais|mil)\b|\b\d{1,5},\d{2}\b|\bpreco\b.{0,35}\d|\bpor apenas\b|\bde (?:cento|cinquenta|sessenta|setenta|oitenta|noventa)\b.{0,90}\bpor (?:cento|cinquenta|sessenta|setenta|oitenta|noventa)\b",
-        "installment": r"\b\d{1,3}\s*(?:x\b|de\s+\d[\d.,]*|vezes\b)|\b(?:em|ate)\s+(?:\d{1,3}|dez|doze)\s*vezes\b|\btaxa zero\b|\bsem entrada e sem juros\b",
+        "installment": r"\b\d{1,3}\s*(?:x\b|de\s+\d[\d.,]*|vezes\b)|\b(?:em|ate)\s+(?:\d{1,3}|dez|doze)\s*vezes\b|\bparcelas?\b|\btaxa zero\b|\bsem entrada e sem juros\b",
         "discount": r"\b(descontos?|cupom|promocao|promocoes|ofertas?|parcelamento|metade do preco)\b",
         "store": r"\b(lojas?|estoque|vendas? abertas?|pronta entrega|campanha de vendas)\b",
-        "product": r"\b(produtos?|suplementos?|magnesio|vitaminas?|colageno|sofa|couro|carros?|veiculos?|capsulas?|medicamentos?|cursos?|livros?)\b",
+        "product": r"\b(produtos?|suplementos?|magnesio|vitaminas?|colageno|sofa(?:-?cama)?|poltronas?|cadeiras?|moveis|mobiliario|decoracoes?|couro|carros?|veiculos?|capsulas?|medicamentos?|cursos?|livros?)\b",
         "sales_cta": r"\b(compre|adquira|aproveit[ae]|garant[ae]|(?:ja |voce ja )?garantiu|peca agora|ligue|acesse a loja|venha conferir|corre la|correria agora|pode ir na loja|quer patrocinar)\b",
         "recommendation": r"\b(use|tome|experimente)\s+(?:(?:o|a|os|as|este|esse|essa|esta)\s+)?\w+",
         "contact": r"\b(telefone|whatsapp|entre em contato)\b|\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b",
@@ -396,7 +396,8 @@ def rank_candidate(candidate, cfg=None):
     missing_required = sorted(key for key in required_components if components.get(key) is None)
     uncertainty_penalty = .08 * (1 - evidence_coverage) if evidence_coverage is not None else .08
     raw = sum(components[key] * weight for key, weight in weights.items() if components.get(key) is not None) / observed_weight if observed_weight else None
-    commercial = candidate.get("content_type") in COMMERCIAL_TYPES and not cfg.get("allow_commercial_candidates", False)
+    commercial = bool(classification and classification.get("eligibility") == "excluded") or candidate.get("content_type") in COMMERCIAL_TYPES
+    commercial = commercial and not cfg.get("allow_commercial_candidates", False)
     context = candidate.get("context_requirement", "unresolved")
     penalties = {"commercial": cfg.get("commercial_penalty", .5) if commercial else 0.0,
                  "missing_evidence_uncertainty": uncertainty_penalty,
@@ -416,7 +417,7 @@ def rank_candidate(candidate, cfg=None):
             "score_weights": weights, "observed_weight": observed_weight,
             "editorial_score_final": round(final, 3) if final is not None else None, "editorial_score": round(final, 3) if final is not None else None, "ranking_version": "4.4.0",
             "score_method": "explicit_weighted_observed_utility_not_probability",
-            "default_shortlist_eligible": not commercial and (not classification or classification.get("eligibility") != "review") and
+            "default_shortlist_eligible": not commercial and (not classification or classification.get("eligibility") not in {"review", "excluded"}) and
                 duration["duration_default_eligible"] and candidate.get("clean_opening") is True and candidate.get("clean_ending") is True and not missing_required}
 
 

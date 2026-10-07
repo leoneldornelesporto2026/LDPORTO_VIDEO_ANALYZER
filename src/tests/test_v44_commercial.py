@@ -43,3 +43,57 @@ def test_post_visual_gate_shortlist_and_metrics_match_delivered_candidates():
     assert final['candidate_metrics']['final_shortlist_count'] == 0
     assert final['candidate_metrics']['excluded_commercial_count'] == 1
     assert data['editorial_shortlist'] == [candidate['moment_id']]
+
+
+def test_commercial_block_propagation_excludes_precursor_candidate_next_to_strong_ad():
+    from ldporto.commercial_gate import apply_commercial_refinement
+    precursor = {'moment_id': 'PRE', 'ideal_start': 0.0, 'ideal_end': 20.0,
+        'core_moment': {'start': 0.0, 'end': 20.0, 'text': 'produto'},
+        'text': 'Poltrona eletrica com preco especial, estoque limitado e parcelas.',
+        'evidence_segment_ids': ['S0'], 'context_requirement': 'none',
+        'standalone_score': .9, 'hook_score': .8, 'clean_opening': True, 'clean_ending': True,
+        'duration_suitability_score': .8}
+    strong = {'moment_id': 'AD', 'ideal_start': 20.0, 'ideal_end': 45.0,
+        'core_moment': {'start': 20.0, 'end': 45.0, 'text': 'promo'},
+        'text': 'Aproveite 60% de desconto, pague no Pix e corra para a loja agora.',
+        'evidence_segment_ids': ['S1'], 'context_requirement': 'none',
+        'standalone_score': .9, 'hook_score': .8, 'clean_opening': True, 'clean_ending': True,
+        'duration_suitability_score': .8}
+    segments = [
+        {'segment_id': 'S0', 'start': 0.0, 'end': 20.0, 'text': precursor['text']},
+        {'segment_id': 'S1', 'start': 20.0, 'end': 45.0, 'text': strong['text']}]
+    result = apply_commercial_refinement({'main_moments': [precursor, strong], 'candidate_metrics': {}}, segments, [],
+                                         {'max_moments': 12, 'target_min_seconds': 15, 'target_max_seconds': 90,
+                                          'hard_min_seconds': 8, 'hard_max_seconds': 180,
+                                          'allow_story_exception': True, 'allow_commercial_candidates': False,
+                                          'commercial_penalty': .5})
+    by_id = {row['moment_id']: row for row in result['main_moments']}
+    assert by_id['AD']['commercial_classification']['eligibility'] == 'excluded'
+    assert by_id['PRE']['commercial_classification']['eligibility'] == 'excluded'
+    assert by_id['PRE']['commercial_classification'].get('block_propagated') is True
+    assert by_id['PRE']['default_shortlist_eligible'] is False
+
+
+def test_commercial_block_propagation_does_not_exclude_neutral_brand_discussion_near_ad():
+    from ldporto.commercial_gate import apply_commercial_refinement
+    neutral = {'moment_id': 'N', 'ideal_start': 0.0, 'ideal_end': 20.0,
+               'core_moment': {'start': 0.0, 'end': 20.0, 'text': 'historia'},
+               'text': 'Na Openbox eu trabalhei e hoje conto como era a cultura da empresa.',
+               'evidence_segment_ids': ['S0'], 'context_requirement': 'none',
+               'standalone_score': .9, 'hook_score': .8, 'clean_opening': True, 'clean_ending': True,
+               'duration_suitability_score': .8}
+    ad = {'moment_id': 'AD', 'ideal_start': 25.0, 'ideal_end': 50.0,
+          'core_moment': {'start': 25.0, 'end': 50.0, 'text': 'promo'},
+          'text': 'Compre agora com 60% de desconto no Pix e aproveite na loja.',
+          'evidence_segment_ids': ['S1'], 'context_requirement': 'none',
+          'standalone_score': .9, 'hook_score': .8, 'clean_opening': True, 'clean_ending': True,
+          'duration_suitability_score': .8}
+    segments = [{'segment_id': 'S0', 'start': 0, 'end': 20, 'text': neutral['text']},
+                {'segment_id': 'S1', 'start': 25, 'end': 50, 'text': ad['text']}]
+    result = apply_commercial_refinement({'main_moments': [neutral, ad], 'candidate_metrics': {}}, segments, [],
+                                         {'max_moments': 12, 'target_min_seconds': 15, 'target_max_seconds': 90,
+                                          'hard_min_seconds': 8, 'hard_max_seconds': 180,
+                                          'allow_story_exception': True, 'allow_commercial_candidates': False,
+                                          'commercial_penalty': .5})
+    by_id = {row['moment_id']: row for row in result['main_moments']}
+    assert by_id['N']['commercial_classification']['eligibility'] != 'excluded'

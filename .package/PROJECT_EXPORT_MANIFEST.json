@@ -1,11 +1,11 @@
 {
   "package_type": "LDPORTO_PROJECT_EXPORT",
-  "created_at_local": "2026-10-07T13:00:23.112011+00:00",
+  "created_at_local": "2026-10-07T22:37:46.896707+00:00",
   "packager_python": "3.13.5",
-  "source_root": "/mnt/data/r4_patch",
-  "included_file_count": 227,
-  "included_bytes": 1574244,
-  "included_human": "1.5 MiB",
+  "source_root": "/mnt/data/work_r23",
+  "included_file_count": 235,
+  "included_bytes": 1631426,
+  "included_human": "1.6 MiB",
   "files": [
     {
       "path": ".gitignore",
@@ -69,11 +69,11 @@
     },
     {
       "path": "config/config.yaml",
-      "bytes": 3794,
-      "sha256": "0b6f4d4a16ace1e167b7915f7df5f5f4a1e2590a3278be53ba971030f6d635e8",
+      "bytes": 4174,
+      "sha256": "b9cf2a522270edb3e4f72969f89b5a7c43b609e43328f3ae483861c9ba5ac806",
       "kind": "project",
       "included": true,
-      "original_bytes": 3794,
+      "original_bytes": 4174,
       "source_artifact": "config.yaml",
       "compact_equivalent": null
     },
@@ -159,11 +159,11 @@
     },
     {
       "path": "docs/CHANGELOG_V44.md",
-      "bytes": 4892,
-      "sha256": "923790fa153b572f0d47a8678ea0d4c218f867c9a87c47940ccd1511fe38554d",
+      "bytes": 5402,
+      "sha256": "5885df4ed6e439272857570a81543a06972f1ce62d3cca27b0b27a11030a61bb",
       "kind": "project",
       "included": true,
-      "original_bytes": 4892,
+      "original_bytes": 5402,
       "source_artifact": "CHANGELOG_V44.md",
       "compact_equivalent": null
     },
@@ -265,6 +265,26 @@
       "included": true,
       "original_bytes": 37458,
       "source_artifact": "REQUISITOS_RECEBIDOS.txt",
+      "compact_equivalent": null
+    },
+    {
+      "path": "docs/ROADMAP_R2_R3_20261007.md",
+      "bytes": 2350,
+      "sha256": "beddb3f71961c5e879ac984933adecde4572abd4feefc90b9fcc59e567381cf7",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 2350,
+      "source_artifact": "ROADMAP_R2_R3_20261007.md",
+      "compact_equivalent": null
+    },
+    {
+      "path": "docs/ROUND2_VISUAL_IDENTITY.md",
+      "bytes": 1808,
+      "sha256": "d0d197e8fef86c944c327a43d0327f6cc8f32150b6d6202cb44451d2c6daf84d",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1808,
+      "source_artifact": "ROUND2_VISUAL_IDENTITY.md",
       "compact_equivalent": null
     },
     {
@@ -435,6 +455,16 @@
       "included": true,
       "original_bytes": 2082,
       "source_artifact": "V44_R3_STABILIZATION.md",
+      "compact_equivalent": null
+    },
+    {
+      "path": "docs/V44_R4_2_INTEGRITY_VISION.md",
+      "bytes": 2964,
+      "sha256": "6cd84511f417c7e2be14e7807b5c8c9388fa1985d21ba38444a2f3ff4ba829c2",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 2964,
+      "source_artifact": "V44_R4_2_INTEGRITY_VISION.md",
       "compact_equivalent": null
     },
     {
@@ -719,11 +749,11 @@
     },
     {
       "path": "README.md",
-      "bytes": 10847,
-      "sha256": "b5b949fdf9540ea736cc22f85244c73faf554c5d884a1cc0cc46401b887156a6",
+      "bytes": 13775,
+      "sha256": "b4d5b07db6b6eadc4302d97cf90c159ebf53c41a7b65286f8d44ff0b40432f55",
       "kind": "project",
       "included": true,
-      "original_bytes": 10847,
+      "original_bytes": 13775,
       "source_artifact": "README.md",
       "compact_equivalent": null
     },
@@ -989,11 +1019,11 @@
     },
     {
       "path": "scripts/dev/compare_runs.py",
-      "bytes": 24588,
-      "sha256": "f13a8f9ff4806ebfbd0a642f2f92f3d368683ab69af6c1ffe977560490c9d531",
+      "bytes": 24589,
+      "sha256": "8fd42e48056835684926610a15d3bacc7f90ffde8600fb564bf0c97d1a8474ec",
       "kind": "project",
       "included": true,
-      "original_bytes": 24588,
+      "original_bytes": 24589,
       "source_artifact": "compare_runs.py",
       "compact_equivalent": null
     },
@@ -1015,6 +1045,16 @@
       "included": true,
       "original_bytes": 1059,
       "source_artifact": "monitor_full_v44.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "scripts/dev/performance_diagnostics_r3.py",
+      "bytes": 4683,
+      "sha256": "5e55169df527d3d38d1da8df7ffe64720b894927b7f2be6c9a38e75daa32e3c8",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 4683,
+      "source_artifact": "performance_diagnostics_r3.py",
       "compact_equivalent": null
     },
     {
@@ -1065,6 +1105,16 @@
       "included": true,
       "original_bytes": 1749,
       "source_artifact": "replay_targeted_asr_v44.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "scripts/dev/replay_visual_identity_r2.py",
+      "bytes": 3707,
+      "sha256": "8b8c7466425f080ef9446fdcbc9e7d246c2cb6198d1d135aa5e5b1d0e8dd89ed",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 3707,
+      "source_artifact": "replay_visual_identity_r2.py",
       "compact_equivalent": null
     },
     {
@@ -1239,11 +1289,11 @@
     },
     {
       "path": "src/ldporto/__init__.py",
-      "bytes": 177,
-      "sha256": "8c5261c9506135ef97c6b85ddcb07f76610667fdab42dd49efbfc34d7e10f3d8",
+      "bytes": 189,
+      "sha256": "d30294886a4b749ab10a36acaa65dfa321ba77099848b39e492774af381988f9",
       "kind": "project",
       "included": true,
-      "original_bytes": 177,
+      "original_bytes": 189,
       "source_artifact": "__init__.py",
       "compact_equivalent": null
     },
@@ -1259,11 +1309,11 @@
     },
     {
       "path": "src/ldporto/analysis_quality.py",
-      "bytes": 10030,
-      "sha256": "f6fdf2d7570a7a0b7e873d19bfded2e2f651dab4605b0e651cf8e61bb8d06333",
+      "bytes": 10225,
+      "sha256": "2559a60819d9b292eb0c6384d93981af8abd2d83f6407d9a2c27d9f4a938a2f1",
       "kind": "project",
       "included": true,
-      "original_bytes": 10030,
+      "original_bytes": 10225,
       "source_artifact": "analysis_quality.py",
       "compact_equivalent": null
     },
@@ -1309,11 +1359,11 @@
     },
     {
       "path": "src/ldporto/camera_director.py",
-      "bytes": 40816,
-      "sha256": "ee48978a3aec01cf6e0840c0f74e2353df3ad06a88725e88e22a9a241cd548ef",
+      "bytes": 41615,
+      "sha256": "47cfcb9f73b6f5073fe41761918484ca5e3280e441d3169c4bf2e7a495428a71",
       "kind": "project",
       "included": true,
-      "original_bytes": 40816,
+      "original_bytes": 41615,
       "source_artifact": "camera_director.py",
       "compact_equivalent": null
     },
@@ -1359,11 +1409,11 @@
     },
     {
       "path": "src/ldporto/commercial_gate.py",
-      "bytes": 3252,
-      "sha256": "9ae77bd216ff90082150997c9a40a107d8efea29ce8866fb6b258f56433318e3",
+      "bytes": 6162,
+      "sha256": "0c30137fc7cd9ed17ac8912db48046587c554ffd5521147e4d0ab693854baaeb",
       "kind": "project",
       "included": true,
-      "original_bytes": 3252,
+      "original_bytes": 6162,
       "source_artifact": "commercial_gate.py",
       "compact_equivalent": null
     },
@@ -1379,11 +1429,11 @@
     },
     {
       "path": "src/ldporto/config.py",
-      "bytes": 22677,
-      "sha256": "caf8fdc2fb4350be76983989e5bf1e66783bfb71e60ca1758585ac90e908c855",
+      "bytes": 24204,
+      "sha256": "27892a620d30315ca9cb4a882480845bf86374118492d37e7006dfc59765ef88",
       "kind": "project",
       "included": true,
-      "original_bytes": 22677,
+      "original_bytes": 24204,
       "source_artifact": "config.py",
       "compact_equivalent": null
     },
@@ -1439,11 +1489,11 @@
     },
     {
       "path": "src/ldporto/editorial.py",
-      "bytes": 34479,
-      "sha256": "38016f05975d72a569717fa97548036e4e5ca0edf24c459b15951405c7beefb0",
+      "bytes": 34219,
+      "sha256": "9d35f7b6bd75fab73839a59768ba242311dc6d13a354e7084d5f9afa6c67f188",
       "kind": "project",
       "included": true,
-      "original_bytes": 34479,
+      "original_bytes": 34219,
       "source_artifact": "editorial.py",
       "compact_equivalent": null
     },
@@ -1579,21 +1629,21 @@
     },
     {
       "path": "src/ldporto/person_reid.py",
-      "bytes": 16848,
-      "sha256": "04de4ce37911b21e4a0d2c0b108fb8d2b78fb913137611f57581204610e0c511",
+      "bytes": 25028,
+      "sha256": "c73b4ce8b37291c1e3c647deaf118c692dbbcbeca4d688ed9f470183d880f96c",
       "kind": "project",
       "included": true,
-      "original_bytes": 16848,
+      "original_bytes": 25028,
       "source_artifact": "person_reid.py",
       "compact_equivalent": null
     },
     {
       "path": "src/ldporto/pipeline.py",
-      "bytes": 25136,
-      "sha256": "3c3a49bcb7f4ef787b6efe388a89bffc7911d5d6950e01633053b2100c996bc8",
+      "bytes": 25220,
+      "sha256": "a65fd99e12956658fd65efbb0d24a7699210e93629daca1d36724c97d0793649",
       "kind": "project",
       "included": true,
-      "original_bytes": 25136,
+      "original_bytes": 25220,
       "source_artifact": "pipeline.py",
       "compact_equivalent": null
     },
@@ -1709,11 +1759,11 @@
     },
     {
       "path": "src/ldporto/second_curation.py",
-      "bytes": 20748,
-      "sha256": "9eb48ac9e79461be40862e9eb426eb9e0fb592b43c96429ffd9cf038bae48d76",
+      "bytes": 22637,
+      "sha256": "b0ff9908a3c1adf4f833889f29ee0584ddae01d6520f6da48fea482ea0b02c6b",
       "kind": "project",
       "included": true,
-      "original_bytes": 20748,
+      "original_bytes": 22637,
       "source_artifact": "second_curation.py",
       "compact_equivalent": null
     },
@@ -1729,11 +1779,11 @@
     },
     {
       "path": "src/ldporto/second_curation_export.py",
-      "bytes": 35098,
-      "sha256": "02459a76299c424734aedb5efe584fbd536ced7c279d5408271fab9120b14093",
+      "bytes": 35612,
+      "sha256": "0808da805cfb6a502a9c8129819c4173d89a3a8cc96b3a79031a4ea6c4e0a506",
       "kind": "project",
       "included": true,
-      "original_bytes": 35098,
+      "original_bytes": 35612,
       "source_artifact": "second_curation_export.py",
       "compact_equivalent": null
     },
@@ -1759,11 +1809,11 @@
     },
     {
       "path": "src/ldporto/social_output.py",
-      "bytes": 15111,
-      "sha256": "5324592debf586c2453ad2889f33571ac758b23ed74f08a0470d69e1f10ae7e0",
+      "bytes": 16310,
+      "sha256": "7e72d6927e09eb95292f63e68720201d177c17158333883f13d9978467b5e6ba",
       "kind": "project",
       "included": true,
-      "original_bytes": 15111,
+      "original_bytes": 16310,
       "source_artifact": "social_output.py",
       "compact_equivalent": null
     },
@@ -1849,11 +1899,11 @@
     },
     {
       "path": "src/ldporto/understanding.py",
-      "bytes": 39113,
-      "sha256": "cea6d3d534253966b7ee59f21f999034774ff03302a0bd81c343e437a6684960",
+      "bytes": 44728,
+      "sha256": "9e53851402133f78b3cb0d5f9d6c1a9a9632f2755d5074a41bf7007538669772",
       "kind": "project",
       "included": true,
-      "original_bytes": 39113,
+      "original_bytes": 44728,
       "source_artifact": "understanding.py",
       "compact_equivalent": null
     },
@@ -2059,21 +2109,21 @@
     },
     {
       "path": "src/tests/test_v43_camera.py",
-      "bytes": 5976,
-      "sha256": "a13652e6f6633d9f8f10bda4b89452a44e805192a0454c832ac4b88c27f2345d",
+      "bytes": 6421,
+      "sha256": "10ba3935d0daf4bb256378ad164f4457dd725b5428d7e11f06457fdb5c454d07",
       "kind": "project",
       "included": true,
-      "original_bytes": 5976,
+      "original_bytes": 6421,
       "source_artifact": "test_v43_camera.py",
       "compact_equivalent": null
     },
     {
       "path": "src/tests/test_v43_editorial.py",
-      "bytes": 15222,
-      "sha256": "732526835018c047f635cfde30e3796790eed6bcd1742594c1a910c1aa260411",
+      "bytes": 17111,
+      "sha256": "b3b49a7b246edf2be85c8f0c40edf12ef8b6c703508da5878a9e5de3abf06bad",
       "kind": "project",
       "included": true,
-      "original_bytes": 15222,
+      "original_bytes": 17111,
       "source_artifact": "test_v43_editorial.py",
       "compact_equivalent": null
     },
@@ -2089,11 +2139,11 @@
     },
     {
       "path": "src/tests/test_v43_perception.py",
-      "bytes": 13988,
-      "sha256": "9a28244cf2b349bd84acffd915c4fb4d4ee09e87f47c1fca47463bb0691731dd",
+      "bytes": 15034,
+      "sha256": "91cafe3c331d7565275c7388d07a224e434c3a73ae08d8e2828cb2cef54fbd42",
       "kind": "project",
       "included": true,
-      "original_bytes": 13988,
+      "original_bytes": 15034,
       "source_artifact": "test_v43_perception.py",
       "compact_equivalent": null
     },
@@ -2129,11 +2179,11 @@
     },
     {
       "path": "src/tests/test_v44_commercial.py",
-      "bytes": 2609,
-      "sha256": "3bf601c765b26bfc65c8532c45e216648f1039679eb351ef4d48047b7366a64a",
+      "bytes": 6597,
+      "sha256": "8c51aa2d6f8edb213752f0ad345eb6e21076f6d7354fac8029c7c9075a1609a4",
       "kind": "project",
       "included": true,
-      "original_bytes": 2609,
+      "original_bytes": 6597,
       "source_artifact": "test_v44_commercial.py",
       "compact_equivalent": null
     },
@@ -2239,11 +2289,11 @@
     },
     {
       "path": "src/tests/test_v44_social_output.py",
-      "bytes": 5458,
-      "sha256": "83bf2170f32accea1bf38e47d775a76ac903c3c00b4b604a061a6228723a08c1",
+      "bytes": 6684,
+      "sha256": "8abb705de503748023a58551284a5143708f1b1bbcf43d88672136810d4e9d1b",
       "kind": "project",
       "included": true,
-      "original_bytes": 5458,
+      "original_bytes": 6684,
       "source_artifact": "test_v44_social_output.py",
       "compact_equivalent": null
     },
@@ -2255,6 +2305,36 @@
       "included": true,
       "original_bytes": 3515,
       "source_artifact": "test_v44_targeted_asr.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v45_r3_resource_budget.py",
+      "bytes": 1378,
+      "sha256": "dd78b3a16be6fc253a93ebc4ee6b38f42790f8ea47a15273fb1b5d42fcd338db",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1378,
+      "source_artifact": "test_v45_r3_resource_budget.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v45_visual_identity_final.py",
+      "bytes": 3093,
+      "sha256": "d5097afe591be1e2566145d49a9aac755a339f2c5cc61e255de23846d1eb92d7",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 3093,
+      "source_artifact": "test_v45_visual_identity_final.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v45_visual_identity_round2.py",
+      "bytes": 2122,
+      "sha256": "4f28b4a36692bea68bdca07da0ec3012f05d5c8786ed46bb6f19ceb54843742a",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 2122,
+      "source_artifact": "test_v45_visual_identity_round2.py",
       "compact_equivalent": null
     },
     {

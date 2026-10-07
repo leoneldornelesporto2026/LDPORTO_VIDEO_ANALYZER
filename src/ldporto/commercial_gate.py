@@ -1,17 +1,66 @@
 """Candidate-scoped sales evidence. Canonical ASR is never changed by OCR."""
-from .editorial import rank_candidate
+from .editorial import rank_candidate, classify_content
+
+
+def _interval(candidate):
+    core = candidate.get('core_moment') or candidate
+    return (float(candidate.get('ideal_start', core.get('start', 0))),
+            float(candidate.get('ideal_end', core.get('end', core.get('start', 0)))))
+
+
+def _commercial_precursor_signals(classification):
+    signals = set((classification or {}).get('signals') or [])
+    return signals & {'price', 'installment', 'discount', 'store', 'product', 'sales_cta',
+                      'urgency', 'payment', 'sponsor', 'event', 'domain', 'contact',
+                      'recommendation', 'health_claim', 'benefit_claim'}
+
+
+def _block_context(segments, start, end, before=25.0, after=25.0):
+    lo, hi = max(0.0, start - before), end + after
+    selected = [s for s in segments if isinstance(s, dict) and s.get('end', 0) > lo and s.get('start', 0) < hi]
+    return selected, ' '.join(str(s.get('text') or '') for s in selected).strip()
 
 
 def refine_candidates(candidates, segments, visual_texts=None, cfg=None):
+    """Re-rank candidates with literal evidence and bounded commercial-block context."""
+    cfg = cfg or {}
     rows = []
+    block_before = float(cfg.get('commercial_block_context_before_seconds', 25.0))
+    block_after = float(cfg.get('commercial_block_context_after_seconds', 25.0))
+    min_precursors = int(cfg.get('commercial_block_min_precursor_signals', 2))
+    clean_segments = [s for s in segments if isinstance(s, dict)]
     for candidate in candidates:
-        start = candidate.get('ideal_start', (candidate.get('core_moment') or candidate)['start'])
-        end = candidate.get('ideal_end', (candidate.get('core_moment') or candidate)['end'])
-        selected = [s for s in segments if s['end'] > start and s['start'] < end]
-        visual = [r for r in visual_texts or [] if r.get('end', 0) >= start and r.get('start', 0) < end]
-        row = {**candidate, 'text': ' '.join(s['text'] for s in selected),
-               'evidence_segment_ids': [s['segment_id'] for s in selected], 'commercial_visual_evidence': visual}
-        rows.append(rank_candidate(row, cfg))
+        start, end = _interval(candidate)
+        selected = [s for s in clean_segments if s.get('end', 0) > start and s.get('start', 0) < end]
+        visual = [r for r in visual_texts or [] if isinstance(r, dict) and r.get('end', 0) >= start and r.get('start', 0) < end]
+        literal = ' '.join(str(s.get('text') or '') for s in selected).strip()
+        row = {**candidate, 'text': literal,
+               'evidence_segment_ids': [s.get('segment_id') for s in selected if s.get('segment_id')],
+               'commercial_visual_evidence': visual}
+        ranked = rank_candidate(row, cfg)
+        local = ranked.get('commercial_classification') or {}
+        if local.get('eligibility') != 'excluded':
+            precursor = _commercial_precursor_signals(local)
+            if len(precursor) >= min_precursors:
+                context_rows, context_text = _block_context(clean_segments, start, end, block_before, block_after)
+                context_ids = [s.get('segment_id') for s in context_rows if s.get('segment_id')]
+                block = classify_content(context_text, context_ids, visual)
+                if block.get('eligibility') == 'excluded':
+                    propagated = {**block,
+                        'classifier_method': 'pt_br_grounded_commercial_gate_v3_block_propagation',
+                        'block_propagated': True,
+                        'block_interval': {'start': max(0.0, start - block_before), 'end': end + block_after},
+                        'candidate_precursor_signals': sorted(precursor),
+                        'needs_review': True,
+                    }
+                    ranked = rank_candidate({**ranked, 'text': literal}, cfg)
+                    ranked = {**ranked, 'commercial_classification': propagated,
+                              'content_type': propagated['content_type'],
+                              'commercial_score': propagated['commercial_score'],
+                              'default_shortlist_eligible': False}
+        if (ranked.get('commercial_classification') or {}).get('eligibility') == 'excluded':
+            ranked['default_shortlist_eligible'] = False
+        rows.append(ranked)
     return sorted(rows, key=lambda r: r.get('editorial_score_final') or 0, reverse=True)
 
 

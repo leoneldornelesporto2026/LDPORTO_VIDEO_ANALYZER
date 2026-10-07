@@ -280,3 +280,25 @@ def test_audio_mouth_windows_split_at_real_shot_boundaries(tmp_path):
     assert all(row["candidates"] for row in raw)
     result = build_active_speaker(diarization, vision, raw, cfg["active_speaker"])["data"]
     assert result["mapping_summary"][0]["person_id"] == "P1"
+
+def test_face_supported_micro_tracklet_can_reenter_established_identity_without_position():
+    from ldporto.person_reid import build_person_identities
+    from test_v42_perception import track_fixture
+    vision = track_fixture([('T1', 'P1', 0, 2, [1, 0]), ('T2', 'P2', 5, 5.2, [1, 0])])
+    data = build_person_identities(vision)['data']
+    assert data['metrics']['micro_track_count'] == 1
+    assert data['metrics']['micro_reid_attachment_count'] == 1
+    assert data['tracklet_to_person']['T2'] == data['tracklet_to_person']['T1']
+    decision = [d for d in data['merge_decisions'] if d.get('tracklet_id') == 'T2' and d.get('accepted')]
+    assert decision and decision[0]['reason'] == 'strict_face_supported_micro_reentry'
+    assert decision[0]['screen_position_used'] is False
+
+
+def test_micro_tracklet_never_reenters_identity_during_temporal_conflict():
+    from ldporto.person_reid import build_person_identities
+    from test_v42_perception import track_fixture
+    vision = track_fixture([('T1', 'P1', 0, 2, [1, 0]), ('T2', 'P2', 1, 1.2, [1, 0])])
+    data = build_person_identities(vision)['data']
+    assert data['metrics']['micro_track_count'] == 1
+    assert data['tracklet_to_person']['T2'] is None
+    assert any(d.get('tracklet_id') == 'T2' and d.get('temporal_conflict') for d in data['merge_decisions'])

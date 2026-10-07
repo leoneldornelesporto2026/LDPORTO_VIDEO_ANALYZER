@@ -1,7 +1,7 @@
 L.D.PORTO VIDEO ANALYZER - PACOTE DO PROJETO
 
 Origem:
-/mnt/data/r4_patch
+/mnt/data/work_r23
 
 Objetivo:
 Enviar a base atual de codigo/config/testes/docs para inspecao e evolucao.

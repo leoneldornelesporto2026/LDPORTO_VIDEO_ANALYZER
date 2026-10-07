@@ -22,6 +22,7 @@ docs/CONTRATO_DADOS.md
 docs/DIRECTOR_BENCHMARK.json
 docs/FILES_CHANGED_V3.md
 docs/FONTES.md
+docs/R3B_PERFORMANCE_20261007.md
 docs/R3_CAMERA_PERCEPTION_PART1.md
 docs/REPOSITORY_STRUCTURE.md
 docs/REQUISITOS_RECEBIDOS.txt
@@ -102,6 +103,8 @@ schemas/second_curation_package.schema.json
 schemas/social_output.schema.json
 scripts/README.md
 scripts/configure_ollama.py
+scripts/dev/benchmark_semantic_r3b.py
+scripts/dev/benchmark_vision_r3b.py
 scripts/dev/compare_runs.py
 scripts/dev/finalize_v44.py
 scripts/dev/monitor_full_v44.py
@@ -161,6 +164,7 @@ src/ldporto/ocr.py
 src/ldporto/ollama_local.py
 src/ldporto/paths.py
 src/ldporto/perception_diagnostics.py
+src/ldporto/performance.py
 src/ldporto/person_motion.py
 src/ldporto/person_reid.py
 src/ldporto/pipeline.py
@@ -234,4 +238,5 @@ src/tests/test_v45_r3_resource_budget.py
 src/tests/test_v45_visual_identity_final.py
 src/tests/test_v45_visual_identity_round2.py
 src/tests/test_v46_r3_camera_perception.py
+src/tests/test_v47_r3b_performance.py
 src/tests/test_v4_final.py

@@ -1,10 +1,10 @@
 {
   "package_type": "LDPORTO_PROJECT_EXPORT",
-  "created_at_local": "2026-10-07T22:47:23.364305+00:00",
+  "created_at_local": "2026-10-07T23:02:02.737260+00:00",
   "packager_python": "3.13.5",
-  "source_root": "/mnt/data/r3_camera_work",
-  "included_file_count": 237,
-  "included_bytes": 1646107,
+  "source_root": "/mnt/data/r3b_work",
+  "included_file_count": 242,
+  "included_bytes": 1673598,
   "included_human": "1.6 MiB",
   "files": [
     {
@@ -69,11 +69,11 @@
     },
     {
       "path": "config/config.yaml",
-      "bytes": 4238,
-      "sha256": "2e1d51109687839d075692d071903a022c701cf3e0e9588c01e19b352aed0ff3",
+      "bytes": 4459,
+      "sha256": "99d448175e6a4d2969916cfe0b02324ad0070ec3562403febc9ead990c235fa9",
       "kind": "project",
       "included": true,
-      "original_bytes": 4238,
+      "original_bytes": 4459,
       "source_artifact": "config.yaml",
       "compact_equivalent": null
     },
@@ -215,6 +215,16 @@
       "included": true,
       "original_bytes": 3538,
       "source_artifact": "R3_CAMERA_PERCEPTION_PART1.md",
+      "compact_equivalent": null
+    },
+    {
+      "path": "docs/R3B_PERFORMANCE_20261007.md",
+      "bytes": 5824,
+      "sha256": "8ac4fb95c0a8d95b8900a736b68b4f9fe6008592069cc2092fa1bbb82791e7a9",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 5824,
+      "source_artifact": "R3B_PERFORMANCE_20261007.md",
       "compact_equivalent": null
     },
     {
@@ -759,11 +769,11 @@
     },
     {
       "path": "README.md",
-      "bytes": 14260,
-      "sha256": "0fa6003a4ab4a1e314aa512288e44a49ae0bda1fa404211e164aeaf70bf2deef",
+      "bytes": 14524,
+      "sha256": "4498243d740fc7cb5f3ec3ae9f936d44f204c5bad23d05cf3fa2e7cf56b45bf0",
       "kind": "project",
       "included": true,
-      "original_bytes": 14260,
+      "original_bytes": 14524,
       "source_artifact": "README.md",
       "compact_equivalent": null
     },
@@ -1025,6 +1035,26 @@
       "included": true,
       "original_bytes": 3948,
       "source_artifact": "configure_ollama.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "scripts/dev/benchmark_semantic_r3b.py",
+      "bytes": 4827,
+      "sha256": "678c3d1cb943e1089dde57b71ce332edfe48547779529c7b5d26773d3ce1332c",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 4827,
+      "source_artifact": "benchmark_semantic_r3b.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "scripts/dev/benchmark_vision_r3b.py",
+      "bytes": 4603,
+      "sha256": "2f560e70c40967bbcc15a14d0616ef1b0a2377e2e556614fe8ca3782519ef557",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 4603,
+      "source_artifact": "benchmark_vision_r3b.py",
       "compact_equivalent": null
     },
     {
@@ -1299,11 +1329,11 @@
     },
     {
       "path": "src/ldporto/__init__.py",
-      "bytes": 193,
-      "sha256": "b313091080074d25965d7bfe3235bc811f13613489884d138bb39593242dfbe4",
+      "bytes": 187,
+      "sha256": "1d7543f7b7f08c1344c606051b29e45d4005611fa58a81abee72712b2017d684",
       "kind": "project",
       "included": true,
-      "original_bytes": 193,
+      "original_bytes": 187,
       "source_artifact": "__init__.py",
       "compact_equivalent": null
     },
@@ -1439,11 +1469,11 @@
     },
     {
       "path": "src/ldporto/config.py",
-      "bytes": 24690,
-      "sha256": "1c285e1412cd2812dd5eed4899b39e471da4b5c28457852d994ac5a65c192698",
+      "bytes": 24972,
+      "sha256": "5cc2d439829778a7afdb4ddc08de54bc1754144703ebd0a85d2f9061c53c0baa",
       "kind": "project",
       "included": true,
-      "original_bytes": 24690,
+      "original_bytes": 24972,
       "source_artifact": "config.py",
       "compact_equivalent": null
     },
@@ -1628,6 +1658,16 @@
       "compact_equivalent": null
     },
     {
+      "path": "src/ldporto/performance.py",
+      "bytes": 1518,
+      "sha256": "48869a8c316ea0206343cddcab7b61055582242a37226dfde48ce46593cdf9dd",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1518,
+      "source_artifact": "performance.py",
+      "compact_equivalent": null
+    },
+    {
       "path": "src/ldporto/person_motion.py",
       "bytes": 5009,
       "sha256": "b66b3dae0a59339f9c82711aad2b05e90a1ad25c8e6c80df0ecaab6db53edd81",
@@ -1649,11 +1689,11 @@
     },
     {
       "path": "src/ldporto/pipeline.py",
-      "bytes": 25220,
-      "sha256": "a65fd99e12956658fd65efbb0d24a7699210e93629daca1d36724c97d0793649",
+      "bytes": 25238,
+      "sha256": "d4a839b1c6282c60fdae951f04fef29ef5381ad4a3e220da626af3853eb81acf",
       "kind": "project",
       "included": true,
-      "original_bytes": 25220,
+      "original_bytes": 25238,
       "source_artifact": "pipeline.py",
       "compact_equivalent": null
     },
@@ -1799,11 +1839,11 @@
     },
     {
       "path": "src/ldporto/semantic.py",
-      "bytes": 63337,
-      "sha256": "3c501d743df65bb2dbe87aebaae2bc422d46782bb4d54f1f99dd5b0161705704",
+      "bytes": 63539,
+      "sha256": "171e189fb888c54401fc1f2afe2961c47a1f3d5eea2fdeeacf84d6c66ab21aeb",
       "kind": "project",
       "included": true,
-      "original_bytes": 63337,
+      "original_bytes": 63539,
       "source_artifact": "semantic.py",
       "compact_equivalent": null
     },
@@ -1919,11 +1959,11 @@
     },
     {
       "path": "src/ldporto/vision.py",
-      "bytes": 52419,
-      "sha256": "bbde1756419df8e5a61fdf3331237d0038e1d84941b2d794dedb0f6b5e882bae",
+      "bytes": 54064,
+      "sha256": "a234b5590d41f7c0bc122a03f33497e3b377b78dca4a7b97a18668a87613e33c",
       "kind": "project",
       "included": true,
-      "original_bytes": 52419,
+      "original_bytes": 54064,
       "source_artifact": "vision.py",
       "compact_equivalent": null
     },
@@ -2355,6 +2395,16 @@
       "included": true,
       "original_bytes": 5299,
       "source_artifact": "test_v46_r3_camera_perception.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v47_r3b_performance.py",
+      "bytes": 8093,
+      "sha256": "16d5e4a7ce2f1351cb561fe183f9a5a1e9a1ed815a4fe2197cc8a2fcf2579a67",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 8093,
+      "source_artifact": "test_v47_r3b_performance.py",
       "compact_equivalent": null
     },
     {

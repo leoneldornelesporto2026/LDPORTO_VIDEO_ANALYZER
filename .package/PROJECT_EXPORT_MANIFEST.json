@@ -1,10 +1,10 @@
 {
   "package_type": "LDPORTO_PROJECT_EXPORT",
-  "created_at_local": "2026-10-07T22:37:46.896707+00:00",
+  "created_at_local": "2026-10-07T22:47:23.364305+00:00",
   "packager_python": "3.13.5",
-  "source_root": "/mnt/data/work_r23",
-  "included_file_count": 235,
-  "included_bytes": 1631426,
+  "source_root": "/mnt/data/r3_camera_work",
+  "included_file_count": 237,
+  "included_bytes": 1646107,
   "included_human": "1.6 MiB",
   "files": [
     {
@@ -69,11 +69,11 @@
     },
     {
       "path": "config/config.yaml",
-      "bytes": 4174,
-      "sha256": "b9cf2a522270edb3e4f72969f89b5a7c43b609e43328f3ae483861c9ba5ac806",
+      "bytes": 4238,
+      "sha256": "2e1d51109687839d075692d071903a022c701cf3e0e9588c01e19b352aed0ff3",
       "kind": "project",
       "included": true,
-      "original_bytes": 4174,
+      "original_bytes": 4238,
       "source_artifact": "config.yaml",
       "compact_equivalent": null
     },
@@ -205,6 +205,16 @@
       "included": true,
       "original_bytes": 1956,
       "source_artifact": "FONTES.md",
+      "compact_equivalent": null
+    },
+    {
+      "path": "docs/R3_CAMERA_PERCEPTION_PART1.md",
+      "bytes": 3538,
+      "sha256": "f80ef2ef17f287a60240f788db963face56061c59f6e2d2b24d0afb9eaa6c86b",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 3538,
+      "source_artifact": "R3_CAMERA_PERCEPTION_PART1.md",
       "compact_equivalent": null
     },
     {
@@ -749,11 +759,11 @@
     },
     {
       "path": "README.md",
-      "bytes": 13775,
-      "sha256": "b4d5b07db6b6eadc4302d97cf90c159ebf53c41a7b65286f8d44ff0b40432f55",
+      "bytes": 14260,
+      "sha256": "0fa6003a4ab4a1e314aa512288e44a49ae0bda1fa404211e164aeaf70bf2deef",
       "kind": "project",
       "included": true,
-      "original_bytes": 13775,
+      "original_bytes": 14260,
       "source_artifact": "README.md",
       "compact_equivalent": null
     },
@@ -1289,11 +1299,11 @@
     },
     {
       "path": "src/ldporto/__init__.py",
-      "bytes": 189,
-      "sha256": "d30294886a4b749ab10a36acaa65dfa321ba77099848b39e492774af381988f9",
+      "bytes": 193,
+      "sha256": "b313091080074d25965d7bfe3235bc811f13613489884d138bb39593242dfbe4",
       "kind": "project",
       "included": true,
-      "original_bytes": 189,
+      "original_bytes": 193,
       "source_artifact": "__init__.py",
       "compact_equivalent": null
     },
@@ -1359,11 +1369,11 @@
     },
     {
       "path": "src/ldporto/camera_director.py",
-      "bytes": 41615,
-      "sha256": "47cfcb9f73b6f5073fe41761918484ca5e3280e441d3169c4bf2e7a495428a71",
+      "bytes": 44205,
+      "sha256": "9c1bf155bcae4239234ebe05b5fbc9fa51ce9e0f89a4209243fad2b0ecec2e02",
       "kind": "project",
       "included": true,
-      "original_bytes": 41615,
+      "original_bytes": 44205,
       "source_artifact": "camera_director.py",
       "compact_equivalent": null
     },
@@ -1429,11 +1439,11 @@
     },
     {
       "path": "src/ldporto/config.py",
-      "bytes": 24204,
-      "sha256": "27892a620d30315ca9cb4a882480845bf86374118492d37e7006dfc59765ef88",
+      "bytes": 24690,
+      "sha256": "1c285e1412cd2812dd5eed4899b39e471da4b5c28457852d994ac5a65c192698",
       "kind": "project",
       "included": true,
-      "original_bytes": 24204,
+      "original_bytes": 24690,
       "source_artifact": "config.py",
       "compact_equivalent": null
     },
@@ -1909,11 +1919,11 @@
     },
     {
       "path": "src/ldporto/vision.py",
-      "bytes": 51401,
-      "sha256": "035117207cd371f9d382a1e5e157ede5afc5b831fcb05e6b5b084a3e47f6b48d",
+      "bytes": 52419,
+      "sha256": "bbde1756419df8e5a61fdf3331237d0038e1d84941b2d794dedb0f6b5e882bae",
       "kind": "project",
       "included": true,
-      "original_bytes": 51401,
+      "original_bytes": 52419,
       "source_artifact": "vision.py",
       "compact_equivalent": null
     },
@@ -1929,11 +1939,11 @@
     },
     {
       "path": "src/ldporto/visual_sampling.py",
-      "bytes": 1925,
-      "sha256": "6c0ec47020aa093f17c009b01eac051fc9704fc5d9c26370970700de08df147c",
+      "bytes": 3122,
+      "sha256": "39ec0af869f804ddb578ccf7588ceaed85ddb79c62775d95854f7de9da889753",
       "kind": "project",
       "included": true,
-      "original_bytes": 1925,
+      "original_bytes": 3122,
       "source_artifact": "visual_sampling.py",
       "compact_equivalent": null
     },
@@ -2335,6 +2345,16 @@
       "included": true,
       "original_bytes": 2122,
       "source_artifact": "test_v45_visual_identity_round2.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v46_r3_camera_perception.py",
+      "bytes": 5299,
+      "sha256": "3d91d33ac30db900075887a1369f2002e597d4a602b6820cbf6c25dba0cae8c0",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 5299,
+      "source_artifact": "test_v46_r3_camera_perception.py",
       "compact_equivalent": null
     },
     {

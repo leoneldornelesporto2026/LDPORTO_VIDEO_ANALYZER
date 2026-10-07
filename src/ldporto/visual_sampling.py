@@ -40,3 +40,34 @@ class SamplingScheduler:
         if speaking:
             return min(cfg['speech_sample_fps'], max(cfg['sample_fps'], 4.)), ['stable_speech']
         return cfg['sample_fps'], ['stable_no_speech']
+
+
+class ShortShotSamplingPlan:
+    """Bounded extra observations for *known* short source shots.
+
+    This is acquisition scheduling, not synthetic identity/face evidence.  It
+    never bridges a cut, and cannot generate more than three targets per shot.
+    """
+    def __init__(self, scenes, *, enabled=True, max_seconds=1.5, start_time=0.):
+        self.times = []
+        if enabled:
+            for scene in scenes:
+                a, b = float(scene['start']), float(scene['end'])
+                duration = b-a
+                if not 0 < duration <= max_seconds:
+                    continue
+                inset = min(.10, duration * .2)
+                targets = [a+inset, (a+b)/2, b-inset]
+                for target in targets:
+                    if target > start_time + 1e-6 and (not self.times or target-self.times[-1] >= .10):
+                        self.times.append(target)
+        self.index = 0
+        self.due_count = 0
+
+    def due(self, time):
+        if self.index >= len(self.times) or time + 1e-6 < self.times[self.index]:
+            return False
+        while self.index < len(self.times) and self.times[self.index] <= time + 1e-6:
+            self.index += 1
+        self.due_count += 1
+        return True

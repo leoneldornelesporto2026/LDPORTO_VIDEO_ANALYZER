@@ -110,6 +110,8 @@ def _commercial(candidate):
 def _critical_editorial_stage_ready(analysis):
     stage = (analysis.get("stage_status") or {}).get("16_understanding", {})
     status = stage.get("status")
+    if status is None and (analysis.get("run_manifest") or {}).get("root_cause_stage") == "16_understanding":
+        return False, 'understanding_failed_or_unavailable_in_run_manifest'
     if status is None:
         return True, None
     if status in {"ok", "partial"}:
@@ -168,6 +170,9 @@ def _caption_plan(candidate, graphics, preset):
         "max_lines": 2,
         "line_break_policy": "phrase_boundary_first",
         "safe_area_policy": "recompute_after_crop_and_aspect_ratio",
+        "broadcast_evidence_status": "interval_observed" if regions else "no_observed_region_in_interval_not_proof_of_absence",
+        "final_safe_area_verified": False,
+        "subtitle_text_review_required": True,
     }
 
 
@@ -286,6 +291,7 @@ def build_social_output(analysis, cfg, package=None):
             "source_topic_id": candidate.get("primary_topic_id"),
             "source_story_arc_id": candidate.get("story_arc"),
             "commercial_review": candidate.get("commercial_classification"),
+            "publication_ready": False, "requires_curator_review": True,
         }
         stories.append(row)
         title_rows.append({"story_id": row["story_id"], "candidate_id": row["candidate_id"], "title": title,
@@ -296,6 +302,8 @@ def build_social_output(analysis, cfg, package=None):
         "schema_version": "1.1", "mode": "multiple_independent_stories", "enabled": bool(stories_cfg.get("enabled", True)),
         "story_readiness": "READY" if editorial_ready else "BLOCKED",
         "story_readiness_reason": blocked_reason,
+        "readiness_scope": "editorial_planning_only_not_final_render",
+        "publication_ready": False, "requires_curator_review": True,
         "provisional_candidates_available": bool(candidates) and not editorial_ready,
         "selected_aspect_ratio": aspect, "available_aspect_ratios": profiles,
         "selected_caption_preset": preset_cfg, "available_caption_presets": CAPTION_PRESETS,

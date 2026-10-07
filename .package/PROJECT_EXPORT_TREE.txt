@@ -24,6 +24,7 @@ docs/FILES_CHANGED_V3.md
 docs/FONTES.md
 docs/R3B_PERFORMANCE_20261007.md
 docs/R3_CAMERA_PERCEPTION_PART1.md
+docs/R4_FINAL_HOMOLOGACAO_20261007.md
 docs/REPOSITORY_STRUCTURE.md
 docs/REQUISITOS_RECEBIDOS.txt
 docs/ROADMAP_R2_R3_20261007.md
@@ -105,8 +106,10 @@ scripts/README.md
 scripts/configure_ollama.py
 scripts/dev/benchmark_semantic_r3b.py
 scripts/dev/benchmark_vision_r3b.py
+scripts/dev/bridge_curator_r4.py
 scripts/dev/compare_runs.py
 scripts/dev/finalize_v44.py
+scripts/dev/homologate_r4.py
 scripts/dev/monitor_full_v44.py
 scripts/dev/performance_diagnostics_r3.py
 scripts/dev/replay_camera_v44.py
@@ -147,6 +150,7 @@ src/ldporto/commercial_gate.py
 src/ldporto/compact_artifacts.py
 src/ldporto/config.py
 src/ldporto/core.py
+src/ldporto/curator_bridge.py
 src/ldporto/diagnostic_dashboard.py
 src/ldporto/diarization.py
 src/ldporto/director_config.py
@@ -239,4 +243,5 @@ src/tests/test_v45_visual_identity_final.py
 src/tests/test_v45_visual_identity_round2.py
 src/tests/test_v46_r3_camera_perception.py
 src/tests/test_v47_r3b_performance.py
+src/tests/test_v48_r4_homologation.py
 src/tests/test_v4_final.py

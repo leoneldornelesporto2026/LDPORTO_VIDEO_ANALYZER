@@ -1,10 +1,10 @@
 {
   "package_type": "LDPORTO_PROJECT_EXPORT",
-  "created_at_local": "2026-10-07T23:02:02.737260+00:00",
+  "created_at_local": "2026-10-07T23:14:59.074218+00:00",
   "packager_python": "3.13.5",
-  "source_root": "/mnt/data/r3b_work",
-  "included_file_count": 242,
-  "included_bytes": 1673598,
+  "source_root": "/mnt/data/r4_finish",
+  "included_file_count": 247,
+  "included_bytes": 1714484,
   "included_human": "1.6 MiB",
   "files": [
     {
@@ -225,6 +225,16 @@
       "included": true,
       "original_bytes": 5824,
       "source_artifact": "R3B_PERFORMANCE_20261007.md",
+      "compact_equivalent": null
+    },
+    {
+      "path": "docs/R4_FINAL_HOMOLOGACAO_20261007.md",
+      "bytes": 6004,
+      "sha256": "21bf2146007fd23603ef9031102ef147eb781b833ab69e17ac14cc992f6be713",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 6004,
+      "source_artifact": "R4_FINAL_HOMOLOGACAO_20261007.md",
       "compact_equivalent": null
     },
     {
@@ -769,11 +779,11 @@
     },
     {
       "path": "README.md",
-      "bytes": 14524,
-      "sha256": "4498243d740fc7cb5f3ec3ae9f936d44f204c5bad23d05cf3fa2e7cf56b45bf0",
+      "bytes": 14825,
+      "sha256": "1dc82c590a309978a8d181fa5df07314281cad1423c4cdea0355aeaafce359cd",
       "kind": "project",
       "included": true,
-      "original_bytes": 14524,
+      "original_bytes": 14825,
       "source_artifact": "README.md",
       "compact_equivalent": null
     },
@@ -1058,6 +1068,16 @@
       "compact_equivalent": null
     },
     {
+      "path": "scripts/dev/bridge_curator_r4.py",
+      "bytes": 1355,
+      "sha256": "0f6601edf845bc5cbaa7700487a6ef26d4a17114bb2c12f1245631fccd436334",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 1355,
+      "source_artifact": "bridge_curator_r4.py",
+      "compact_equivalent": null
+    },
+    {
       "path": "scripts/dev/compare_runs.py",
       "bytes": 24589,
       "sha256": "8fd42e48056835684926610a15d3bacc7f90ffde8600fb564bf0c97d1a8474ec",
@@ -1075,6 +1095,16 @@
       "included": true,
       "original_bytes": 2762,
       "source_artifact": "finalize_v44.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "scripts/dev/homologate_r4.py",
+      "bytes": 5872,
+      "sha256": "4f80049c32fc0b1c87f27726d9725bb5e492c21a94e71b38af63ae8d4b36d114",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 5872,
+      "source_artifact": "homologate_r4.py",
       "compact_equivalent": null
     },
     {
@@ -1329,11 +1359,11 @@
     },
     {
       "path": "src/ldporto/__init__.py",
-      "bytes": 187,
-      "sha256": "1d7543f7b7f08c1344c606051b29e45d4005611fa58a81abee72712b2017d684",
+      "bytes": 190,
+      "sha256": "6aaa825c43bc75f11dba5a778ea980be4ed187f35d7555e2a34ec16a811f4ec1",
       "kind": "project",
       "included": true,
-      "original_bytes": 187,
+      "original_bytes": 190,
       "source_artifact": "__init__.py",
       "compact_equivalent": null
     },
@@ -1485,6 +1515,16 @@
       "included": true,
       "original_bytes": 24265,
       "source_artifact": "core.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/ldporto/curator_bridge.py",
+      "bytes": 10428,
+      "sha256": "675b86ad46e37ac6d7e2a64eea660e97359685943bfcdc947d366c0830db7ed8",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 10428,
+      "source_artifact": "curator_bridge.py",
       "compact_equivalent": null
     },
     {
@@ -1809,11 +1849,11 @@
     },
     {
       "path": "src/ldporto/second_curation.py",
-      "bytes": 22637,
-      "sha256": "b0ff9908a3c1adf4f833889f29ee0584ddae01d6520f6da48fea482ea0b02c6b",
+      "bytes": 22823,
+      "sha256": "35901a4788952cf56f71750a3d8d4f3ec90611317ace505c923a3d0b3d087185",
       "kind": "project",
       "included": true,
-      "original_bytes": 22637,
+      "original_bytes": 22823,
       "source_artifact": "second_curation.py",
       "compact_equivalent": null
     },
@@ -1829,11 +1869,11 @@
     },
     {
       "path": "src/ldporto/second_curation_export.py",
-      "bytes": 35612,
-      "sha256": "0808da805cfb6a502a9c8129819c4173d89a3a8cc96b3a79031a4ea6c4e0a506",
+      "bytes": 44793,
+      "sha256": "b8e5d1cb4272f665ea2c729f7e6ef465d4f9d391e5e066804a13ff62e9cc54de",
       "kind": "project",
       "included": true,
-      "original_bytes": 35612,
+      "original_bytes": 44793,
       "source_artifact": "second_curation_export.py",
       "compact_equivalent": null
     },
@@ -1859,11 +1899,11 @@
     },
     {
       "path": "src/ldporto/social_output.py",
-      "bytes": 16310,
-      "sha256": "7e72d6927e09eb95292f63e68720201d177c17158333883f13d9978467b5e6ba",
+      "bytes": 16927,
+      "sha256": "598f21849ba4503b16fd423a5366324d95376be7fd72b0371bdc5f487de03679",
       "kind": "project",
       "included": true,
-      "original_bytes": 16310,
+      "original_bytes": 16927,
       "source_artifact": "social_output.py",
       "compact_equivalent": null
     },
@@ -2405,6 +2445,16 @@
       "included": true,
       "original_bytes": 8093,
       "source_artifact": "test_v47_r3b_performance.py",
+      "compact_equivalent": null
+    },
+    {
+      "path": "src/tests/test_v48_r4_homologation.py",
+      "bytes": 6939,
+      "sha256": "3786bcf21a6d3a6af362dcc28c44c7c1d79fd08e58f4fd6bfaed7f9c5bf0a97d",
+      "kind": "project",
+      "included": true,
+      "original_bytes": 6939,
+      "source_artifact": "test_v48_r4_homologation.py",
       "compact_equivalent": null
     },
     {

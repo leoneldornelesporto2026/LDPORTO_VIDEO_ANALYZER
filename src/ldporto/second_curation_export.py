@@ -45,6 +45,61 @@ def _write_jsonl(path, rows):
             handle.write(json.dumps(_public(row), ensure_ascii=False, allow_nan=False, separators=(',', ':')) + '\n')
 
 
+def _final_commercial_classification(candidate):
+    """Never weaken an upstream exclusion (notably a propagated commercial block).
+
+    Local textual reclassification can catch additional adverts, but cannot undo a
+    commercial decision supported by the wider temporal/visual context.
+    """
+    prior = candidate.get('commercial_classification') or {}
+    local = classify_content(candidate.get('transcript_literal', ''), candidate.get('segment_ids', []),
+                             candidate.get('commercial_visual_evidence'))
+    if prior.get('eligibility') == 'excluded':
+        return {**prior, 'eligibility': 'excluded',
+                'export_reclassification': 'upstream_exclusion_preserved'}
+    if local.get('eligibility') == 'excluded':
+        return {**local, 'export_reclassification': 'local_exclusion_added'}
+    return {**local, 'export_reclassification': 'local_eligible'}
+
+
+def _reconcile_social_output(social_output, candidates, editorial_ready):
+    """Stories are suggestions, never publication approvals; excluded IDs fail closed."""
+    from copy import deepcopy
+    output = deepcopy(social_output or {})
+    by_id = {row['candidate_id']: row for row in candidates}
+    incoming = output.get('stories') or []
+    safe, removed = [], []
+    for story in incoming:
+        cid = story.get('candidate_id') if isinstance(story, dict) else None
+        candidate = by_id.get(cid)
+        if not editorial_ready or not candidate or not candidate.get('default_shortlist_eligible', False) or not candidate.get('publication_eligible', False):
+            removed.append({'candidate_id': cid, 'reason': 'editorial_not_ready' if not editorial_ready else 'candidate_excluded_or_unavailable'})
+            continue
+        if candidate.get('commercial_classification', {}).get('eligibility') == 'excluded':
+            removed.append({'candidate_id': cid, 'reason': 'commercial_excluded'})
+            continue
+        row = deepcopy(story)
+        row['publication_ready'] = False
+        row['requires_curator_review'] = True
+        row['human_review_required_for'] = ['title', 'subtitle_accuracy', 'crop_and_safe_areas', 'commercial_context']
+        safe.append(row)
+    output['stories'] = safe
+    output['story_readiness'] = 'BLOCKED' if not editorial_ready else ('REVIEW_REQUIRED' if safe else 'NO_STORIES')
+    output['story_readiness_reason'] = ('editorial_upstream_incomplete' if not editorial_ready else
+                                        'story_candidates_removed_by_final_gate' if removed else output.get('story_readiness_reason'))
+    output['removed_stories_by_final_gate'] = removed
+    output['final_story_count'] = len(safe)
+    output['publication_ready'] = False
+    output['requires_curator_review'] = True
+    ids = {row.get('story_id') for row in safe}
+    output['title_suggestions'] = [row for row in output.get('title_suggestions', []) if row.get('story_id') in ids]
+    output['caption_style_recommendations'] = [row for row in output.get('caption_style_recommendations', []) if row.get('story_id') in ids]
+    if isinstance(output.get('stories_metrics'), dict):
+        output['stories_metrics']['selected_count'] = len(safe)
+        output['stories_metrics']['final_gate_removed_count'] = len(removed)
+    return output
+
+
 def validate_core_package(path):
     """Validate ZIP or staging directory; never extract an untrusted package."""
     path = Path(path)
@@ -77,6 +132,9 @@ def validate_core_package(path):
             errors.append('second_curator_brief_mismatch')
         if not isinstance(brief.get('recommended_entrypoints'), list) or 'CURATION_INDEX.json' not in brief.get('recommended_entrypoints', []):
             errors.append('second_curator_brief_entrypoints')
+        if (manifest.get('readiness') != index.get('second_curation_readiness') or
+                manifest.get('readiness') != brief.get('capabilities')):
+            errors.append('readiness_disagreement_between_manifest_index_brief')
         import jsonschema
         jsonschema.validate(index, read_json(SCHEMA_DIR / 'curation_index.schema.json'))
         jsonschema.validate(catalog, read_json(SCHEMA_DIR / 'curation_catalog.schema.json'))
@@ -102,7 +160,51 @@ def validate_core_package(path):
         shortlist = json.loads(read('editorial/default_shortlist.json'))
         if not set(shortlist['candidate_ids']) <= ids:
             errors.append('shortlist_dangling_candidate')
+        if 'editorial/final_gate_report.json' in names:
+            gates = json.loads(read('editorial/final_gate_report.json'))
+            metrics = json.loads(read('summary/analysis_summary.json')).get('candidate_metrics', {})
+            expected_excluded = sum(row.get('commercial_classification', {}).get('eligibility') == 'excluded'
+                                    for row in candidates)
+            if (gates.get('excluded_commercial_count') != expected_excluded or
+                    gates.get('final_shortlist_count') != len(shortlist['candidate_ids']) or
+                    metrics.get('excluded_commercial_count') != expected_excluded or
+                    metrics.get('final_shortlist_count') != len(shortlist['candidate_ids'])):
+                errors.append('final_gate_summary_count_disagreement')
+        by_id = {row['candidate_id']: row for row in candidates}
+        for cid in shortlist['candidate_ids']:
+            row = by_id.get(cid)
+            if row and (row.get('commercial_classification', {}).get('eligibility') == 'excluded'
+                        or row.get('default_shortlist_eligible') is False
+                        or row.get('publication_eligible') is False):
+                errors.append('shortlist_ineligible:' + cid)
+        if 'social/stories_manifest.json' in names:
+            social = json.loads(read('social/stories_manifest.json'))
+            story_ids = set()
+            for story in social.get('stories', []):
+                cid = story.get('candidate_id')
+                row = by_id.get(cid)
+                if not row:
+                    errors.append('story_dangling_candidate:' + str(cid))
+                elif (row.get('commercial_classification', {}).get('eligibility') == 'excluded'
+                      or row.get('default_shortlist_eligible') is False
+                      or row.get('publication_eligible') is False):
+                    errors.append('story_ineligible:' + str(cid))
+                if story.get('story_id') in story_ids:
+                    errors.append('duplicate_story_id')
+                story_ids.add(story.get('story_id'))
+                if story.get('publication_ready') is True:
+                    errors.append('story_publication_unverified:' + str(cid))
+            if not manifest.get('readiness', {}).get('editorial_ready') and social.get('stories'):
+                errors.append('stories_with_incomplete_editorial_upstream')
+            if 'social/stories_candidates.json' in names:
+                shadow = json.loads(read('social/stories_candidates.json'))
+                if shadow != social.get('stories', []):
+                    errors.append('story_manifest_candidate_list_disagreement')
         visual_count = 0
+        if manifest.get('readiness', {}).get('visual_ready'):
+            if not shortlist['candidate_ids'] or any(
+                    not by_id.get(cid, {}).get('visual_refs') for cid in shortlist['candidate_ids']):
+                errors.append('visual_ready_without_shortlist_evidence')
         metadata = json.loads(read('source/metadata.json'))
         duration = metadata.get('duration')
         reference_indices = {
@@ -220,9 +322,12 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         media_relative_name = f'SECOND_CURATION_MEDIA_{source_id}_{timestamp}_{uuid.uuid4().hex[:6]}.zip'
         for number, candidate in enumerate(candidates):
             candidate_id = _identifier(candidate['candidate_id'])
-            candidate['commercial_classification'] = classify_content(candidate['transcript_literal'], candidate.get('segment_ids', []), candidate.get('commercial_visual_evidence'))
+            candidate['commercial_classification'] = _final_commercial_classification(candidate)
             candidate['content_type'] = candidate['commercial_classification']['content_type']
             candidate['commercial_score'] = candidate['commercial_classification']['commercial_score']
+            if candidate['commercial_classification']['eligibility'] == 'excluded':
+                candidate['default_shortlist_eligible'] = False
+                candidate['publication_eligible'] = False
             candidate['privacy_redacted'] = _public(candidate['transcript_literal']) != candidate['transcript_literal']
             if candidate['privacy_redacted']:
                 candidate['transcript_literal_method'] += '_with_explicit_privacy_redaction'
@@ -258,7 +363,8 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                                  'duration': candidate.get('duration'), 'reason': 'first_pass_eligibility_gate'})
             write(f'candidates/{candidate_id}.json', candidate)
         write('editorial/candidate_catalog.json', {'schema_version': SCHEMA_VERSION, 'candidates': candidates})
-        social_output = analysis.get('social_output') or {}
+        social_output = _reconcile_social_output(analysis.get('social_output') or {}, candidates,
+                                                bool(package.get('editorial_integrity_ready', True)))
         write('social/stories_manifest.json', social_output)
         write('social/stories_candidates.json', social_output.get('stories', []))
         write('social/title_suggestions.json', social_output.get('title_suggestions', []))
@@ -268,10 +374,25 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
               'selected_caption_preset': social_output.get('selected_caption_preset'),
               'available_caption_presets': social_output.get('available_caption_presets', {}),
               'render_contract': social_output.get('render_contract', {})})
-        shortlist = [cid for cid in shortlist if next(r for r in candidates if r['candidate_id'] == cid)['commercial_classification']['eligibility'] == 'eligible']
+        candidate_by_id = {row['candidate_id']: row for row in candidates}
+        shortlist = [cid for cid in shortlist if candidate_by_id[cid].get('default_shortlist_eligible')
+                     and candidate_by_id[cid].get('publication_eligible')
+                     and candidate_by_id[cid]['commercial_classification']['eligibility'] == 'eligible']
         write('editorial/default_shortlist.json', {'candidate_ids': shortlist, 'rank_is_first_pass_not_final': True})
         write('editorial/excluded_candidates.json', excluded)
         write('editorial/excluded_commercials.json', [row for row in candidates if row['commercial_classification']['eligibility'] == 'excluded'])
+        metrics = dict(analysis.get('candidate_metrics') or {})
+        metrics['excluded_commercial_count'] = sum(row['commercial_classification']['eligibility'] == 'excluded' for row in candidates)
+        metrics['final_shortlist_count'] = len(shortlist)
+        write('summary/analysis_summary.json', {'analysis_status': analysis.get('analysis_status'),
+            'analyzer_version': __version__, 'candidate_count': len(candidates), 'candidate_metrics': metrics,
+            'episode_summary': (analysis.get('video_understanding') or {}).get('episode_summary')})
+        write('editorial/final_gate_report.json', {
+            'candidate_count': len(candidates), 'final_shortlist_count': len(shortlist),
+            'excluded_commercial_count': metrics['excluded_commercial_count'],
+            'social_story_count': len(social_output.get('stories', [])),
+            'removed_stories_by_final_gate': social_output.get('removed_stories_by_final_gate', []),
+            'publication_ready': False, 'review_required': True})
         write('editorial/alternate_groups.json', [{'primary_candidate': candidate['candidate_id'], 'alternates': [row.get('moment_id') for row in candidate.get('alternates', [])]} for candidate in candidates if candidate.get('alternates')])
         write('quality/candidate_quality.json', [{'candidate_id': candidate['candidate_id'], **{key: candidate.get(key) for key in ('audio_quality', 'technical_quality', 'clean_opening', 'clean_ending', 'evidence_coverage', 'ranking_confidence', 'missing_field_reasons')}} for candidate in candidates])
         write('camera/candidate_camera_plans.json', [{'candidate_id': candidate['candidate_id'], 'camera_feasibility': candidate.get('camera_feasibility'),
@@ -433,6 +554,21 @@ def generate_visuals_on_demand(package_path, source, candidate_ids, output_dir, 
                   'catalog_count_preserved': len(catalog['candidates'])})
         manifest = read_json(root / 'SECOND_CURATION_MANIFEST.json')
         manifest.update(created_at=datetime.now(timezone.utc).isoformat(), derived_from_package_sha256=file_hash(package_path))
+        shortlist_ids = read_json(root / 'editorial/default_shortlist.json').get('candidate_ids', [])
+        has_all_visuals = bool(shortlist_ids) and all(by_id[cid].get('visual_refs') for cid in shortlist_ids)
+        manifest.setdefault('readiness', {})['visual_ready'] = bool(has_all_visuals)
+        manifest.setdefault('readiness_reasons', {})['visual_ready'] = None if has_all_visuals else (
+            'shortlist_empty' if not shortlist_ids else 'shortlist_visual_evidence_incomplete')
+        manifest['missing_capabilities'] = [key for key, value in manifest['readiness'].items() if not value]
+        index = read_json(root / 'CURATION_INDEX.json')
+        index['second_curation_readiness'] = manifest['readiness']
+        index['second_curation_readiness_reasons'] = manifest['readiness_reasons']
+        write_json(root / 'CURATION_INDEX.json', index)
+        brief = read_json(root / 'SECOND_CURATOR_BRIEF.json')
+        brief['capabilities'] = manifest['readiness']
+        brief['capability_reasons'] = manifest['readiness_reasons']
+        brief['known_limitations'] = manifest['missing_capabilities']
+        write_json(root / 'SECOND_CURATOR_BRIEF.json', brief)
         manifest['files'] = [{'path': f.relative_to(root).as_posix(), 'bytes': f.stat().st_size, 'sha256': file_hash(f)}
                              for f in sorted(root.rglob('*')) if f.is_file() and f.name != 'SECOND_CURATION_MANIFEST.json']
         manifest['file_count'] = len(manifest['files']) + 1

@@ -22,6 +22,7 @@ docs/CONTRATO_DADOS.md
 docs/DIRECTOR_BENCHMARK.json
 docs/FILES_CHANGED_V3.md
 docs/FONTES.md
+docs/R3_CAMERA_PERCEPTION_PART1.md
 docs/REPOSITORY_STRUCTURE.md
 docs/REQUISITOS_RECEBIDOS.txt
 docs/ROADMAP_R2_R3_20261007.md
@@ -232,4 +233,5 @@ src/tests/test_v44_targeted_asr.py
 src/tests/test_v45_r3_resource_budget.py
 src/tests/test_v45_visual_identity_final.py
 src/tests/test_v45_visual_identity_round2.py
+src/tests/test_v46_r3_camera_perception.py
 src/tests/test_v4_final.py

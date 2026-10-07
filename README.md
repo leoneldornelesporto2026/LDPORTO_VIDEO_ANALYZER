@@ -1,3 +1,5 @@
+> **Build R4.5 — Rodada 3 Parte 1 (Câmera e Percepção).** Melhorias em aquisição de evidência nas cenas curtas, embeddings SFace quando disponível, filtros conservadores de associação speaker↔person para câmera e diagnóstico de oportunidade/ausência de Smart Zoom. Veja [docs/R3_CAMERA_PERCEPTION_PART1.md](docs/R3_CAMERA_PERCEPTION_PART1.md). Mantém versão de cache lógica 4.4.0; mudanças na etapa 07 invalidam seletivamente o cache visual, não a transcrição.
+
 > **V4.2:** [relatorio atual](docs/V4_2_IMPLEMENTATION_REPORT.md), [matriz](docs/V4_2_REQUIREMENT_MATRIX.md),
 
 > **Build de estabilização atual:** V4.4 R3 (cache identity 4.4.0). Veja `docs/V44_R3_STABILIZATION.md`.

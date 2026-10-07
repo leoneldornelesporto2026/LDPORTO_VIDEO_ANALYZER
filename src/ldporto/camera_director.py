@@ -65,7 +65,21 @@ def _prepare(metadata, vision, shots, active, cfg):
         frame, obs = visual.near(mid, lo, hi, cfg['max_observation_gap_seconds']) if shot else (None, {})
         voices = list(active_cursor.at(mid))
         speakers = sorted({r.get('speaker_id') for r in voices if r.get('speaker_id')})
-        confident = [r for r in voices if r.get('person_id') in obs and _confidence(r) >= cfg['enter_confidence']]
+        # Only recent, visibly supported associations can direct an individual crop.
+        # Distinct contradictory identities are never resolved by screen position.
+        confident_rows = [r for r in voices
+            if r.get('person_id') in obs and obs[r['person_id']].get('face_visible')
+            and _confidence(r) >= cfg['enter_confidence']
+            and r.get('active_speaker_state') not in {'UNCERTAIN', 'OFFSCREEN'}
+            and r.get('contemporary_visual_presence') is not False
+            and r.get('offscreen_state') is not True]
+        confident_by_person = {}
+        for candidate in confident_rows:
+            person_id = candidate['person_id']
+            previous = confident_by_person.get(person_id)
+            if previous is None or _confidence(candidate) > _confidence(previous):
+                confident_by_person[person_id] = candidate
+        confident = list(confident_by_person.values())
         safe = {p: geometry([o], metadata, cfg) for p, o in obs.items()}
         safe = {p: g for p, g in safe.items() if g['safe']}
         pair = tuple(sorted(safe)) if len(safe) == 2 and len(obs) == 2 else ()
@@ -333,8 +347,20 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                     break
                 j += 1
         beat = _editorial_zoom_beat(mid, mrows, arows)
+        if beat:
+            counts['editorial_beat_raw_windows'] += 1
         if quick or item['overlap'] or near_cut:
+            if beat:
+                counts['editorial_beat_suppressed_due_to_cut_or_overlap'] += 1
             beat = None
+        if beat:
+            counts['editorial_beat_eligible_windows'] += 1
+            if current_focus is None:
+                counts['editorial_beat_without_focus_windows'] += 1
+            elif current_focus == person and current_layout == 'single_person':
+                counts['editorial_beat_with_speaker_focus_windows'] += 1
+        elif current_focus and current_layout == 'single_person':
+            counts['focused_windows_without_editorial_beat'] += 1
         baseline_geo = geometry([obs[current_focus]], metadata, cfg) if current_focus in obs else {'safe': False}
         face_size = number((obs.get(current_focus, {}).get('face_bbox') or {}).get('height'))
         source_motion_data = (item['frame'] or {}).get('source_camera_motion')
@@ -578,6 +604,16 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                'full_frame_fraction': fractions['full_frame'],
                **{k: counts[k] for k in ('switches_suppressed', 'deadzone_suppressed_moves', 'unsafe_crop_avoided', 'source_shot_resets')},
                'director_intervals': len(rows), 'director_evaluation_windows': len(records),
+               'evaluation_windows_with_face_evidence':sum(bool(item['obs'] and any(o.get('face_visible') for o in item['obs'].values())) for item in records),
+               'evaluation_windows_with_grounded_speaker':sum(bool(item['confident']) and not item['overlap'] for item in records),
+               'evaluation_windows_with_conflicting_person_targets':sum(len(item['confident'])>1 for item in records),
+               'evaluation_windows_without_visual_sample':sum(item['frame'] is None for item in records),
+               'editorial_beat_raw_windows':counts['editorial_beat_raw_windows'],
+               'editorial_beat_eligible_windows':counts['editorial_beat_eligible_windows'],
+               'editorial_beat_suppressed_due_to_cut_or_overlap':counts['editorial_beat_suppressed_due_to_cut_or_overlap'],
+               'editorial_beat_without_focus_windows':counts['editorial_beat_without_focus_windows'],
+               'editorial_beat_with_speaker_focus_windows':counts['editorial_beat_with_speaker_focus_windows'],
+               'focused_windows_without_editorial_beat':counts['focused_windows_without_editorial_beat'],
                'observations_per_second': len(vision.get('observations', []))/duration,
                'conversation_modes': dict(Counter(r['conversation_mode'] for r in rows)),
                'elapsed_seconds': time.perf_counter()-started,

@@ -201,16 +201,97 @@ def semantic_cache_key(cfg, group, model_fingerprint):
                    'structured_ranges': cfg.get('structured_ranges', True)})
 
 
+def semantic_failure_category(error):
+    text = str(error).lower()
+    for category, cues in [('EMPTY_CONTENT', ('empty', 'vazio')), ('TIMEOUT', ('timeout', 'timed out')),
+                           ('CALL_BUDGET', ('budget',)), ('TRANSPORT', ('unreachable', 'connection')),
+                           ('PT_BR_METADATA', ('pt-br', 'english', 'portugues')),
+                           ('TOPIC_COVERAGE', ('coverage', 'cover', 'overlap', 'cobrem', 'cobertura')),
+                           ('REFERENCE_RANGE', ('reference', 'segment', 'reversed', 'consecutive'))]:
+        if any(cue in text for cue in cues):
+            return category
+    return 'SCHEMA_STRUCTURAL'
+
+
+def salvage_semantic_components(data, group, chunk_index):
+    """Keep individually validated facts; synthesize topics only for uncovered IDs."""
+    refs = [s['segment_id'] for s in group]
+    positions = {sid: i for i, sid in enumerate(refs)}
+    topics, moments, covered = [], [], set()
+    if not isinstance(data, dict) or data.get('locale') != 'pt-BR':
+        return None, {}
+    for key in ('topics', 'moments'):
+        for item_index, source in enumerate(data.get(key, []) if isinstance(data.get(key), list) else []):
+            try:
+                item = deepcopy(source)
+                if 'start_segment_id' in item:
+                    a, b = positions[item.pop('start_segment_id')], positions[item.pop('end_segment_id')]
+                    if b < a:
+                        continue
+                    item['segment_ids'] = refs[a:b + 1]
+                ids = item['segment_ids']
+                offsets = [positions[sid] for sid in ids]
+                if offsets != list(range(min(offsets), max(offsets) + 1)):
+                    continue
+                subset = group[min(offsets):max(offsets) + 1]
+                shell = {'locale': 'pt-BR', 'topics': [{'topic': 'Trecho para revisão', 'summary': 'Evidência parcial da conversa.',
+                         'context_required': 'unresolved', 'segment_ids': ids}], 'moments': []}
+                shell[key] = [item]
+                grounded = ground_model_output(shell, subset, chunk_index)[key][0]
+                if key == 'topics':
+                    if covered.intersection(ids):
+                        continue
+                    grounded['topic_id'] = f'TOPIC_PRESERVED_{chunk_index:05}_{item_index:04}'
+                    topics.append(grounded)
+                    covered.update(ids)
+                else:
+                    grounded['moment_id'] = f'MOMENT_PRESERVED_{chunk_index:05}_{item_index:04}'
+                    moments.append(grounded)
+            except (ValueError, KeyError, TypeError, IndexError, __import__('jsonschema').ValidationError):
+                continue
+    preserved = {'preserved_topic_count': len(topics), 'preserved_moment_count': len(moments),
+                 'fallback_segment_count': len(refs) - len(covered)}
+    missing_groups, current = [], []
+    for segment in group:
+        if segment['segment_id'] in covered:
+            if current:
+                missing_groups.append(current)
+                current = []
+        else:
+            current.append(segment)
+    if current:
+        missing_groups.append(current)
+    for index, missing in enumerate(missing_groups):
+        fallback = heuristic(missing, chunk_index)
+        for row in fallback['topics']:
+            row['topic_id'] = f'TOPIC_FALLBACK_{chunk_index:05}_{index:04}'
+        for n, row in enumerate(fallback['moments']):
+            row['moment_id'] = f'MOMENT_FALLBACK_{chunk_index:05}_{index:04}_{n:04}'
+        topics.extend(fallback['topics'])
+        moments.extend(fallback['moments'])
+    return {'topics': sorted(topics, key=lambda t: t['start']), 'moments': moments}, preserved
+
+
 def repair_ollama_output(cfg, group, invalid_data, error):
     """One bounded structural repair. It may only reuse segment IDs already supplied."""
     import jsonschema
     schema = ollama_schema()
     valid_ids = [row.get("segment_id") for row in group]
     positions = {reference: index for index, reference in enumerate(valid_ids)}
-    try:
-        original = expand_reference_ranges(invalid_data, group)
-    except Exception:
-        original = invalid_data
+    original = deepcopy(invalid_data)
+    # Expand independently: one invalid range must not poison valid siblings.
+    if isinstance(original, dict):
+        for key in ('topics', 'moments'):
+            if not isinstance(original.get(key), list):
+                continue
+            for item in original[key]:
+                if not isinstance(item, dict) or 'start_segment_id' not in item:
+                    continue
+                a, b = positions.get(item.get('start_segment_id')), positions.get(item.get('end_segment_id'))
+                if a is not None and b is not None and a <= b:
+                    item.pop('start_segment_id')
+                    item.pop('end_segment_id')
+                    item['segment_ids'] = valid_ids[a:b + 1]
     editable = isinstance(original, dict) and original.get('locale') == 'pt-BR' and all(isinstance(original.get(key), list) for key in ('topics', 'moments'))
     invalid_indices = {'topics': [], 'moments': []}
     if editable:
@@ -225,9 +306,32 @@ def repair_ollama_output(cfg, group, invalid_data, error):
                     require_pt_br([item['reason']] if key == 'moments' else [item['topic'], item['summary']])
                 except (ValueError, KeyError, TypeError, jsonschema.ValidationError):
                     invalid_indices[key].append(index)
-        covered = [reference for item in original['topics'] if isinstance(item, dict) for reference in item.get('segment_ids', [])]
-        if covered != valid_ids and not invalid_indices['topics']:
-            invalid_indices['topics'] = list(range(len(original['topics'])))
+        covered = set()
+        for index, item in enumerate(original['topics']):
+            if index in invalid_indices['topics']:
+                continue
+            ids = item['segment_ids']
+            if covered.intersection(ids):
+                invalid_indices['topics'].append(index)
+            else:
+                covered.update(ids)
+        # A missing interval is a repair item of its own, not a reason to rewrite
+        # every valid topic. Deterministic ordering is resolved after merging.
+        if not invalid_indices['topics']:
+            missing, current = [], []
+            for reference in valid_ids:
+                if reference in covered:
+                    if current:
+                        missing.append(current)
+                        current = []
+                else:
+                    current.append(reference)
+            if current:
+                missing.append(current)
+            for ids in missing:
+                invalid_indices['topics'].append(len(original['topics']))
+                original['topics'].append({'topic': 'Intervalo não coberto', 'summary': 'Metadata pendente de reparo.',
+                                           'context_required': 'unresolved', 'segment_ids': ids})
     system = ("Corrija SOMENTE a estrutura JSON. Não altere a transcrição, não crie IDs, não crie timestamps, "
               "não acrescente fatos. Use exclusivamente os segment_id válidos fornecidos e respeite a ordem/consecutividade. "
               "Reescreva somente metadata em PT-BR, sem traduzir fala literal. Devolva apenas os itens invalidos; use arrays vazios para colecoes sem reparo. "
@@ -235,6 +339,20 @@ def repair_ollama_output(cfg, group, invalid_data, error):
     payload = {"validation_error": scrub(error), "valid_segment_ids": valid_ids,
                "repair_scope": {key: invalid_indices[key] for key in invalid_indices},
                "invalid_output": {'locale': 'pt-BR', **{key: [original[key][index] for index in invalid_indices[key]] for key in invalid_indices}} if editable else invalid_data}
+    needed = set()
+    if editable:
+        for key, indices in invalid_indices.items():
+            for index in indices:
+                item = original[key][index]
+                if isinstance(item, dict):
+                    needed.update(reference for reference in item.get('segment_ids', []) if reference in positions)
+                    a, b = positions.get(item.get('start_segment_id')), positions.get(item.get('end_segment_id'))
+                    if a is not None and b is not None and a <= b:
+                        needed.update(valid_ids[a:b + 1])
+        if invalid_indices['topics']:
+            needed.update(reference for reference in valid_ids if reference not in covered)
+    payload['repair_transcript_data'] = [{key: segment.get(key) for key in ('segment_id', 'speaker', 'text')}
+                                         for segment in group if segment['segment_id'] in needed]
     data, meta = ollama_chat(
         cfg["ollama_url"], cfg.get("_resolved_model") or cfg["model"],
         [{"role":"system","content":system},
@@ -257,6 +375,8 @@ def repair_ollama_output(cfg, group, invalid_data, error):
                 raise ValueError('Targeted repair did not return the expected invalid items.')
         meta = {**meta, 'repair_scope': invalid_indices,
                 'preserved_item_count': sum(len(original[key]) - len(indices) for key, indices in invalid_indices.items())}
+        if all(isinstance(item, dict) and item.get('segment_ids') for item in combined['topics']):
+            combined['topics'].sort(key=lambda item: positions.get(item['segment_ids'][0], len(valid_ids)))
         return combined, meta
     return data, meta
 
@@ -786,7 +906,8 @@ class SemanticEngine:
                     try:
                         result = ground_model_output(model_output, group, index)
                     except Exception as exc:
-                        entry.update(initial_invalid=True, repair_attempted=True)
+                        entry.update(initial_invalid=True, repair_attempted=True,
+                                     initial_error_category=semantic_failure_category(exc))
                         if used_calls >= call_budget:
                             raise RuntimeError("semantic_repair_budget_exceeded") from exc
                         used_calls += 1
@@ -797,7 +918,9 @@ class SemanticEngine:
                     write_json(record, {"version": "4.3", "key": key, "checksum": digest(model_output), "data": model_output,
                                         "source_hash": ctx.signature, "progress_index": index, "model_fingerprint": model_fingerprint})
                 except Exception as exc:
-                    entry.update(fallback=True, fallback_used=True, error_category=type(exc).__name__, error=scrub(exc))
+                    entry.update(fallback=True, fallback_used=True, error_category=semantic_failure_category(exc), error=scrub(exc))
+                    result, preservation = salvage_semantic_components(model_output, group, index)
+                    entry.update(preservation)
                     if hasattr(exc, 'metadata'):
                         entry['call'] = exc.metadata
                     notes.append(f"Bloco semantico {index + 1}: {scrub(exc)}; fallback sinalizado.")
@@ -870,6 +993,7 @@ class SemanticEngine:
                    "requested_backend": requested_backend, "resolved_model": cfg.get("_resolved_model") or cfg["model"],
                    "profile": cfg["profile"], "ollama_reachable_at_start": bool(service and service.get("reachable")),
                    "ollama_version": (service or {}).get("version"), "ollama_call_count": used_calls, "ollama_calls": call_meta,
+                   "semantic_chunk_profile": call_meta,
                    "global_review_call": review_meta, "heuristic_chunks": heuristic_count, "total_chunks": total,
                    "editorial_metrics_are_subjective": True,
                    "structural_repair": {"initial_invalid": any(entry["initial_invalid"] for entry in call_meta),

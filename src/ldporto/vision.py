@@ -555,6 +555,8 @@ class VisionEngine:
                             sharpness = finite_or_none(float(cv2.Laplacian(roi, cv2.CV_64F).var()))
                     lip_opening = mouth_matches[0]["lip_opening"] if len(mouth_matches) == 1 else None
                     row = {**obs, "time": time, "frame": index, "scene_id": scene_id,
+                           "person_detection_kind": ('FACE_BODY_PERSON' if obs['face_visible'] and obs['body_visible'] else
+                                                     'FACE_ONLY_PERSON' if obs['face_visible'] else 'BODY_ONLY_PERSON'),
                            "center": center(box), "head_center": face_center,
                            "body_center": center(box) if obs["body_visible"] else None,
                            "percent_frame": box["width"]*box["height"],
@@ -624,7 +626,8 @@ class VisionEngine:
                     ctx.progress('07_people_tracking', current=time, total=metadata['duration'], unit='video_seconds', substage='visual_detection_and_tracking')
                     last_progress = time
                 if time-last_log >= 60:
-                    ctx.logger.info("Visão: %.1f / %.1fs; %s tracks", time, metadata["duration"], len(people))
+                    ctx.logger.info("Visão: %.1f / %.1fs; %s raw_person_hypotheses; %s raw_tracklets",
+                                    time, metadata["duration"], len(people), tracker.next_track_id - 1)
                     last_log = time
         finally:
             cap.release()
@@ -753,9 +756,9 @@ class ActiveSpeakerEngine:
                     continue
                 candidates = []
                 if not turn.get("overlap") and end-start >= evidence_cfg.get("min_audio_window_seconds", 1.5):
-                    audio_start = max(0, start - .08)
+                    audio_start = max(0, start - .16)
                     f.seek(max(0, round(audio_start * rate)))
-                    window_audio = f.read(max(1, round((end - audio_start + .08) * rate)), dtype="float32")
+                    window_audio = f.read(max(1, round((end - audio_start + .16) * rate)), dtype="float32")
                     for pid, rows in tracks.items():
                         times = track_times[pid]
                         selected = rows[bisect.bisect_left(times, start):bisect.bisect_left(times, end)]
@@ -763,24 +766,16 @@ class ActiveSpeakerEngine:
                             continue
                         if len({r["scene_id"] for r in selected}) > 1:
                             continue
-                        values, rms = [], []
-                        for r in selected:
-                            offset = max(0, round((r["time"] - .08 - audio_start) * rate))
-                            samples = window_audio[offset:offset + round(.16 * rate)]
-                            rms.append(float(np.sqrt(np.mean(samples**2))) if samples.size else 0)
-                            values.append(r["lip_opening"])
-                        if np.std(values) < 0.008 or np.std(rms) < 1e-5:
-                            continue
-                        correlation = float(np.corrcoef(values, rms)[0, 1])
-                        if math.isfinite(correlation):
-                            lower_bound = math.tanh(math.atanh(max(-.999999, min(.999999, correlation))) - 1.96 / math.sqrt(max(1, len(selected) - 3)))
-                            candidates.append({"person_id": pid, "correlation": correlation,
-                                               "sample_count": len(selected),
-                                               "correlation_lower_bound_proxy": lower_bound,
+                        from .speaker_signals import mouth_audio_evidence
+                        signal = mouth_audio_evidence(selected, window_audio, rate, audio_start)
+                        if signal:
+                            candidates.append({"person_id": pid, **signal,
                                                "visibility_coverage": (selected[-1]["time"] - selected[0]["time"]) / (end - start),
                                                "track_stability": 1 / max(1, len({row.get('track_id') for row in selected})),
                                                "source_shot_id": selected[0].get("scene_id"),
-                                               "mouth_activity_mean": float(np.mean([r.get("mouth_activity") or 0 for r in selected]))})
+                                               "mouth_activity_mean": float(np.mean([r.get("mouth_activity") or 0 for r in selected])),
+                                               "face_visibility": sum(bool(r.get('face_visible')) for r in selected) / len(selected),
+                                               "embedding_continuity": sum(bool(r.get('face_embedding_available')) for r in selected) / len(selected)})
                 candidates.sort(key=lambda c: c["correlation"], reverse=True)
                 chosen = None
                 if candidates and candidates[0]["correlation"] >= cfg["association_min_correlation"] and candidates[0]["correlation_lower_bound_proxy"] > 0:

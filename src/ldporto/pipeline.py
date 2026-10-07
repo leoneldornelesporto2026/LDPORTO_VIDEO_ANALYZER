@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import re
 from . import __version__
 from .config import ROOT, configure_local_mode
-from .core import Context, file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok
+from .core import Context, file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok, digest
 from .media import resolve_input, inspect
 from .audio import extract_audio, audio_metrics, sound_events
 from .transcription import TranscriptionEngine
@@ -74,15 +74,18 @@ def analyze(source, cfg, output=None, force=False):
                         'diarization':capabilities['diarization']['checks'].get('model_access',{}).get('model_fingerprint'),
                         'semantic':capabilities['semantic']['checks'].get('model',{}).get('model_fingerprint')}
 
-    with logging_session(logger), output_lock(destination):
+    from .storage import media_lease
+    with logging_session(logger), output_lock(destination), media_lease(video):
         metadata = ctx.step("01_metadata", {}, lambda: inspect(video), required=True,
                             code_files=["media.py", "core.py"])
         metadata.update(
             source=provenance, sha256=signature, analyzer_version=__version__,
-            schema_version='2.0', camera_director_version='4.3.0',
+            schema_version='2.0', camera_director_version='4.4.0',
             analyzed_at_utc=datetime.now(timezone.utc).isoformat(),
         )
-        ctx.progress('01_metadata', status='ok', metadata=metadata)
+        from .runtime_metrics import historical_stage_estimates
+        ctx.progress('01_metadata', status='ok', metadata=metadata,
+                     historical_stage_estimates=historical_stage_estimates(metadata, cfg))
 
         audio = ctx.step("02_audio", {"audio": cfg["audio"], "external": external['02_audio']},
                          lambda: extract_audio(ctx, metadata), required=True,
@@ -107,7 +110,7 @@ def analyze(source, cfg, output=None, force=False):
              "token_available": bool(__import__("os").environ.get("HF_TOKEN") or
                                      __import__("os").environ.get("HUGGING_FACE_HUB_TOKEN"))},
             lambda: DiarizationEngine().run(ctx, audio, metadata),
-            code_files=["diarization.py", "core.py"])
+            code_files=["diarization.py", "model_cache.py", "core.py"])
         transcript = align_speakers(transcript, diarization)
 
         scene_data = ctx.step("06_scenes", cfg["scenes"],
@@ -138,7 +141,7 @@ def analyze(source, cfg, output=None, force=False):
             "10_active_speaker",
             {"vision": cfg["vision"], "active_speaker": cfg["active_speaker"], "external": external['10_active_speaker']},
             lambda: _active_stage(ctx, audio, diarization, vision, metadata, cfg["active_speaker"]),
-            code_files=["vision.py", "active_speaker.py", "temporal.py", "core.py"],
+            code_files=["vision.py", "active_speaker.py", "speaker_signals.py", "perception_diagnostics.py", "temporal.py", "core.py"],
             requires=["07_people_tracking"])
 
         shot_data = ctx.step("11_shots", cfg["shots"],
@@ -174,7 +177,7 @@ def analyze(source, cfg, output=None, force=False):
             "16_understanding", cfg["understanding"],
             lambda: run_understanding(ctx, metadata, transcript, diarization, vision, active,
                                       semantic, shots, cfg["understanding"]),
-            code_files=["understanding.py", "semantic.py", "editorial.py", "core.py"])
+            code_files=["understanding.py", "story_recovery.py", "semantic.py", "editorial.py", "core.py"])
         master_data = ctx.step(
             "17_master_timeline", {"schema": "2.0"},
             lambda: build_master_timeline(metadata, transcript, scenes, semantic.get("topics", []),
@@ -183,6 +186,30 @@ def analyze(source, cfg, output=None, force=False):
                                           active.get("intervals", [])),
             code_files=["master_timeline.py", "core.py"])
         master_timeline = master_data.get("timeline", [])
+        from .broadcast_graphics import inspect_candidate_graphics
+        graphics_candidates = understanding.get('main_moments', [])
+        graphics = ctx.step('17b_broadcast_graphics',
+            {'ranges': digest([{k: r.get(k) for k in ('moment_id', 'start', 'end', 'editorial_score')} for r in graphics_candidates]),
+             'limit': cfg['export']['second_curation_visual_candidate_limit']},
+            lambda: ok(inspect_candidate_graphics(ctx.video, graphics_candidates,
+                       cfg['export']['second_curation_visual_candidate_limit'])),
+            code_files=['broadcast_graphics.py'], requires=['16_understanding'])
+        vision['broadcast_graphics'] = graphics
+        from .commercial_gate import targeted_ocr, apply_commercial_refinement
+        commercial_visual = ctx.step('17c_commercial_visual',
+            {'ranges': digest(graphics_candidates), 'ocr': cfg['ocr'], 'limit': cfg['export']['second_curation_visual_candidate_limit']},
+            lambda: ok(targeted_ocr(ctx.video, graphics_candidates, cfg['ocr'], cfg['export']['second_curation_visual_candidate_limit'])),
+            code_files=['commercial_gate.py'], requires=['16_understanding'])
+        understanding = apply_commercial_refinement(understanding, transcript['segments'],
+            [{**r, 'source': 'ocr'} for r in ocr.get('texts', [])] + commercial_visual.get('texts', []), cfg['understanding'])
+        from .targeted_asr import run_targeted_repair
+        targeted_asr = ctx.step('17d_targeted_asr',
+            {'config': {k: cfg['transcription'].get(k) for k in ('targeted_repair_enabled', 'targeted_max_regions', 'targeted_max_audio_seconds', 'model', 'beam_size', 'vad_filter', 'glossary', 'import_file')},
+             'candidate_ranges': digest(understanding['main_moments']), 'arcs': digest(understanding.get('story_arcs', []))},
+            lambda: ok(run_targeted_repair(ctx, audio, transcript, understanding['main_moments'],
+                      understanding.get('story_arcs', []), semantic.get('questions_answers', []), metadata['duration'])),
+            code_files=['targeted_asr.py'], requires=['04_transcription', '16_understanding'])
+        transcript.setdefault('transcription_alternatives', []).extend(targeted_asr.get('alternatives', []))
 
         for window in metrics.get("quality_windows", []):
             selected = [word for word in transcript["words"]
@@ -236,14 +263,17 @@ def analyze(source, cfg, output=None, force=False):
             "secondary_editorial_themes": semantic.get("secondary_editorial_themes", []),
             "topic_quality": semantic.get("topic_quality", {}),
             "semantic_metrics": semantic.get("semantic_metrics", {}),
+            "semantic_chunk_profile": semantic.get("semantic_chunk_profile", []),
             "editorial_moments": semantic.get("moments", []),
             "ollama_editorial_review": semantic.get("editorial_review"),
             "candidate_hooks": semantic.get("candidate_hooks", []),
             "candidate_endings": semantic.get("candidate_endings", []),
             "silences": metrics.get("silences", []), "audio_events": events.get("events", []),
             "ocr_text": ocr.get("texts", []), "timeline": timeline,
+            "broadcast_graphics": graphics,
             "low_confidence_words": transcript.get("low_confidence_words", []),
             "transcription_alternatives": transcript.get("transcription_alternatives", []),
+            "targeted_asr_repair": targeted_asr,
             "unaligned_segments": transcript.get("unaligned_segments", []),
             # v2 perception/understanding contract
             "person_identities": reid.get("identities", []),
@@ -254,6 +284,7 @@ def analyze(source, cfg, output=None, force=False):
             "diarization_quality": diarization.get("alignment_metrics", {}),
             "person_motion": motion.get("people", []),
             "speaker_person_summary": active.get("mapping_summary", []),
+            "speaker_person_diagnostics": active.get("speaker_person_diagnostics", []),
             "speaker_person_affinity": active.get("affinity", []),
             "active_speaker_evidence": active.get("active_speaker_evidence", []),
             "active_speaker": active.get("intervals", []),

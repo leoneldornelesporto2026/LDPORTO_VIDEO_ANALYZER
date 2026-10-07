@@ -176,6 +176,10 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         def write(name, data):
             write_json(root / name, _public(data))
         write('source/metadata.json', {key: metadata.get(key) for key in ('duration', 'width', 'height', 'fps', 'rotation', 'sha256', 'source', 'analyzer_version')})
+        from .second_curation_decisions import SCHEMA
+        write('schemas/second_curation_decisions.schema.json', SCHEMA)
+        write('SECOND_CURATION_DECISIONS.template.json', {'schema_version': '4.4.0', 'source_sha256': metadata.get('sha256'),
+                                                       'provider': 'manual_json', 'actions': []})
         write('summary/analysis_summary.json', {'analysis_status': analysis.get('analysis_status'), 'analyzer_version': __version__,
             'candidate_count': len(candidates), 'candidate_metrics': analysis.get('candidate_metrics', {}),
             'episode_summary': (analysis.get('video_understanding') or {}).get('episode_summary')})
@@ -216,7 +220,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         media_relative_name = f'SECOND_CURATION_MEDIA_{source_id}_{timestamp}_{uuid.uuid4().hex[:6]}.zip'
         for number, candidate in enumerate(candidates):
             candidate_id = _identifier(candidate['candidate_id'])
-            candidate['commercial_classification'] = classify_content(candidate['transcript_literal'], candidate.get('segment_ids', []))
+            candidate['commercial_classification'] = classify_content(candidate['transcript_literal'], candidate.get('segment_ids', []), candidate.get('commercial_visual_evidence'))
             candidate['content_type'] = candidate['commercial_classification']['content_type']
             candidate['commercial_score'] = candidate['commercial_classification']['commercial_score']
             candidate['privacy_redacted'] = _public(candidate['transcript_literal']) != candidate['transcript_literal']
@@ -254,6 +258,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                                  'duration': candidate.get('duration'), 'reason': 'first_pass_eligibility_gate'})
             write(f'candidates/{candidate_id}.json', candidate)
         write('editorial/candidate_catalog.json', {'schema_version': SCHEMA_VERSION, 'candidates': candidates})
+        shortlist = [cid for cid in shortlist if next(r for r in candidates if r['candidate_id'] == cid)['commercial_classification']['eligibility'] == 'eligible']
         write('editorial/default_shortlist.json', {'candidate_ids': shortlist, 'rank_is_first_pass_not_final': True})
         write('editorial/excluded_candidates.json', excluded)
         write('editorial/excluded_commercials.json', [row for row in candidates if row['commercial_classification']['eligibility'] == 'excluded'])
@@ -340,3 +345,80 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                   media_preview_count=len(media_files))
         emit('complete', 1, 1)
         return result
+
+
+def generate_visuals_on_demand(package_path, source, candidate_ids, output_dir, preview=False):
+    """New derivative ZIP, same full catalog; six frames per requested candidate only."""
+    validation = validate_core_package(package_path)
+    if validation['status'] != 'valid':
+        raise ValueError('Invalid input second-curation package')
+    output_dir = Path(output_dir).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='v44_visuals_', dir=output_dir) as temporary:
+        root = Path(temporary).resolve()
+        with zipfile.ZipFile(package_path) as archive:
+            for name in archive.namelist():
+                target = (root / name).resolve()
+                if not target.is_relative_to(root):
+                    raise ValueError('Unsafe visual package target')
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(archive.read(name))
+        metadata = read_json(root / 'source/metadata.json')
+        if file_hash(source) != metadata.get('sha256'):
+            raise ValueError('On-demand source hash mismatch')
+        catalog = read_json(root / 'editorial/candidate_catalog.json')
+        by_id = {r['candidate_id']: r for r in catalog['candidates']}
+        if not set(candidate_ids) <= by_id.keys() or len(candidate_ids) > 40:
+            raise ValueError('Invalid on-demand candidate IDs/budget')
+        generated = []
+        media_output = output_dir / ('SECOND_CURATION_ON_DEMAND_MEDIA_' + uuid.uuid4().hex[:10]) if preview else None
+        media_zip = media_output.with_suffix('.zip') if media_output else None
+        previews = []
+        for cid in dict.fromkeys(candidate_ids):
+            row = by_id[cid]
+            relative = 'visuals/' + _identifier(cid) + '/contact_sheet.jpg'
+            result = build_contact_sheet(source, row, root / relative)
+            if result['status'] != 'ok':
+                raise ValueError('Requested visual evidence unavailable: ' + cid)
+            row['visual_refs'] = list(dict.fromkeys(row.get('visual_refs', []) + [relative]))
+            row['visual_metadata'] = result
+            if preview:
+                member = 'previews/' + _identifier(cid) + '.mp4'
+                preview_path = media_output / member
+                rendered = render_preview(source, [], metadata, preview_path,
+                                          {'start': row['start'], 'end': row['end']}, 270, 480)
+                row['on_demand_preview_status'] = rendered.get('status')
+                if rendered.get('status') == 'ok' and preview_path.is_file():
+                    row['preview_reference'] = {'package':media_zip.name, 'member':member,
+                                                'bytes':preview_path.stat().st_size, 'sha256':file_hash(preview_path)}
+                    previews.append((preview_path, member))
+            write_json(root / ('candidates/' + cid + '.json'), row)
+            generated.append({'candidate_id': cid, 'visual_refs': [relative], 'frame_count': result['frame_count'],
+                              'preview_reference':row.get('preview_reference') if preview else None})
+        if previews:
+            with zipfile.ZipFile(media_zip, 'x', zipfile.ZIP_DEFLATED) as media:
+                for preview_path, member in previews:
+                    media.write(preview_path, member)
+        write_json(root / 'editorial/candidate_catalog.json', catalog)
+        write_json(root / 'ON_DEMAND_VISUALS.json', {'schema_version': '1.0', 'generated': generated,
+                  'input_package_sha256': file_hash(package_path), 'expensive_inference_executed': False,
+                  'catalog_count_preserved': len(catalog['candidates'])})
+        manifest = read_json(root / 'SECOND_CURATION_MANIFEST.json')
+        manifest.update(created_at=datetime.now(timezone.utc).isoformat(), derived_from_package_sha256=file_hash(package_path))
+        manifest['files'] = [{'path': f.relative_to(root).as_posix(), 'bytes': f.stat().st_size, 'sha256': file_hash(f)}
+                             for f in sorted(root.rglob('*')) if f.is_file() and f.name != 'SECOND_CURATION_MANIFEST.json']
+        manifest['file_count'] = len(manifest['files']) + 1
+        manifest['uncompressed_bytes'] = sum(r['bytes'] for r in manifest['files'])
+        write_json(root / 'SECOND_CURATION_MANIFEST.json', manifest)
+        state = 'READY' if all(manifest.get('readiness', {}).get(k) for k in ('editorial_ready', 'transcript_ready', 'visual_ready')) else 'PARTIAL'
+        path = output_dir / ('SECOND_CURATION_' + state + '_ON_DEMAND_' + uuid.uuid4().hex[:10] + '.zip')
+        with zipfile.ZipFile(path, 'x', zipfile.ZIP_DEFLATED) as archive:
+            for f in sorted(root.rglob('*')):
+                if f.is_file():
+                    archive.write(f, f.relative_to(root).as_posix())
+        validation = validate_core_package(path)
+        if validation['status'] != 'valid':
+            raise ValueError('On-demand package validation failed')
+        return {'path': str(path), 'validation': validation, 'generated': generated,
+                'catalog_count': len(catalog['candidates']), 'media_path': str(media_zip) if previews else None,
+                'expensive_inference_executed': False}

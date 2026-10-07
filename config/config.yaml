@@ -125,6 +125,7 @@ captions:
 # O perfil define os defaults; overrides opcionais documentados em docs/CAMERA_DIRECTOR_V3.md.
 camera_director:
   enabled: true
+  dominant_face_fallback: true
   profile: natural
   debug_output: true
 

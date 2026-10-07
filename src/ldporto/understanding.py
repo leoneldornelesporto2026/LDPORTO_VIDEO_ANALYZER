@@ -292,6 +292,10 @@ def build_story_arcs(transcript, topics, questions_answers=None):
             "confidence": None, "needs_review": True,
             "missing_component_reasons": {key: "not_narrative_or_unresolved" for key, value in (("setup", setup), ("conflict", conflict), ("payoff", payoff)) if value is None},
         })
+    from .story_recovery import recover_story_arcs
+    existing = [(a['start'], a['end']) for a in arcs if a['kind'] == 'complete_story']
+    arcs.extend(a for a in recover_story_arcs(transcript.get('segments', []), topics)
+                if not any(start <= a['start'] and end >= a['end'] for start, end in existing))
     return arcs
 
 
@@ -314,7 +318,9 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
         lo = max(0.0, start-30.0, topic["start"] if topic else 0.0)
         hi = min((segments[-1]["end"] if segments else end), end+30.0,
                  topic["end"] if topic else (segments[-1]["end"] if segments else end+30.0))
-        story = next((arc for arc in story_arcs if overlap(start, end, arc["start"], arc["end"]) > 0), None)
+        matching_stories = [arc for arc in story_arcs if overlap(start, end, arc['start'], arc['end']) > 0]
+        story = max(matching_stories, key=lambda arc: (arc.get('kind') == 'complete_story',
+                    overlap(start, end, arc['start'], arc['end']) / max(arc['end'] - arc['start'], 1e-9)), default=None)
         boundaries = optimize_boundaries(moment, segments, cfg, story)
         ideal_start, ideal_end = boundaries["ideal_start"], boundaries["ideal_end"]
         q_complete = any(q.get("answer_end") is not None and q["question_start"] >= ideal_start and

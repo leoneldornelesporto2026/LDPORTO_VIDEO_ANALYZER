@@ -2,6 +2,7 @@
 import os
 import platform
 import time
+from functools import lru_cache
 from pathlib import Path
 
 from .core import digest, read_json, write_json
@@ -39,8 +40,16 @@ def resource_snapshot():
     return result
 
 
+@lru_cache(maxsize=1)
+def gpu_history_profile():
+    from .ollama_local import nvidia_smi
+    return [{key: row.get(key) for key in ('name', 'vram_total_mib', 'driver')}
+            for row in nvidia_smi().get('gpus', [])]
+
+
 def history_fingerprint(metadata, cfg):
     return digest({'machine': platform.machine(), 'processor': platform.processor(), 'cpu_count': os.cpu_count(),
+                   'device': cfg.get('device'), 'gpus': gpu_history_profile(),
                    'duration_bucket_minutes': round((metadata.get('duration') or 0) / 60),
                    'resolution': [metadata.get('width'), metadata.get('height')], 'fps': metadata.get('fps'),
                    'asr_model': cfg.get('transcription', {}).get('model'),
@@ -62,3 +71,21 @@ def record_runtime_history(metadata, cfg, stage_metrics, path=None):
                     'fps': metadata.get('fps'), 'stage_runtime': stage_metrics, 'telemetry_external': False})
     write_json(path, {'schema_version': '1.0', 'records': records[-50:]})
     return key
+
+
+def historical_stage_estimates(metadata, cfg, path=None):
+    from collections import defaultdict
+    from statistics import median
+    try:
+        history = read_json(Path(path or PROJECT_ROOT / '.cache/runtime_history.json'))
+    except (OSError, ValueError):
+        return {}
+    matches = [r for r in history.get('records', []) if r.get('hardware_and_config_fingerprint') == history_fingerprint(metadata, cfg)]
+    samples = defaultdict(list)
+    for record in matches:
+        for stage, row in record.get('stage_runtime', {}).items():
+            cost = row.get('elapsed_seconds')
+            if not row.get('cache_hit') and isinstance(cost, (int,float)) and cost > 0:
+                samples[stage].append(cost)
+    return {stage:{'median_seconds':median(costs), 'range_seconds':[min(costs), max(costs)], 'sample_count':len(costs)}
+            for stage, costs in samples.items() if len(costs) >= 3}

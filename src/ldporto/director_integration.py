@@ -7,6 +7,8 @@ from .global_camera_planner import build_global_camera_plan
 
 PLANNER_CODE = ['global_camera_planner.py', 'director_config.py', 'camera_geometry.py', 'temporal.py', 'director_integration.py']
 DIRECTOR_CODE = ['camera_director.py', 'director_config.py', 'camera_motion.py',
+                 'camera_evidence.py', 'interview_layout.py', 'broadcast_graphics.py',
+                 'preview_verifier.py',
                  'camera_geometry.py', 'temporal.py', 'director_integration.py']
 
 
@@ -29,7 +31,7 @@ def run_planner_stage(ctx, metadata, vision, shots, camera_timeline, active, sem
 
 
 def run_director_stage(ctx, metadata, vision, shots, active, motion, semantic, understanding, camera_plan=None):
-    vision = {'frames': vision.get('frames', []), 'observations': vision.get('observations', [])}
+    vision = {k: vision.get(k, [] if k != 'broadcast_graphics' else {}) for k in ('frames', 'observations', 'broadcast_graphics')}
     params = {'config': ctx.config['camera_director'], 'schema': '3.0',
               'inputs': digest({'metadata': {k: metadata.get(k) for k in ('duration', 'width', 'height', 'rotation')},
                                'vision': vision, 'shots': shots, 'active': active, 'motion': motion,

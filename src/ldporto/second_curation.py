@@ -126,6 +126,7 @@ def build_second_curation_package(analysis):
                               'status':'generated_requires_review' if copy else 'not_generated_by_analyzer',
                               'title_idea':copy.get('title_idea'),'source_moment_id':cid if copy else None},
             'commercial_classification':m.get('commercial_classification'),
+            'commercial_visual_evidence': m.get('commercial_visual_evidence', []),
             'editorial_score_raw':m.get('editorial_score_raw'),
             'score_components':m.get('score_components',{}),'penalties':m.get('penalties',{}),
             'score_weights':m.get('score_weights',{}),'editorial_score_final':m.get('editorial_score_final',score),

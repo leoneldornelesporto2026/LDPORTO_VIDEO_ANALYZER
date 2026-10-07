@@ -9,6 +9,8 @@ from .director_config import resolve_config
 from .temporal import IntervalCursor, VisualIndex, SampleIndex, number
 from .camera_geometry import geometry, crop_rect, contains, base_size
 from .camera_motion import CameraMotion, SmartZoomState
+from .camera_evidence import VisualTargetEvidence, camera_state
+from .interview_layout import choose_layout
 
 PRESERVE = {'broll', 'b_roll', 'screen', 'screen_capture', 'screen_content',
             'logo', 'title_card', 'empty', 'black'}
@@ -98,11 +100,13 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
     moments = IntervalCursor([{**m, 'start': (m.get('core_moment') or m).get('start'),
                                'end': (m.get('core_moment') or m).get('end')} for m in main_moments or []])
     planner = IntervalCursor((camera_plan or {}).get('selected_global_path', []))
+    graphics_cursor = IntervalCursor((vision.get('broadcast_graphics') or {}).get('intervals', []))
     motion_index = SampleIndex(person_motion or [])
     rows, debug = [], []
     counts = Counter()
     switches, recent_people = deque(), deque()
     current_focus, current_layout, current_pair = None, 'full_frame', ()
+    current_role = 'SOURCE_PRESERVE'
     source_id, shot_since, layout_since = None, 0., 0.
     last_switch, last_focus_change = -math.inf, -math.inf
     last_reaction, reaction_until, reaction_return = -math.inf, -math.inf, None
@@ -111,6 +115,7 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
     previous_mode, last_stable_person, last_valid_crop = None, None, None
     controller = CameraMotion()
     smart_state = SmartZoomState()
+    visual_targets = VisualTargetEvidence()
     previous_motion = {}
     side_assignments = {}
     split_anchor = None
@@ -130,6 +135,7 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
             smart_state.reset_shot(t)
             source_id, shot_since, layout_since = sid, t, t
             current_focus, current_layout, current_pair = None, 'full_frame', ()
+            current_role = 'SOURCE_PRESERVE'
             controller = CameraMotion()
             last_switch = last_focus_change = -math.inf
             hold_until = t
@@ -156,6 +162,16 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
         confident = item['confident']
         person = confident[0]['person_id'] if len(confident) == 1 and not item['overlap'] else None
         confidence = _confidence(confident[0]) if person else 0.
+        role = ('CONFIRMED_SPEAKER' if person and confident[0].get('active_speaker_state', 'CONFIRMED' if confidence >= .8 else 'PROBABLE') == 'CONFIRMED'
+                else 'PROBABLE_SPEAKER' if person else 'SOURCE_PRESERVE')
+        dominant = visual_targets.update(obs, item['frame']['time'] if item['frame'] else mid, sid, cfg)
+        if cfg['dominant_face_fallback'] and person is None and dominant and not item['overlap']:
+            fallback_person = dominant['person_id']
+            if fallback_person in item['safe'] and shot.get('shot_type') not in PRESERVE | {'close_up', 'medium_close_up'}:
+                person, confidence = fallback_person, dominant['confidence']
+                role = 'DOMINANT_FACE'
+                speech_run = dominant['persistence_seconds']
+                reasons.append('DOMINANT_FACE')
         for r in confident:
             recent_people.append((t, r['person_id']))
         while recent_people and recent_people[0][0] < t-10:
@@ -289,6 +305,7 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
             if current_focus != requested_focus:
                 last_focus_change = t
             current_focus, current_layout, current_pair = requested_focus, chosen['layout'], new_pair
+            current_role = role if current_focus == person else 'REACTION' if chosen.get('reaction') else 'SOURCE_PRESERVE'
             last_switch, layout_since = t, t
             hold_until = t+cfg['min_hold_seconds']
             transition = 'cut' if not reset else transition
@@ -397,14 +414,25 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                    'STATIC_TWO_SHOT' if current_layout == 'two_shot' else 'SPLIT' if split else 'REACTION' if mode == 'REACTION' else
                    'SMART_RECENTER' if movement == 'pan' and smart_decision['mode'] in {'STATIC_MEDIUM', 'STATIC_CLOSE'} else smart_decision['mode'])
         reasons = list(dict.fromkeys(reasons or ['stable_decision']))
-        focus_conf = max((_confidence(r) for r in item['voices'] if r.get('person_id') == current_focus), default=0.) if current_focus else None
+        if current_focus == person:
+            current_role = role
+        role = current_role if current_focus else 'SOURCE_PRESERVE'
+        focus_conf = (number(obs.get(current_focus, {}).get('detection_confidence')) if role == 'DOMINANT_FACE' else
+                      max((_confidence(r) for r in item['voices'] if r.get('person_id') == current_focus), default=0.)) if current_focus else None
         decision = {
             'confidence': focus_conf, 'confidence_is_calibrated': False,
             'reasons': reasons, 'switch_suppressed': suppressed is not None,
             'switch_suppressed_reason': suppressed, 'selected_candidate': chosen['candidate'],
         }
-        sig = (sid, mode, current_layout, current_focus, current_pair, framing, camera_mode, planned.get('planner_id') if planned else None)
+        sig = (sid, mode, current_layout, current_focus, current_pair, framing, camera_mode, role, planned.get('planner_id') if planned else None)
         row = {
+            'broadcast_graphics': list(graphics_cursor.at(mid)),
+            'graphics_policy': 'single_copy_source_strip' if current_layout == 'split_candidate' else 'avoid_face_text_overlap',
+            'interview_layout': choose_layout(list(obs.values()), list(current_pair) or ([current_focus] if current_focus else []),
+                                               union_safe=current_layout == 'two_shot'),
+            'camera_evidence_role': role if current_focus else 'SOURCE_CLOSEUP_PRESERVE' if shot.get('shot_type') in {'close_up', 'medium_close_up'} else 'SOURCE_PRESERVE',
+            'speaker_identity_confirmed': bool(current_focus and role == 'CONFIRMED_SPEAKER'),
+            'camera_state': camera_state(transition, current_layout, movement, mode == 'REACTION', last_person, current_focus),
             'schema_version': '4.3', 'start': t, 'end': end,
             'camera_mode': camera_mode, 'zoom_mode': smart_decision['mode'],
             'smart_zoom': {
@@ -531,7 +559,9 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
     counts['director_switches'] = delivered_switches
     fractions = {layout: sum(r['end']-r['start'] for r in rows if r['layout'] == layout)/duration
                  for layout in ('split_candidate', 'two_shot', 'full_frame')}
-    metrics = {'camera_director_coverage': evidence_seconds/duration,
+    metrics = {'camera_director_coverage': sum(row['end'] - row['start'] for row in rows if row.get('focus_person') or row.get('split')) / duration,
+                'camera_director_visual_sample_coverage': evidence_seconds/duration,
+                'dominant_face_coverage': sum(row['end'] - row['start'] for row in rows if row.get('camera_evidence_role') == 'DOMINANT_FACE') / duration,
                 'smart_zoom_enabled': cfg['smart_zoom']['enabled'],
                 'zoom_event_count': len(smart_state.events), 'zoom_events_per_minute': len(smart_state.events) * 60 / duration,
                 'mean_zoom_factor': sum((row['camera']['zoom_start'] + row['camera']['zoom_end']) / 2 * (row['end'] - row['start']) for row in rows) / duration,
@@ -557,6 +587,9 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                    if r.get('global_plan') and r['layout'] == r['global_plan'].get('layout')
                    and r.get('focus_person') == r['global_plan'].get('focus_person'))/duration if camera_plan else None),
                'coverage_note': 'Visual coverage is sampled; timeline coverage includes explicit full-frame fallback.'}
+    from .preview_verifier import zoom_diagnostics
+    delivered_zoom, _ = zoom_diagnostics(rows, duration, cfg['smart_zoom']['min_zoom_duration'])
+    metrics.update(delivered_zoom, proposed_zoom_event_count=len(smart_state.events))
     status = 'unavailable' if not evidence_seconds else 'partial' if unresolved_seconds or evidence_seconds < .8*duration else 'ok'
     return ok({'timeline': rows, 'metrics': metrics, 'debug': {'schema_version': '3.0', 'events': debug, 'counts': dict(counts)} if cfg['debug_output'] else None,
                'zoom_events': smart_state.events,

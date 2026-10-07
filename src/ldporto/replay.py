@@ -17,7 +17,7 @@ from .preview_integration import run_preview_stage
 from .reports import ReportEngine
 
 
-REPLAY_STAGES = ('active_speaker', 'semantic', 'understanding', 'ranking', 'camera_director', 'preview_verifier', 'handoff')
+REPLAY_STAGES = ('speaker_person', 'active_speaker', 'semantic', 'commercial', 'understanding', 'ranking', 'camera', 'camera_director', 'preview_verifier', 'second_curation', 'handoff')
 
 
 def resolve_replay_folder(value):
@@ -39,7 +39,7 @@ class ReplayArtifacts:
         self.summary = read_json(self.folder / 'analysis_summary.json') if (self.folder / 'analysis_summary.json').is_file() else self.document
         self.metadata = self.summary.get('metadata') or self.document.get('metadata') or {}
         version = str(self.metadata.get('analyzer_version') or self.summary.get('producer_version') or '')
-        if not version.startswith('4.3') and not allow_legacy_snapshot:
+        if not version.startswith(('4.3', '4.4')) and not allow_legacy_snapshot:
             raise ValueError('Legacy replay requires --allow-legacy-snapshot; not a current prompt/model cache.')
         if self.metadata.get('schema_version') not in ('2.0', '4.2', '4.3'):
             raise ValueError('Unsupported replay artifact schema.')
@@ -170,7 +170,8 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
     shots = artifacts.read('shots.json') or []
     vision = {'people':people, 'observations':observations, 'frames':frames,
               'scene_intervals':[{key:row[key] for key in ('start', 'end', 'scene_id')} for row in scenes], 'thumbnails':[],
-              'tracking_metrics':{key:value for key,value in quality_original.items() if any(term in key for term in ('track', 'identity', 'reid', 'embedding', 'persistent_person'))}}
+              'tracking_metrics':{key:value for key,value in quality_original.items() if any(term in key for term in ('track', 'identity', 'reid', 'embedding', 'persistent_person'))},
+              'broadcast_graphics':artifacts.read('broadcast_graphics.json') or {}}
     active = {'intervals':artifacts.read('active_speaker.json') or [], 'mappings':artifacts.read('speaker_person_mapping.json') or [],
               'mapping_summary':artifacts.read('speaker_person_summary.json') or [],
               'metrics':{key:value for key,value in quality_original.items() if any(term in key for term in ('active_speaker', 'speaker_person', 'mapping_', 'unknown_person', 'offscreen'))}}
@@ -191,18 +192,20 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
     started = time.monotonic()
     with logging_session(logger), output_lock(output):
         if from_stage == 'semantic':
-            semantic = ctx.step('15_semantic', ctx.config['semantic_analysis'], lambda: SemanticEngine().run(ctx, transcript),
-                                code_files=['semantic.py', 'ollama_local.py'], required=True)
-        elif from_stage == 'active_speaker':
+            semantic = ctx.step('15_semantic', {'config':ctx.config['semantic_analysis'], 'transcript':digest(transcript)}, lambda: SemanticEngine().run(ctx, transcript),
+                                code_files=['semantic.py', 'ollama_local.py', 'editorial.py'], required=True)
+        elif from_stage in ('speaker_person', 'active_speaker'):
             from .active_speaker import build_active_speaker
             evidence = artifacts.read('active_speaker_evidence.json')
             if evidence is None:
                 raise ValueError('Active speaker replay requires raw mouth/audio evidence; V4.2 review does not supply it. Use a verified fixture or source audio.')
-            active = ctx.step('10_active_speaker', cfg['active_speaker'], lambda: build_active_speaker(diarization, vision, evidence, cfg['active_speaker']), code_files=['active_speaker.py'])
-        if from_stage in ('active_speaker', 'semantic', 'understanding', 'ranking'):
+            active = ctx.step('10_active_speaker', {'config':cfg['active_speaker'], 'snapshot':digest(artifacts.verified)},
+                             lambda: build_active_speaker(diarization, vision, evidence, cfg['active_speaker']),
+                             code_files=['active_speaker.py', 'perception_diagnostics.py', 'temporal.py'])
+        if from_stage in ('speaker_person', 'active_speaker', 'semantic', 'commercial', 'understanding', 'ranking'):
             understanding = ctx.step('16_understanding', {'config':ctx.config['understanding'], 'snapshot':digest(artifacts.verified)},
                 lambda: run_understanding(ctx, metadata, transcript, diarization, vision, active, semantic, shots, ctx.config['understanding']),
-                code_files=['understanding.py', 'editorial.py', 'semantic.py'], required=True)
+                code_files=['understanding.py', 'story_recovery.py', 'editorial.py', 'semantic.py'], required=True)
         else:
             understanding = {'main_moments':artifacts.read('main_moments.json') or [], 'participants':artifacts.read('participants.json') or [],
                              'story_arcs':artifacts.read('story_arcs.json') or [], 'entities':artifacts.read('entities.json') or [],
@@ -224,6 +227,8 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
                     'topic_quality':semantic['topic_quality'], 'semantic_metrics':semantic['semantic_metrics'],
                     'editorial_moments':semantic['moments'], 'candidate_hooks':semantic.get('candidate_hooks', []), 'candidate_endings':semantic.get('candidate_endings', []),
                     'speaker_person_mapping':active.get('mappings', []), 'speaker_person_summary':active.get('mapping_summary', []),
+                    'speaker_person_diagnostics':active.get('speaker_person_diagnostics', []),
+                    'speaker_person_affinity':active.get('affinity', []), 'active_speaker_evidence':active.get('active_speaker_evidence', []),
                     'active_speaker':active.get('intervals', []), 'camera_timeline':camera_timeline or [], 'camera_plan':plan,
                     'preview_validation':preview.get('validation', {}), 'preview_canaries':preview.get('canaries', []), 'preview_closed_loop':preview.get('closed_loop', {}),
                     'timeline':[], 'master_timeline':[], 'silences':audio.get('silences', []), 'audio_events':[], 'ocr_text':[],

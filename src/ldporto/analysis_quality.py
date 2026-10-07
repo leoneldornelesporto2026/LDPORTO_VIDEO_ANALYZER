@@ -20,7 +20,8 @@ def camera_quality_metrics(rows, duration, suppressed=None):
                 ((row.get('split') or {}).get('left_person') and (row.get('split') or {}).get('right_person'))]
     source = [row for row in rows if row.get('layout') == 'full_frame']
     safe = [row for row in rows if (row.get('crop') or {}).get('safe')]
-    known = [row for row in resolved if row.get('focus_person') and row.get('focus_confidence') is not None]
+    known = [row for row in resolved if row.get('focus_person') and row.get('focus_confidence') is not None
+             and row.get('camera_evidence_role', 'CONFIRMED_SPEAKER') in {'CONFIRMED_SPEAKER', 'PROBABLE_SPEAKER'}]
     switches = 0
     previous = None
     for row in rows:

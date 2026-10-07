@@ -63,8 +63,14 @@ class WeightedProgress:
         self.finished = False
         self.succeeded = False
         self.completion = None
+        self.historical = {}
 
     def update(self, event):
+        if event.get('historical_stage_estimates'):
+            self.historical = event['historical_stage_estimates']
+            for stage, row in self.historical.items():
+                if stage in self.weights:
+                    self.weights[stage] = row['median_seconds']
         if event.get('event') in {'run_completed', 'run_failed', 'run_cancelled'}:
             self.finished = True
             self.succeeded = event['event'] == 'run_completed'
@@ -106,24 +112,25 @@ class WeightedProgress:
             center = median(samples)
             ordered = sorted(samples)
             lower, upper = ordered[int((len(ordered) - 1) * .1)], ordered[int((len(ordered) - 1) * .9)]
-            robust = [sample for sample in samples if sample <= max(center * 4, 1e-6)]
-            typical = median(robust) if robust else center
+            typical = center
             stage_eta = typical * (total - current)
             if upper > max(1e-6, lower) * 1.8:
                 eta_range = [lower * (total - current), upper * (total - current)]
         ordered_stages = list(self.weights)
         next_stage = next((name for name in ordered_stages[ordered_stages.index(stage) + 1:] if self.states.get(name, {}).get('status') not in TERMINAL), None) if stage in ordered_stages else None
         remaining = [name for name in ordered_stages if name != stage and self.states.get(name, {}).get('status') not in TERMINAL]
-        scale = 1.
-        if stage_eta is not None and stage_fraction is not None and stage_fraction < 1:
-            scale = (stage_eta / (1 - stage_fraction)) / max(self.weights.get(stage, 1), 1e-9)
-        total_eta = stage_eta + sum(self.weights[name] for name in remaining) * scale if stage_eta is not None else None
+        future = sum(self.weights[name] for name in remaining)
+        total_eta = stage_eta + future if stage_eta is not None else None
+        total_range = [(eta_range or [stage_eta, stage_eta])[0] + .6*future,
+                       (eta_range or [stage_eta, stage_eta])[1] + 1.8*future] if stage_eta is not None else None
         return {'overall_fraction': self.last_fraction, 'stage': stage, 'stage_label': STAGE_LABELS.get(stage, stage),
                 'stage_fraction': stage_fraction, 'current': current, 'total': total,
                 'elapsed_seconds': now - self.started,
                 'stage_elapsed_seconds': now - state.get('started_at', now),
                 'stage_eta_seconds': stage_eta, 'total_eta_seconds': total_eta,
                 'stage_eta_range_seconds': eta_range,
+                'total_eta_range_seconds': total_range,
+                'historical_stage_count': len(self.historical),
                 'eta_basis': 'rolling_unit_median_and_empirical_range' if stage_eta is not None else 'calculating',
                 'next_stage': next_stage, 'next_stage_label': STAGE_LABELS.get(next_stage),
                 'status': state.get('status', 'waiting'), 'substage': state.get('substage'),

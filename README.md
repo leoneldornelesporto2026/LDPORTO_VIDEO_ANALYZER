@@ -7,6 +7,23 @@
 
 # L.D.PORTO VIDEO ANALYZER
 
+V4.4.0 mantém o runtime oficial **Windows/Python 3.11.x**. A entrega adiciona
+diagnósticos e evidências speaker/person, fallback visual independente da voz,
+Commercial Gate V3, repair semântico por item, recuperação de histórias,
+ASR localizado e contrato de segunda curadoria com visuais sob demanda.
+O Curator importa ZIP/JSON diretamente, refina cortes em 6 fps, preserva GC
+em uma cópia e vincula aprovação ao preview e ao plano atual.
+
+Estado verificável: [ledger V4.4](docs/V44_IMPLEMENTATION_LEDGER.md),
+[baseline reconciliado](docs/V44_BASELINE_RECONCILIATION.md) e
+[benchmark V4.4](docs/V44_BENCHMARK_REPORT.md). Replays e clips curtos são
+identificados separadamente do benchmark completo; coverage não mede acurácia.
+
+Visuais promovidos: `python exportar_ldporto.py --visuals-on-demand PACOTE.zip
+--source-video VIDEO.mp4 --candidate MOMENT_ID`. O ZIP original é preservado.
+Na GUI, **LIMPAR ARQUIVOS PESADOS** mostra estimativa antes de pedir confirmação;
+JSONs, transcrições, pacotes, contact sheets e renders finais são protegidos.
+
 Analisador Python local para a primeira fase de uma plataforma de cortes:
 **entender o vídeo inteiro antes de editar**.
 

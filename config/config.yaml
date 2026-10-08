@@ -23,6 +23,9 @@ transcription:
   overlap_seconds: 4
   low_confidence: 0.60
   multipass: true
+  targeted_repair_enabled: true
+  targeted_max_regions: 16
+  targeted_max_audio_seconds: 180
   max_review_regions: 100
   source_selection: auto
   glossary: ""

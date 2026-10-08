@@ -122,12 +122,15 @@ def export_legacy_curator_bridge(package_path, output_dir):
     for segment in segment_rows:
         raw_words = words_by_seg.get(segment.get('segment_id'), [])
         # Never turn uncertain ASR words into karaoke timings without a review pass.
-        valid = bool(raw_words) and all(not w.get('needs_review') and not w.get('timestamp_suspect')
+        valid = bool(raw_words) and all(w.get('alignment_verified') is True and w.get('audio_verified') is True and not w.get('needs_review')
+                                        and not w.get('timestamp_suspect') and not w.get('speech_overlap')
                                         and isinstance(w.get('start'), (int, float)) and isinstance(w.get('end'), (int, float))
                                         and segment['start'] <= w['start'] < w['end'] <= segment['end'] for w in raw_words)
         captions.append({'start': segment['start'], 'end': segment['end'], 'text': segment.get('text') or '',
                          'display_text': segment.get('text') or '', 'words': raw_words if valid else [],
-                         'subtitle_review_required': not valid})
+                         'subtitle_review_required': True, 'human_audio_verified': False,
+                         'word_highlight_enabled': bool(valid),
+                         'status': 'DRAFT_REQUIRES_LISTENING'})
     with tempfile.TemporaryDirectory(prefix='.curator_bridge_', dir=output_dir) as temp:
         root = Path(temp)
         legacy_analysis = {'metadata': metadata, 'transcript_segments': segment_rows,

@@ -56,7 +56,9 @@ def test_social_output_has_all_aspect_ratios_titles_caption_safe_area_and_font()
     assert len(result['stories']) == 2
     first = result['stories'][0]
     assert first['aspect_ratio'] == '4:5'
-    assert first['caption_plan']['preset'] == 'karaoke'
+    assert first['caption_plan']['preset'] == 'simple'
+    assert first['caption_plan']['requested_preset'] == 'karaoke'
+    assert first['caption_plan']['word_highlight_enabled'] is False
     assert first['caption_plan']['font_family'] == 'Montserrat'
     assert first['caption_plan']['size_scale'] == 1.2
     assert first['caption_plan']['preferred_position'] == 'upper_middle'

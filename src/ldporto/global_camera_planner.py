@@ -91,6 +91,8 @@ def build_global_camera_plan(metadata, vision, shots, camera_timeline, cfg=None,
 
     visual = VisualIndex(vision)
     mapped_people = {row['person_id'] for row in active_speaker or [] if row.get('person_id') and
+                     ('active_person' not in row or row['active_person'] == row['person_id']) and
+                     row.get('active_speaker_state') not in {'UNCERTAIN', 'OFFSCREEN', 'PROBABLE'} and
                      number(row.get('confidence', row.get('mapping_confidence'))) >= cfg['enter_confidence']}
     shot_map = {s.get('shot_id'): s for s in (shots or [])}
     windows, rejected = [], []

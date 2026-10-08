@@ -209,7 +209,9 @@ def test_global_affinity_retains_candidates_from_locally_unresolved_windows():
     diarization, vision, raw = affinity_fixture()
     result = build_active_speaker(diarization, vision, raw, DEFAULTS["active_speaker"])["data"]
     assert result["mapping_summary"][0]["person_id"] == "P1"
-    assert result["metrics"]["active_speaker_coverage"] > 0
+    # S5 separates global identity coverage from locally verified active speech.
+    assert result["metrics"]["speaker_person_mapping_coverage"] > 0
+    assert result["metrics"]["active_speaker_coverage"] == 0
     assert len(result["affinity"]) == 2
     assert next(pair for pair in result["affinity"] if pair["person_id"] == "P2")["negative_windows"] == 2
 

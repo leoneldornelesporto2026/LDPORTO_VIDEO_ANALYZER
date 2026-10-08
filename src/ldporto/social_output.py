@@ -274,6 +274,14 @@ def build_social_output(analysis, cfg, package=None):
         titles = _title_variants(candidate)
         title = titles[0]["text"] if titles else f"Momento {rank}"
         caption_plan = _caption_plan(candidate, graphics, preset)
+        clip_review = (analysis.get('subtitle_review_s7') or {}).get('candidates', {}).get(candidate['candidate_id'], {})
+        caption_plan['subtitle_review_state'] = clip_review.get('approval_state', 'NOT_EVALUATED')
+        caption_plan['word_highlight_enabled'] = bool(clip_review.get('karaoke_allowed'))
+        caption_plan['effective_preset'] = ('simple' if preset in ('karaoke', 'pod_p')
+                                             and not caption_plan['word_highlight_enabled'] else preset)
+        caption_plan['requested_preset'] = preset
+        caption_plan['preset'] = caption_plan['effective_preset']
+        caption_plan['per_clip_review_required'] = True
         caption_plan["font_family"] = social.get("caption_font", "Arial")
         caption_plan["size_scale"] = social.get("caption_size_scale", 1.0)
         caption_plan["primary_color"] = social.get("caption_primary_color", "#FFFFFF")
@@ -284,7 +292,7 @@ def build_social_output(analysis, cfg, package=None):
             "duration": candidate.get("duration") or candidate["end"] - candidate["start"],
             "category": candidate["story_category"], "score": candidate["story_score"],
             "title": title, "title_variants": titles, "title_status": "grounded_suggestion_requires_review",
-            "caption_preset": preset, "caption_plan": caption_plan,
+            "caption_preset": caption_plan["effective_preset"], "requested_caption_preset": preset, "caption_plan": caption_plan,
             "aspect_ratio": aspect, "render_profile": ASPECT_RATIOS[aspect],
             "camera_mode": candidate.get("camera_mode"), "layouts": candidate.get("layouts", []),
             "reason": "selected_from_full_video_with_editorial_temporal_and_category_diversity",

@@ -885,20 +885,28 @@ class ActiveSpeakerEngine:
                                      "inference": False, "needs_review": False})
                     continue
                 candidates = []
+                screening = defaultdict(int)
                 if not turn.get("overlap") and end-start >= evidence_cfg.get("min_audio_window_seconds", 1.5):
                     audio_start = max(0, start - .16)
                     f.seek(max(0, round(audio_start * rate)))
                     window_audio = f.read(max(1, round((end - audio_start + .16) * rate)), dtype="float32")
                     for pid, rows in tracks.items():
+                        screening['mouth_tracks_examined'] += 1
                         times = track_times[pid]
                         selected = rows[bisect.bisect_left(times, start):bisect.bisect_left(times, end)]
-                        if len(selected) < evidence_cfg.get("min_evidence_samples", 8) or selected[-1]["time"]-selected[0]["time"] < (end-start)*0.7:
+                        if len(selected) < evidence_cfg.get("min_evidence_samples", 8):
+                            screening['insufficient_mouth_samples'] += 1
+                            continue
+                        if selected[-1]["time"]-selected[0]["time"] < (end-start)*0.7:
+                            screening['insufficient_visual_duration'] += 1
                             continue
                         if len({r["scene_id"] for r in selected}) > 1:
+                            screening['shot_change_inside_evidence'] += 1
                             continue
                         from .speaker_signals import mouth_audio_evidence
                         signal = mouth_audio_evidence(selected, window_audio, rate, audio_start)
                         if signal:
+                            screening['candidates_emitted'] += 1
                             candidates.append({"person_id": pid, **signal,
                                                "visibility_coverage": (selected[-1]["time"] - selected[0]["time"]) / (end - start),
                                                "track_stability": 1 / max(1, len({row.get('track_id') for row in selected})),
@@ -906,6 +914,12 @@ class ActiveSpeakerEngine:
                                                "mouth_activity_mean": float(np.mean([r.get("mouth_activity") or 0 for r in selected])),
                                                "face_visibility": sum(bool(r.get('face_visible')) for r in selected) / len(selected),
                                                "embedding_continuity": sum(bool(r.get('face_embedding_available')) for r in selected) / len(selected)})
+                        else:
+                            screening['no_reliable_mouth_audio_signal'] += 1
+                elif turn.get('overlap'):
+                    screening['simultaneous_audio_skipped'] += 1
+                else:
+                    screening['audio_window_below_minimum'] += 1
                 candidates.sort(key=lambda c: c["correlation"], reverse=True)
                 chosen = None
                 if candidates and candidates[0]["correlation"] >= cfg["association_min_correlation"] and candidates[0]["correlation_lower_bound_proxy"] > 0:
@@ -925,6 +939,7 @@ class ActiveSpeakerEngine:
                                  "speaker_id": speaker, "visible_person": chosen, "person_id": chosen,
                                  "association_confidence": confidence, "confidence": confidence,
                                  "association_evidence_score": top_score,
+                                 "candidate_screening": dict(screening),
                                  "candidates": candidates, "method": "lip_audio_correlation" if chosen else "unresolved",
                                  "evidence": (["diarization", "mouth_activity", "face_visible"] if chosen else
                                               (["diarization"] if speaker else [])),

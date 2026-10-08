@@ -29,9 +29,12 @@ def captions(words, cfg):
                        "end": group[-1]["end"], "text": text,
                        "display_text": text.upper() if cfg["uppercase_display"] else text,
                        "speaker": group[0].get("speaker"), "speech_overlap": any(w.get("speech_overlap") for w in group),
-                       "needs_review": any(w.get("needs_review") for w in group),
+                       "needs_review": any(w.get("needs_review") or w.get("timestamp_repaired") or w.get('speech_overlap') for w in group),
+                       "karaoke_eligible": all(w.get('alignment_verified') is True and w.get('audio_verified') is True and not w.get('needs_review')
+                           and not w.get('timestamp_repaired') and not w.get('speech_overlap') for w in group),
+                       "audio_verified": False, "caption_status": "DRAFT_REQUIRES_HUMAN_REVIEW",
                        "words": [{key: w.get(key) for key in
-                           ("word", "raw", "start", "end", "confidence", "word_id", "speaker", "needs_review")}
+                           ("word", "raw", "start", "end", "confidence", "word_id", "speaker", "needs_review", "speech_overlap", "timestamp_repaired", "alignment_verified")}
                                  for w in group]})
     return result
 

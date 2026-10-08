@@ -1,3 +1,7 @@
+## R4.9/S6 — Camera Director e Smart Zoom (2026-10-07)
+
+**Nova Sessão 6:** pré-planejamento de crop e split em proporção correta, funil diagnóstico de foco/zoom, Q&A/reveal como beats apenas com evidência real, detector temporal de barras no preview e auditor CLI offline. Base S5 e salvaguardas do Active Speaker mantidas. Leia [docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md](docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md). Benchmark dos 4,39% e zeros ainda exige execução original.
+
 ## R4.9/S4 — Tracking e recuperação facial (2026-10-07)
 
 - YuNet multiescala orçada; quality gate facial; amostragem nos limites dos shots.
@@ -259,3 +263,11 @@ As recomendações não equivalem a performance comprovada. Um replay de
 Re-ID com o checkpoint real não valida identidade civil, acerto de câmera,
 `active speaker` nem segurança de recorte. O ganho real exige benchmark
 downstream e, posteriormente, um vídeo anotado de referência.
+
+## R4.9/S5 — Speaker/Person e Active Speaker
+
+A identidade global de uma pessoa e a confirmação de que ela fala **naquele instante** agora são explicitamente diferentes. O foco de câmera S5 prioriza `active_person` com sincronismo temporal, não apenas `person_id`. Veja [`docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md`](docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md). Para revisão offline, use `python scripts/dev/audit_speaker_s5.py ANALISE --output PASTA_S5`.
+
+## R4.9/S7 — Transcrição, Targeted ASR e legendas (2026-10-07)
+
+O Targeted ASR prioriza aberturas/desfechos de cortes selecionados e explicita orçamento/cobertura; novas hipóteses não substituem o áudio/transcript original. `17e_subtitle_review_s7` fornece pendências, SRT **rascunho** e CSV de revisão humana por corte. A seleção automática de karaokê passa a exigir texto **e alinhamento** verificados; caso contrário, o preset efetivo é legenda simples. Auditoria offline e importação de revisão humana em `scripts/dev/audit_subtitles_s7.py`. Consulte `docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md`.

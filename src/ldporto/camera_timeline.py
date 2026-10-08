@@ -42,7 +42,9 @@ def build_camera_timeline(metadata, vision, shots, active_speaker, person_motion
         frame, observations = visual.near(mid, shot.get('start', a), shot.get('end', b), .6)
         visible = sorted(observations)
         matches = list(active_index.at(mid))
-        persons = sorted({r['person_id'] for r in matches if r.get('person_id') in observations})
+        persons = sorted({(r.get('active_person') if 'active_person' in r else r.get('person_id'))
+                          for r in matches if (r.get('active_person') if 'active_person' in r else r.get('person_id')) in observations
+                          and (r.get('active_speaker_state') in (None, 'CONFIRMED'))})
         speakers = {r.get('speaker_id') for r in matches if r.get('speaker_id')}
         overlap = len(speakers) > 1 or any(r.get('overlap') for r in matches)
         person = persons[0] if len(persons) == 1 and not overlap else None

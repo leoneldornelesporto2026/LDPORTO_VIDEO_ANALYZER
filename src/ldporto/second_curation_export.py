@@ -463,6 +463,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             'selection_report': (analysis.get('candidate_metrics') or {}).get('selection_report')})
         social_output = _reconcile_social_output(analysis.get('social_output') or {}, candidates,
                                                 integrity_ready)
+        write('subtitles/subtitle_review_s7.json', analysis.get('subtitle_review_s7', {}))
         write('social/stories_manifest.json', social_output)
         write('social/stories_candidates.json', social_output.get('stories', []))
         write('social/title_suggestions.json', social_output.get('title_suggestions', []))

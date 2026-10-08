@@ -38,3 +38,35 @@ V4.3 hardens the existing analyzer instead of replacing its architecture. The ma
 - Targeted ASR re-review/prioritization remains unfinished.
 - A new full-video V4.3 run is required to prove real tracking/active-speaker/camera and runtime improvements.
 - Final full-suite homologation must still be rerun on Windows/Python 3.11 after these last audit fixes.
+
+## R4.9/S5 — Speaker ↔ Person e Active Speaker (2026-10-07)
+
+- Separação explícita de identidade persistente e pessoa **falando agora** (`active_person` conservador).
+- Consenso audiovisual local exige correlação de boca/áudio com limite inferior, lag coerente, cobertura e margem, além de janelas independentes. Reações apenas com evidência visual explícita.
+- Fala simultânea não atribui voz misturada automaticamente; distinção de offscreen / wide shot / falta de frame com indicadores de incerteza.
+- Camera Timeline, Global Planner e Director respeitam `active_person` e evitam zoom automático baseado apenas em rosto visível.
+- Auditor offline `scripts/dev/audit_speaker_s5.py`, goldset CSV e opção de comparar predições ASD externas sem promover modelo.
+- Limites e instruções: [`docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md`](docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md).
+- Análise original dos cinco locutores não acompanha o ZIP: **nenhuma taxa de recuperação real é reivindicada**.
+
+## R4.9/S6 — Camera Director e Smart Zoom (2026-10-07)
+
+- Funil causal de janelas de foco por causa, duração e fallback visual; não converte associação global em falante ativo.
+- Preflight de crop temporal do mesmo shot e identidade; bloqueio de zoom sem pelo menos duas amostras distintas.
+- Split calculado no aspecto real de cada painel (sem deformação) e validado contra amostras seguintes.
+- Beats editoriais com `hook_type` comprovado e Q&A completo, mantendo veto a beats sem IDs/timestamps.
+- Solicitações de zoom contadas por tentativa real, separadas de oportunidades, eventos aceitos e entrega por keyframes.
+- Alerta de borda em preview baseado em geometria, contraste e repetição temporal, não em fração bruta de pixels pretos.
+- Auditor offline em pasta/ZIP, com replay opcional apenas do Director: `scripts/dev/audit_camera_s6.py`.
+- Testes novos de geometria, split real, zoom, fundo preto, barras artificiais, CLI e replay.
+- Guia completo: `docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md`. Sem alegação de ganho no benchmark antigo sem seus artefatos.
+
+## R4.9/S7 — Transcrição, reparação e legendas (2026-10-07)
+
+- Identificados pontos de integração: orçamento global de 4 janelas, abertura/desfecho da shortlist nem sempre revisados e presets karaoke sem gating real de alinhamento.
+- `17d_targeted_asr` agora respeita `editorial_shortlist`, com janelas de hook/payoff mesmo sem alerta do ASR principal; preserva alternativas sem substituição automática e registra cobertura.
+- `17e_subtitle_review_s7` fornece evidência por corte e diagnósticos que distinguem `needs_review` original, fala simultânea, riso e problemas temporais.
+- Exports SRT provisórios, CSV humano, validação de aprovação por corte e arquivos separados `.human_reviewed.srt`.
+- Social Output e Curator bridge impedem habilitar karaoke pelo simples pedido de preset; exigem texto e alinhamento verificados.
+- Código Python 3.11 AST validado; suíte ampliada para 555 passed / 2 skipped (Linux). Windows e taxa real de Emerson pendentes.
+- Documentação: `docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md`.

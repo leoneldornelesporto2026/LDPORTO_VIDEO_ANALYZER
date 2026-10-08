@@ -94,14 +94,14 @@ def build_analysis_quality(metadata, transcript, diarization, vision, active_dat
     visual_tracking_coverage = min(1.0, len({o.get('time') for o in observations})/max(1,len(frames))) if frames else 0.0
     active_rows=active_data.get('intervals',[])
     mapping_cov = active_data.get('coverage') if isinstance(active_data.get('coverage'), (int,float)) else 0.0
-    active_known=_coverage(active_rows,duration,lambda r:r.get('state')=='KNOWN_PERSON') if duration else mapping_cov
+    active_known=_coverage(active_rows,duration,lambda r:bool(r.get('active_person')) if 'active_person' in r else r.get('state')=='KNOWN_PERSON') if duration else 0.0
     shot_coverage = _coverage(shots, duration)
     semantic_coverage = _coverage(semantic.get('topics', []), duration)
     camera_coverage = _coverage(camera_timeline, duration)
     missing=[]
     if not turns: missing.append('diarization')
     if not observations: missing.append('visual_tracking')
-    if not any(r.get('person_id') for r in active_rows): missing.append('active_speaker_known_person')
+    if not any(r.get('active_person') if 'active_person' in r else r.get('person_id') for r in active_rows): missing.append('active_speaker_known_person')
     if not camera_timeline: missing.append('camera_timeline')
     quality = {
         'measurement_type': 'runtime_measurements_and_explicit_heuristic_proxies',
@@ -147,7 +147,7 @@ def quality_gate(analysis, cfg=None):
         required_missing.append('understanding_unavailable')
     issues.extend({'code':name,'severity':'high'} for name in required_missing)
     flags={
-        'active_speaker_unavailable':cfg.get('vision',{}).get('active_speaker',True) and not any(row.get('person_id') for row in analysis.get('active_speaker',[])),
+        'active_speaker_unavailable':cfg.get('vision',{}).get('active_speaker',True) and not any(row.get('active_person') if 'active_person' in row else row.get('person_id') for row in analysis.get('active_speaker',[])),
         'fragmented_tracking':(quality.get('micro_track_ratio') or 0)>.5,
         'participant_explosion':len(analysis.get('participants',[]))>50,
         'qa_unresolved':(analysis.get('qa_metrics',{}).get('unresolved_question_count') or 0)>0,

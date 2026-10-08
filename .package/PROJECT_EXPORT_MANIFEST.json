@@ -1,8 +1,8 @@
 {
-  "release": "R4.9-S8",
-  "base": "R4.9-S7",
-  "package_contents": "complete_source_and_tests_without_models_or_media",
-  "file_count_excluding_manifest": 285,
+  "release": "R4.9-S9-S10-S11",
+  "base": "R4.9-S8",
+  "package_contents": "complete_source_and_tests_without_models_or_real_media",
+  "file_count_excluding_manifest": 296,
   "files": [
     {
       "path": ".gitignore",
@@ -11,13 +11,13 @@
     },
     {
       "path": ".package/PROJECT_EXPORT_README.txt",
-      "bytes": 318,
-      "sha256": "cb725fdbbc4209c09e7b9c949b9e6bdb042a4773d3bebff54dac75e09322b11c"
+      "bytes": 281,
+      "sha256": "32d060a03ae760a02136c69d9f79353dd5df15740e4e5eb5cf8a36488c03a636"
     },
     {
       "path": ".package/PROJECT_EXPORT_TREE.txt",
-      "bytes": 9139,
-      "sha256": "b8c74bce2ad24ec279314dad8ca6012f8b11237ee9ef3fcd7971024053342691"
+      "bytes": 9543,
+      "sha256": "944c5b0d569bb0682f7604f6101aeb9123aaee48521a9edcd97b4aa3dcb441f8"
     },
     {
       "path": "ABRIR_ANALYZER.bat",
@@ -26,8 +26,8 @@
     },
     {
       "path": "CHANGELOG_V43.md",
-      "bytes": 7495,
-      "sha256": "3b29f361cc14580c907b508599d17d85a4ec4af7d006a6a724b5987d2dffef4e"
+      "bytes": 8586,
+      "sha256": "56aeaade909f466fb3fe8235e6130118a36764c9f9c8252a7f4cfc9b88b3b98f"
     },
     {
       "path": "CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat",
@@ -61,8 +61,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 18050,
-      "sha256": "259762a8bbcc6e467a06c6e504dbfbb5dacdc82ba0f60418056b5bc8bc511ed2"
+      "bytes": 18769,
+      "sha256": "4202c729cef8a0fe5fe23416e5b20488aed8fc02b52d2295f7cb1e2e721d3058"
     },
     {
       "path": "TESTAR_WINDOWS.bat",
@@ -76,8 +76,8 @@
     },
     {
       "path": "app.py",
-      "bytes": 45811,
-      "sha256": "0c89d91a304e2e5767eddda1340c1b72e0f3ef1e0b3a63a54e0e765ddf33c30a"
+      "bytes": 49534,
+      "sha256": "5630d6959282cc137380f60d77361fc9aa7109ad8c2e0c1e8e7a0fd1692a665e"
     },
     {
       "path": "compare_runs.py",
@@ -170,6 +170,16 @@
       "sha256": "d0d197e8fef86c944c327a43d0327f6cc8f32150b6d6202cb44451d2c6daf84d"
     },
     {
+      "path": "docs/S11_AUTOMATED_TESTS.xml",
+      "bytes": 81325,
+      "sha256": "3a9048a4b245e08fc681eafb48601c63e8a6a08c8ef167eb58fa92cceec62733"
+    },
+    {
+      "path": "docs/S11_TECHNICAL_VALIDATION_20261008.md",
+      "bytes": 2082,
+      "sha256": "5391e0c4c791db936a905f0c988e5b31d3b0f0ac77021ba457fb5261d7496c02"
+    },
+    {
       "path": "docs/S1_UNDERSTANDING_CONTRACT_FIX.md",
       "bytes": 3607,
       "sha256": "605fd79b168c9a44c8c9ef37650b0ec3828b283fd80dd3cf514dc522aa012e9f"
@@ -208,6 +218,11 @@
       "path": "docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md",
       "bytes": 7966,
       "sha256": "d97eeba472effec384515e1f070405a8c7aa4bcb986af02a681afa5534e4ca1b"
+    },
+    {
+      "path": "docs/S9_S11_REAL_TEST.md",
+      "bytes": 10168,
+      "sha256": "3a706455e73359caec22ea72acf6fc60362b87d839098cb72b311ab072f66b87"
     },
     {
       "path": "docs/TEST_REPORT_V3.md",
@@ -440,19 +455,9 @@
       "sha256": "b0c4d7ded370a9bfc193c622880f0768366113585e9334bd287fd41536e7d2ab"
     },
     {
-      "path": "models/vision_models_manifest.json",
-      "bytes": 862,
-      "sha256": "a270d89a7e7b8591a705cade14082cacae184b5cfe68e51dea6de62400be150e"
-    },
-    {
       "path": "pytest.ini",
       "bytes": 51,
       "sha256": "00b4fac49dd1dc95ba5800c9ac2699c8425fb06710552aacd5c2756349b04c64"
-    },
-    {
-      "path": "requirements.txt",
-      "bytes": 385,
-      "sha256": "cf8afbcf6a7422aecb39a34fa0c6980217025aac04abca316ff1a769ec458521"
     },
     {
       "path": "requirements/README.md",
@@ -498,6 +503,11 @@
       "path": "requirements/yolo.txt",
       "bytes": 111,
       "sha256": "59f6cfac2f20ce288ed2119ea508ad061309d26f055394e9cde8f7ae4bda3ef4"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 385,
+      "sha256": "cf8afbcf6a7422aecb39a34fa0c6980217025aac04abca316ff1a769ec458521"
     },
     {
       "path": "schemas/camera_director_debug.schema.json",
@@ -576,8 +586,8 @@
     },
     {
       "path": "scripts/README.md",
-      "bytes": 791,
-      "sha256": "eb4cb00753899b466bd95e7563dec92f9d4246e837fe77e33592fd1046ff7209"
+      "bytes": 1284,
+      "sha256": "13332a39730c23d1ba1a7ac57c30ca05835cac128c6c64e545c24b5c8be50be8"
     },
     {
       "path": "scripts/configure_ollama.py",
@@ -616,8 +626,8 @@
     },
     {
       "path": "scripts/dev/benchmark_semantic_r3b.py",
-      "bytes": 4827,
-      "sha256": "678c3d1cb943e1089dde57b71ce332edfe48547779529c7b5d26773d3ce1332c"
+      "bytes": 5446,
+      "sha256": "9e3ed8dcf00fbe25325857c6ee5085eb0b2fd77406471c7a4989bfbdb643f467"
     },
     {
       "path": "scripts/dev/benchmark_vision_r3b.py",
@@ -635,6 +645,11 @@
       "sha256": "8fd42e48056835684926610a15d3bacc7f90ffde8600fb564bf0c97d1a8474ec"
     },
     {
+      "path": "scripts/dev/curator_s9.py",
+      "bytes": 2850,
+      "sha256": "f3cf2ce30993f4c1b5f55cad7df388359b6095b744b7f003c5b3836d24a1d21e"
+    },
+    {
       "path": "scripts/dev/finalize_v44.py",
       "bytes": 2762,
       "sha256": "e35d65da1621e5a288f19810ced0a9b55367f1dc5f4d4f184c9babc346745716"
@@ -645,6 +660,11 @@
       "sha256": "4f80049c32fc0b1c87f27726d9725bb5e492c21a94e71b38af63ae8d4b36d114"
     },
     {
+      "path": "scripts/dev/homologation_s11.py",
+      "bytes": 1320,
+      "sha256": "66f83bfacab480a6307b84082fa3799556343fa6e2337e308c3c21101d1b9ea5"
+    },
+    {
       "path": "scripts/dev/monitor_full_v44.py",
       "bytes": 1059,
       "sha256": "5857b2ad535ba528003bff1972c927fc98a44c006b4670ff7edebc2d5e867554"
@@ -653,6 +673,11 @@
       "path": "scripts/dev/performance_diagnostics_r3.py",
       "bytes": 4683,
       "sha256": "5e55169df527d3d38d1da8df7ffe64720b894927b7f2be6c9a38e75daa32e3c8"
+    },
+    {
+      "path": "scripts/dev/performance_s10.py",
+      "bytes": 1700,
+      "sha256": "b94db308556dbd0cdc439de86657921925bdd108eb1c9484b328c60815d520d2"
     },
     {
       "path": "scripts/dev/replay_camera_v44.py",
@@ -710,6 +735,11 @@
       "sha256": "97b1cdd2f302db74a9b17989a5c8c0aaf2874cf1fc134f8f440e51667eadbeb4"
     },
     {
+      "path": "scripts/dev/start_real_test_s11.py",
+      "bytes": 2237,
+      "sha256": "732517336107e314d54165dbd7f4351f518870968cb91b14dce8e677d6a4cca5"
+    },
+    {
       "path": "scripts/dev/validate_diarization_cache_v44.py",
       "bytes": 1474,
       "sha256": "ccf7be9ce8c492343cdf4ae69c039271b4b0b9dcde2b7b6ff85a9c2f88cc8f5c"
@@ -738,6 +768,11 @@
       "path": "scripts/windows/CHECK_RUNTIME.bat",
       "bytes": 589,
       "sha256": "a7139a6315893810b3fa1fb98c49c2ecdf64795e7cb6159e33c166eabdc609e5"
+    },
+    {
+      "path": "scripts/windows/TESTAR_FLUXO_REAL_WINDOWS.bat",
+      "bytes": 682,
+      "sha256": "87dc0b80e1b045c7e67cb68b7eb756bc60c1617774a913d5e0a428d7a707a214"
     },
     {
       "path": "scripts/windows/diagnostics/DIAGNOSTICO_GPU_WINDOWS.bat",
@@ -865,6 +900,11 @@
       "sha256": "7b9a82f49616f4c9a16a534f8effc7628805b3a8b31f693b0e66fb10f403822f"
     },
     {
+      "path": "src/ldporto/curator_delivery.py",
+      "bytes": 24006,
+      "sha256": "188e33bb01fc72a8ab1da56e3ccf72daa53449673807e00b68fcf4c256466cfb"
+    },
+    {
       "path": "src/ldporto/diagnostic_dashboard.py",
       "bytes": 1441,
       "sha256": "9fe768a356b5434100e4feb5e72c875596701d2132b6525d08ba501c4a896c52"
@@ -913,6 +953,11 @@
       "path": "src/ldporto/handoff.py",
       "bytes": 9881,
       "sha256": "9c5dc0d15f10d9f3a4ebe5bd74ea3d80132a06dbdf9a253f1dd4ca1d95842409"
+    },
+    {
+      "path": "src/ldporto/homologation_s11.py",
+      "bytes": 10636,
+      "sha256": "37757e3906dcf219ad80b5e352a69caed44718a1e14981b5a676dbd018c916ea"
     },
     {
       "path": "src/ldporto/identity_goldset.py",
@@ -973,6 +1018,11 @@
       "path": "src/ldporto/performance.py",
       "bytes": 1518,
       "sha256": "48869a8c316ea0206343cddcab7b61055582242a37226dfde48ce46593cdf9dd"
+    },
+    {
+      "path": "src/ldporto/performance_acceptance.py",
+      "bytes": 6913,
+      "sha256": "5859bc75bc2dca3a6675a7f63f162b45a5bb6ccb18b98c9496ce0334e78490b4"
     },
     {
       "path": "src/ldporto/person_motion.py",
@@ -1250,6 +1300,11 @@
       "sha256": "1989b162e948b093bf0a3844269fef48d276a56c2c6db3408d3df75aa73bb0b8"
     },
     {
+      "path": "src/tests/test_s9_s10_s11_delivery.py",
+      "bytes": 9450,
+      "sha256": "e81250fa12b6d86fcc70850b4e7cdd3f5b27a902005b9bae9344f22ec5b789d7"
+    },
+    {
       "path": "src/tests/test_understanding_session1.py",
       "bytes": 4992,
       "sha256": "9a68aa54b68fcb98ae6c3c4bc20a005bae918eac6538d7aa42372cca3629edb2"
@@ -1430,7 +1485,12 @@
       "sha256": "de05782745cc5731e5bdc67a6871fe216f22348ae19c128aab3b65e6ddb33ccf"
     }
   ],
-  "python_3_11_syntax": "checked",
-  "full_test_suite": "573 passed, 2 skipped",
-  "real_world_homologation": "PENDING_Windows_Tesseract_source_media"
+  "technical_validation": {
+    "automated_tests_passed": 582,
+    "skipped": 2,
+    "errors": 0,
+    "media_evidence": "synthetic_ffmpeg_only",
+    "windows_cuda_ollama_real_homologation": "pending",
+    "publication_ready": false
+  }
 }

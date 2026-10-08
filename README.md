@@ -277,3 +277,11 @@ O Targeted ASR prioriza aberturas/desfechos de cortes selecionados e explicita o
 Incremental sobre S7: blocos comerciais por evidência temporal, revisão para ofertas vistas apenas no OCR, Broadcast Graphics/Commercial Visual com estados de execução honestos, títulos apoiados na transcrição, Stories distribuídos no vídeo e zonas provisórias de GC/legendas/overlays. **Não infere persistência de texto observado em um frame.** O áudio de risadas por PANNs e o Tesseract são opcionais (desligados no padrão). Veja `docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md`.
 
 Auditoria offline sem repetir mídia: `python scripts/dev/audit_commercial_stories_s8.py <PASTA_ANALISE_OU_ZIP> --output <PASTA_REVISAO>`.
+
+## R4.9 — Sessões 9–11: integração, performance e teste real
+
+O projeto inclui uma ponte local FFmpeg para renderizar previews verticais reais e Stories MP4 independentes com validação por hash e revisão humana. O aplicativo Curator independente não acompanha este ZIP: a integração nativa dele permanece externa; `scripts/dev/bridge_curator_r4.py` continua fornecendo o contrato legado.
+
+**Teste inicial (Windows):** `scripts\windows\TESTAR_FLUXO_REAL_WINDOWS.bat "SECOND_CURATION_READY.zip" "video_original.mp4" "C:\teste_s11"`
+
+**Passo a passo, gates de segurança, revisão manual, homologação e A/B:** `docs/S9_S11_REAL_TEST.md`. Nenhum resultado sintético é prova de qualidade editorial humana.

@@ -1,5 +1,6 @@
 .gitignore
 .package/PROJECT_EXPORT_README.txt
+.package/PROJECT_EXPORT_TREE.txt
 ABRIR_ANALYZER.bat
 CHANGELOG_V43.md
 CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat
@@ -30,6 +31,8 @@ docs/REPOSITORY_STRUCTURE.md
 docs/REQUISITOS_RECEBIDOS.txt
 docs/ROADMAP_R2_R3_20261007.md
 docs/ROUND2_VISUAL_IDENTITY.md
+docs/S11_AUTOMATED_TESTS.xml
+docs/S11_TECHNICAL_VALIDATION_20261008.md
 docs/S1_UNDERSTANDING_CONTRACT_FIX.md
 docs/S2_PIPELINE_INTEGRITY_HARDENING.md
 docs/S3_INTELIGENCIA_EDITORIAL_20261007.md
@@ -38,6 +41,7 @@ docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md
 docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md
 docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md
 docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md
+docs/S9_S11_REAL_TEST.md
 docs/TEST_REPORT_V3.md
 docs/TEST_RESULTS_V3.xml
 docs/V43_ARCHITECTURE.md
@@ -84,9 +88,7 @@ examples/llm_insights_DEMONSTRACAO_SINTETICA.json
 examples/mapping_example.json
 exportar_ldporto.py
 install.py
-models/vision_models_manifest.json
 pytest.ini
-requirements.txt
 requirements/README.md
 requirements/audio-events.txt
 requirements/demucs.txt
@@ -96,6 +98,7 @@ requirements/gpu-windows.txt
 requirements/ocr.txt
 requirements/vision.txt
 requirements/yolo.txt
+requirements.txt
 schemas/camera_director_debug.schema.json
 schemas/camera_director_timeline.schema.json
 schemas/camera_plan.schema.json
@@ -123,10 +126,13 @@ scripts/dev/benchmark_semantic_r3b.py
 scripts/dev/benchmark_vision_r3b.py
 scripts/dev/bridge_curator_r4.py
 scripts/dev/compare_runs.py
+scripts/dev/curator_s9.py
 scripts/dev/finalize_v44.py
 scripts/dev/homologate_r4.py
+scripts/dev/homologation_s11.py
 scripts/dev/monitor_full_v44.py
 scripts/dev/performance_diagnostics_r3.py
+scripts/dev/performance_s10.py
 scripts/dev/replay_camera_v44.py
 scripts/dev/replay_commercial_v44.py
 scripts/dev/replay_perception_v44.py
@@ -138,12 +144,14 @@ scripts/dev/report_full_v44.py
 scripts/dev/resume_full_v44_benchmark.py
 scripts/dev/review_editorial_s3.py
 scripts/dev/run_full_v44_benchmark.py
+scripts/dev/start_real_test_s11.py
 scripts/dev/validate_diarization_cache_v44.py
 scripts/download_models.py
 scripts/export/exportar_ldporto.py
 scripts/generate_director_fixture.py
 scripts/test_gpu.py
 scripts/windows/CHECK_RUNTIME.bat
+scripts/windows/TESTAR_FLUXO_REAL_WINDOWS.bat
 scripts/windows/diagnostics/DIAGNOSTICO_GPU_WINDOWS.bat
 scripts/windows/diagnostics/DIAGNOSTICO_WINDOWS.bat
 scripts/windows/gpu/CORRIGIR_GPU_WINDOWS.bat
@@ -169,6 +177,7 @@ src/ldporto/compact_artifacts.py
 src/ldporto/config.py
 src/ldporto/core.py
 src/ldporto/curator_bridge.py
+src/ldporto/curator_delivery.py
 src/ldporto/diagnostic_dashboard.py
 src/ldporto/diarization.py
 src/ldporto/director_config.py
@@ -179,6 +188,7 @@ src/ldporto/face_quality.py
 src/ldporto/global_camera_planner.py
 src/ldporto/gpu_runtime.py
 src/ldporto/handoff.py
+src/ldporto/homologation_s11.py
 src/ldporto/identity_goldset.py
 src/ldporto/integrity_contracts.py
 src/ldporto/interview_layout.py
@@ -191,6 +201,7 @@ src/ldporto/ollama_local.py
 src/ldporto/paths.py
 src/ldporto/perception_diagnostics.py
 src/ldporto/performance.py
+src/ldporto/performance_acceptance.py
 src/ldporto/person_motion.py
 src/ldporto/person_reid.py
 src/ldporto/pipeline.py
@@ -246,6 +257,7 @@ src/tests/test_s5_speaker_person_active.py
 src/tests/test_s6_camera_director_smart_zoom.py
 src/tests/test_s7_subtitle_review.py
 src/tests/test_s8_commercial_graphics_stories.py
+src/tests/test_s9_s10_s11_delivery.py
 src/tests/test_understanding_session1.py
 src/tests/test_v2_perception.py
 src/tests/test_v42_cache.py

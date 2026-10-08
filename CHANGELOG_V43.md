@@ -80,3 +80,9 @@ V4.3 hardens the existing analyzer instead of replacing its architecture. The ma
 - Títulos com âncora lexical, presets por Story, retângulos de texto provisórios com conflitos de GC/OCR, reação acústica só quando evidenciada; nenhuma publicação automática.
 - Auditor offline de pasta/ZIP com CSV de referência humana; teste em fixtures e regressão completa.
 - Homologação obrigatória: vídeo real do Emerson/Clóvis, Tesseract/PANNs caso habilitados e renderização Windows/Python 3.11.
+
+## R4.9 — S9/S10/S11 (2026-10-08)
+- S9: ponte renderizadora `curator_delivery.py`, importações do core/decisões, fonte SHA-256, MP4 vertical H.264/AAC, mix instrumental opcional, performances em áudio original, gate canário + SHA e lote Stories independentes + revisão por arquivo. Câmera permanece `source_preserve` se crop não verificado; não declara publicação pronta.
+- S10: `performance_acceptance.py`, A/B crítico de Ollama/HOG-face, throughput tokens/s no benchmark local, diagnósticos CPU/RAM/VRAM sem autodimensionamento não medido; GUI ganhou Recursos S10.
+- S11: `homologation_s11.py`, verificação de pacote, fonte, preview e hashes, JUnit, baseline, checklist editorial e runtime; `start_real_test_s11.py` e launcher Windows para teste local; GUI permite gerar plano Curator S9.
+- Teste técnico sintético FFmpeg e regressão automatizada validam o código disponível. **Pendente:** Windows/Python3.11 + NVIDIA/CUDA + Ollama reais; vídeos Emerson/Clóvis; aprovação humana de legenda, áudio, GC, corte e payoff; Curator independente não foi modificado.

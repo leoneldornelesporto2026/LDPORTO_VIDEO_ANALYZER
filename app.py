@@ -172,6 +172,7 @@ class App:
         self.start_button = ttk.Button(buttons, text="ANALISAR", command=self.start)
         self.start_button.pack(side="left")
         ttk.Button(buttons, text="Diagnóstico", command=self.diagnose).pack(side="left", padx=8)
+        ttk.Button(buttons, text="Recursos S10", command=self.diagnose_s10).pack(side='left', padx=5)
         if os.name == "nt":
             ttk.Button(buttons, text="Reparar GPU", command=self.repair_gpu).pack(side="left", padx=4)
         ttk.Button(buttons, text="Abrir resultados", command=self.open_results).pack(side="left")
@@ -249,6 +250,7 @@ class App:
         ttk.Button(final_buttons, text='Abrir pasta', command=self.open_package_folder).pack(side='left')
         ttk.Button(final_buttons, text='Copiar caminho', command=self.copy_package_path).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Ver resumo', command=self.open_results).pack(side='left', padx=8)
+        ttk.Button(final_buttons, text='Gerar plano Curator S9', command=self.prepare_curator_s9).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Nova analise', command=self.new_analysis).pack(side='right')
 
     def show_execution(self):
@@ -348,6 +350,59 @@ class App:
         self.final_readiness.set('\n'.join(label + ': ' + ('pronta' if package.get('readiness', {}).get(key) else 'indisponivel/degradada') for key, label in labels.items()) +
             ('\nCamera preservando source: speaker/person ou crop ainda insuficiente.' if not package.get('readiness', {}).get('camera_ready') else ''))
         self.final_package.set(str(self.package_path) + '\n' + f"{package.get('bytes', 0) / 1024 ** 2:.2f} MB | {package.get('state', 'FAILED')}" if self.package_path else 'Pacote indisponivel; artifacts locais foram preservados para diagnostico/resume.')
+
+    def diagnose_s10(self):
+        """Read-only diagnostics in worker; never turn on parallelism automatically."""
+        self.status.set('Recursos S10: coletando CPU, RAM, VRAM e ferramentas locais…')
+        def task():
+            try:
+                from ldporto.performance_acceptance import resource_diagnostic
+                from ldporto.curator_delivery import save_json
+                report = resource_diagnostic()
+                output = ROOT / '.cache' / 's10_resource_diagnostic.json'
+                save_json(output, report)
+                message = ('CPU lógico: ' + str(report.get('logical_cpus')) +
+                           '\nNVIDIA: ' + ('detectada' if report.get('gpu', {}).get('available') else 'indisponível') +
+                           '\nFFmpeg: ' + ('disponível' if report.get('ffmpeg') else 'ausente') +
+                           '\nParalelismo adaptativo: desativado até benchmark A/B' +
+                           '\nRelatório: ' + str(output))
+                self.window.after(0, lambda: (self.status.set('Diagnóstico S10 concluído — A/B real ainda pendente'),
+                                               messagebox.showinfo('Recursos S10', message)))
+            except Exception as exc:
+                self.window.after(0, lambda error=str(exc): messagebox.showerror('Recursos S10', error))
+        threading.Thread(target=task, daemon=True).start()
+
+    def prepare_curator_s9(self):
+        """Create a reviewed render plan; no render, publication or automatic approval."""
+        if not self.package_path or not self.package_path.is_file():
+            messagebox.showerror('Curator S9', 'Pacote de segunda curadoria indisponível. Gere o SECOND_CURATION_READY primeiro.')
+            return
+        video = filedialog.askopenfilename(title='Selecione o vídeo ORIGINAL da análise',
+                                           filetypes=[('Vídeo', '*.mp4 *.mkv *.webm *.mov *.avi'), ('Todos', '*.*')])
+        if not video:
+            return
+        output = filedialog.askdirectory(title='Onde salvar o plano para o Curator S9?')
+        if not output:
+            return
+        self.final_heading.set('Curator S9: conferindo hashes e elegibilidade…')
+        package_path = self.package_path
+        def task():
+            try:
+                from ldporto.curator_delivery import prepare_plan, save_json
+                plan = prepare_plan(package_path, video, output_dir=output)
+                target = Path(output) / 'CURATOR_S9_PLAN.json'
+                if target.exists():
+                    raise FileExistsError('CURATOR_S9_PLAN.json já existe; escolha outra pasta para não sobrescrever.')
+                save_json(target, plan)
+                message = (f'Plano salvo em {target}\nCortes: {len(plan["clips"])}\n'
+                           'Ainda requer renderizar canário, revisar e aprovar por hash.\n'
+                           'Veja docs/S9_S11_REAL_TEST.md para os próximos comandos.')
+                self.window.after(0, lambda: (self.final_heading.set('Plano Curator S9 pronto para canário'),
+                                               messagebox.showinfo('Curator S9', message)))
+            except Exception as exc:
+                self.window.after(0, lambda error=str(exc): (self.final_heading.set('Curator S9 bloqueado'),
+                                                               messagebox.showerror('Curator S9', error)))
+        threading.Thread(target=task, daemon=True).start()
 
     def new_analysis(self):
         self.final_frame.pack_forget()

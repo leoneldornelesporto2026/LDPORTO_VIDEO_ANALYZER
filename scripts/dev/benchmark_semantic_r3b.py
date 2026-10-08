@@ -51,6 +51,12 @@ def make_report(transcription, cfg, *, sample_indices, run_model=False):
                                    ollama_eval_count=meta.get('eval_count'),
                                    prompt_eval_count=meta.get('prompt_eval_count'),
                                    total_duration_ns=meta.get('total_duration_ns'),
+                                   eval_duration_ns=meta.get('eval_duration_ns'),
+                                   tokens_per_second=(round(meta['eval_count'] * 1e9 / meta['eval_duration_ns'], 2)
+                                       if isinstance(meta.get('eval_count'), (int, float)) and
+                                       isinstance(meta.get('eval_duration_ns'), (int, float)) and meta['eval_duration_ns'] > 0 else None),
+                                   output_token_count=meta.get('eval_count'),
+                                   repair_attempted=False, # this isolated test performs no automatic repair
                                    elapsed_seconds=round(perf_counter()-started, 3))
                 except Exception as exc:
                     metrics.update(status='invalid_or_unavailable', error_type=type(exc).__name__,

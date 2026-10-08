@@ -380,6 +380,8 @@ class ReportEngine:
             "active_speaker_evidence.json": analysis.get("active_speaker_evidence", []),
             "shots.json": analysis.get("shots", []),
             "broadcast_graphics.json": analysis.get("broadcast_graphics", {}),
+            "commercial_blocks_s8.json": analysis.get('commercial_blocks', []),
+            "commercial_visual_s8.json": analysis.get('commercial_visual_s8', {}),
             "participants.json": analysis.get("participants", []),
             "participant_catalog.json": analysis.get("participant_catalog", []),
             "participant_metrics.json": analysis.get("participant_metrics", {}),

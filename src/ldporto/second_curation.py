@@ -166,6 +166,8 @@ def build_second_curation_package(analysis):
                               'title_idea':copy.get('title_idea'),'source_moment_id':cid if copy else None},
             'commercial_classification':m.get('commercial_classification'),
             'commercial_visual_evidence': m.get('commercial_visual_evidence', []),
+            'commercial_gate_reason': m.get('commercial_gate_reason'),
+            'commercial_block_refs': m.get('commercial_block_refs', []),
             'editorial_score_raw':m.get('editorial_score_raw'),
             'score_components':m.get('score_components',{}),'penalties':m.get('penalties',{}),
             'score_weights':m.get('score_weights',{}),'editorial_score_final':m.get('editorial_score_final',score),
@@ -177,11 +179,11 @@ def build_second_curation_package(analysis):
             'duration_exception_reason': m.get('duration_exception_reason'),
             'hook_type': m.get('hook_type'), 'hook_strength': m.get('hook_score', m.get('hook_strength')),
             'default_shortlist_eligible':bool(m.get('default_shortlist_eligible',True)) and
-                (m.get('commercial_classification') or {}).get('eligibility') != 'excluded' and
+                (m.get('commercial_classification') or {}).get('eligibility') in (None, 'eligible') and
                 not m.get('_provisional_upstream_incomplete', False),
             'publication_eligible':not m.get('_provisional_upstream_incomplete', False) and
                 bool(m.get('default_shortlist_eligible', True)) and
-                (m.get('commercial_classification') or {}).get('eligibility') != 'excluded',
+                (m.get('commercial_classification') or {}).get('eligibility') in (None, 'eligible'),
             'candidate_state':'PROVISIONAL_UPSTREAM_INCOMPLETE' if m.get('_provisional_upstream_incomplete', False) else 'EDITORIAL_CANDIDATE',
             'candidate_state_reason':m.get('_provisional_reason'),
             'editorial_scores': {**editorial, 'editorial_strength': score},

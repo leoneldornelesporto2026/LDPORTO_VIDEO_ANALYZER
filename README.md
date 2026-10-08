@@ -271,3 +271,9 @@ A identidade global de uma pessoa e a confirmação de que ela fala **naquele in
 ## R4.9/S7 — Transcrição, Targeted ASR e legendas (2026-10-07)
 
 O Targeted ASR prioriza aberturas/desfechos de cortes selecionados e explicita orçamento/cobertura; novas hipóteses não substituem o áudio/transcript original. `17e_subtitle_review_s7` fornece pendências, SRT **rascunho** e CSV de revisão humana por corte. A seleção automática de karaokê passa a exigir texto **e alinhamento** verificados; caso contrário, o preset efetivo é legenda simples. Auditoria offline e importação de revisão humana em `scripts/dev/audit_subtitles_s7.py`. Consulte `docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md`.
+
+## Atualização R4.9 / Sessão 8 — Commercial Gate e Stories
+
+Incremental sobre S7: blocos comerciais por evidência temporal, revisão para ofertas vistas apenas no OCR, Broadcast Graphics/Commercial Visual com estados de execução honestos, títulos apoiados na transcrição, Stories distribuídos no vídeo e zonas provisórias de GC/legendas/overlays. **Não infere persistência de texto observado em um frame.** O áudio de risadas por PANNs e o Tesseract são opcionais (desligados no padrão). Veja `docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md`.
+
+Auditoria offline sem repetir mídia: `python scripts/dev/audit_commercial_stories_s8.py <PASTA_ANALISE_OU_ZIP> --output <PASTA_REVISAO>`.

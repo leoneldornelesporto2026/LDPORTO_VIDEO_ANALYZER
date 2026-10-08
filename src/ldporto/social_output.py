@@ -34,7 +34,7 @@ CAPTION_PRESETS = {
     "creator_style": {"label": "Creator Style", "font_family": "Arial", "weight": "black", "highlight": True, "background": "none", "motion": "keyword_pop"},
 }
 
-from .editorial import COMMERCIAL_TYPES
+from .editorial import COMMERCIAL_TYPES, fold_text, terms
 
 
 def _score(value, default=0.0):
@@ -58,24 +58,42 @@ def _short_title(text, max_words=9):
 
 
 def _title_variants(candidate):
-    generated = candidate.get("generated_copy") or {}
-    transcript = (candidate.get("transcript_literal") or "").strip()
-    topic = (candidate.get("topic") or candidate.get("topic_summary") or "").strip()
-    variants = []
-    for mode, value in (
-        ("semantic_editorial", generated.get("title_idea")),
-        ("semantic_hook", generated.get("hook_idea")),
-        ("topic", topic),
-    ):
-        if value and value not in [row["text"] for row in variants]:
-            variants.append({"mode": mode, "text": str(value).strip(), "requires_review": True})
-    if "?" in transcript:
-        question = transcript.split("?", 1)[0].strip() + "?"
+    """Strong but evidence-bound titles: never select an unverified LLM promise."""
+    generated = candidate.get('generated_copy') or {}
+    transcript = (candidate.get('transcript_literal') or '').strip()
+    topic = (candidate.get('topic') or candidate.get('topic_summary') or '').strip()
+    variants, seen = [], set()
+    def add(mode, title, *, verified=False, reason=None):
+        title = ' '.join(str(title or '').split()).strip()[:100]
+        if title and fold_text(title) not in seen:
+            seen.add(fold_text(title))
+            variants.append({'mode': mode, 'text': title, 'requires_review': not verified,
+                             'evidence_status': 'literal_transcript' if verified else 'lexically_supported_suggestion',
+                             'evidence_reason': reason})
+    literal_terms = terms(transcript)
+    if '?' in transcript:
+        question = transcript.split('?', 1)[0].strip() + '?'
         if 3 <= len(_words(question)) <= 14:
-            variants.append({"mode": "literal_question", "text": question, "requires_review": False})
+            add('literal_question', question, verified=True)
+    # Avoid fabricated secrets, revelations, absolute claims, quantities and
+    # outcomes not anchored in the canonical transcript. Lexical containment is
+    # intentionally strict; human editor may still propose a paraphrase.
+    for mode, value in (('semantic_hook', generated.get('hook_idea')),
+                        ('semantic_editorial', generated.get('title_idea')),
+                        ('topic', topic)):
+        if not isinstance(value, str) or not value.strip():
+            continue
+        proposed = terms(value)
+        unsupported = proposed - literal_terms
+        novelty = len(unsupported) / max(1, len(proposed))
+        forbidden = {'segredo', 'revelacao', 'inacreditavel', 'chocante', 'exclusivo',
+                     'bomba', 'prova', 'verdade', 'nunca', 'sempre', 'tudo', 'ninguem'}
+        if (literal_terms and len(proposed) >= 2 and novelty <= .25
+            and not (unsupported & forbidden)):
+            add(mode, value, verified=False, reason='lexical_overlap_not_fact_check')
     literal = _short_title(transcript)
-    if literal and literal not in [row["text"] for row in variants]:
-        variants.append({"mode": "literal_excerpt", "text": literal, "requires_review": True})
+    if literal:
+        add('literal_excerpt', literal, verified=True)
     return variants[:4]
 
 
@@ -101,7 +119,7 @@ def _commercial(candidate):
     return bool(
         candidate.get("content_type") in COMMERCIAL_TYPES
         or row.get("content_type") in COMMERCIAL_TYPES
-        or row.get("eligibility") == "excluded"
+        or row.get("eligibility") in {"excluded", "review"}
         or _score(score) >= .7
         or candidate.get("default_shortlist_eligible") is False and row.get("eligibility") == "excluded"
     )
@@ -146,6 +164,19 @@ def _graphics_for_interval(graphics, start, end):
     return rows
 
 
+def _normalized_rect_overlap(first, second):
+    """2D overlap area of normalized bounding boxes; zero on missing geometry."""
+    try:
+        a = (_score(first['x']), _score(first['y']), _score(first['width']), _score(first['height']))
+        b = (_score(second['x']), _score(second['y']), _score(second['width']), _score(second['height']))
+        if not (0 <= a[0] <= 1 and 0 <= a[1] <= 1 and 0 < a[2] <= 1 and 0 < a[3] <= 1 and
+                0 <= b[0] <= 1 and 0 <= b[1] <= 1 and 0 < b[2] <= 1 and 0 < b[3] <= 1):
+            return 0.
+        return max(0., min(a[0]+a[2], b[0]+b[2])-max(a[0],b[0])) * max(0.,min(a[1]+a[3],b[1]+b[3])-max(a[1],b[1]))
+    except (TypeError, KeyError):
+        return 0.
+
+
 def _caption_plan(candidate, graphics, preset):
     regions = _graphics_for_interval(graphics, candidate["start"], candidate["end"])
     lower = any(row.get("persistent") and row.get("kind") in {"lower_third", "ticker"} and _score(row.get("y_start")) > .4 for row in regions)
@@ -173,6 +204,14 @@ def _caption_plan(candidate, graphics, preset):
         "broadcast_evidence_status": "interval_observed" if regions else "no_observed_region_in_interval_not_proof_of_absence",
         "final_safe_area_verified": False,
         "subtitle_text_review_required": True,
+        "candidate_safe_rects_normalized": [
+            {"position": "upper_middle", "x": .10, "y": .18, "width": .80, "height": .22,
+             "requires_post_crop_validation": True},
+            {"position": "lower_middle", "x": .10, "y": .62, "width": .80, "height": .20,
+             "requires_post_crop_validation": True}],
+        "observed_graphics_count": len(regions),
+        "coordinate_system": "normalized_post_crop_placeholder",
+        "position_verification": "pending_frame_and_final_render",
     }
 
 
@@ -192,61 +231,83 @@ def _preset_for(candidate, content_mode, configured):
 
 
 def select_story_set(candidates, cfg):
-    """Select multiple independent story moments with temporal/topic/category diversity."""
-    minimum = float(cfg.get("min_seconds", 15))
-    maximum = float(cfg.get("max_seconds", 60))
-    limit = int(cfg.get("max_stories", 12))
-    spacing = float(cfg.get("min_spacing_seconds", 45))
-    per_topic = int(cfg.get("max_per_topic", 2))
-    distribution_window = float(cfg.get("distribution_window_seconds", 600))
-    max_per_window = int(cfg.get("max_per_window", 3))
-    eligible = []
+    """Select across the complete programme; never fill slots by repetition."""
+    minimum = float(cfg.get('min_seconds', 15))
+    maximum = float(cfg.get('max_seconds', 60))
+    limit = int(cfg.get('max_stories', 12))
+    spacing = float(cfg.get('min_spacing_seconds', 45))
+    per_topic = int(cfg.get('max_per_topic', 2))
+    distribution_window = max(1., float(cfg.get('distribution_window_seconds', 600)))
+    max_per_window = int(cfg.get('max_per_window', 3))
+    eligible, rejection = [], Counter()
     for candidate in candidates:
-        duration = _score(candidate.get("duration"), _score(candidate.get("end")) - _score(candidate.get("start")))
+        duration = _score(candidate.get('duration'), _score(candidate.get('end')) - _score(candidate.get('start')))
         if not minimum <= duration <= maximum:
-            continue
-        if _commercial(candidate) or candidate.get("default_shortlist_eligible") is False:
-            continue
+            rejection['duration'] += 1; continue
+        if _commercial(candidate) or candidate.get('default_shortlist_eligible') is False:
+            rejection['commercial_or_editorial_gate'] += 1; continue
+        if (candidate.get('commercial_classification') or {}).get('eligibility') not in (None, 'eligible'):
+            rejection['commercial_requires_review'] += 1; continue
+        if candidate.get('editorial_blockers'):
+            rejection['editorial_blocker'] += 1; continue
         row = dict(candidate)
-        row["story_score"] = _story_score(candidate)
-        row["story_category"] = _category(candidate)
+        row['story_score'] = _story_score(candidate)
+        row['story_category'] = _category(candidate)
         eligible.append(row)
-    eligible.sort(key=lambda row: (-row["story_score"], row.get("start", 0)))
-    selected, topic_counts, category_counts, window_counts = [], Counter(), Counter(), Counter()
+    eligible.sort(key=lambda row: (-row['story_score'], row.get('start', 0)))
+    if not eligible:
+        return [], {'eligible_count': 0, 'selected_count': 0, 'rejection_reasons': dict(rejection),
+                    'category_counts': {}, 'topic_counts': {}, 'distribution_window_seconds': distribution_window,
+                    'window_counts': {}, 'phase_coverage': 0}
+    earliest = min(_score(row.get('start')) for row in eligible)
+    latest = max(_score(row.get('end')) for row in eligible)
+    # Equal-duration temporal phases enable beginning/middle/end coverage even
+    # when the video is shorter than 600 s. One top item per phase first.
+    phases = min(max(1, limit), max(1, math.ceil((latest-earliest)/distribution_window)))
+    phase_width = max(1., (latest-earliest)/phases)
+    def phase(row):
+        return min(phases-1, int((_score(row.get('start'))-earliest)/phase_width))
+    grouped = defaultdict(list)
     for row in eligible:
-        topic = row.get("primary_topic_id") or row.get("topic") or "unknown"
-        window_id = int(float(row.get("start", 0)) // max(distribution_window, 1.0))
-        if topic_counts[topic] >= per_topic or window_counts[window_id] >= max_per_window:
-            continue
-        too_close = False
+        grouped[phase(row)].append(row)
+    selected, ids, topic_counts, category_counts, window_counts, distinct_arcs = [], set(), Counter(), Counter(), Counter(), set()
+    def accept(row):
+        cid = row.get('candidate_id')
+        topic = row.get('primary_topic_id') or row.get('topic') or 'unknown'
+        window_id = int(_score(row.get('start')) // distribution_window)
+        arc = row.get('story_arc') or row.get('source_story_arc_id')
+        if not cid or cid in ids or topic_counts[topic] >= per_topic or window_counts[window_id] >= max_per_window:
+            return False
+        if arc and arc in distinct_arcs:
+            return False
         for prior in selected:
-            distance = min(abs(row["start"] - prior["start"]), abs(row["end"] - prior["end"]))
-            if distance < spacing and row["story_category"] == prior["story_category"]:
-                too_close = True
+            if max(row['start'], prior['start']) < min(row['end'], prior['end']):
+                return False
+            distance = min(abs(row['start']-prior['start']), abs(row['end']-prior['end']))
+            if distance < spacing and row['story_category'] == prior['story_category']:
+                return False
+        selected.append(row); ids.add(cid); topic_counts[topic] += 1
+        category_counts[row['story_category']] += 1; window_counts[window_id] += 1
+        if arc: distinct_arcs.add(arc)
+        return True
+    # Phase-first, then best remaining material. No forced quantity.
+    for key in sorted(grouped):
+        for row in grouped[key]:
+            if accept(row):
                 break
-        if too_close:
-            continue
-        selected.append(row)
-        topic_counts[topic] += 1
-        window_counts[window_id] += 1
-        category_counts[row["story_category"]] += 1
         if len(selected) >= limit:
             break
-    # Fill remaining slots only after diversity pass, still without exact duplicates/commercials.
-    ids = {row["candidate_id"] for row in selected}
     for row in eligible:
-        if len(selected) >= limit:
-            break
-        if row["candidate_id"] in ids:
-            continue
-        topic = row.get("primary_topic_id") or row.get("topic") or "unknown"
-        window_id = int(float(row.get("start", 0)) // max(distribution_window, 1.0))
-        if topic_counts[topic] >= per_topic or window_counts[window_id] >= max_per_window:
-            continue
-        selected.append(row); ids.add(row["candidate_id"]); topic_counts[topic] += 1; window_counts[window_id] += 1; category_counts[row["story_category"]] += 1
-    return selected, {"eligible_count": len(eligible), "selected_count": len(selected),
-                      "category_counts": dict(category_counts), "topic_counts": dict(topic_counts),
-                      "distribution_window_seconds": distribution_window, "window_counts": dict(window_counts)}
+        if len(selected) >= limit: break
+        accept(row)
+    selected.sort(key=lambda row: (-row['story_score'], row.get('start', 0)))
+    return selected, {'eligible_count': len(eligible), 'selected_count': len(selected),
+        'category_counts': dict(category_counts), 'topic_counts': dict(topic_counts),
+        'rejection_reasons': dict(rejection), 'distribution_window_seconds': distribution_window,
+        'window_counts': dict(window_counts), 'temporal_phases': phases,
+        'phase_coverage': len(set(phase(row) for row in selected)),
+        'coverage_seconds': {'first_candidate_start': earliest, 'last_candidate_end': latest},
+        'unfilled_slots_are_intentional': len(selected) < limit}
 
 
 def build_social_output(analysis, cfg, package=None):
@@ -268,12 +329,94 @@ def build_social_output(analysis, cfg, package=None):
     preset_cfg = social.get("caption_preset", "auto")
     aspect = social.get("aspect_ratio", "9:16")
     graphics = analysis.get("broadcast_graphics") or {}
+    ocr_rows = (analysis.get('commercial_visual_s8') or {}).get('texts') or []
+    events = analysis.get('audio_events') or []
     stories, title_rows, caption_rows = [], [], []
     for rank, candidate in enumerate(selected, 1):
         preset = _preset_for(candidate, content_mode, preset_cfg)
         titles = _title_variants(candidate)
         title = titles[0]["text"] if titles else f"Momento {rank}"
         caption_plan = _caption_plan(candidate, graphics, preset)
+        evidence_ocr = [r for r in ocr_rows if isinstance(r, dict) and r.get('bbox')
+                        and candidate['start'] <= _score(r.get('observed_at'), -1) < candidate['end']
+                        and (not r.get('moment_id') or r.get('moment_id') == candidate['candidate_id'])]
+        caption_plan['observed_ocr_boxes'] = [{'observed_at': r.get('observed_at'),
+            'bbox': r['bbox'], 'visual_type_hint': r.get('visual_type_hint'),
+            'persistence': 'unknown', 'source': 'ocr'} for r in evidence_ocr]
+        caption_plan['requires_reposition_after_crop'] = bool(evidence_ocr or caption_plan['broadcast_regions'])
+        obstacles = [r['bbox'] for r in evidence_ocr]
+        for region in caption_plan['broadcast_regions']:
+            if not all(k in region for k in ('x_start','x_end','y_start','y_end')):
+                continue
+            obstacles.append({'x':region['x_start'], 'y':region['y_start'],
+                'width': _score(region['x_end'])-_score(region['x_start']),
+                'height': _score(region['y_end'])-_score(region['y_start'])})
+        for rect in caption_plan['candidate_safe_rects_normalized']:
+            hits = sum(_normalized_rect_overlap(rect, obstacle) > .001 for obstacle in obstacles)
+            rect['observed_overlay_conflicts'] = hits
+            rect['evidence_status'] = 'observed_overlay_conflict_requires_relayout' if hits else 'provisional_no_overlay_overlap_not_face_verified'
+        preferred_rect = next((r for r in caption_plan['candidate_safe_rects_normalized']
+            if r['position'] == caption_plan['preferred_position']), None)
+        if preferred_rect and preferred_rect['observed_overlay_conflicts']:
+            alternatives = [r for r in caption_plan['candidate_safe_rects_normalized']
+                if not r['observed_overlay_conflicts']]
+            caption_plan['preferred_position'] = alternatives[0]['position'] if alternatives else 'dynamic_safe_zone'
+            caption_plan['position_verification'] = 'overlay_conflict_requires_reposition_and_final_frame_verification'
+        observed_reactions = [r for r in events if isinstance(r, dict)
+            and _score(r.get('start'), -1) >= candidate['start'] and _score(r.get('start'), -1) < candidate['end']
+            and any(word in str(r.get('label') or r.get('event') or r.get('type') or '').lower()
+                    for word in ('laughter', 'laugh', 'risada', 'applause', 'aplauso'))]
+        # These events are only optional signals; they cannot infer speech or
+        # automatically assert an authentic joke.
+        visual_mode = ('reaction_split_review' if len(candidate.get('person_ids') or []) >= 2
+                       and any('split' in str(l).lower() for l in candidate.get('layouts') or [])
+                       and observed_reactions else 'source_preserve')
+        style_by_category = {
+            'humor': 'humor_reaction_conservative',
+            'pergunta_resposta': 'qa_clean_question_hook',
+            'historia': 'story_arc_context_first',
+            'curiosidade': 'curiosity_factual',
+            'emocao': 'emotional_minimal',
+            'impacto': 'impact_emphasis',
+            'informativo': 'information_clear',
+            'visual': 'source_visual_preserve',
+        }
+        # Screen geometry must be recomputed after the final crop. Suggested
+        # rectangles are *not* certified free of faces/TV graphics.
+        gc_top = any(r.get('kind') == 'banner' and _score(r.get('y_end')) < .35
+                     for r in caption_plan['broadcast_regions'])
+        gc_lower = any(r.get('kind') in ('lower_third','ticker') and _score(r.get('y_start')) > .4
+                       for r in caption_plan['broadcast_regions'])
+        title_rect = ({'x':.1, 'y':.33, 'width':.8, 'height':.13} if gc_top
+                      else {'x':.1, 'y':.08, 'width':.8, 'height':.12})
+        if gc_top and gc_lower:
+            title_review_reason = 'top_and_lower_third_both_occupied_manual_layout_required'
+        elif gc_top:
+            title_review_reason = 'top_banner_detected_use_mid_candidate'
+        elif gc_lower:
+            title_review_reason = 'lower_third_detected_keep_title_top'
+        else:
+            title_review_reason = 'no_broadcast_graphics_observed_not_proof_of_empty_space'
+        ocr_run = analysis.get('commercial_visual_s8') or {}
+        graphics_run = analysis.get('broadcast_graphics') or {}
+        visual_plan = {'preset': style_by_category.get(candidate['story_category'], 'source_preserve'),
+            'commercial_ocr_scope': ('sampled' if candidate['candidate_id'] in (ocr_run.get('inspected_candidate_ids') or [])
+                                     and ocr_run.get('status') == 'measured' else
+                                     'uninspected_or_backend_unavailable'),
+            'broadcast_graphics_scope': ('sampled' if candidate['candidate_id'] in (graphics_run.get('inspected_candidate_ids') or [])
+                                         and graphics_run.get('status') == 'measured' else
+                                         'uninspected_or_backend_unavailable'),
+            'layout_mode': visual_mode, 'caption_style': preset,
+            'overlay_safety': caption_plan['position_verification'],
+            'title_position': 'center_upper' if gc_top else 'safe_top',
+            'title_candidate_rect_normalized': title_rect,
+            'title_review_reason': title_review_reason,
+            'safe_area_verified': False, 'split_requires_visual_confirmation': visual_mode != 'source_preserve',
+            'broadcast_region_count': len(caption_plan['broadcast_regions']),
+            'ocr_observations': len(evidence_ocr), 'audio_reaction_evidence_count': len(observed_reactions),
+            'needs_preview_and_human_review': True,
+            'zoom_policy': 'camera_director_evidence_required_no_decorative_zoom',
+            'editorial_copy_must_be_supported_by_transcript': True}
         clip_review = (analysis.get('subtitle_review_s7') or {}).get('candidates', {}).get(candidate['candidate_id'], {})
         caption_plan['subtitle_review_state'] = clip_review.get('approval_state', 'NOT_EVALUATED')
         caption_plan['word_highlight_enabled'] = bool(clip_review.get('karaoke_allowed'))
@@ -291,7 +434,13 @@ def build_social_output(analysis, cfg, package=None):
             "candidate_id": candidate["candidate_id"], "start": candidate["start"], "end": candidate["end"],
             "duration": candidate.get("duration") or candidate["end"] - candidate["start"],
             "category": candidate["story_category"], "score": candidate["story_score"],
-            "title": title, "title_variants": titles, "title_status": "grounded_suggestion_requires_review",
+            "visual_plan": visual_plan,
+            "audio_reaction_evidence": [{"start": r.get('start'), "end": r.get('end'),
+                "label": r.get('label') or r.get('event') or r.get('type'),
+                "confidence": r.get('confidence')} for r in observed_reactions[:8]],
+            "title": title, "title_variants": titles,
+            "title_status": ("literal_transcript_requires_editorial_review" if titles and
+                titles[0].get('evidence_status') == 'literal_transcript' else 'grounded_suggestion_requires_review'),
             "caption_preset": caption_plan["effective_preset"], "requested_caption_preset": preset, "caption_plan": caption_plan,
             "aspect_ratio": aspect, "render_profile": ASPECT_RATIOS[aspect],
             "camera_mode": candidate.get("camera_mode"), "layouts": candidate.get("layouts", []),

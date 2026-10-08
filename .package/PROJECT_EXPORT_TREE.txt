@@ -1,6 +1,5 @@
 .gitignore
 .package/PROJECT_EXPORT_README.txt
-.package/PROJECT_EXPORT_TREE.txt
 ABRIR_ANALYZER.bat
 CHANGELOG_V43.md
 CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat
@@ -38,6 +37,7 @@ docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md
 docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md
 docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md
 docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md
+docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md
 docs/TEST_REPORT_V3.md
 docs/TEST_RESULTS_V3.xml
 docs/V43_ARCHITECTURE.md
@@ -114,6 +114,7 @@ schemas/social_output.schema.json
 scripts/README.md
 scripts/configure_ollama.py
 scripts/dev/audit_camera_s6.py
+scripts/dev/audit_commercial_stories_s8.py
 scripts/dev/audit_pipeline_integrity_s2.py
 scripts/dev/audit_speaker_s5.py
 scripts/dev/audit_subtitles_s7.py
@@ -244,6 +245,7 @@ src/tests/test_s4_tracking_face_recovery.py
 src/tests/test_s5_speaker_person_active.py
 src/tests/test_s6_camera_director_smart_zoom.py
 src/tests/test_s7_subtitle_review.py
+src/tests/test_s8_commercial_graphics_stories.py
 src/tests/test_understanding_session1.py
 src/tests/test_v2_perception.py
 src/tests/test_v42_cache.py

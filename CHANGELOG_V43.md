@@ -70,3 +70,13 @@ V4.3 hardens the existing analyzer instead of replacing its architecture. The ma
 - Social Output e Curator bridge impedem habilitar karaoke pelo simples pedido de preset; exigem texto e alinhamento verificados.
 - Código Python 3.11 AST validado; suíte ampliada para 555 passed / 2 skipped (Linux). Windows e taxa real de Emerson pendentes.
 - Documentação: `docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md`.
+
+## 2026-10-08 — R4.9/S8 Commercial Gate, Broadcast Graphics e Stories
+
+- Commercial Gate: blocos com IDs/intervalos/segmentos e combinação de intenção comercial fragmentada pelo ASR, limitando propagação e preservando decisão upstream.
+- OCR comercial opcional: três frames por trecho; bbox, confiança e status explícitos, sem afirmar duração nem inventar anúncio com base em um frame.
+- `17b` e `17c`: estados medidos/skip/unavailable/partial propagados aos checkpoints e relatório de integridade.
+- Segunda curadoria e Stories: manter `excluded` e `review` fora da shortlist; manifestar blocos, motivos e visuais; seleção estratificada sem forçar número.
+- Títulos com âncora lexical, presets por Story, retângulos de texto provisórios com conflitos de GC/OCR, reação acústica só quando evidenciada; nenhuma publicação automática.
+- Auditor offline de pasta/ZIP com CSV de referência humana; teste em fixtures e regressão completa.
+- Homologação obrigatória: vídeo real do Emerson/Clóvis, Tesseract/PANNs caso habilitados e renderização Windows/Python 3.11.

@@ -1,5 +1,17 @@
-"""Candidate-scoped sales evidence. Canonical ASR is never changed by OCR."""
-from .editorial import rank_candidate, classify_content
+"""S8: Evidence-bound commercial gate. OCR never rewrites speech or proves an ad alone.
+
+Blocks are defined from observed transcript intervals, not a blind +/- N seconds
+around every price or brand. Uncertain sales/review clips fail closed for Stories.
+"""
+from collections import Counter
+import math
+
+from .editorial import classify_content, rank_candidate
+
+
+SALE_SIGNALS = {'price', 'installment', 'discount', 'store', 'product', 'sales_cta',
+                'urgency', 'payment', 'sponsor', 'event', 'domain', 'contact',
+                'recommendation', 'health_claim', 'benefit_claim'}
 
 
 def _interval(candidate):
@@ -8,101 +20,252 @@ def _interval(candidate):
             float(candidate.get('ideal_end', core.get('end', core.get('start', 0)))))
 
 
-def _commercial_precursor_signals(classification):
-    signals = set((classification or {}).get('signals') or [])
-    return signals & {'price', 'installment', 'discount', 'store', 'product', 'sales_cta',
-                      'urgency', 'payment', 'sponsor', 'event', 'domain', 'contact',
-                      'recommendation', 'health_claim', 'benefit_claim'}
+def _as_range(row):
+    try:
+        start, end = float(row['start']), float(row['end'])
+        if not (math.isfinite(start) and math.isfinite(end) and end >= start >= 0):
+            return None
+        return start, end
+    except (TypeError, KeyError, ValueError):
+        return None
 
 
-def _block_context(segments, start, end, before=25.0, after=25.0):
-    lo, hi = max(0.0, start - before), end + after
-    selected = [s for s in segments if isinstance(s, dict) and s.get('end', 0) > lo and s.get('start', 0) < hi]
-    return selected, ' '.join(str(s.get('text') or '') for s in selected).strip()
+def _overlap(a, b):
+    return max(0., min(a[1], b[1]) - max(a[0], b[0]))
 
 
-def refine_candidates(candidates, segments, visual_texts=None, cfg=None):
-    """Re-rank candidates with literal evidence and bounded commercial-block context."""
+def _precursors(classification):
+    return set((classification or {}).get('signals') or []) & SALE_SIGNALS
+
+
+def build_commercial_blocks(segments, visual_texts=None, *, merge_gap_seconds=2.0):
+    """Strong ASR commercial spans, merged only across genuine time adjacency.
+
+    Visual-only cues can require a separate review; they do not establish a
+    commercial block from an OCR observation whose duration is unknown.
+    """
+    ordered = sorted((dict(s) for s in segments if isinstance(s, dict) and _as_range(s)),
+                     key=lambda r: (r['start'], r['end']))
+    # Commercial intent is frequently split by ASR boundaries: product/CTA in
+    # one segment, price/payment in the next. Independently marked commercial
+    # windows must be adjacent and every marked row needs lexical sales evidence.
+    classifications = [classify_content(row.get('text', ''), [row.get('segment_id')]) for row in ordered]
+    seed_indices = {i for i, c in enumerate(classifications) if c['eligibility'] == 'excluded'}
+    for index in range(len(ordered)):
+        group = []
+        for cursor in range(index, min(len(ordered), index + 4)):
+            if group and ordered[cursor]['start'] - ordered[cursor-1]['end'] > 1.5:
+                break
+            group.append(ordered[cursor])
+            if len(group) < 2:
+                continue
+            combined = classify_content(' '.join(str(r.get('text') or '') for r in group))
+            if combined['eligibility'] == 'excluded':
+                seed_indices.update(k for k in range(index, cursor + 1)
+                                    if _precursors(classifications[k]))
+                break
+    runs, current, last_index = [], None, None
+    for index, row in enumerate(ordered):
+        if index not in seed_indices:
+            current = None; last_index = None; continue
+        r = _as_range(row)
+        item = {'start': r[0], 'end': r[1], 'segment_ids': [row.get('segment_id')],
+                'text': str(row.get('text') or ''), 'signals': list(classifications[index]['signals'])}
+        if current and last_index == index - 1 and r[0] <= current['end'] + merge_gap_seconds:
+            current['end'] = max(current['end'], r[1])
+            current['segment_ids'].extend(item['segment_ids'])
+            current['signals'] = sorted(set(current['signals'] + item['signals']))
+            current['text'] += ' ' + item['text']
+        else:
+            current = item
+            runs.append(item)
+        last_index = index
+    # Limited backward propagation: a continuous offer's factual preamble may
+    # itself contain price/product/stock but no imperative CTA yet.  This is
+    # *not* a blanket 25-second context exclusion.
+    for run in runs:
+        preceding = [s for s in ordered if s['end'] <= run['start'] and
+                     0 <= run['start'] - s['end'] <= 1.0]
+        if preceding:
+            precursor = preceding[-1]
+            evidence = classify_content(precursor.get('text', ''), [precursor.get('segment_id')])
+            if len(_precursors(evidence)) >= 2 and evidence['eligibility'] != 'excluded':
+                run['start'] = float(precursor['start'])
+                run['segment_ids'].insert(0, precursor.get('segment_id'))
+                run['signals'] = sorted(set(run['signals']) | _precursors(evidence))
+                run['text'] = str(precursor.get('text') or '') + ' ' + run['text']
+    blocks = []
+    for n, row in enumerate(runs, 1):
+        blocks.append({'block_id': f'COMMERCIAL_{n:04d}', 'start': row['start'], 'end': row['end'],
+                       'segment_ids': [x for x in row['segment_ids'] if x],
+                       'signals': row['signals'], 'classification': classify_content(row['text']),
+                       'origin': 'strong_canonical_transcript', 'visual_corroboration': [v for v in (visual_texts or [])
+                           if isinstance(v, dict) and _as_range(v) and row['start'] <= float(v['start']) <= row['end']],
+                       'needs_review': True})
+    return blocks
+
+
+def refine_candidates(candidates, segments, visual_texts=None, cfg=None, *, commercial_blocks=None):
     cfg = cfg or {}
+    clean_segments = [s for s in segments if isinstance(s, dict) and _as_range(s)]
+    blocks = commercial_blocks if commercial_blocks is not None else build_commercial_blocks(clean_segments, visual_texts)
     rows = []
-    block_before = float(cfg.get('commercial_block_context_before_seconds', 25.0))
-    block_after = float(cfg.get('commercial_block_context_after_seconds', 25.0))
-    min_precursors = int(cfg.get('commercial_block_min_precursor_signals', 2))
-    clean_segments = [s for s in segments if isinstance(s, dict)]
     for candidate in candidates:
-        start, end = _interval(candidate)
-        selected = [s for s in clean_segments if s.get('end', 0) > start and s.get('start', 0) < end]
-        visual = [r for r in visual_texts or [] if isinstance(r, dict) and r.get('end', 0) >= start and r.get('start', 0) < end]
+        window = _interval(candidate)
+        if not window[1] > window[0]:
+            rows.append({**candidate, 'default_shortlist_eligible': False,
+                         'commercial_gate_reason': 'invalid_candidate_interval'})
+            continue
+        selected = [s for s in clean_segments if _overlap(window, _as_range(s)) > 0]
         literal = ' '.join(str(s.get('text') or '') for s in selected).strip()
-        row = {**candidate, 'text': literal,
-               'evidence_segment_ids': [s.get('segment_id') for s in selected if s.get('segment_id')],
-               'commercial_visual_evidence': visual}
-        ranked = rank_candidate(row, cfg)
+        # One OCR frame is NOT evidence of on-screen duration. Scoped OCR frames
+        # must belong to the candidate; global keyframes use observed instant.
+        visual = [v for v in (visual_texts or []) if isinstance(v, dict) and v.get('text')
+                  and (_as_range(v) is not None) and window[0] <= float(v['start']) < window[1]
+                  and (v.get('moment_id') is None or v.get('moment_id') == candidate.get('moment_id'))]
+        evidence_ids = [s.get('segment_id') for s in selected if s.get('segment_id')]
+        ranked = rank_candidate({**candidate, 'text': literal, 'evidence_segment_ids': evidence_ids,
+                                 'commercial_visual_evidence': visual}, cfg)
         local = ranked.get('commercial_classification') or {}
-        if local.get('eligibility') != 'excluded':
-            precursor = _commercial_precursor_signals(local)
-            if len(precursor) >= min_precursors:
-                context_rows, context_text = _block_context(clean_segments, start, end, block_before, block_after)
-                context_ids = [s.get('segment_id') for s in context_rows if s.get('segment_id')]
-                block = classify_content(context_text, context_ids, visual)
-                if block.get('eligibility') == 'excluded':
-                    propagated = {**block,
-                        'classifier_method': 'pt_br_grounded_commercial_gate_v3_block_propagation',
-                        'block_propagated': True,
-                        'block_interval': {'start': max(0.0, start - block_before), 'end': end + block_after},
-                        'candidate_precursor_signals': sorted(precursor),
-                        'needs_review': True,
-                    }
-                    ranked = rank_candidate({**ranked, 'text': literal}, cfg)
-                    ranked = {**ranked, 'commercial_classification': propagated,
-                              'content_type': propagated['content_type'],
-                              'commercial_score': propagated['commercial_score'],
-                              'default_shortlist_eligible': False}
-        if (ranked.get('commercial_classification') or {}).get('eligibility') == 'excluded':
+        audio_only = classify_content(literal, evidence_ids)
+        prior = candidate.get('commercial_classification') or {}
+        if prior.get('eligibility') == 'excluded' and local.get('eligibility') != 'excluded':
+            ranked['commercial_classification'] = {**prior,
+                'eligibility': 'excluded', 'upstream_exclusion_preserved': True}
             ranked['default_shortlist_eligible'] = False
+            local = ranked['commercial_classification']
+        elif prior.get('eligibility') == 'review' and local.get('eligibility') == 'eligible':
+            ranked['commercial_classification'] = {**prior,
+                'eligibility': 'review', 'upstream_review_preserved': True}
+            ranked['default_shortlist_eligible'] = False
+            local = ranked['commercial_classification']
+        # OCR-only offers are a REVIEW, not confirmed spoken advertisements.
+        if local.get('eligibility') == 'excluded' and audio_only.get('eligibility') != 'excluded':
+            local = {**local, 'eligibility': 'review', 'needs_review': True,
+                     'classifier_method': 's8_ocr_unconfirmed',
+                     'visual_only_sale_unconfirmed': True,
+                     'review_reason': 'ocr_sales_evidence_without_transcript_confirmation'}
+            ranked.update(commercial_classification=local, default_shortlist_eligible=False)
+        # A strong commercial block that overlaps the selected candidate cannot
+        # be erased by candidate-local re-ranking. Reject partial excerpts too.
+        intersecting = [block for block in blocks if _overlap(window, (block['start'], block['end'])) > 0]
+        if intersecting:
+            strongest = max(intersecting, key=lambda b: _overlap(window, (b['start'], b['end'])))
+            prior = ranked['commercial_classification']
+            if audio_only.get('eligibility') == 'excluded' or _overlap(window, (strongest['start'], strongest['end'])) >= min(2., window[1] - window[0]):
+                ranked['commercial_classification'] = {**strongest['classification'],
+                    'eligibility': 'excluded', 'needs_review': True,
+                    'classifier_method': 's8_grounded_block_overlap',
+                    'block_id': strongest['block_id'], 'block_propagated': True,
+                    'block_interval': {'start': strongest['start'], 'end': strongest['end']},
+                    'evidence_segment_ids': strongest['segment_ids']}
+                ranked['default_shortlist_eligible'] = False
+            elif _precursors(prior):
+                ranked['commercial_classification'] = {**prior, 'eligibility': 'review',
+                    'needs_review': True, 'review_reason': 'near_commercial_block', 'block_id': strongest['block_id']}
+                ranked['default_shortlist_eligible'] = False
+        status = (ranked.get('commercial_classification') or {}).get('eligibility')
+        # Unverified promotion must never be silently published as Story.
+        if status != 'eligible':
+            ranked['default_shortlist_eligible'] = False
+        ranked['commercial_gate_reason'] = ranked.get('commercial_gate_reason') or (
+            'confirmed_commercial' if status == 'excluded' else 'needs_manual_commercial_review' if status == 'review' else 'eligible')
+        ranked['commercial_block_refs'] = [block['block_id'] for block in intersecting]
         rows.append(ranked)
     return sorted(rows, key=lambda r: r.get('editorial_score_final') or 0, reverse=True)
 
 
 def apply_commercial_refinement(understanding, segments, visual_texts, cfg):
-    rows = refine_candidates(understanding.get('main_moments', []), segments, visual_texts, cfg)
-    eligible = [row for row in rows if row.get('default_shortlist_eligible', True)]
-    shortlist = [row['moment_id'] for row in eligible[:cfg.get('max_moments', 12)]]
+    blocks = build_commercial_blocks(segments, visual_texts)
+    rows = refine_candidates(understanding.get('main_moments', []), segments, visual_texts, cfg,
+                             commercial_blocks=blocks)
+    eligible = [row for row in rows if row.get('default_shortlist_eligible', True) and
+                (row.get('commercial_classification') or {}).get('eligibility') == 'eligible']
+    max_moments = max(0, int(cfg.get('max_moments', 12)))
+    shortlist = [row.get('moment_id') for row in eligible[:max_moments] if row.get('moment_id')]
+    reasons = Counter(row.get('commercial_gate_reason') for row in rows)
     metrics = {**understanding.get('candidate_metrics', {}),
-               'excluded_commercial_count': sum(row['commercial_classification']['eligibility'] == 'excluded' for row in rows),
+               'excluded_commercial_count': sum((r.get('commercial_classification') or {}).get('eligibility') == 'excluded' for r in rows),
+               'commercial_review_count': sum((r.get('commercial_classification') or {}).get('eligibility') == 'review' for r in rows),
+               'commercial_block_count': len(blocks), 'commercial_gate_reasons': dict(reasons),
                'excluded_eligibility_count': len(rows) - len(eligible), 'final_shortlist_count': len(shortlist)}
-    return {**understanding, 'main_moments': rows, 'editorial_shortlist': shortlist, 'candidate_metrics': metrics}
+    return {**understanding, 'main_moments': rows, 'editorial_shortlist': shortlist,
+            'commercial_blocks': blocks, 'candidate_metrics': metrics}
 
 
 def targeted_ocr(video, candidates, cfg, limit=16):
+    """Optional Tesseract, three bounded, observed frames per selected interval.
+
+    Returns normalized coordinates, OCR confidences and text type hints. The
+    first/last observation does NOT establish continuous display duration.
+    """
     if not cfg.get('enabled'):
-        return {'status': 'skipped', 'texts': [], 'scope': 'selected_candidates'}
-    import cv2
+        return {'status': 'skipped', 'texts': [], 'scope': 'selected_candidates', 'reason': 'ocr_disabled'}
     try:
+        import cv2
         import pytesseract
         if cfg.get('tesseract_cmd'):
             pytesseract.pytesseract.tesseract_cmd = cfg['tesseract_cmd']
         pytesseract.get_tesseract_version()
-    except (ImportError, OSError):
-        return {'status': 'unavailable', 'texts': [], 'reason': 'optional_tesseract_missing'}
+    except (ImportError, OSError, RuntimeError) as exc:
+        return {'status': 'unavailable', 'texts': [], 'reason': 'optional_tesseract_missing',
+                'detail': type(exc).__name__}
     cap = cv2.VideoCapture(str(video))
-    texts = []
+    if not cap.isOpened():
+        return {'status': 'unavailable', 'texts': [], 'reason': 'video_decode_unavailable'}
+    texts, sampled, errors, inspected_ids = [], 0, 0, []
     try:
-        for row in candidates[:limit]:
-            core = row.get('core_moment') or row
-            start, end = row.get('ideal_start', core['start']), row.get('ideal_end', core['end'])
-            for time in (start, (start + end) / 2):
-                cap.set(cv2.CAP_PROP_POS_MSEC, time * 1000)
-                ok, frame = cap.read()
-                if not ok:
+        for row in candidates[:max(0, int(limit))]:
+            start, end = _interval(row)
+            if end <= start:
+                continue
+            inspected_ids.append(row.get('moment_id'))
+            samples = [start + (end-start)*part for part in (.12, .5, .88)]
+            for when in samples:
+                cap.set(cv2.CAP_PROP_POS_MSEC, when * 1000)
+                decoded, frame = cap.read()
+                if not decoded:
+                    errors += 1
                     continue
+                sampled += 1
+                h, w = frame.shape[:2]
                 try:
-                    text = pytesseract.image_to_string(frame, lang=cfg.get('languages', 'por+eng'), timeout=5).strip()
+                    data = pytesseract.image_to_data(frame, lang=cfg.get('languages', 'por+eng'),
+                        config='--psm 11', output_type=pytesseract.Output.DICT, timeout=5)
                 except (RuntimeError, pytesseract.TesseractError):
+                    errors += 1
                     continue
-                if text:
-                    texts.append({'text': text, 'start': time, 'end': time, 'source': 'ocr',
-                                  'moment_id': row.get('moment_id'), 'duration_unknown': True})
+                groups = {}
+                for i, token in enumerate(data['text']):
+                    try:
+                        conf = float(data['conf'][i])
+                    except (TypeError, ValueError):
+                        continue
+                    if str(token).strip() and conf >= 45:
+                        key = (data['block_num'][i], data['par_num'][i], data['line_num'][i])
+                        groups.setdefault(key, []).append(i)
+                for ids in groups.values():
+                    text = ' '.join(data['text'][i] for i in ids).strip()
+                    left = min(data['left'][i] for i in ids)
+                    top = min(data['top'][i] for i in ids)
+                    right = max(data['left'][i]+data['width'][i] for i in ids)
+                    bottom = max(data['top'][i]+data['height'][i] for i in ids)
+                    box = {'x': left/w, 'y': top/h, 'width': (right-left)/w, 'height': (bottom-top)/h}
+                    signals = classify_content(text).get('signals', [])
+                    visual_type = ('offer_or_price' if set(signals) & {'price', 'discount', 'installment', 'payment'}
+                                   else 'lower_third_gc' if box['y'] > .55
+                                   else 'banner_or_logo_text' if box['y'] < .25 else 'unknown_text')
+                    texts.append({'text': text, 'start': when, 'end': when, 'observed_at': when,
+                                  'source': 'ocr', 'method': 'tesseract_candidate_frame_s8',
+                                  'moment_id': row.get('moment_id'), 'bbox': box,
+                                  'confidence': round(sum(float(data['conf'][i]) for i in ids)/len(ids)/100, 3),
+                                  'signals': signals, 'visual_type_hint': visual_type,
+                                  'duration_unknown': True, 'needs_review': True})
     finally:
         cap.release()
-    return {'status': 'measured', 'texts': texts, 'scope': 'selected_candidates', 'max_frames': 2 * limit}
+    return {'status': 'measured' if sampled else 'partial', 'texts': texts,
+            'sampled_frames': sampled, 'failed_frames_or_ocr': errors,
+            'scope': 'selected_candidate_observations', 'max_frames': max(0, int(limit))*3,
+            'continuity_established': False, 'requested_candidate_count': len(candidates),
+            'inspected_candidate_ids': inspected_ids,
+            'uninspected_candidate_count': max(0, len(candidates)-len(inspected_ids))}

@@ -143,7 +143,7 @@ def analyze(source, cfg, output=None, force=False):
             "10_active_speaker",
             {"vision": cfg["vision"], "active_speaker": cfg["active_speaker"], "external": external['10_active_speaker']},
             lambda: _active_stage(ctx, audio, diarization, vision, metadata, cfg["active_speaker"]),
-            code_files=["vision.py", "active_speaker.py", "speaker_signals.py", "perception_diagnostics.py", "temporal.py", "core.py"],
+            code_files=["vision.py", "active_speaker.py", "speaker_signals.py", "speaker_roles.py", "perception_diagnostics.py", "temporal.py", "core.py"],
             requires=["05_diarization", "08_person_reid"])
 
         shot_data = ctx.step("11_shots", cfg["shots"],
@@ -173,7 +173,6 @@ def analyze(source, cfg, output=None, force=False):
                                   vision, mappings, diarization)
         semantic = enrich_editorial(semantic, timeline, mappings, transcript)
         enrich_scenes(scenes, vision, metadata)
-        captions_data = captions(transcript["words"], cfg["captions"])
 
         understanding = ctx.step(
             "16_understanding", cfg["understanding"],
@@ -207,11 +206,29 @@ def analyze(source, cfg, output=None, force=False):
         from .targeted_asr import run_targeted_repair
         targeted_asr = ctx.step('17d_targeted_asr',
             {'config': {k: cfg['transcription'].get(k) for k in ('targeted_repair_enabled', 'targeted_max_regions', 'targeted_max_audio_seconds', 'model', 'beam_size', 'vad_filter', 'glossary', 'import_file')},
-             'candidate_ranges': digest(understanding['main_moments']), 'arcs': digest(understanding.get('story_arcs', []))},
+             'candidate_ranges': digest(understanding['main_moments']), 'arcs': digest(understanding.get('story_arcs', [])),
+             'questions': digest(semantic.get('questions_answers', [])), 'selected': digest(understanding.get('editorial_shortlist', [])),
+             'overlaps': digest(diarization.get('overlaps', []))},
             lambda: ok(run_targeted_repair(ctx, audio, transcript, understanding['main_moments'],
-                      understanding.get('story_arcs', []), semantic.get('questions_answers', []), metadata['duration'])),
-            code_files=['targeted_asr.py'], requires=['04_transcription', '16_understanding'])
+                      understanding.get('story_arcs', []), semantic.get('questions_answers', []), metadata['duration'],
+                      shortlist_ids=understanding.get('editorial_shortlist', []),
+                      speech_overlaps=diarization.get('overlaps', []), events=events.get('events', []))),
+            code_files=['targeted_asr.py', 'transcription.py'], requires=['04_transcription', '16_understanding'])
         transcript.setdefault('transcription_alternatives', []).extend(targeted_asr.get('alternatives', []))
+        from .subtitle_review import review_selected_clips
+        subtitle_review = ctx.step('17e_subtitle_review_s7',
+            {'selection': digest(understanding.get('editorial_shortlist', [])),
+             'targeted': digest(targeted_asr), 'captions': cfg['captions'],
+             'events': digest(events.get('events', []))},
+            lambda: ok(review_selected_clips(transcript['words'], understanding.get('main_moments', []),
+                     selected_ids=understanding.get('editorial_shortlist', []),
+                     alternatives=targeted_asr.get('alternatives', []),
+                     events=events.get('events', []), caption_config=cfg['captions'],
+                     threshold=cfg['transcription']['low_confidence'])),
+            code_files=['subtitle_review.py', 'timeline.py'],
+            requires=['04_transcription', '16_understanding', '17d_targeted_asr'])
+        # Caption rendering remains a draft pending verification of the original audio.
+        captions_data = captions(transcript['words'], cfg['captions'])
 
         for window in metrics.get("quality_windows", []):
             selected = [word for word in transcript["words"]
@@ -276,6 +293,7 @@ def analyze(source, cfg, output=None, force=False):
             "low_confidence_words": transcript.get("low_confidence_words", []),
             "transcription_alternatives": transcript.get("transcription_alternatives", []),
             "targeted_asr_repair": targeted_asr,
+            "subtitle_review_s7": subtitle_review,
             "unaligned_segments": transcript.get("unaligned_segments", []),
             # v2 perception/understanding contract
             "person_identities": reid.get("identities", []),

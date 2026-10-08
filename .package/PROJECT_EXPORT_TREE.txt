@@ -1,5 +1,6 @@
-.cache/runtime_history.json
 .gitignore
+.package/PROJECT_EXPORT_README.txt
+.package/PROJECT_EXPORT_TREE.txt
 ABRIR_ANALYZER.bat
 CHANGELOG_V43.md
 CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat
@@ -34,6 +35,9 @@ docs/S1_UNDERSTANDING_CONTRACT_FIX.md
 docs/S2_PIPELINE_INTEGRITY_HARDENING.md
 docs/S3_INTELIGENCIA_EDITORIAL_20261007.md
 docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md
+docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md
+docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md
+docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md
 docs/TEST_REPORT_V3.md
 docs/TEST_RESULTS_V3.xml
 docs/V43_ARCHITECTURE.md
@@ -81,15 +85,8 @@ examples/mapping_example.json
 exportar_ldporto.py
 install.py
 models/vision_models_manifest.json
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_010009_848760_3e4379.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_010111_790946_e62956.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_010225_423984_c6da0e.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_022833_666335_8b71b5.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_022845_680745_8f83f6.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_022923_896532_26e25f.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_023203_873359_157223.zip
-pacotes_para_enviar/SECOND_CURATION_PARTIAL_source_20261008_023223_232807_efe0d4.zip
 pytest.ini
+requirements.txt
 requirements/README.md
 requirements/audio-events.txt
 requirements/demucs.txt
@@ -99,7 +96,6 @@ requirements/gpu-windows.txt
 requirements/ocr.txt
 requirements/vision.txt
 requirements/yolo.txt
-requirements.txt
 schemas/camera_director_debug.schema.json
 schemas/camera_director_timeline.schema.json
 schemas/camera_plan.schema.json
@@ -117,7 +113,10 @@ schemas/second_curation_package.schema.json
 schemas/social_output.schema.json
 scripts/README.md
 scripts/configure_ollama.py
+scripts/dev/audit_camera_s6.py
 scripts/dev/audit_pipeline_integrity_s2.py
+scripts/dev/audit_speaker_s5.py
+scripts/dev/audit_subtitles_s7.py
 scripts/dev/audit_tracking_s4.py
 scripts/dev/benchmark_semantic_r3b.py
 scripts/dev/benchmark_vision_r3b.py
@@ -162,6 +161,7 @@ src/ldporto/camera_director.py
 src/ldporto/camera_evidence.py
 src/ldporto/camera_geometry.py
 src/ldporto/camera_motion.py
+src/ldporto/camera_preflight.py
 src/ldporto/camera_timeline.py
 src/ldporto/commercial_gate.py
 src/ldporto/compact_artifacts.py
@@ -210,10 +210,13 @@ src/ldporto/second_curation_export.py
 src/ldporto/semantic.py
 src/ldporto/shots.py
 src/ldporto/social_output.py
+src/ldporto/speaker_goldset.py
+src/ldporto/speaker_roles.py
 src/ldporto/speaker_signals.py
 src/ldporto/storage.py
 src/ldporto/storage_dialog.py
 src/ldporto/story_recovery.py
+src/ldporto/subtitle_review.py
 src/ldporto/targeted_asr.py
 src/ldporto/temporal.py
 src/ldporto/timeline.py
@@ -238,6 +241,9 @@ src/tests/test_s2_pipeline_integrity.py
 src/tests/test_s3_editorial_intelligence.py
 src/tests/test_s3_editorial_reviewer.py
 src/tests/test_s4_tracking_face_recovery.py
+src/tests/test_s5_speaker_person_active.py
+src/tests/test_s6_camera_director_smart_zoom.py
+src/tests/test_s7_subtitle_review.py
 src/tests/test_understanding_session1.py
 src/tests/test_v2_perception.py
 src/tests/test_v42_cache.py

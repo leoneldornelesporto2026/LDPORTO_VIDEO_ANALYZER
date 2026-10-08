@@ -55,7 +55,8 @@ class SmartZoomState:
             self.current_target, self.target_zoom, self.transition = None, 1., None
             self.current_camera_mode = 'SOURCE_PRESERVE'
             return {'zoom': 1., 'requested_zoom': 1., 'mode': self.current_camera_mode,
-                    'reason_codes': reasons, 'digital_motion_allowed': False}
+                    'reason_codes': reasons, 'digital_motion_allowed': False,
+                    'zoom_attempted': False, 'new_zoom_request': False}
         if target != self.current_target:
             self.current_target = target
             self.current_zoom = self.target_zoom = 1.
@@ -78,6 +79,9 @@ class SmartZoomState:
         goal = min(cfg['max_zoom_factor'], max(1., zoom_cap))
         beat_key = (beat or {}).get('id'), target
         request = self.target_zoom
+        zoom_attempted = bool(beat and not micro_interruption and beat_key not in self.used_beats
+                              and speech_seconds >= cfg['min_speaker_persistence'])
+        new_zoom_request = False
         if beat and not blocked and not micro_interruption and beat_key not in self.used_beats and speech_seconds >= cfg['min_speaker_persistence']:
             if len(self.event_times) >= cfg['max_zoom_events_per_minute']:
                 reasons.append('ZOOM_RATE_LIMIT')
@@ -92,6 +96,7 @@ class SmartZoomState:
                     reasons.append('INSUFFICIENT_ZOOM_DURATION')
                 elif goal - self.current_zoom > .035:
                     self.transition = (time, duration, self.current_zoom, goal)
+                    new_zoom_request = True
                     self.target_zoom = goal
                     self.hold_until = time + duration + cfg['min_hold_duration']
                     self.last_zoom_event_at = time
@@ -120,7 +125,8 @@ class SmartZoomState:
         self.current_camera_mode = mode
         return {'zoom': zoom, 'requested_zoom': request, 'mode': mode,
                 'reason_codes': reasons or ['STABLE_EDITORIAL_FRAMING'], 'digital_motion_allowed': not blocked,
-                'limited_by_quality': goal + 1e-6 < request}
+                'limited_by_quality': goal + 1e-6 < request,
+                'zoom_attempted': zoom_attempted, 'new_zoom_request': new_zoom_request}
 
 
 @dataclass

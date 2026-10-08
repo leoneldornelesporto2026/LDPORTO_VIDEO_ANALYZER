@@ -365,6 +365,7 @@ class ReportEngine:
             "speaker_person_mapping.json": analysis["speaker_person_mapping"],
             "transcription_alternatives.json": analysis["transcription_alternatives"],
             "targeted_asr_repair.json": analysis.get('targeted_asr_repair', {}),
+            "subtitle_review_s7.json": analysis.get('subtitle_review_s7', {}),
             "low_confidence_words.json": analysis["low_confidence_words"],
             "ocr_text.json": analysis["ocr_text"], "audio_analysis.json": analysis["audio_analysis"],
             "video_analysis.json": analysis["video_analysis"],
@@ -454,6 +455,8 @@ class ReportEngine:
                       segment["text"], ""]
         (ctx.output/"transcript.txt").write_text("\n".join(lines), encoding="utf-8")
         write_srt(ctx.output/"transcript.srt", caption_segments)
+        from .subtitle_review import write_review_kit
+        write_review_kit(ctx.output / 'subtitle_review_s7', analysis.get('subtitle_review_s7', {}))
         (ctx.output/"report.md").write_text(markdown_report(analysis), encoding="utf-8")
         (ctx.output/"report.html").write_text(html_report(analysis), encoding="utf-8")
         (ctx.output/"CHATGPT_ANALYSIS_HANDOFF.md").write_text(handoff_markdown(analysis), encoding="utf-8")
@@ -474,6 +477,7 @@ class ReportEngine:
             ctx.output/n for n in ("transcript.txt", "transcript.srt", "report.md", "report.html",
                                   "CHATGPT_ANALYSIS_HANDOFF.md", "PARA_ENVIAR_AO_CHATGPT.txt", "second_curation_package.md")]
         outputs.extend(compact_paths)
+        outputs.extend(sorted((ctx.output / 'subtitle_review_s7').glob('*')))
         outputs.extend(sorted(path for path in stories_dir.glob("*.json") if path.is_file()))
         sizes=sorted(({'path':path.relative_to(ctx.output).as_posix(),'bytes':path.stat().st_size} for path in outputs if path.is_file()),
                      key=lambda record:(-record['bytes'],record['path']))

@@ -51,6 +51,39 @@ def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
     return metrics, issues
 
 
+def border_geometry_evidence(gray, np, *, dark_level=8, min_dark_fraction=.94,
+                             min_inner_brightness=34, min_luma_jump=23):
+    """Detect probable *added* matte bars, not mere dark pixels at frame edges.
+
+    Requires a nearly solid dark stripe and a sharper/brighter neighboring band.
+    This is a heuristic candidate, not proof a crop failed. A normal black studio
+    background remains unflagged unless an artificial straight boundary is visible.
+    """
+    h, w = gray.shape[:2]
+    edge = max(2, round(min(w, h)*.022))
+    if min(w, h) < 40 or edge*5 >= min(w, h):
+        return {'possible_padding': False, 'rails': [], 'reason': 'small_frame'}
+    candidates = [
+        ('top', gray[:edge, :], gray[edge*2:edge*4, :]),
+        ('bottom', gray[-edge:, :], gray[-edge*4:-edge*2, :]),
+        ('left', gray[:, :edge], gray[:, edge*2:edge*4]),
+        ('right', gray[:, -edge:], gray[:, -edge*4:-edge*2]),
+    ]
+    rails = []
+    for side, outer, inner in candidates:
+        if not outer.size or not inner.size:
+            continue
+        fraction = float(np.mean(outer < dark_level))
+        # Full-field darkness is not evidence of unexpected letterboxing.
+        internal_brightness = float(np.median(inner))
+        jump = internal_brightness - float(np.median(outer))
+        if fraction >= min_dark_fraction and internal_brightness >= min_inner_brightness and jump >= min_luma_jump:
+            rails.append({'side': side, 'dark_fraction': round(fraction, 3),
+                          'inner_median': round(internal_brightness, 1), 'luma_jump': round(jump, 1)})
+    return {'possible_padding': bool(rails), 'rails': rails,
+            'reason': 'hard_dark_rail_with_interior_contrast' if rails else 'no_geometric_bar_evidence'}
+
+
 def _ffprobe(path):
     exe = find_media_tool('ffprobe')
     if not exe:
@@ -93,6 +126,7 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     face_sizes, headrooms = [], []
     face = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
     previous = None
+    border_candidates = []
     stride = max(1, round(fps/5))
     index = 0
     try:
@@ -105,16 +139,16 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
                 continue
             sampled += 1
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            edge = max(2, round(min(width,height)*.02))
-            border = np.concatenate([gray[:edge,:].ravel(), gray[-edge:,:].ravel(), gray[:, :edge].ravel(), gray[:, -edge:].ravel()])
-            black_fraction = float(np.mean(border < 8)) if border.size else 0.0
-            source_time = expected.get('source_start',0) + index / fps
+            source_time = expected.get('source_start', 0) + index / fps
             source_row = next((row for row in timeline or [] if row['start'] <= source_time < row['end']), {})
-            intentional_padding = source_row.get('layout') == 'full_frame'
-            if black_fraction > thresholds['border_fraction'] and not intentional_padding:
-                issues.append({'interval': None, 'severity': 'warning', 'issue_type': 'UNEXPECTED_BORDER',
-                               'evidence': {'frame': index, 'black_edge_fraction': black_fraction},
-                               'suggested_repair': 'FORCE_SOURCE_OR_REDUCE_CROP'})
+            # SOURCE_FULL deliberately uses fit_with_padding. Dark studio walls do
+            # not become 'UNEXPECTED_BORDER' just because the outer pixels are black.
+            intentional_padding = (source_row.get('layout') == 'full_frame' or
+                                   (source_row.get('crop') or {}).get('full_frame_policy') == 'fit_with_padding')
+            geometry_evidence = border_geometry_evidence(gray, np)
+            if geometry_evidence['possible_padding'] and not intentional_padding:
+                border_candidates.append({'frame': index, 'time': round(source_time, 4),
+                                          'rails': geometry_evidence['rails']})
             faces = face.detectMultiScale(gray, 1.1, 5, minSize=(24,24)) if not face.empty() else []
             face_frames += int(len(faces) > 0)
             focused_frames += int(bool(source_row.get('focus_person')))
@@ -147,6 +181,22 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
             index += 1
     finally:
         cap.release()
+    # Temporal confirmation: isolated TV flashes and transition artifacts are not
+    # enough. Require repeated rail geometry in separate sampled frames.
+    rail_counts = {}
+    for candidate in border_candidates:
+        for rail in candidate['rails']:
+            rail_counts[rail['side']] = rail_counts.get(rail['side'], 0) + 1
+    suspicious_sides = [side for side, count in rail_counts.items()
+                        if count >= 3 and count >= max(3, int(sampled*.20))]
+    if suspicious_sides:
+        issues.append({'interval': None, 'severity': 'warning', 'issue_type': 'UNEXPECTED_BORDER',
+                       'evidence': {'detector': 'contrast_and_temporal_bar_geometry_v2',
+                                    'sides': sorted(suspicious_sides), 'matching_frame_counts': rail_counts,
+                                    'sampled_frames': sampled,
+                                    'example': next((c for c in border_candidates if
+                                        any(r['side'] in suspicious_sides for r in c['rails'])), None)},
+                       'suggested_repair': 'CHECK_SOURCE_MATTE_AND_RENDER_ASPECT_BEFORE_CROPPING'})
     if not sampled:
         issues.append({'interval':None,'severity':'error','issue_type':'NO_RENDERED_FRAMES'})
     if focused_frames and not focused_face_frames:
@@ -195,6 +245,8 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
                'mean_face_size': sum(face_sizes) / len(face_sizes) if face_sizes else None,
                'mean_headroom': sum(headrooms) / len(headrooms) if headrooms else None,
                'edge_cutoff_count': clipped_frames,
+               'border_detector_method': 'contrast_and_temporal_bar_geometry_v2',
+               'unconfirmed_border_candidates': len(border_candidates),
                'output_dimensions':[width,height],'duration':finite_or_none(duration),
                'av_duration_delta':finite_or_none(av_delta),'estimated_pan_flow_peak_px_per_second':finite_or_none(flow_peak),
                'issues':issues,'issue_count':len(issues),'verifier_uses_rendered_frames':True}, status,

@@ -6,7 +6,7 @@ publication approval. This module never silently repairs upstream artifacts.
 
 BLOCKING_STATUSES = frozenset({'failed', 'blocked', 'unavailable', 'cancelled'})
 MANDATORY_STAGES = ('15_semantic', '16_understanding')
-EDITORIAL_DEPENDENCIES = ('17b_broadcast_graphics', '17c_commercial_visual', '17d_targeted_asr')
+EDITORIAL_DEPENDENCIES = ('17b_broadcast_graphics', '17c_commercial_visual', '17d_targeted_asr', '17e_subtitle_review_s7')
 EVIDENCE_DEPENDENCIES = ('04_transcription', '05_diarization', '08_person_reid',
                          '10_active_speaker', '11_shots')
 

@@ -30,7 +30,7 @@ DEFAULTS = {
                       "review_padding_seconds": 2, "import_file": None,
                       "glossary": "", "source_selection": "auto",
                       "allow_cpu_fallback": False, "targeted_repair_enabled": True,
-                      "targeted_max_regions": 4, "targeted_max_audio_seconds": 60},
+                      "targeted_max_regions": 16, "targeted_max_audio_seconds": 180},
     "diarization": {"enabled": True,
                     "model": "pyannote/speaker-diarization-community-1",
                     "num_speakers": None, "min_speakers": None,
@@ -68,7 +68,11 @@ DEFAULTS = {
     "active_speaker": {"backend": "heuristic_consensus", "min_consensus_windows": 2, "min_consensus_share": 0.67, "min_confidence": .55,
                        "evidence_window_seconds": 3.0, "min_evidence_samples": 8,
                        "min_audio_window_seconds": 1.5, "min_evidence_window_seconds": .5,
-                       "window_seconds": .5, "max_observation_gap_seconds": .6},
+                       "window_seconds": .5, "max_observation_gap_seconds": .6,
+                       "max_sync_offset_seconds": .12, "max_sync_lag_deviation_seconds": .10,
+                       "min_local_visibility": .6, "min_local_face_fraction": .6,
+                       "min_local_track_stability": .5, "min_local_margin": .10,
+                       "min_active_confidence": .7},
     "camera_timeline": {"min_window_seconds": 0.25, "max_window_seconds": 1.0},
     "preview": {"enabled": True, "max_canaries": 4, "canary_seconds": 8.0,
                 "output_width": 540, "output_height": 960, "max_repair_iterations": 1},
@@ -259,6 +263,15 @@ def validate(cfg):
         value = cfg["active_speaker"][key]
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 <= value <= 1:
             raise ValueError(f"active_speaker.{key} inválido")
+    for key in ('min_local_visibility', 'min_local_face_fraction', 'min_local_track_stability',
+                'min_local_margin', 'min_active_confidence'):
+        value = cfg['active_speaker'][key]
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value <= 1:
+            raise ValueError(f'active_speaker.{key} fora de [0,1]')
+    for key in ('max_sync_offset_seconds', 'max_sync_lag_deviation_seconds'):
+        value = cfg['active_speaker'][key]
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value <= .5:
+            raise ValueError(f'active_speaker.{key} fora de [0,.5]')
     if cfg["active_speaker"].get("backend") != "heuristic_consensus":
         raise ValueError("active_speaker.backend externo ainda requer adapter/benchmark local; use heuristic_consensus.")
     active = cfg["active_speaker"]

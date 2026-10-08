@@ -1,3 +1,10 @@
+## R4.9-S2-PIPELINE-INTEGRITY — 2026-10-07
+
+- Auditoria upstream estruturada, fail-closed, contratos únicos e métricas finais consistentes entre ZIP e artefatos locais.
+- Estado explícito READY_FOR_REVIEW/PARTIAL separado de preview_approved/publication_ready.
+- Validador semântico interarquivos e 17 regressões de integridade incluindo adulterações com hashes válidos.
+- CLI de auditoria read-only e cache signature nova somente para 21_second_curation_handoff.
+
 # V4.3 Changelog
 
 ## Scope

@@ -163,5 +163,10 @@ def quality_gate(analysis, cfg=None):
     issues.extend({'code':name,'severity':'medium' if name!='preview_skipped' else 'info'} for name,present in flags.items() if present)
     degraded=any(issue['severity'] in ('high','medium') for issue in issues)
     status='P0_FAIL' if required_missing else 'P1_DEGRADED' if degraded else 'PASS_WITH_WARNINGS' if issues else 'PASS'
+    preview = analysis.get('preview_validation') or {}
+    technically_verified = preview.get('status') == 'ok' and preview.get('verifier_uses_rendered_frames') is True
     return {'schema_version':'1.0','status':status,'issues':issues,'required_missing_capabilities':required_missing,
-            'preview_validated':not flags['preview_skipped'],'not_accuracy_certification':True}
+            'preview_validated':technically_verified, 'preview_technical_verified':technically_verified,
+            'preview_approved':False, 'publication_ready':False,
+            'preview_validation_scope':'technical_canary_not_editorial_approval',
+            'not_accuracy_certification':True}

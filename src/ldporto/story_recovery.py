@@ -3,7 +3,7 @@ import re
 from collections import Counter
 from .editorial import fold_text, classify_content
 
-ACTION = re.compile(r'\b(?:eu (?:subi|fui|recebi|tentei|lembrei|falei|pensei|continuei)|me chamaram|me encontrava|na epoca|um dia)\b')
+ACTION = re.compile(r'\b(?:eu (?:subi|fui|recebi|tentei|lembrei|falei|pensei|continuei|estava|tava)|me chamaram|me encontrava|na epoca|um dia|certa vez|quando eu|teve uma vez|aconteceu comigo|lembro que)\b')
 CONFLICT = re.compile(r'\b(?:mas|so que|problema|dificuldade|nao tenho saida|alternativas|saio correndo|sair correndo|humilhado|coracao vazio|mente perturbada|acovardado)\b')
 OUTCOME = re.compile(r'\b(?:aplaudindo|aplaudiram|consegui|deu certo|ganhou o campeonato|mente se apazigou|coracao.{0,30}cheio|agora.{0,50}confianca|sabe do que voce e capaz)\b')
 
@@ -34,10 +34,14 @@ def recover_story_arcs(segments, topics, max_seconds=360):
             action_count += bool(ACTION.search(text))
             if s['start'] > initial[-1]['start'] and not conflict and CONFLICT.search(text):
                 conflict = s
-            if conflict and s['start'] > conflict['start'] and OUTCOME.search(text) and action_count >= 2:
+            if conflict and s['start'] > conflict['start'] and OUTCOME.search(text) and action_count >= 1:
                 payoff = s
                 break
         if not payoff or not conflict or payoff['end'] - setup['start'] < 8:
+            continue
+        # Literal punctuation is weak evidence of a finished ending, but a
+        # dangling speech fragment must not be promoted to a complete story.
+        if not payoff.get('text', '').rstrip().endswith(('.', '?', '!')):
             continue
         known = Counter()
         for s in window:
@@ -60,8 +64,13 @@ def recover_story_arcs(segments, topics, max_seconds=360):
             'conflict': {'text': conflict['text'], 'segment_ids': [conflict['segment_id']]},
             'development': {'text': ' '.join(s['text'] for s in window if s not in initial and s is not payoff),
                             'segment_ids': [s['segment_id'] for s in window if s not in initial and s is not payoff]},
+            'climax': {'text': conflict['text'], 'segment_ids': [conflict['segment_id']]},
             'payoff': {'text': payoff['text'], 'segment_ids': [payoff['segment_id']], 'start': payoff['start'], 'end': payoff['end']},
             'ending': {'text': payoff['text'], 'segment_ids': [payoff['segment_id']]},
+            'narrative_structure': {'introduction': setup_ids,
+                                    'development': [s['segment_id'] for s in window if s not in initial and s is not payoff],
+                                    'climax': [conflict['segment_id']],
+                                    'resolution': [payoff['segment_id']], 'ending': [payoff['segment_id']]},
             'interruption_segment_ids': [s['segment_id'] for s in window if s.get('speaker') not in {speaker, None}],
             'standalone_score': .8, 'completeness': 'supported_setup_development_payoff',
             'method': 'literal_narrative_resumption_v2', 'inference': True, 'confidence': None,

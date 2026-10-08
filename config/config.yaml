@@ -50,17 +50,26 @@ vision:
   speech_sample_fps: 6
   checkpoint_seconds: 30
   max_width: 960
-  body_backend: hog
+  body_backend: auto
   detector_cascade: true
   embedding_interval_seconds: 1.0
+  boundary_extra_sampling: true
+  boundary_inset_seconds: 0.12
+  yunet_score_threshold: 0.82
+  face_rescue_upsample: true
+  face_rescue_scale: 1.5
+  face_rescue_cooldown_seconds: 2.0
+  face_rescue_max_pixels: 2500000
+  face_quality_gate: true
+  face_min_pixels_for_embedding: 28
+  face_min_sharpness_for_embedding: 18
+  face_min_confidence_for_embedding: 0.74
   short_shot_extra_sampling: true
   # CPU-only HOG em paralelo ao detector facial (opt-in após teste A/B local).
   parallel_hog_with_face: false
   short_shot_max_seconds: 1.5
   body_refresh_seconds: 0.5
   track_occlusion_max_seconds: 2.0
-  micro_reid_threshold: 0.72
-  micro_reid_margin: 0.12
   micro_reid_threshold: 0.72
   micro_reid_margin: 0.12
   active_speaker: true

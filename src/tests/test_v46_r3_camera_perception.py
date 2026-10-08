@@ -67,6 +67,8 @@ def make_detector():
     detector = object.__new__(PersonDetectionEngine)
     detector.cv2 = cv2
     detector.cfg = {**DEFAULTS['vision'], 'embedding_interval_seconds': 2.0}
+    detector.cfg["face_quality_gate"] = False  # mocked flat-black frame
+    detector.cfg["face_rescue_upsample"] = False  # mock detector does not scale rows
     detector.notes = []
     detector.phase_seconds = defaultdict(float)
     detector.calls = defaultdict(int)

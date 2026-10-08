@@ -508,12 +508,48 @@ class ReportEngine:
             package_result = ctx.step('21_second_curation_handoff', {'schema':'1.0', 'config':export_cfg,
                 'evidence':digest(analysis['second_curation_package']), 'preview':digest(analysis.get('preview_validation', {}))},
                 create_package, code_files=['second_curation.py', 'second_curation_export.py', 'second_curation_decisions.py',
-                                            '../../schemas/second_curation_decisions.schema.json', 'preview_renderer.py'],
-                output_version='1.0', requires=['20_handoff'])
+                                            'integrity_contracts.py', 'commercial_gate.py', 'social_output.py',
+                                            'analysis_quality.py', '../../schemas/second_curation_decisions.schema.json',
+                                            'preview_renderer.py'],
+                output_version='1.1-s2-integrity', requires=['20_handoff'])
             if package_result.get('path'):
                 from .second_curation_export import validate_core_package
                 if validate_core_package(package_result['path'])['status'] != 'valid':
                     raise ValueError('Cached second curation package failed integrity validation.')
+                # The *final* ZIP is authoritative. Reflect its decisions in the
+                # local reports instead of leaving pre-export commercial counts,
+                # Stories or shortlist in conflict with the package.
+                from zipfile import ZipFile
+                with ZipFile(package_result['path']) as finalized:
+                    def final(name):
+                        return json.loads(finalized.read(name))
+                    canonical_summary = final('summary/analysis_summary.json')
+                    canonical_quality = final('summary/quality_summary.json')
+                    canonical_shortlist = final('editorial/default_shortlist.json')['candidate_ids']
+                    canonical_candidates = final('editorial/candidate_catalog.json')['candidates']
+                    canonical_social = final('social/stories_manifest.json')
+                analysis['candidate_metrics'] = canonical_summary['candidate_metrics']
+                analysis['editorial_shortlist'] = canonical_shortlist
+                analysis['second_curation_package']['candidates'] = canonical_candidates
+                analysis['second_curation_package']['filtering_summary']['default_shortlist_ids'] = canonical_shortlist
+                analysis['second_curation_package']['candidate_catalog_mode'] = 'final_export_validated'
+                analysis['social_output'] = canonical_social
+                analysis['quality_gate'] = canonical_quality['quality_gate']
+                analysis['summary']['candidate_metrics'] = canonical_summary['candidate_metrics']
+                write_json(ctx.output / 'video_summary.json', analysis['summary'])
+                write_json(ctx.output / 'second_curation_package.json', analysis['second_curation_package'])
+                write_json(ctx.output / 'quality_gate.json', analysis['quality_gate'])
+                write_json(ctx.output / 'stories_manifest.json', canonical_social)
+                write_json(ctx.output / 'stories_candidates.json', canonical_social['stories'])
+                write_json(ctx.output / 'title_suggestions.json', canonical_social.get('title_suggestions', []))
+                write_json(ctx.output / 'caption_style_recommendations.json', canonical_social.get('caption_style_recommendations', []))
+                write_json(stories_dir / 'stories_manifest.json', canonical_social)
+                selected_story_files = {story['story_id'].lower() + '.json' for story in canonical_social['stories']}
+                for stale in stories_dir.glob('story_*.json'):
+                    if stale.name not in selected_story_files:
+                        stale.unlink()
+                for story in canonical_social['stories']:
+                    write_json(stories_dir / (story['story_id'].lower() + '.json'), story)
             analysis['second_curation_export'] = package_result
             analysis['stage_status'].update(ctx.states)
             analysis['stage_runtime'].update(ctx.stage_metrics) if 'stage_runtime' in analysis else analysis.update(stage_runtime=dict(ctx.stage_metrics))
@@ -534,18 +570,31 @@ class ReportEngine:
             from .core import read_json
             compact_summary = read_json(summary_path)
             compact_summary.update(stage_runtime=analysis['stage_runtime'], stage_status=analysis['stage_status'],
-                                   analysis_status=analysis['analysis_status'], analysis_quality=metrics, second_curation_export=package_result)
+                                   analysis_status=analysis['analysis_status'], analysis_quality=metrics, second_curation_export=package_result,
+                                   candidate_metrics=analysis.get('candidate_metrics', {}), quality_gate=analysis.get('quality_gate', {}),
+                                   editorial_shortlist=analysis.get('editorial_shortlist', []))
             write_json(summary_path, compact_summary)
             if export_cfg.get('legacy_full_analysis', False):
                 write_json(ctx.output / 'analysis.json', analysis)
             else:
+                # The compact document was created BEFORE the final ZIP. Keep
+                # every reference checksum in sync after applying final gates.
+                from .core import file_hash
+                source_ref = (document.get('collection_refs') or {}).get('second_curation_package')
+                if source_ref:
+                    source_ref['sha256'] = file_hash(ctx.output / 'second_curation_package.json')
+                    document['second_curation_package_ref'] = source_ref
                 document.update(stage_runtime=analysis['stage_runtime'], stage_status=analysis['stage_status'],
                                 analysis_status=analysis['analysis_status'], analysis_quality=metrics,
+                                candidate_metrics=analysis.get('candidate_metrics', {}),
+                                editorial_shortlist=analysis.get('editorial_shortlist', []),
+                                social_output=analysis.get('social_output', {}), quality_gate=analysis.get('quality_gate', {}),
                                 run_manifest=analysis['run_manifest'], second_curation_export=package_result)
                 write_json(ctx.output / 'analysis.json', document)
             outputs.append(ctx.output / 'second_curation_export.json')
             final_manifest.update(stage_status=analysis['stage_status'], analysis_status=analysis['analysis_status'],
-                                  second_curation_export=package_result, files=list(dict.fromkeys(final_manifest['files'] + ['second_curation_export.json'])))
+                                  second_curation_export=package_result, files=[name for name in dict.fromkeys(final_manifest['files'] + ['second_curation_export.json'])
+                                                                            if (ctx.output / name).is_file()])
             write_json(ctx.output / 'manifest.json', final_manifest)
             (ctx.output / 'PARA_ENVIAR_AO_CHATGPT.txt').write_text('Pacote core: ' + str(package_result.get('path') or 'FAILED') + '\nReadiness: ' + json.dumps(package_result.get('readiness', {})) + '\n', encoding='utf-8')
         reference_hashes = {reference['path']:reference['sha256'] for reference in document.get('collection_refs', {}).values()} if isinstance(document, dict) else {}

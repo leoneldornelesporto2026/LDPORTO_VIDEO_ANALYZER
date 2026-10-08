@@ -4,7 +4,9 @@ import math
 import re
 from .core import ok, overlap, run_command, write_json
 from .editorial import (GENERIC_TERMS, fold_text, normalize_moment, optimize_boundaries,
-                        rank_candidate, deduplicate_candidates, classify_content)
+                        rank_candidate, deduplicate_candidates, classify_content,
+                        _complete_story, _story_component_ids)
+from .editorial_intelligence import narrative_integrity, humor_integrity, select_editorial_shortlist
 
 _CAP = r"[A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][A-Za-zÀ-ÖØ-öø-ÿ0-9'’_-]*"
 _NAME = rf"{_CAP}(?:\s+(?:(?:de|da|do|dos|das|e)\s+)?{_CAP}){{0,4}}"
@@ -136,6 +138,48 @@ def _normalize_semantic_contract(semantic):
     if diagnostics:
         notes.append(f"semantic_contract_diagnostics: {len(diagnostics)} normalization event(s); see understanding_contract_diagnostics.json")
     return data, notes, diagnostics
+
+
+def _validate_story_arcs_contract(arcs, transcript_segments):
+    """Normalize only observed IDs and invalidate unsupported story claims.
+
+    Story recovery and the duration exception use different component shapes.
+    This boundary guarantees that ranking sees a mapping with grounded
+    ``segment_ids`` or None, never a provider list masquerading as a mapping.
+    """
+    diagnostics = []
+    known = {segment.get('segment_id') for segment in transcript_segments}
+    normalized = []
+    for index, original in enumerate(arcs):
+        if not isinstance(original, dict):
+            diagnostics.append(_contract_issue(f'story_arcs[{index}]', 'object', original, 'omitted'))
+            continue
+        arc = dict(original)
+        for key in ('setup', 'development', 'payoff'):
+            part = arc.get(key)
+            if part is None:
+                continue
+            ids = _story_component_ids(arc, key)
+            valid = bool(ids) and all(item in known for item in ids)
+            if valid and isinstance(part, list):
+                arc[key] = {'segment_ids': ids}
+                diagnostics.append(_contract_issue(f'story_arcs[{index}].{key}', 'object', part,
+                                                   'normalized_existing_segment_ids'))
+            elif not valid:
+                arc[key] = None
+                diagnostics.append(_contract_issue(f'story_arcs[{index}].{key}',
+                                                   'object_with_known_segment_ids|null', part,
+                                                   'invalid_evidence_removed'))
+        if arc.get('kind') == 'complete_story' and not _complete_story(
+                arc, arc.get('evidence_segment_ids') or []):
+            arc.update(kind='partial_story', completeness='unresolved_payoff',
+                       standalone_score=None, needs_review=True,
+                       narrative_supported=False)
+            diagnostics.append(_contract_issue(f'story_arcs[{index}].kind',
+                                               'complete_story_with_ordered_grounded_components',
+                                               original.get('kind'), 'downgraded_to_partial_story'))
+        normalized.append(arc)
+    return normalized, diagnostics
 
 
 def extract_entities(transcript):
@@ -367,10 +411,11 @@ def build_story_arcs(transcript, topics, questions_answers=None):
             continue
         setup = next((s for s in segments if setup_re.search(s["text"])), None)
         conflict = next((s for s in segments if conflict_re.search(s["text"])), None)
-        payoff = next((s for s in reversed(segments) if payoff_re.search(s["text"])), None)
+        payoff = next((s for s in segments if conflict and s["start"] > conflict["start"] and payoff_re.search(s["text"])), None)
         complete_qa = next((pair for pair in questions_answers or [] if pair.get("question_answer_complete") and
                             topic["start"] <= pair["question_start"] and pair["answer_end"] <= topic["end"]), None)
-        marker_supported = setup is not None and conflict is not None and payoff is not None and setup["start"] < conflict["start"] < payoff["start"]
+        marker_supported = (setup is not None and conflict is not None and payoff is not None and
+                            setup["start"] < conflict["start"] < payoff["start"])
         kind = "complete_story" if marker_supported else "qa_arc" if complete_qa else "partial_story" if setup and conflict else "anecdote" if setup else "discussion_segment"
         if not marker_supported:
             payoff = None
@@ -380,7 +425,14 @@ def build_story_arcs(transcript, topics, questions_answers=None):
                 payoff = by_id.get(complete_qa["answer_segment_ids"][-1])
         if classify_content(" ".join(segment["text"] for segment in segments))["eligibility"] == "excluded":
             continue
-        middle = [segment for segment in segments[1:-1] if not payoff or segment["start"] < payoff["start"]]
+        middle = ([segment for segment in segments if setup and payoff and
+                   setup["start"] < segment["start"] < payoff["start"]] if marker_supported else
+                  [segment for segment in segments[1:-1] if not payoff or segment["start"] < payoff["start"]])
+        # A story's development must be independently grounded and temporally
+        # ordered between setup and outcome. The conflict can be the climax.
+        if marker_supported and not middle:
+            marker_supported = False
+            kind = 'partial_story'
         ending = segments[-1]
         start = setup["start"] if setup else segments[0]["start"]
         duration = ending["end"]-start
@@ -399,10 +451,16 @@ def build_story_arcs(transcript, topics, questions_answers=None):
             "conflict": {"text": conflict["text"], "segment_ids": [conflict["segment_id"]]} if conflict else None,
             "development": {"text": " ".join(s["text"] for s in middle) or None,
                             "segment_ids": [s["segment_id"] for s in middle]} if kind != "discussion_segment" else None,
+            "climax": {"text": conflict["text"], "segment_ids": [conflict["segment_id"]]} if marker_supported else None,
             "payoff": {"text": payoff["text"], "segment_ids": [payoff["segment_id"]], "start": payoff['start'], "end": payoff['end']} if payoff else None,
             "ending": {"text": ending["text"], "segment_ids": [ending["segment_id"]]},
+            "narrative_structure": {"introduction": [setup['segment_id']] if setup else [],
+                                     "development": [s['segment_id'] for s in middle],
+                                     "climax": [conflict['segment_id']] if marker_supported else [],
+                                     "resolution": [payoff['segment_id']] if payoff else [],
+                                     "ending": [ending['segment_id']]},
             "standalone_score": score if marker_supported or complete_qa else None,
-            "completeness": "supported_setup_development_payoff" if marker_supported or complete_qa else "unresolved_payoff",
+            "completeness": "supported_setup_development_payoff" if marker_supported else "supported_question_answer" if complete_qa else "unresolved_payoff",
             "method": "narrative_marker_heuristic" if marker_supported else "grounded_qa_arc" if complete_qa else "discussion_section_candidate",
             "inference": True,
             "confidence": None, "needs_review": True,
@@ -435,12 +493,25 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
         hi = min((segments[-1]["end"] if segments else end), end+30.0,
                  topic["end"] if topic else (segments[-1]["end"] if segments else end+30.0))
         matching_stories = [arc for arc in story_arcs if overlap(start, end, arc['start'], arc['end']) > 0]
-        story = max(matching_stories, key=lambda arc: (arc.get('kind') == 'complete_story',
-                    overlap(start, end, arc['start'], arc['end']) / max(arc['end'] - arc['start'], 1e-9)), default=None)
-        boundaries = optimize_boundaries(moment, segments, cfg, story)
+        story = max(matching_stories, key=lambda arc: (
+                    overlap(start, end, arc['start'], arc['end']) / max(end-start, 1e-9),
+                    arc.get('kind') == 'complete_story'), default=None)
+        boundaries = optimize_boundaries(moment, segments, cfg, story, questions_answers)
         ideal_start, ideal_end = boundaries["ideal_start"], boundaries["ideal_end"]
-        q_complete = any(q.get("answer_end") is not None and q["question_start"] >= ideal_start and
-                         q["answer_end"] <= ideal_end for q in questions_answers)
+        segment_ids = boundaries.get('boundary_segment_ids') or moment.get('evidence_segment_ids', [])
+        narrative = narrative_integrity(story, segment_ids)
+        humor = humor_integrity(segments, ideal_start, ideal_end,
+                                hinted=bool(set(moment.get('categories') or []) & {'humor', 'punchline'}))
+        qa_overlap = [q for q in questions_answers if q.get('answer_expected') and
+                      overlap(start, end, q['question_start'], q.get('answer_end') or q['question_end']) > 0]
+        qa_blockers = ['question_without_complete_answer'] if any(
+            q['question_start'] >= ideal_start and q['question_start'] < ideal_end and
+            (not q.get('question_answer_complete') or not q.get('answer_end') or
+             q['answer_end'] > ideal_end) for q in qa_overlap) else []
+        editorial_blockers = sorted(set(narrative['blockers'] + humor['blockers'] + qa_blockers))
+        q_complete = any(q.get("question_answer_complete") is True and q.get("answer_end") is not None and
+                         q["question_start"] >= ideal_start and q["answer_end"] <= ideal_end
+                         for q in questions_answers)
         visual = [s.get("camera_score") for s in shots if overlap(start, end, s["start"], s["end"]) > 0 and
                   isinstance(s.get("camera_score"), (int, float))]
         editorial_payload = moment.get("editorial")
@@ -470,8 +541,10 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
             "standalone_score": _score_class(moment.get("standalone_class")),
             "hook_strength": hook['hook_strength'], "hook_type": hook['hook_type'],
             "ending_strength": 1.0 if moment.get("complete_sentence") else 0.35,
-            "story_completeness": story.get("standalone_score") if story else None,
+            "story_completeness": story.get("standalone_score") if story and narrative["status"] == "complete_candidate" else None,
             "question_answer_complete": q_complete,
+            "editorial_blockers": editorial_blockers, "narrative_integrity": narrative,
+            "humor_integrity": humor,
             "editorial_score": editorial_score,
             "story_score": story.get("standalone_score") if story else None,
             "hook_score": min(hook['hook_strength'], ed.get('hook_strength')) if hook['hook_strength'] is not None and isinstance(ed.get('hook_strength'), (int, float)) else hook['hook_strength'],
@@ -639,6 +712,10 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
     participant_catalog = build_participants(transcript, diarization, vision,
                                       _dict_rows(active_data.get("mapping_summary", [])), qas, cfg, shots, include_background=True)
     story_arcs = build_story_arcs(transcript, semantic["topics"], qas)
+    story_arcs, arc_diagnostics = _validate_story_arcs_contract(story_arcs, transcript['segments'])
+    if arc_diagnostics:
+        contract_diagnostics.extend(arc_diagnostics)
+        contract_notes.append(f'story_arc_contract_normalized: {len(arc_diagnostics)} events')
     section_by_topic = {topic_id: section["section_id"] for section in semantic["program_sections"]
                         if isinstance(section.get("topic_ids"), list) and section.get("section_id")
                         for topic_id in section["topic_ids"]}
@@ -646,15 +723,42 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
         arc["section_id"] = section_by_topic.get(arc.get("topic_id"))
     main_moments = build_main_moments(transcript, semantic["topics"], semantic["moments"],
                                       qas, story_arcs, shots, semantic.get("editorial_review"), cfg)
+    for index, candidate in enumerate(main_moments):
+        if candidate.get('duration_exception_proof_rejected'):
+            contract_diagnostics.append(_contract_issue(
+                f'main_moments[{index}].duration_exception_evidence',
+                'ordered_source_segment_ids', candidate.get('duration_exception_evidence'),
+                'duration_exception_revoked'))
+    # Save contract facts only: never dump transcription/prompt bodies into logs.
+    write_json(diagnostics_path, {
+        'schema_version': '1.0',
+        'normalization_event_count': len(contract_diagnostics),
+        'events': contract_diagnostics,
+        'semantic_counts': {key: len(semantic.get(key, [])) for key in
+                            ('topics', 'moments', 'questions_answers', 'program_sections')},
+        'input_types': {
+            'transcript_segments': type(transcript.get('segments')).__name__,
+            'diarization_speakers': type(diarization.get('speakers')).__name__,
+            'vision_people': type(vision.get('people')).__name__,
+            'shots': type(shots).__name__,
+        },
+        'story_arc_count': len(story_arcs),
+        'candidate_count': len(main_moments),
+    })
     for candidate in main_moments:
         candidate["program_section_id"] = section_by_topic.get(candidate.get("topic_id"))
+    shortlist_rows, selection_report = select_editorial_shortlist(
+        main_moments, cfg.get('max_moments', 12), cfg.get('min_editorial_score', .50),
+        cfg.get('max_candidates_per_topic', 2))
+    shortlist_ids = [row['moment_id'] for row in shortlist_rows]
     candidate_metrics = {"candidates_before_dedup": len(semantic.get("moments", [])),
                          "candidates_after_dedup": len(main_moments),
                          "alternate_count": sum(len(candidate.get("alternates", [])) for candidate in main_moments),
                          "excluded_commercial_count": sum((candidate.get('commercial_classification') or {}).get('eligibility') == 'excluded' for candidate in main_moments),
                          "excluded_eligibility_count": sum(not candidate.get('default_shortlist_eligible', True) for candidate in main_moments),
                          "editorial_participant_count": len(participants),
-                         "final_shortlist_count": min(cfg.get('max_moments', 12), sum(candidate.get('default_shortlist_eligible', True) for candidate in main_moments))}
+                         "final_shortlist_count": len(shortlist_ids),
+                         "selection_report": selection_report}
     candidate_metrics.update(complete_story_arc_count=sum(arc.get('kind') == 'complete_story' for arc in story_arcs),
                              partial_story_arc_count=sum(arc.get('kind') == 'partial_story' for arc in story_arcs),
                              discussion_block_count=sum(arc.get('kind') == 'discussion_segment' for arc in story_arcs),
@@ -663,7 +767,7 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
                                           max(1, sum(arc.get('kind') in {'complete_story', 'partial_story', 'anecdote'} for arc in story_arcs)),
                              duration_violation_count=sum(not candidate.get('duration_in_target_range', False) and not candidate.get('duration_exception') for candidate in main_moments))
     thumbnails = build_thumbnail_candidates(vision, shots, cfg.get("max_thumbnail_candidates", 80),
-                    [moment for moment in main_moments if moment.get('default_shortlist_eligible',True)][:cfg.get('max_moments',12)])
+                    shortlist_rows)
     moment_frames = []
     try:
         moment_frames = extract_moment_frames(ctx, main_moments, thumbnails, cfg)
@@ -682,7 +786,7 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
                "participant_catalog": participant_catalog,
                "participant_metrics": dict(Counter(row["participant_category"] for row in participant_catalog)),
                "candidate_metrics": candidate_metrics,
-               "editorial_shortlist": [candidate["moment_id"] for candidate in main_moments if candidate.get("default_shortlist_eligible", True)][:cfg.get("max_moments", 12)],
+               "editorial_shortlist": shortlist_ids,
                "main_moments": main_moments, "thumbnail_candidates": thumbnails,
                "moment_frames": moment_frames, "video_understanding": video_understanding},
               "ok" if transcript.get("segments") else "partial", notes, [*artifacts, diagnostics_path])

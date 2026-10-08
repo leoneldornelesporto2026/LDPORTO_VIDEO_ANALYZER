@@ -1,27 +1,5 @@
-L.D.PORTO VIDEO ANALYZER - PACOTE DO PROJETO
-
-Origem:
-/mnt/data/r4_finish
-
-Objetivo:
-Enviar a base atual de codigo/config/testes/docs para inspecao e evolucao.
-
-Inclui:
-- src / tests / config(s) / docs / schemas / scripts / examples
-- assets/resources pequenos permitidos
-- arquivos de projeto na raiz
-- documentacao/metadados pequenos de models quando existirem
-
-Exclui propositalmente:
-- analysis/
-- .venv / venv
-- videos e audios
-- modelos/pesos/binarios
-- downloads/input
-- caches
-- previews/proxies
-- ZIPs antigos e arquivos derivados de pacotes
-- scripts exportadores antigos substituidos por exportar_ldporto.py
-- credenciais/tokens detectados
-
-Use este ZIP quando a tarefa for alterar, revisar ou evoluir o codigo.
+R4.9-S4 TRACKING FACIAL RECOVERY
+Base: R4.9/S3, revisada sem reinicializacao do projeto.
+Leia docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md.
+Nenhum benchmark 742 nem validacao real em Windows acompanha este pacote.
+Tests: 509 passed, 2 skipped.

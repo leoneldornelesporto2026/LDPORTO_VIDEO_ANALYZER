@@ -15,6 +15,7 @@ from .paths import PACKAGE_OUTPUT_DIR, SCHEMA_DIR
 from .preview_renderer import build_contact_sheet, render_preview
 from .second_curation import build_second_curation_package
 from .editorial import classify_content
+from .integrity_contracts import audit_editorial_contract, derive_review_state
 
 
 SCHEMA_VERSION = '1.0'
@@ -135,9 +136,34 @@ def validate_core_package(path):
         if (manifest.get('readiness') != index.get('second_curation_readiness') or
                 manifest.get('readiness') != brief.get('capabilities')):
             errors.append('readiness_disagreement_between_manifest_index_brief')
+        if (manifest.get('readiness_reasons') != index.get('second_curation_readiness_reasons') or
+                manifest.get('readiness_reasons') != brief.get('capability_reasons')):
+            errors.append('readiness_reasons_disagreement_between_manifest_index_brief')
+        if manifest.get('workflow') is not None:
+            expected_workflow = derive_review_state(manifest.get('readiness', {}))
+            if (manifest['workflow'] != expected_workflow or index.get('workflow') != expected_workflow or
+                    brief.get('workflow') != expected_workflow):
+                errors.append('workflow_disagreement:manifest_index_brief')
+            if manifest.get('missing_capabilities') != [key for key, value in manifest.get('readiness', {}).items() if not value]:
+                errors.append('missing_capabilities_disagreement:manifest')
+            upstream = manifest.get('upstream_contract_validation') or {}
+            if upstream.get('status') != 'valid' and manifest.get('readiness', {}).get('editorial_ready'):
+                errors.append('editorial_ready_with_blocked_upstream_contract')
+            if 'summary/upstream_contract_validation.json' not in names or (upstream != json.loads(read('summary/upstream_contract_validation.json'))):
+                errors.append('upstream_contract_disagreement:manifest_summary')
         import jsonschema
-        jsonschema.validate(index, read_json(SCHEMA_DIR / 'curation_index.schema.json'))
-        jsonschema.validate(catalog, read_json(SCHEMA_DIR / 'curation_catalog.schema.json'))
+        for name, document, schema in (
+                ('CURATION_INDEX.json', index, 'curation_index.schema.json'),
+                ('editorial/candidate_catalog.json', catalog, 'curation_catalog.schema.json')):
+            try:
+                jsonschema.validate(document, read_json(SCHEMA_DIR / schema))
+            except jsonschema.ValidationError as exc:
+                errors.append('schema_invalid:' + name + ':' + '.'.join(str(part) for part in exc.path))
+        if manifest.get('workflow') is not None:
+            required_contracts = {'summary/upstream_contract_validation.json', 'summary/final_quality_gate.json',
+                                  'editorial/final_gate_report.json', 'summary/analysis_summary.json'}
+            for missing in sorted(required_contracts - set(names)):
+                errors.append('missing_final_integrity_contract:' + missing)
         file_index = {row['path']: row for row in manifest.get('files', [])}
         if set(file_index) != set(names) - {'SECOND_CURATION_MANIFEST.json'}:
             errors.append('file_manifest_mismatch')
@@ -162,7 +188,8 @@ def validate_core_package(path):
             errors.append('shortlist_dangling_candidate')
         if 'editorial/final_gate_report.json' in names:
             gates = json.loads(read('editorial/final_gate_report.json'))
-            metrics = json.loads(read('summary/analysis_summary.json')).get('candidate_metrics', {})
+            analysis_summary = json.loads(read('summary/analysis_summary.json'))
+            metrics = analysis_summary.get('candidate_metrics', {})
             expected_excluded = sum(row.get('commercial_classification', {}).get('eligibility') == 'excluded'
                                     for row in candidates)
             if (gates.get('excluded_commercial_count') != expected_excluded or
@@ -170,6 +197,32 @@ def validate_core_package(path):
                     metrics.get('excluded_commercial_count') != expected_excluded or
                     metrics.get('final_shortlist_count') != len(shortlist['candidate_ids'])):
                 errors.append('final_gate_summary_count_disagreement')
+            if (analysis_summary.get('candidate_count') != len(candidates) or gates.get('candidate_count') != len(candidates) or
+                    index.get('default_shortlist_count') != len(shortlist['candidate_ids']) or
+                    brief.get('default_shortlist_count') != len(shortlist['candidate_ids'])):
+                errors.append('candidate_or_shortlist_count_disagreement')
+            if 'editorial/excluded_commercials.json' in names:
+                excluded_ids = {r.get('candidate_id') for r in json.loads(read('editorial/excluded_commercials.json'))}
+                if excluded_ids != {r['candidate_id'] for r in candidates if (r.get('commercial_classification') or {}).get('eligibility') == 'excluded'}:
+                    errors.append('excluded_commercial_ids_disagreement')
+            if manifest.get('workflow') is not None:
+                final_gate = json.loads(read('summary/final_quality_gate.json')) if 'summary/final_quality_gate.json' in names else {}
+                quality_summary = json.loads(read('summary/quality_summary.json'))
+                counts = ('excluded_commercial_count', 'final_shortlist_count')
+                if (not final_gate or final_gate.get('editorial_integrity_ready') != (manifest.get('upstream_contract_validation') or {}).get('editorial_integrity_ready') or
+                        any(final_gate.get(k) != gates.get(k) for k in counts) or
+                        gates.get('publication_ready') is not False or final_gate.get('publication_ready') is not False or
+                        final_gate.get('preview_approved') is not False):
+                    errors.append('final_quality_gate_disagreement_or_unsafe_approval')
+                if (quality_summary.get('final_package_gate') != final_gate or
+                        quality_summary.get('candidate_metrics') != metrics or
+                        (quality_summary.get('quality_gate') or {}).get('status') != final_gate.get('status') or
+                        (quality_summary.get('quality_gate') or {}).get('publication_ready') is not False):
+                    errors.append('quality_summary_disagreement:summary/quality_summary.json')
+                if (metrics.get('final_candidate_count') != len(candidates) or
+                        metrics.get('final_story_count') != gates.get('social_story_count') or
+                        final_gate.get('final_story_count') != gates.get('social_story_count')):
+                    errors.append('final_story_or_candidate_metrics_disagreement')
         by_id = {row['candidate_id']: row for row in candidates}
         for cid in shortlist['candidate_ids']:
             row = by_id.get(cid)
@@ -177,6 +230,12 @@ def validate_core_package(path):
                         or row.get('default_shortlist_eligible') is False
                         or row.get('publication_eligible') is False):
                 errors.append('shortlist_ineligible:' + cid)
+        if not manifest.get('readiness', {}).get('editorial_ready') and shortlist['candidate_ids']:
+            errors.append('shortlist_with_incomplete_editorial_upstream')
+        for row in candidates:
+            if ((row.get('commercial_classification') or {}).get('eligibility') == 'excluded' or
+                    row.get('candidate_state') == 'PROVISIONAL_UPSTREAM_INCOMPLETE') and (row.get('default_shortlist_eligible') is not False or row.get('publication_eligible') is not False):
+                errors.append('candidate_invalid_eligibility:' + row['candidate_id'])
         if 'social/stories_manifest.json' in names:
             social = json.loads(read('social/stories_manifest.json'))
             story_ids = set()
@@ -196,6 +255,13 @@ def validate_core_package(path):
                     errors.append('story_publication_unverified:' + str(cid))
             if not manifest.get('readiness', {}).get('editorial_ready') and social.get('stories'):
                 errors.append('stories_with_incomplete_editorial_upstream')
+            if (index.get('story_candidate_count') != len(social.get('stories', [])) or
+                    (gates.get('social_story_count') if 'editorial/final_gate_report.json' in names else len(social.get('stories', []))) != len(social.get('stories', []))):
+                errors.append('social_story_count_disagreement')
+            if manifest.get('workflow') is not None:
+                if ((not manifest['readiness'].get('editorial_ready') and social.get('story_readiness') != 'BLOCKED') or
+                        social.get('publication_ready') is not False):
+                    errors.append('social_story_readiness_or_publication_gate_disagreement')
             if 'social/stories_candidates.json' in names:
                 shadow = json.loads(read('social/stories_candidates.json'))
                 if shadow != social.get('stories', []):
@@ -223,7 +289,10 @@ def validate_core_package(path):
                 errors.append('missing_candidate_file:' + candidate['candidate_id'])
             else:
                 individual = json.loads(read(candidate_file))
-                if any(individual.get(key) != candidate.get(key) for key in ('candidate_id', 'start', 'end', 'transcript_literal')):
+                if any(individual.get(key) != candidate.get(key) for key in
+                       ('candidate_id', 'start', 'end', 'transcript_literal', 'commercial_classification',
+                        'default_shortlist_eligible', 'publication_eligible', 'candidate_state', 'visual_refs',
+                        'eligible_for_human_review', 'publication_ready')):
                     errors.append('candidate_file_mismatch:' + candidate['candidate_id'])
             if not set(candidate.get('segment_ids', [])) <= segment_ids:
                 errors.append('segment_ref:' + candidate['candidate_id'])
@@ -249,6 +318,10 @@ def validate_core_package(path):
                 'checksums_valid': not any(error.startswith('checksum') for error in errors),
                 'visual_count': visual_count, 'candidate_count': len(candidates), 'file_count': len(names),
                 'readiness': manifest.get('readiness', {})}
+    except (ValueError, TypeError, KeyError, IndexError, AttributeError) as exc:
+        # Malformed external JSON should become a report, not crash the caller.
+        return {'status': 'failed', 'errors': ['validation_exception:' + type(exc).__name__],
+                'dangling_references': 0, 'checksums_valid': False}
     finally:
         if archive:
             archive.close()
@@ -263,6 +336,16 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
     from copy import deepcopy
     package = deepcopy(package) if package is not None else build_second_curation_package(analysis)
     candidates = package['candidates']
+    contract = audit_editorial_contract(analysis)
+    if not package.get('editorial_integrity_ready', True) and contract['editorial_integrity_ready']:
+        contract['editorial_integrity_ready'] = False
+        contract['status'] = 'blocked'
+        contract['errors'].append({'code': 'source_package_integrity_blocked',
+                                    'path': 'second_curation_package.editorial_integrity_ready',
+                                    'expected': 'true', 'received': 'false'})
+    integrity_ready = bool(contract['editorial_integrity_ready'] and package.get('editorial_integrity_ready', True))
+    integrity_reason = (package.get('editorial_integrity_reason') or
+                        (contract['errors'][0]['code'] + ':' + contract['errors'][0]['path'] if contract['errors'] else None))
     shortlist = [reference for reference in analysis.get('editorial_shortlist', []) if reference in package['resolvable_index']]
     source_info = metadata.get('source') or {}
     source_id = source_info.get('id') or str(metadata.get('sha256') or 'source')[:12]
@@ -287,6 +370,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             'episode_summary': (analysis.get('video_understanding') or {}).get('episode_summary')})
         write('summary/quality_summary.json', {'quality': analysis.get('analysis_quality', {}), 'quality_gate': analysis.get('quality_gate', {}),
             'root_cause_stage': (analysis.get('run_manifest') or {}).get('root_cause_stage'), 'warnings': analysis.get('issues', [])})
+        write('summary/upstream_contract_validation.json', contract)
         write('summary/performance_summary.json', {'stage_runtime': analysis.get('stage_runtime', {}), 'semantic_metrics': analysis.get('semantic_metrics', {}),
             'execution_scope': analysis.get('execution_scope', 'full_pipeline')})
         segments = analysis.get('transcript_segments', [])
@@ -325,9 +409,20 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             candidate['commercial_classification'] = _final_commercial_classification(candidate)
             candidate['content_type'] = candidate['commercial_classification']['content_type']
             candidate['commercial_score'] = candidate['commercial_classification']['commercial_score']
+            if not integrity_ready:
+                candidate['candidate_state'] = 'PROVISIONAL_UPSTREAM_INCOMPLETE'
+                candidate['candidate_state_reason'] = integrity_reason or 'editorial_integrity_unavailable'
+                candidate['default_shortlist_eligible'] = False
+                candidate['publication_eligible'] = False
             if candidate['commercial_classification']['eligibility'] == 'excluded':
                 candidate['default_shortlist_eligible'] = False
                 candidate['publication_eligible'] = False
+            # The legacy 'publication_eligible' field refers to candidate
+            # eligibility for curator review, not actual publishing authority.
+            candidate['eligible_for_human_review'] = bool(candidate.get('default_shortlist_eligible') and
+                                                          candidate.get('publication_eligible'))
+            candidate['publication_ready'] = False
+            candidate['human_approval_required'] = True
             candidate['privacy_redacted'] = _public(candidate['transcript_literal']) != candidate['transcript_literal']
             if candidate['privacy_redacted']:
                 candidate['transcript_literal_method'] += '_with_explicit_privacy_redaction'
@@ -363,8 +458,11 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                                  'duration': candidate.get('duration'), 'reason': 'first_pass_eligibility_gate'})
             write(f'candidates/{candidate_id}.json', candidate)
         write('editorial/candidate_catalog.json', {'schema_version': SCHEMA_VERSION, 'candidates': candidates})
+        write('editorial/selection_report_s3.json', {'method': 'evidence_gates_score_floor_topical_diversity',
+            'final_selection_is_human_review_required': True,
+            'selection_report': (analysis.get('candidate_metrics') or {}).get('selection_report')})
         social_output = _reconcile_social_output(analysis.get('social_output') or {}, candidates,
-                                                bool(package.get('editorial_integrity_ready', True)))
+                                                integrity_ready)
         write('social/stories_manifest.json', social_output)
         write('social/stories_candidates.json', social_output.get('stories', []))
         write('social/title_suggestions.json', social_output.get('title_suggestions', []))
@@ -384,9 +482,27 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         metrics = dict(analysis.get('candidate_metrics') or {})
         metrics['excluded_commercial_count'] = sum(row['commercial_classification']['eligibility'] == 'excluded' for row in candidates)
         metrics['final_shortlist_count'] = len(shortlist)
+        metrics['final_candidate_count'] = len(candidates)
+        metrics['final_story_count'] = len(social_output.get('stories', []))
         write('summary/analysis_summary.json', {'analysis_status': analysis.get('analysis_status'),
             'analyzer_version': __version__, 'candidate_count': len(candidates), 'candidate_metrics': metrics,
             'episode_summary': (analysis.get('video_understanding') or {}).get('episode_summary')})
+        final_quality_gate = {
+            'status': 'P0_FAIL' if not integrity_ready else (analysis.get('quality_gate') or {}).get('status', 'NOT_MEASURED'),
+            'editorial_integrity_ready': integrity_ready,
+            'excluded_commercial_count': metrics['excluded_commercial_count'],
+            'final_shortlist_count': metrics['final_shortlist_count'],
+            'final_story_count': metrics['final_story_count'],
+            'preview_approved': False, 'publication_ready': False}
+        write('summary/final_quality_gate.json', final_quality_gate)
+        upstream_quality = analysis.get('quality_gate') or {}
+        write('summary/quality_summary.json', {'quality': analysis.get('analysis_quality', {}),
+              'quality_gate': {**upstream_quality, 'status': final_quality_gate['status'],
+                               'preview_approved': False, 'publication_ready': False},
+              'upstream_quality_gate': upstream_quality, 'final_package_gate': final_quality_gate,
+              'candidate_metrics': metrics,
+              'root_cause_stage': (analysis.get('run_manifest') or {}).get('root_cause_stage'),
+              'warnings': analysis.get('issues', [])})
         write('editorial/final_gate_report.json', {
             'candidate_count': len(candidates), 'final_shortlist_count': len(shortlist),
             'excluded_commercial_count': metrics['excluded_commercial_count'],
@@ -411,7 +527,6 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                 if archive.testzip() is not None or any(hashlib.sha256(archive.read(row['path'])).hexdigest() != row['sha256'] for row in media_manifest['files']):
                     raise ValueError('Optional media package checksum validation failed.')
         refs_resolved = package['reference_validation']['status'] == 'resolved'
-        integrity_ready = bool(package.get('editorial_integrity_ready', True))
         editorial_ready = bool(integrity_ready and candidates and segments and metadata.get('duration') and refs_resolved and
                               all(candidate['transcript_literal'].strip() for candidate in candidates) and
                               all(candidate.get('candidate_state') != 'PROVISIONAL_UPSTREAM_INCOMPLETE' for candidate in candidates))
@@ -423,7 +538,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                      'preview_ready': (analysis.get('preview_validation') or {}).get('status') == 'ok' and bool((analysis.get('preview_validation') or {}).get('verifier_uses_rendered_frames'))}
         readiness_reasons = {
             'editorial_ready': None if readiness['editorial_ready'] else (
-                package.get('editorial_integrity_reason') if not integrity_ready else
+                integrity_reason if not integrity_ready else
                 'no_candidates' if not candidates else 'missing_transcript_or_unresolved_references'),
             'transcript_ready': None if readiness['transcript_ready'] else 'transcript_unavailable_or_empty',
             'visual_ready': None if readiness['visual_ready'] else ('shortlist_empty' if not shortlist else 'shortlist_visual_evidence_incomplete'),
@@ -431,13 +546,15 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             'camera_ready': None if readiness['camera_ready'] else 'resolved_focus_coverage_zero',
             'preview_ready': None if readiness['preview_ready'] else 'rendered_preview_not_verified',
         }
+        workflow = derive_review_state(readiness)
         index = {'schema_version': SCHEMA_VERSION, 'source': {'title': source_info.get('title') or metadata.get('filename'),
                  'url': source_info.get('url'), 'duration': metadata.get('duration')}, 'analysis_status': analysis.get('analysis_status'),
                  'second_curation_readiness': readiness, 'second_curation_readiness_reasons': readiness_reasons, 'candidate_count': len(candidates), 'default_shortlist_count': len(shortlist),
                  'candidate_catalog_ref': 'editorial/candidate_catalog.json', 'shortlist_ref': 'editorial/default_shortlist.json',
                  'stories_ref': 'social/stories_manifest.json', 'story_candidate_count': len(social_output.get('stories', [])),
                  'selected_aspect_ratio': social_output.get('selected_aspect_ratio'),
-                 'story_readiness': social_output.get('story_readiness'), 'story_readiness_reason': social_output.get('story_readiness_reason')}
+                 'story_readiness': social_output.get('story_readiness'), 'story_readiness_reason': social_output.get('story_readiness_reason'),
+                 'workflow': workflow}
         write('CURATION_INDEX.json', index)
         brief = {'schema_version': '1.0', 'task': 'second_editorial_curation', 'source_id': source_id,
                  'source_title': index['source']['title'], 'source_url': index['source']['url'],
@@ -445,7 +562,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                  'goals': ['find_strongest_standalone_social_clips', 'reject_commercials', 'challenge_first_pass_ranking',
                            'optimize_boundaries', 'prefer_complete_payoff'],
                  'target_duration_seconds': {'preferred_min': 30, 'preferred_max': 90},
-                 'capabilities': readiness,
+                 'capabilities': readiness, 'workflow': workflow,
                  'capability_reasons': readiness_reasons,
                  'known_limitations': [key for key, value in readiness.items() if not value],
                  'recommended_entrypoints': ['CURATION_INDEX.json', 'editorial/default_shortlist.json',
@@ -463,15 +580,16 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         manifest = {'schema_version': SCHEMA_VERSION, 'second_curation_schema_version': '3.1', 'run_id': run_id,
                     'source_hash': metadata.get('sha256'), 'analyzer_version': __version__, 'analyzer_build': __build__, 'created_at': datetime.now(timezone.utc).isoformat(),
                     'files': files, 'file_count': len(files) + 1, 'uncompressed_bytes': sum(row['bytes'] for row in files),
-                    'readiness': readiness, 'readiness_reasons': readiness_reasons, 'missing_capabilities': [key for key, value in readiness.items() if not value],
+                    'readiness': readiness, 'readiness_reasons': readiness_reasons, 'workflow': workflow,
+                    'upstream_contract_validation': contract,
+                    'missing_capabilities': [key for key, value in readiness.items() if not value],
                     'warnings': package.get('quality_warnings', []), 'reference_validation': package['reference_validation'],
                     'source_video_included': False, 'expensive_inference_executed': False}
         write('SECOND_CURATION_MANIFEST.json', manifest)
         validation = validate_core_package(root)
         if validation['status'] != 'valid':
             raise ValueError('Core package validation failed: ' + '; '.join(validation['errors'][:10]))
-        ready = readiness['editorial_ready'] and readiness['transcript_ready'] and readiness['visual_ready']
-        state = 'READY' if ready else 'PARTIAL'
+        state = 'READY' if workflow['review_ready'] else 'PARTIAL'
         zip_path = output_dir / f'SECOND_CURATION_{state}_{source_id}_{timestamp}_{uuid.uuid4().hex[:6]}.zip'
         emit('compression')
         with zipfile.ZipFile(zip_path, 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
@@ -560,13 +678,16 @@ def generate_visuals_on_demand(package_path, source, candidate_ids, output_dir, 
         manifest.setdefault('readiness_reasons', {})['visual_ready'] = None if has_all_visuals else (
             'shortlist_empty' if not shortlist_ids else 'shortlist_visual_evidence_incomplete')
         manifest['missing_capabilities'] = [key for key, value in manifest['readiness'].items() if not value]
+        manifest['workflow'] = derive_review_state(manifest['readiness'])
         index = read_json(root / 'CURATION_INDEX.json')
         index['second_curation_readiness'] = manifest['readiness']
         index['second_curation_readiness_reasons'] = manifest['readiness_reasons']
+        index['workflow'] = manifest['workflow']
         write_json(root / 'CURATION_INDEX.json', index)
         brief = read_json(root / 'SECOND_CURATOR_BRIEF.json')
         brief['capabilities'] = manifest['readiness']
         brief['capability_reasons'] = manifest['readiness_reasons']
+        brief['workflow'] = manifest['workflow']
         brief['known_limitations'] = manifest['missing_capabilities']
         write_json(root / 'SECOND_CURATOR_BRIEF.json', brief)
         manifest['files'] = [{'path': f.relative_to(root).as_posix(), 'bytes': f.stat().st_size, 'sha256': file_hash(f)}
@@ -574,7 +695,7 @@ def generate_visuals_on_demand(package_path, source, candidate_ids, output_dir, 
         manifest['file_count'] = len(manifest['files']) + 1
         manifest['uncompressed_bytes'] = sum(r['bytes'] for r in manifest['files'])
         write_json(root / 'SECOND_CURATION_MANIFEST.json', manifest)
-        state = 'READY' if all(manifest.get('readiness', {}).get(k) for k in ('editorial_ready', 'transcript_ready', 'visual_ready')) else 'PARTIAL'
+        state = 'READY' if manifest['workflow']['review_ready'] else 'PARTIAL'
         path = output_dir / ('SECOND_CURATION_' + state + '_ON_DEMAND_' + uuid.uuid4().hex[:10] + '.zip')
         with zipfile.ZipFile(path, 'x', zipfile.ZIP_DEFLATED) as archive:
             for f in sorted(root.rglob('*')):

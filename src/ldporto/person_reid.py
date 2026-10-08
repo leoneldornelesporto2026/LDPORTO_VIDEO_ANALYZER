@@ -359,8 +359,13 @@ def build_person_identities(vision, cfg=None):
         metrics["track_duration_" + label] = _quantile(durations, fraction)
         metrics["observations_per_track_" + label] = _quantile([track["observation_count"] for track in tracks], fraction)
         metrics["tracks_per_person_" + label] = _quantile([len(person["track_ids"]) for person in identities], fraction)
+    from .visual_identity_audit import audit_embedding_gaps
+    gap_audit = audit_embedding_gaps(vision, {'tracklets': tracks})
+    metrics['embedding_gap_tracklet_count'] = gap_audit['tracklets_without_embedding']
+    metrics['micro_embedding_absence_by_cause'] = gap_audit['micro_without_embedding_by_cause']
     return ok({"identities": identities, "tracklets": tracks, "tracklet_to_person": mapping,
-               "merge_decisions": decisions, "metrics": metrics}, "ok" if identities else "partial",
+               "merge_decisions": decisions, "metrics": metrics,
+               "embedding_gap_audit": gap_audit}, "ok" if identities else "partial",
               ["Identidades sao anonimas dentro do video, nao pessoas civis unicas.",
                "Micro-tracklets ficam na evidencia bruta; somente reentrada facial estrita pode anexa-los a identidade existente; posicao nao e usada."])
 

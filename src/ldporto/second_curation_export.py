@@ -58,6 +58,13 @@ def _final_commercial_classification(candidate):
     if prior.get('eligibility') == 'excluded':
         return {**prior, 'eligibility': 'excluded',
                 'export_reclassification': 'upstream_exclusion_preserved'}
+    canonical_speech = classify_content(candidate.get('transcript_literal', ''),
+                                        candidate.get('segment_ids', []))
+    if canonical_speech.get('eligibility') == 'excluded':
+        return {**canonical_speech, 'export_reclassification': 'canonical_speech_exclusion'}
+    if prior.get('eligibility') == 'review':
+        return {**prior, 'eligibility': 'review',
+                'export_reclassification': 'upstream_commercial_review_preserved'}
     if local.get('eligibility') == 'excluded':
         return {**local, 'export_reclassification': 'local_exclusion_added'}
     return {**local, 'export_reclassification': 'local_eligible'}
@@ -76,7 +83,7 @@ def _reconcile_social_output(social_output, candidates, editorial_ready):
         if not editorial_ready or not candidate or not candidate.get('default_shortlist_eligible', False) or not candidate.get('publication_eligible', False):
             removed.append({'candidate_id': cid, 'reason': 'editorial_not_ready' if not editorial_ready else 'candidate_excluded_or_unavailable'})
             continue
-        if candidate.get('commercial_classification', {}).get('eligibility') == 'excluded':
+        if candidate.get('commercial_classification', {}).get('eligibility') != 'eligible':
             removed.append({'candidate_id': cid, 'reason': 'commercial_excluded'})
             continue
         row = deepcopy(story)
@@ -414,7 +421,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                 candidate['candidate_state_reason'] = integrity_reason or 'editorial_integrity_unavailable'
                 candidate['default_shortlist_eligible'] = False
                 candidate['publication_eligible'] = False
-            if candidate['commercial_classification']['eligibility'] == 'excluded':
+            if candidate['commercial_classification']['eligibility'] != 'eligible':
                 candidate['default_shortlist_eligible'] = False
                 candidate['publication_eligible'] = False
             # The legacy 'publication_eligible' field refers to candidate
@@ -480,6 +487,14 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         write('editorial/default_shortlist.json', {'candidate_ids': shortlist, 'rank_is_first_pass_not_final': True})
         write('editorial/excluded_candidates.json', excluded)
         write('editorial/excluded_commercials.json', [row for row in candidates if row['commercial_classification']['eligibility'] == 'excluded'])
+        write('editorial/commercial_blocks_s8.json', analysis.get('commercial_blocks', []))
+        write('editorial/commercial_review_s8.json', [
+            {'candidate_id': row['candidate_id'], 'commercial': row['commercial_classification'],
+             'block_refs': row.get('commercial_block_refs', []),
+             'gate_reason': row.get('commercial_gate_reason')}
+            for row in candidates if row['commercial_classification']['eligibility'] != 'eligible'])
+        write('visual/broadcast_graphics_s8.json', analysis.get('broadcast_graphics', {}))
+        write('visual/commercial_ocr_s8.json', analysis.get('commercial_visual_s8', {}))
         metrics = dict(analysis.get('candidate_metrics') or {})
         metrics['excluded_commercial_count'] = sum(row['commercial_classification']['eligibility'] == 'excluded' for row in candidates)
         metrics['final_shortlist_count'] = len(shortlist)

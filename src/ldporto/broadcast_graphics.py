@@ -44,7 +44,7 @@ def face_safe_height(graphics, default=1.):
 def inspect_candidate_graphics(video, candidates, limit=16):
     """Eight seeks per selected candidate; never decode a full programme for graphics."""
     cap = cv2.VideoCapture(str(video))
-    intervals, sampled = [], 0
+    intervals, sampled, inspected_ids = [], 0, []
     try:
         if not cap.isOpened():
             return {'schema_version': '1.0', 'status': 'unavailable', 'intervals': [], 'sampled_frames': 0}
@@ -60,12 +60,16 @@ def inspect_candidate_graphics(video, candidates, limit=16):
                 if ok:
                     frames.append(frame)
             sampled += len(frames)
+            inspected_ids.append(row.get('moment_id'))
             result = detect_graphics(frames, fps=len(frames) / (end - start))
             intervals.append({'start': start, 'end': end, 'moment_id': row.get('moment_id'), **result})
     finally:
         cap.release()
     return {'schema_version': '1.0', 'status': 'measured', 'intervals': intervals,
-            'sampled_frames': sampled, 'scope': 'selected_candidate_windows', 'ocr_required': False}
+            'sampled_frames': sampled, 'scope': 'selected_candidate_windows', 'ocr_required': False,
+            'requested_candidate_count': len(candidates), 'inspected_candidate_ids': inspected_ids,
+            'uninspected_candidate_count': max(0, len(candidates)-len(inspected_ids)),
+            'absence_of_graphics_outside_sampled_windows_verified': False}
 
 
 class GraphicsAccumulator:

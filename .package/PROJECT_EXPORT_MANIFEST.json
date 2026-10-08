@@ -1,19 +1,8 @@
 {
-  "package_type": "LDPORTO_PROJECT_EXPORT",
-  "release": "R4.9-S7-TRANSCRIPTION-TARGETED-ASR-SUBTITLES",
-  "created_utc": "2026-10-08T02:57:41.729777+00:00",
-  "source_root": "relative_project_root",
-  "integrity_note": "sha256 applies to listed files; self-manifest excluded",
-  "tests": {
-    "passed": 555,
-    "skipped": 2,
-    "failed": 0,
-    "host_os": "Linux",
-    "python_3_11_ast_file_count": 157,
-    "windows_live_validation": "not_performed",
-    "emerson_original_audio_benchmark": "not_available"
-  },
-  "project_file_count": 283,
+  "release": "R4.9-S8",
+  "base": "R4.9-S7",
+  "package_contents": "complete_source_and_tests_without_models_or_media",
+  "file_count_excluding_manifest": 285,
   "files": [
     {
       "path": ".gitignore",
@@ -22,13 +11,13 @@
     },
     {
       "path": ".package/PROJECT_EXPORT_README.txt",
-      "bytes": 599,
-      "sha256": "2132650b7b743320171b607ac6f8fd034ba46f364e5aa715c574e92404995401"
+      "bytes": 318,
+      "sha256": "cb725fdbbc4209c09e7b9c949b9e6bdb042a4773d3bebff54dac75e09322b11c"
     },
     {
       "path": ".package/PROJECT_EXPORT_TREE.txt",
-      "bytes": 9032,
-      "sha256": "28d897d2c65a7319fb9ed26c0bde757e978d9ae60e3e34d762eb474a7e4b9cdd"
+      "bytes": 9139,
+      "sha256": "b8c74bce2ad24ec279314dad8ca6012f8b11237ee9ef3fcd7971024053342691"
     },
     {
       "path": "ABRIR_ANALYZER.bat",
@@ -37,8 +26,8 @@
     },
     {
       "path": "CHANGELOG_V43.md",
-      "bytes": 6394,
-      "sha256": "b04c9e897596b59cf371fcfe3f2beede0b264e7f37e339ca4eacee54e25867b6"
+      "bytes": 7495,
+      "sha256": "3b29f361cc14580c907b508599d17d85a4ec4af7d006a6a724b5987d2dffef4e"
     },
     {
       "path": "CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat",
@@ -72,8 +61,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 17346,
-      "sha256": "f7f12d27eb96a71b152bd86f045b2af6d11e838017167e4a21da919e749ea470"
+      "bytes": 18050,
+      "sha256": "259762a8bbcc6e467a06c6e504dbfbb5dacdc82ba0f60418056b5bc8bc511ed2"
     },
     {
       "path": "TESTAR_WINDOWS.bat",
@@ -214,6 +203,11 @@
       "path": "docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md",
       "bytes": 6531,
       "sha256": "de44b9aeefbdc149a1bef7c99e7a77f2061c0b5fd3720d39676adb942f3f928f"
+    },
+    {
+      "path": "docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md",
+      "bytes": 7966,
+      "sha256": "d97eeba472effec384515e1f070405a8c7aa4bcb986af02a681afa5534e4ca1b"
     },
     {
       "path": "docs/TEST_REPORT_V3.md",
@@ -596,6 +590,11 @@
       "sha256": "bc3e663f0b887bd74e2b25d00dbf75f3cd31caba313a8049e4c0d1d9b97ff63b"
     },
     {
+      "path": "scripts/dev/audit_commercial_stories_s8.py",
+      "bytes": 7158,
+      "sha256": "bfc76dd6ba2a3004af3d61ec7574cafc37c6daf4b730b124a48cd32d9a920447"
+    },
+    {
       "path": "scripts/dev/audit_pipeline_integrity_s2.py",
       "bytes": 2682,
       "sha256": "6b184d69fcaaddb1ac1598421e8c0b2b98a459718090ebf68b608cb3aca9b9ab"
@@ -807,8 +806,8 @@
     },
     {
       "path": "src/ldporto/broadcast_graphics.py",
-      "bytes": 4819,
-      "sha256": "7f9c9bff1eff73a95ca9fb0573381c2b900eed679f3d0dff15927131fcacea3e"
+      "bytes": 5155,
+      "sha256": "8f845f75709c0e19b486cea6543821138fd8e04a16be045e95e9b1cc628f72f7"
     },
     {
       "path": "src/ldporto/camera_director.py",
@@ -842,8 +841,8 @@
     },
     {
       "path": "src/ldporto/commercial_gate.py",
-      "bytes": 6162,
-      "sha256": "0c30137fc7cd9ed17ac8912db48046587c554ffd5521147e4d0ab693854baaeb"
+      "bytes": 16066,
+      "sha256": "b769bb7b0b90cb31af0182c638f09ea3d79a1f2bc3a6d1cd223720252d1b0d61"
     },
     {
       "path": "src/ldporto/compact_artifacts.py",
@@ -987,8 +986,8 @@
     },
     {
       "path": "src/ldporto/pipeline.py",
-      "bytes": 26703,
-      "sha256": "80d6ce1316d00b52bdcb0a4de2763c96c8bfa754727b0d2cf306878cb3af7aeb"
+      "bytes": 27380,
+      "sha256": "45e8ffbdcbed497cfab57b47d363da9e71976f42af550b00cd703fa17a9f5bbd"
     },
     {
       "path": "src/ldporto/preflight.py",
@@ -1022,8 +1021,8 @@
     },
     {
       "path": "src/ldporto/reports.py",
-      "bytes": 47564,
-      "sha256": "3af3ef0c66cb5105740715146183760584d89389e7bb3d7995f0dcfb5ad1fb62"
+      "bytes": 47727,
+      "sha256": "4477365c3cec70a8a927767ecfd636f12e6d429793ff93dec5994f73bcbacc3d"
     },
     {
       "path": "src/ldporto/review_overrides.py",
@@ -1047,8 +1046,8 @@
     },
     {
       "path": "src/ldporto/second_curation.py",
-      "bytes": 23529,
-      "sha256": "4459c33ce2d0f85eb5c19273c82547efdcdc19af99c0106b8303dcca497d73a7"
+      "bytes": 23689,
+      "sha256": "e31f2829c81998f049317d795a61648df1218bf596f7efd0f31a8dc236654767"
     },
     {
       "path": "src/ldporto/second_curation_decisions.py",
@@ -1057,8 +1056,8 @@
     },
     {
       "path": "src/ldporto/second_curation_export.py",
-      "bytes": 54774,
-      "sha256": "45cbae54f88bac485afd226b4273fba2ea0a297e40e4c1b0ac243ca79dcaa947"
+      "bytes": 55912,
+      "sha256": "860d613ce9548de669b4905fd7ebadafeaa09fc58b5a78832386f04ff15f476c"
     },
     {
       "path": "src/ldporto/semantic.py",
@@ -1072,8 +1071,8 @@
     },
     {
       "path": "src/ldporto/social_output.py",
-      "bytes": 17664,
-      "sha256": "5907fa31052f3fab8cc57b8b379ab3f4a945c75b78c66aa2bc0a6823735911a0"
+      "bytes": 28078,
+      "sha256": "04af8577da1226ebcb047c542313fa4e2f223444cc5e3450ae2a4532e17f145c"
     },
     {
       "path": "src/ldporto/speaker_goldset.py",
@@ -1244,6 +1243,11 @@
       "path": "src/tests/test_s7_subtitle_review.py",
       "bytes": 10339,
       "sha256": "884940a19dc0a61349e546b71ecdd1e13a258c85883758842a21ef2becacc285"
+    },
+    {
+      "path": "src/tests/test_s8_commercial_graphics_stories.py",
+      "bytes": 14297,
+      "sha256": "1989b162e948b093bf0a3844269fef48d276a56c2c6db3408d3df75aa73bb0b8"
     },
     {
       "path": "src/tests/test_understanding_session1.py",
@@ -1425,5 +1429,8 @@
       "bytes": 5753,
       "sha256": "de05782745cc5731e5bdc67a6871fe216f22348ae19c128aab3b65e6ddb33ccf"
     }
-  ]
+  ],
+  "python_3_11_syntax": "checked",
+  "full_test_suite": "573 passed, 2 skipped",
+  "real_world_homologation": "PENDING_Windows_Tesseract_source_media"
 }

@@ -268,13 +268,50 @@ def duration_contract(cfg=None):
             "allow_story_exception": cfg.get("allow_story_exception", True)}
 
 
+_STORY_COMPONENT_KEYS = ("setup", "development", "payoff")
+
+
+def _story_component_ids(story, key):
+    """Read a real arc component or a legacy duration-proof list of source IDs.
+
+    A duration exception is saved as ``{setup: [IDs], ...}`` by assess_duration.
+    A regular story arc uses ``{setup: {segment_ids: [IDs]}, ...}`` instead.
+    Both encode the *same observed segment evidence*. Reject all other shapes;
+    never synthesize a missing component, ID, or timestamp.
+    """
+    if not isinstance(story, dict):
+        return []
+    value = story.get(key)
+    if isinstance(value, dict):
+        value = value.get("segment_ids")
+    if not isinstance(value, (list, tuple)) or not value:
+        return []
+    if not all(isinstance(item, str) and item.strip() for item in value):
+        return []
+    if len(set(value)) != len(value):
+        return []
+    return list(value)
+
+
 def _complete_story(story, segment_ids):
-    if not story or story.get("kind") not in (None, "complete_story"):
+    if not isinstance(story, dict) or story.get("kind") not in (None, "complete_story"):
         return False
     if story.get("kind") is None and story.get("completeness") != "supported_setup_development_payoff":
         return False
-    components = [(story.get(key) or {}).get("segment_ids", []) for key in ("setup", "development", "payoff")]
-    return all(component and set(component) <= set(segment_ids) for component in components)
+    if not isinstance(segment_ids, (list, tuple)) or not segment_ids:
+        return False
+    # Validate against the selected contiguous source sequence, not arbitrary
+    # semantic IDs. Unknown components or overlapping/reversed arcs cannot earn
+    # an exception just because the clip happens to be long.
+    source_indices = {segment_id: index for index, segment_id in enumerate(segment_ids)
+                      if isinstance(segment_id, str)}
+    indices = []
+    for key in _STORY_COMPONENT_KEYS:
+        component = _story_component_ids(story, key)
+        if not component or any(segment_id not in source_indices for segment_id in component):
+            return False
+        indices.append([source_indices[segment_id] for segment_id in component])
+    return max(indices[0]) < min(indices[1]) and max(indices[1]) < min(indices[2])
 
 
 def assess_duration(start, end, cfg=None, story=None, segment_ids=None):
@@ -284,7 +321,9 @@ def assess_duration(start, end, cfg=None, story=None, segment_ids=None):
     target = contract["target_min_seconds"] <= duration <= contract["target_max_seconds"]
     exception = bool(hard and duration > contract["target_max_seconds"] and contract["allow_story_exception"] and
                      _complete_story(story, segment_ids or []))
-    proof = {key: (story.get(key) or {}).get("segment_ids", []) for key in ("setup", "development", "payoff")} if exception else None
+    # Public duration-proof contract is a mapping of source-ID lists. The
+    # ranking stage must be able to consume exactly this representation.
+    proof = {key: _story_component_ids(story, key) for key in _STORY_COMPONENT_KEYS} if exception else None
     return {"duration_contract": contract, "duration_exception": exception,
             "duration_exception_reason": "grounded_complete_story_requires_contiguous_setup_and_payoff" if exception else None,
             "duration_exception_evidence": proof,
@@ -320,7 +359,7 @@ def ending_quality(segment):
             "method": "observed_sentence_ending_not_semantic_payoff_probability"}
 
 
-def optimize_boundaries(moment, segments, cfg=None, story=None):
+def optimize_boundaries(moment, segments, cfg=None, story=None, qa_pairs=None):
     """Choose source sentence/story boundaries; never fabricate times to meet duration."""
     cfg = cfg or {}
     by_id = {segment["segment_id"]: index for index, segment in enumerate(segments)}
@@ -344,6 +383,26 @@ def optimize_boundaries(moment, segments, cfg=None, story=None):
         story_indices = [index for index, segment in enumerate(segments) if story["start"] <= segment["start"] and segment["end"] <= story["end"]]
         if story_indices:
             first, last = min(first, min(story_indices)), max(last, max(story_indices))
+    # A reply is not standalone if the source question is missing. Join only
+    # a grounded, contiguous, temporally relevant Q&A span within hard limits.
+    qa_expansion = []
+    core_duration = max(core_end - core_start, 1e-6)
+    for pair in qa_pairs or []:
+        if not pair.get('question_answer_complete') or pair.get('answer_start') is None:
+            continue
+        answer_start, answer_end = pair['answer_start'], pair['answer_end']
+        relevant = max(0.0, min(core_end, answer_end) - max(core_start, answer_start)) / core_duration
+        if relevant < .25 or abs(pair['question_start'] - core_start) > 40:
+            continue
+        pair_ids = pair.get('evidence_segment_ids') or []
+        if not pair_ids or any(sid not in by_id for sid in pair_ids):
+            continue
+        q_indices = [by_id[sid] for sid in pair_ids]
+        a, b = min(first, min(q_indices)), max(last, max(q_indices))
+        if segments[b]['end'] - segments[a]['start'] > duration_contract(cfg)['hard_max_seconds']:
+            continue
+        first, last = a, b
+        qa_expansion.append(pair.get('question_id'))
     if last + 1 < len(segments) and not segments[last].get("text", "").rstrip().endswith((".", "?", "!")):
         if segments[last + 1]["end"] - core_end <= 30:
             last += 1
@@ -355,7 +414,8 @@ def optimize_boundaries(moment, segments, cfg=None, story=None):
     assessment = assess_duration(start, end, cfg, story, selected_ids)
     return {"ideal_start": start, "ideal_end": end,
             "alternate_starts": sorted({core_start, start}), "alternate_ends": sorted({core_end, end}),
-            "boundary_reason": "grounded_sentence_reference_and_story_completion",
+            "boundary_reason": "grounded_sentence_reference_story_and_qa_completion",
+            "qa_boundary_expansion_ids": qa_expansion,
             "context_added_before": max(0.0, core_start - start), "context_added_after": max(0.0, end - core_end),
             "clean_opening": opening_assessment["clean"], "opening_assessment": opening_assessment,
             "clean_ending": ending_assessment["clean"], "ending_assessment": ending_assessment,
@@ -373,9 +433,17 @@ def rank_candidate(candidate, cfg=None):
                      "content_type": classification["content_type"], "commercial_score": classification["commercial_score"]}
     start, end = candidate.get("ideal_start", 0), candidate.get("ideal_end", 0)
     exception_proof = candidate.get("duration_exception_evidence")
-    story = {"kind": "complete_story", **exception_proof} if candidate.get("duration_exception") and exception_proof else None
+    # Legacy proof has ID lists, whereas a story arc has component objects.
+    # Revalidate the recorded proof as source IDs, without assuming .get() on
+    # a list and without promoting malformed/partial evidence to a story.
+    story = ({"kind": "complete_story", "completeness": "supported_setup_development_payoff",
+              **{key: {"segment_ids": _story_component_ids(exception_proof, key)}
+                 for key in _STORY_COMPONENT_KEYS}}
+             if candidate.get("duration_exception") and isinstance(exception_proof, dict) else None)
     duration = assess_duration(start, end, cfg, story, candidate.get("boundary_segment_ids") or candidate.get("evidence_segment_ids", []))
-    candidate = {**candidate, **duration}
+    candidate = {**candidate, **duration,
+                 "duration_exception_proof_rejected": bool(candidate.get("duration_exception") and
+                                                           not duration["duration_exception"])}
     components = {"hook": finite_score(candidate.get("hook_score")),
                   "standalone_clarity": finite_score(candidate.get("standalone_score")),
                   "clean_opening": float(candidate["clean_opening"]) if isinstance(candidate.get("clean_opening"), bool) else None,
@@ -404,7 +472,8 @@ def rank_candidate(candidate, cfg=None):
                  "incomplete_ending": .15 if candidate.get('clean_ending') is False else 0.0,
                  "context_dependency": .1 if context == "required" else 0.0,
                  "unresolved_evidence": .05 if context == "unresolved" else 0.0,
-                 "duplicate": 0.0}
+                 "duplicate": 0.0,
+                 "editorial_incomplete": .25 if candidate.get("editorial_blockers") else 0.0}
     final = max(0.0, min(1.0, raw - sum(penalties.values()))) if raw is not None else None
     return {**candidate, "editorial_score_raw": raw, "score_components": components, "penalties": penalties,
             "editorial_quality_score": round(raw, 3) if raw is not None else None,
@@ -415,10 +484,11 @@ def rank_candidate(candidate, cfg=None):
                                     'story_not_required_for_monologue': True, 'qa_not_required_for_monologue': True,
                                     'score_is_probability': False},
             "score_weights": weights, "observed_weight": observed_weight,
-            "editorial_score_final": round(final, 3) if final is not None else None, "editorial_score": round(final, 3) if final is not None else None, "ranking_version": "4.4.0",
+            "editorial_score_final": round(final, 3) if final is not None else None, "editorial_score": round(final, 3) if final is not None else None, "ranking_version": "4.9.3",
             "score_method": "explicit_weighted_observed_utility_not_probability",
             "default_shortlist_eligible": not commercial and (not classification or classification.get("eligibility") not in {"review", "excluded"}) and
-                duration["duration_default_eligible"] and candidate.get("clean_opening") is True and candidate.get("clean_ending") is True and not missing_required}
+                duration["duration_default_eligible"] and candidate.get("clean_opening") is True and candidate.get("clean_ending") is True and
+                not missing_required and not candidate.get("editorial_blockers")}
 
 
 # Generated by GitHub Copilot - Oct-05-2026

@@ -8,7 +8,8 @@ import numpy as np
 import soundfile as sf
 from .core import ok, Unavailable, read_json, overlap, finite_or_none
 from .config import asset_path
-from .visual_sampling import SamplingScheduler, ShortShotSamplingPlan
+from .visual_sampling import SamplingScheduler, ShortShotSamplingPlan, ShotBoundarySamplingPlan
+from .face_quality import assess_face
 from .vision_checkpoint import VisionCheckpointStore
 
 
@@ -210,7 +211,7 @@ class Tracker:
                            "face_embedding_observed": observed_embedding,
                            "embedding_reused": embedding is not None and not observed_embedding,
                            "face_embedding": np.asarray(d["embedding"]).tolist() if observed_embedding else None,
-                           "embedding_method": "opencv_sface" if embedding is not None else None})
+                           "embedding_method": "opencv_sface" if observed_embedding else None})
         for person_id, track in self.tracks.items():
             if person_id not in used:
                 track["state"] = "temporarily_lost"
@@ -224,6 +225,7 @@ class PersonDetectionEngine:
         self.phase_seconds=defaultdict(float)
         self.calls = defaultdict(int)
         self.face_history = []
+        self.last_rescue_time = -math.inf
         self.last_body_time = -math.inf
         self.last_shot = None
         self.face = self.sface = self.hog = self.yolo = None
@@ -232,7 +234,8 @@ class PersonDetectionEngine:
         self.overlap_budget = cpu_overlap_budget(requested=cfg.get("parallel_hog_with_face", False))
         yunet, sface = asset_path(cfg["yunet_model"]), asset_path(cfg["sface_model"])
         if yunet.is_file():
-            self.face = cv2.FaceDetectorYN.create(str(yunet), "", (320, 320), 0.85, 0.3, 5000)
+            self.face = cv2.FaceDetectorYN.create(str(yunet), "", (320, 320),
+                float(cfg.get("yunet_score_threshold", .82)), 0.3, 5000)
             if sface.is_file():
                 self.sface = cv2.FaceRecognizerSF.create(str(sface), "")
         else:
@@ -242,12 +245,12 @@ class PersonDetectionEngine:
             notes.append("SFace ausente: IDs persistem apenas por continuidade; uma pessoa "
                          "pode receber novo ID após trocar câmera. Contagem é de tracks.")
         if cfg["body_detection"]:
-            if cfg["body_backend"] == "yolo":
+            if cfg["body_backend"] in ("yolo", "auto"):
                 try:
                     from ultralytics import YOLO
                     model = asset_path(cfg["yolo_model"])
-                    if offline and not model.is_file():
-                        raise Unavailable("YOLO offline exige modelo local.")
+                    if not model.is_file() and (offline or cfg["body_backend"] == "auto"):
+                        raise Unavailable("YOLO local nao encontrado; nao baixar modelo implicitamente.")
                     self.yolo = YOLO(str(model) if model.is_file() else cfg["yolo_model"])
                 except Exception as exc:
                     notes.append(f"YOLO indisponível ({type(exc).__name__}); usando HOG.")
@@ -291,7 +294,8 @@ class PersonDetectionEngine:
         if not hasattr(self, "calls"):
             self.calls = defaultdict(int)
             self.face_history, self.last_body_time, self.last_shot = [], -math.inf, None
-        if shot_id != self.last_shot:
+        shot_changed = shot_id != self.last_shot
+        if shot_changed:
             self.face_history, self.last_body_time = [], -math.inf
         self.calls["face_detection_calls"] += 1
         # Scheduled refresh is independent of face results. Overlap exactly the
@@ -305,13 +309,59 @@ class PersonDetectionEngine:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             for values in self.face.detectMultiScale(gray, 1.1, 5, minSize=(30, 30)):
                 faces.append({"face_bbox": bbox(values, width, height),
-                              "confidence": None, "embedding": None, "eyes": None})
+                              "confidence": None, "embedding": None, "eyes": None,
+                              "face_quality": None, "embedding_missing_reason": "sface_unavailable_haar_fallback",
+                              "face_detection_source": "haar"})
         else:
             self.face.setInputSize((width, height))
             _, detections = self.face.detect(frame)
+            # A second, bounded YuNet pass may recover small faces in a long
+            # studio shot. Never hallucinate a face or stretch a face embedding.
+            base_count = len(detections) if detections is not None else 0
+            if self.cfg.get('face_rescue_upsample', False) and base_count < 2:
+                cooldown = float(self.cfg.get('face_rescue_cooldown_seconds', 2.0))
+                # Empty shots deserve an immediate retry. When a face is already
+                # visible, limit the multi-face rescue to periodic checks.
+                if ((not base_count and shot_changed) or time is None or
+                        time - getattr(self, 'last_rescue_time', -math.inf) >= cooldown):
+                    self.last_rescue_time = time if time is not None else -math.inf
+                    multiplier = float(self.cfg.get('face_rescue_scale', 1.5))
+                    max_pixels = int(self.cfg.get('face_rescue_max_pixels', 2500000))
+                    if width*height*multiplier*multiplier <= max_pixels:
+                        try:
+                            enlarged = cv2.resize(frame, None, fx=multiplier, fy=multiplier)
+                            self.face.setInputSize((enlarged.shape[1], enlarged.shape[0]))
+                            self.calls['face_rescue_calls'] += 1
+                            _, rescued = self.face.detect(enlarged)
+                            if rescued is not None and len(rescued):
+                                corrected = rescued.copy()
+                                corrected[:, :14] /= multiplier
+                                kept = [row for row in detections] if detections is not None else []
+                                added = 0
+                                for proposal in sorted(corrected, key=lambda r: -float(r[14])):
+                                    box = bbox(proposal[:4], width, height)
+                                    if all(iou(box, bbox(existing[:4], width, height)) < .45
+                                           for existing in kept):
+                                        kept.append(proposal)
+                                        added += 1
+                                if kept:
+                                    detections = np.stack(kept)
+                                self.calls['face_rescue_detected_faces'] += added
+                        finally:
+                            self.face.setInputSize((width, height))
+                    else:
+                        self.calls['face_rescue_budget_skipped'] += 1
             for row in detections if detections is not None else []:
                 embedding = None
                 face_box = bbox(row[:4], width, height)
+                eyes = [{'x': float(row[i])/width, 'y': float(row[i+1])/height}
+                        for i in (4, 6)]
+                quality = (assess_face(frame, face_box, confidence=finite_or_none(float(row[14])),
+                            eyes=eyes, min_pixels=int(self.cfg.get('face_min_pixels_for_embedding', 28)),
+                            min_sharpness=float(self.cfg.get('face_min_sharpness_for_embedding', 18)),
+                            min_confidence=float(self.cfg.get('face_min_confidence_for_embedding', .74)))
+                    if self.cfg.get('face_quality_gate', False) else None)
+                reason = None
                 history_matches = [(iou(face_box, previous["bbox"]), index, previous)
                                    for index, previous in enumerate(self.face_history)
                                    if index not in used_history and iou(face_box, previous["bbox"]) >= .8]
@@ -322,7 +372,7 @@ class PersonDetectionEngine:
                     time - matched[2]["embedding_time"] >= self.cfg.get("embedding_interval_seconds", 1.0))
                 if matched:
                     used_history.add(matched[1])
-                if self.sface and embedding_due:
+                if self.sface and embedding_due and (quality is None or quality['embedding_eligible']):
                     embedding_started=perf_counter()
                     self.calls["embedding_calls"] += 1
                     if short_shot:
@@ -335,17 +385,28 @@ class PersonDetectionEngine:
                             raise ValueError("Face embedding nao finito ou degenerado")
                         embedding = embedding / norm
                         self.calls["successful_embeddings"] += 1
-                    except (cv2.error, ValueError):
+                    except (cv2.error, ValueError, TypeError):
                         embedding = None
+                        reason = 'embedding_extraction_failed'
                         self.calls["failed_embeddings"] += 1
                     embedding_seconds+=perf_counter()-embedding_started
+                elif self.sface and quality is not None and not quality['embedding_eligible']:
+                    reason = 'quality_rejected'
+                    self.calls['embedding_quality_rejections'] += 1
+                    for quality_reason in quality['rejection_reasons']:
+                        self.calls['quality_'+quality_reason] += 1
                 elif self.sface:
+                    reason = 'embedding_not_due'
                     self.calls["embedding_calls_avoided"] += 1
+                else:
+                    reason = 'sface_unavailable'
+                    self.calls['face_without_sface'] += 1
                 faces.append({"face_bbox": face_box,
                               "confidence": finite_or_none(float(row[14])), "embedding": embedding,
                               "embedding_time": time if embedding is not None else matched[2]["embedding_time"] if matched else -math.inf,
-                              "eyes": [{"x": float(row[i])/width, "y": float(row[i+1])/height}
-                                       for i in (4, 6)]})
+                              "eyes": eyes, "face_quality": quality,
+                              "embedding_missing_reason": reason,
+                              "face_detection_source": "yunet"})
         self.phase_seconds['face_embedding']+=embedding_seconds
         self.phase_seconds['face_detection']+=max(0.0,perf_counter()-face_started-embedding_seconds)
         body_started=perf_counter()
@@ -384,13 +445,18 @@ class PersonDetectionEngine:
                                "bbox_kind": "body" if body else "face",
                                "face_bbox": f["face_bbox"], "face_visible": True,
                                "body_visible": body is not None, "eyes_position": f["eyes"],
-                               "embedding": f["embedding"], "detection_confidence": f["confidence"]})
+                               "embedding": f["embedding"], "detection_confidence": f["confidence"],
+                               "face_quality": f.get('face_quality'),
+                               "embedding_missing_reason": f.get('embedding_missing_reason'),
+                               "face_detection_source": f.get('face_detection_source')})
         for i, b in enumerate(bodies):
             if i not in used_bodies:
                 detections.append({"bbox": b["bbox"], "bbox_kind": "body", "face_bbox": None,
                                    "face_visible": False, "body_visible": True,
                                    "eyes_position": None, "embedding": None,
-                                   "detection_confidence": b["confidence"]})
+                                   "detection_confidence": b["confidence"],
+                                   "embedding_missing_reason": "body_only_no_face_detected",
+                                   "face_quality": None})
         return detections
 
 
@@ -487,6 +553,11 @@ class VisionEngine:
             enabled=cfg.get("short_shot_extra_sampling", True),
             max_seconds=cfg.get("short_shot_max_seconds", 1.5),
             start_time=float(resumed["end"]) if resumed else 0.)
+        boundary_plan = ShotBoundarySamplingPlan(scenes,
+            enabled=cfg.get('boundary_extra_sampling', False),
+            short_max_seconds=cfg.get('short_shot_max_seconds', 1.5),
+            inset_seconds=cfg.get('boundary_inset_seconds', .12),
+            start_time=float(resumed['end']) if resumed else 0.)
         if resumed:
             scheduler.burst_until=float(resumed.get('sampling_state',{}).get('burst_until',0))
             scheduler.last_speaker=resumed.get('sampling_state',{}).get('last_speaker')
@@ -515,7 +586,8 @@ class VisionEngine:
                     continue
                 resume_cutoff = None
                 short_shot_due = short_shot_plan.due(time)
-                if time+1/fps < next_sample and not short_shot_due:
+                boundary_due = boundary_plan.due(time)
+                if time+1/fps < next_sample and not short_shot_due and not boundary_due:
                     continue
                 phase_started=perf_counter()
                 got, frame = cap.retrieve()
@@ -549,6 +621,8 @@ class VisionEngine:
                     except (cv2.error, ValueError, TypeError):
                         source_camera_motion = None
                 quality = {"time": time, "frame": index, "scene_id": scene_id,
+                           "short_shot_scheduled": bool(short_shot_due),
+                           "boundary_scheduled": bool(boundary_due),
                            "brightness": finite_or_none(float(gray.mean()/255)),
                            "blur_laplacian_variance": finite_or_none(float(cv2.Laplacian(gray, cv2.CV_64F).var())),
                            "camera_motion_proxy": motion, "source_camera_motion": source_camera_motion,
@@ -565,6 +639,10 @@ class VisionEngine:
                 timings['face_body_embedding_detection']+=perf_counter()-phase_started
                 phase_started=perf_counter()
                 current = tracker.update(detections, time, scene_id)
+                if boundary_due:
+                    quality['boundary_face_observed'] = any(d.get('face_visible') for d in current)
+                    quality['boundary_fresh_embedding_observed'] = any(
+                        d.get('face_embedding_observed') for d in current)
                 if short_shot_due:
                     quality['short_shot_face_observed'] = any(d.get('face_visible') for d in current)
                     quality['short_shot_fresh_embedding_observed'] = any(
@@ -716,6 +794,11 @@ class VisionEngine:
                    "sample_fps": cfg["sample_fps"], "speech_sample_fps": cfg["speech_sample_fps"],
                    "performance": {'elapsed_seconds':perf_counter()-stage_started,'phase_seconds':{**dict(timings),**dict(getattr(detector,'phase_seconds',{}))},
                                    'decoded_frames':frame_index,'sampled_frames':len(frames),
+                                   'boundary_scheduled_frames':sum(bool(frame.get('boundary_scheduled')) for frame in frames),
+                                   'boundary_scheduled_frames_with_face':sum(bool(frame.get('boundary_face_observed')) for frame in frames),
+                                   'boundary_scheduled_frames_with_embedding':sum(bool(frame.get('boundary_fresh_embedding_observed')) for frame in frames),
+                                   'face_detection_backend': 'haar' if isinstance(getattr(detector, 'face', None), cv2.CascadeClassifier) else 'yunet_or_test_backend',
+                                   'body_detection_backend': checkpoint_backend['body'],
                                    'short_shot_scheduled_frames':sum(bool(frame.get('short_shot_scheduled')) for frame in frames),
                                    'short_shot_scheduled_frames_with_face':sum(bool(frame.get('short_shot_face_observed')) for frame in frames),
                                    'short_shot_scheduled_frames_with_fresh_embedding':sum(bool(frame.get('short_shot_fresh_embedding_observed')) for frame in frames),

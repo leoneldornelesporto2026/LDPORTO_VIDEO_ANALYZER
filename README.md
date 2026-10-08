@@ -1,3 +1,15 @@
+## R4.9/S4 — Tracking e recuperação facial (2026-10-07)
+
+- YuNet multiescala orçada; quality gate facial; amostragem nos limites dos shots.
+- Preferência por YOLO local para pessoa sentada (fallback HOG identificado); Re-ID facial conservador.
+- Auditoria das razões da ausência de embeddings e CSV/contact sheet de revisão humana.
+- Procedimento/limitações: [`docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md`](docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md).
+- A execução real dos 742 micro-tracklets não acompanha o ZIP: **sem promessa de melhora numérica**.
+
+## R4.9 / Sessão 2 — Integridade do pipeline
+
+A nova auditoria read-only (`scripts/dev/audit_pipeline_integrity_s2.py`) detecta inconsistências de prontidão, comerciais e Stories sem reprocessar vídeo. Leia `docs/S2_PIPELINE_INTEGRITY_HARDENING.md`. `SECOND_CURATION_READY` continua significando pronto **para revisão humana**, não para publicação.
+
 > **R4.7 — Rodada 4 Homologação e segurança editorial:** rechecagem comercial final para Stories/shortlist, consistência dos manifestos, bridge para Curator V2, diagnóstico de preview e prontidão explícita. Ver [docs/R4_FINAL_HOMOLOGACAO_20261007.md](docs/R4_FINAL_HOMOLOGACAO_20261007.md).
 
 > **R4.6 — Rodada 3B Performance segura:** cache semântico sem regravação, opções A/B de prompt compacto e HOG/face CPU (desligadas por padrão), instrumentação e benchmarks. Consulte [docs/R3B_PERFORMANCE_20261007.md](docs/R3B_PERFORMANCE_20261007.md).

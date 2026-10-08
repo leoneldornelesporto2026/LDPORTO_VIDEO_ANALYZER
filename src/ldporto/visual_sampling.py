@@ -71,3 +71,34 @@ class ShortShotSamplingPlan:
             self.index += 1
         self.due_count += 1
         return True
+
+
+class ShotBoundarySamplingPlan:
+    """At most two additional samples per *long* source shot, on each side of cuts.
+
+    Frames are still read sequentially and a plan never forges a detection.
+    Short scenes remain under ShortShotSamplingPlan to avoid duplicate bursts.
+    """
+    def __init__(self, scenes, *, enabled=True, short_max_seconds=1.5,
+                 inset_seconds=.12, start_time=0.):
+        targets = set()
+        if enabled:
+            for shot in scenes:
+                start, end = float(shot['start']), float(shot['end'])
+                if end-start <= short_max_seconds:
+                    continue
+                inset = min(inset_seconds, (end-start)/4)
+                for target in (start+inset, end-inset):
+                    if target > start_time + .000001:
+                        targets.add(round(target, 6))
+        self.times = sorted(targets)
+        self.index = 0
+        self.due_count = 0
+
+    def due(self, timestamp):
+        if self.index >= len(self.times) or timestamp + 1e-6 < self.times[self.index]:
+            return False
+        while self.index < len(self.times) and self.times[self.index] <= timestamp + 1e-6:
+            self.index += 1
+        self.due_count += 1
+        return True

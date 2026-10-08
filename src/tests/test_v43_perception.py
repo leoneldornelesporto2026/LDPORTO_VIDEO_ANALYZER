@@ -145,6 +145,8 @@ def test_detector_cascade_reduces_redundant_work_and_refreshes_on_shot_cut():
 
     detector = object.__new__(PersonDetectionEngine)
     detector.cv2, detector.cfg = cv2, deepcopy(DEFAULTS["vision"])
+    detector.cfg["face_quality_gate"] = False  # mocked flat-black frame
+    detector.cfg["face_rescue_upsample"] = False  # mock detector does not scale rows
     detector.face, detector.sface, detector.hog, detector.yolo = Face(), Embedding(), Body(), None
     detector.phase_seconds = defaultdict(float)
     frame = np.zeros((180, 240, 3), dtype=np.uint8)

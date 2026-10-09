@@ -1,0 +1,23 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 48/52 — Recuperação editorial: Q&A, arcos, limites e score honesto
+
+OBJETIVO: voltar a produzir cortes autossuficientes, com abertura, desenvolvimento e payoff demonstráveis; não maquiar 0 histórias completas.
+CÓDIGO: src/ldporto/story_recovery.py, editorial_intelligence.py, semantic.py, understanding.py, second_curation.py, qa_audit.py, test_stage07_... até 12 e testes v44 semantic_story.
+EVIDÊNCIA Clóvis: 204 arcos, zero histórias completas comprovadas, 400 Q&A (240 unresolved), 175 candidatos abaixo piso, 152 sem ending, scores hook/clarity ausentes. Rank1 MOMENT_00034_0001 (1:44:48), Rank2 MOMENT_00028_0004 (1:27:46), rank7 MOMENT_00024_0002 (1:16:02) são SÓ candidatos a escuta humana.
+IMPLEMENTE:
+1. Vincular perguntas a respostas ao longo de interrupções e mudanças de falante, suportar respostas indiretas com evidência; criar id estável e explicitamente unresolved se não há prova.
+2. Reconstruir começo/fim dos candidatos apenas a partir de palavras/timestamps e evidências do arco; bloquear ganchos cortados, punchline incompleta, referência sem antecedente e cortes de conclusão perdida; nunca alterar transcrição para facilitar match.
+3. Scores hook/standalone_clarity/punchline/completeness medidos ou null (não zero automático) e critérios explicáveis; missing_required_score não deve se converter em prova de qualidade.
+4. Ranking com diversidade e preservação de alternativas, evitando que trechos genuinamente interessantes sejam eliminados por falta de um campo opcional, mas sem liberar conteúdo não comprovado.
+5. Fixtures para perguntas interrompidas, múltiplos speakers, cenas conflitantes e 3 candidatos reais; comparar antes/depois com IDs, timestamps, racional e sem exigir quota artificial.
+CRITÉRIO: relatório mostra contagens de Q&A realmente completos, ambiguidades e grupos narrativos; nunca fabricar arc 'complete'.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_48.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

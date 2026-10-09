@@ -1,0 +1,22 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 47/52 — Fila humana provisória e shortlist editorial seguros
+
+OBJETIVO: impedir zero fila humana devido a OCR opcional, mantendo shortlist e publicação fechados.
+CÓDIGO: src/ldporto/second_curation.py, second_curation_export.py, integrity_contracts.py, editorial_selection.py (verificar módulo real), social_output.py, second_curation_decisions.py.
+IMPLEMENTE:
+1. Separar invariantes por candidato: discovered; eligible_for_human_review (pode ser provisório), editorial_verified, commercial_review_state, preview_technical_ready, human_approved, publication_ready (sempre false por padrão). Evidências ausentes acompanhadas de reason; não renomear 'publication_eligible' sem compatibilidade e migração.
+2. Produzir editorial/human_review_queue.json com IDs, rank, intervalos, scores, causas, prioridades, links de transcript/visual. Não incluir automaticamente em editorial/default_shortlist.json quem necessita comercial review; não criar Stories/publicação da fila provisória.
+3. Deduplicar preservados por intervalos, parent/alternate, clusters explícitos: MOMENT_PRESERVED_00032_0002 e _0005 mesma unidade editorial, alternativas disponíveis sem duplicar slot.
+4. Garantir que revisão manual pode REJEITAR mas aprovação exige verificação comercial, narrativa, legenda e preview, com hashes de mídia. Não admitir aprovação humana fabricada ou herdada pelo replay.
+5. Testes com pacote Clóvis + fixtures: candidatos não comerciais ganham fila não vazia quando dados existirem; anúncio suspeito é review, não publicado; somente um representante de grupo duplicado; validação ZIP de referências, schema e hashes.
+CRITÉRIO: métricas distintas (discovered, review_queue, shortlist, approved, rendered) e nenhuma contagem fake para meta de 12 vídeos.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_47.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

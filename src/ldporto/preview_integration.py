@@ -2,7 +2,7 @@
 from pathlib import Path
 from .core import ok, digest
 from .preview_renderer import render_preview, select_canary_intervals
-from .preview_verifier import verify_preview, conservative_repair
+from .preview_verifier import verify_preview, conservative_repair, border_temporal_report
 
 PREVIEW_CODE = ['preview_renderer.py','preview_verifier.py','preview_integration.py','core.py']
 
@@ -37,6 +37,8 @@ def build_preview_package(ctx, metadata, director, cfg):
             validation = verify_preview(target, {'width':cfg.get('output_width',540),
                                                  'height':cfg.get('output_height',960),
                                                  'source_start':interval['start'],
+                                                 'source_width': rendered.get('data', {}).get('source_width'),
+                                                 'source_height': rendered.get('data', {}).get('source_height'),
                                                  'duration':interval['end']-interval['start']}, timeline)
             data = validation.get('data', {})
             for issue in data.get('issues', []):
@@ -47,7 +49,9 @@ def build_preview_package(ctx, metadata, director, cfg):
             item['accepted_preview_path'] = str(target) if validation.get('status') == 'ok' else None
             all_issues.extend(data.get('issues', []))
         else:
-            item['validation'] = {'issues': [{'severity':'error','issue_type':'PREVIEW_RENDER_FAILED',
+            item['validation'] = {'border_report': border_temporal_report([]),
+                                  'preview_approved': None, 'publish_ready': False,
+                                  'issues': [{'severity':'error','issue_type':'PREVIEW_RENDER_FAILED',
                                              'evidence': {'canary_id': item['canary_id']}}]}
             all_issues.extend(item['validation']['issues'])
             item['validation_status'] = 'unavailable'
@@ -74,6 +78,8 @@ def build_preview_package(ctx, metadata, director, cfg):
                     recheck = verify_preview(target, {'width':cfg.get('output_width',540),
                                                       'height':cfg.get('output_height',960),
                                                       'source_start':interval['start'],
+                                                      'source_width': rerender.get('data', {}).get('source_width'),
+                                                      'source_height': rerender.get('data', {}).get('source_height'),
                                                       'duration':interval['end']-interval['start']}, repaired_timeline)
                     for issue in recheck.get('data',{}).get('issues',[]):
                         issue['interval'] = [interval['start'], interval['end']]

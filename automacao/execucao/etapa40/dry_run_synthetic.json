@@ -1,0 +1,388 @@
+{
+  "schema_version": "40.1",
+  "scope": "offline_prompt_size_only",
+  "provenance": {
+    "model": "qwen3:14b",
+    "ollama_version": null,
+    "model_digest": null,
+    "options": {
+      "num_ctx": 32768,
+      "num_predict": 6144,
+      "temperature": 0.0,
+      "top_k": 40,
+      "top_p": 0.9,
+      "repeat_penalty": 1.05,
+      "seed": 42
+    },
+    "python": "3.11.9",
+    "configuration_sha256": "138f3d00056cb7e2950cf374463c30e67056018eb89fc1729f2bdb6db7e15f8d",
+    "transcription_sha256": "2b861a1acbd19fde438432217ad7f8ca73e71cac75971fe25b6652e40006c864",
+    "benchmark_script_sha256": "b8aa2758a563aeaba1dbf4f67617018e0d4eee836ec7caede577c4bae0b1ddbf",
+    "semantic_code_sha256": "85d104f34defb0067f947979842bcb6b5adf10635abe42688a7a1d3f21ddf2dc"
+  },
+  "configuration": {
+    "enabled": true,
+    "backend": "ollama",
+    "ollama_url": "http://127.0.0.1:11434",
+    "model": "qwen3:14b",
+    "profile": "max",
+    "chunk_seconds": 180,
+    "timeout_seconds": 600,
+    "max_chars": 24000,
+    "keep_alive": "30m",
+    "think": false,
+    "structured_ranges": true,
+    "compact_prompt": false,
+    "global_review": true,
+    "global_max_moments": 120,
+    "global_max_chars": 80000,
+    "num_ctx": null,
+    "num_predict": null,
+    "temperature": null,
+    "top_k": null,
+    "top_p": null,
+    "repeat_penalty": null,
+    "seed": null,
+    "max_calls_per_hour": 80,
+    "fallback_warning_fraction": 0.1,
+    "_resolved_model": "qwen3:14b"
+  },
+  "repeats": 2,
+  "retry_policy": "single_attempt_no_repair_no_fallback",
+  "analyzer_cache_modified": false,
+  "total_chunks": 3,
+  "sample_indices": [
+    0,
+    1,
+    2
+  ],
+  "samples": [
+    {
+      "index": 0,
+      "repeat": 0,
+      "segments": 1,
+      "subset_sha256": "7ff29f3cf12a0f4bd816ec28c8b6f30eba1472bde70776455dcc5b966cecbd12",
+      "call_order": [
+        "legacy",
+        "compact"
+      ],
+      "modes": {
+        "legacy": {
+          "system_prompt_chars": 3459,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        },
+        "compact": {
+          "system_prompt_chars": 1476,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        }
+      },
+      "prompt_char_reduction_pct": 57.33
+    },
+    {
+      "index": 1,
+      "repeat": 0,
+      "segments": 1,
+      "subset_sha256": "1bfd7d9f5770891afb597a7cb2726a95e1045cdc6ffb9425da4201e3c4ebc9a1",
+      "call_order": [
+        "compact",
+        "legacy"
+      ],
+      "modes": {
+        "compact": {
+          "system_prompt_chars": 1476,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        },
+        "legacy": {
+          "system_prompt_chars": 3459,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        }
+      },
+      "prompt_char_reduction_pct": 57.33
+    },
+    {
+      "index": 2,
+      "repeat": 0,
+      "segments": 1,
+      "subset_sha256": "621a7b50f902a2a8be6cd6a1a8abcbe3c1f9b4ca21b5917bc5fc12ab4a81fe97",
+      "call_order": [
+        "legacy",
+        "compact"
+      ],
+      "modes": {
+        "legacy": {
+          "system_prompt_chars": 3459,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        },
+        "compact": {
+          "system_prompt_chars": 1476,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        }
+      },
+      "prompt_char_reduction_pct": 57.33
+    },
+    {
+      "index": 0,
+      "repeat": 1,
+      "segments": 1,
+      "subset_sha256": "7ff29f3cf12a0f4bd816ec28c8b6f30eba1472bde70776455dcc5b966cecbd12",
+      "call_order": [
+        "compact",
+        "legacy"
+      ],
+      "modes": {
+        "compact": {
+          "system_prompt_chars": 1476,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        },
+        "legacy": {
+          "system_prompt_chars": 3459,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        }
+      },
+      "prompt_char_reduction_pct": 57.33
+    },
+    {
+      "index": 1,
+      "repeat": 1,
+      "segments": 1,
+      "subset_sha256": "1bfd7d9f5770891afb597a7cb2726a95e1045cdc6ffb9425da4201e3c4ebc9a1",
+      "call_order": [
+        "legacy",
+        "compact"
+      ],
+      "modes": {
+        "legacy": {
+          "system_prompt_chars": 3459,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        },
+        "compact": {
+          "system_prompt_chars": 1476,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        }
+      },
+      "prompt_char_reduction_pct": 57.33
+    },
+    {
+      "index": 2,
+      "repeat": 1,
+      "segments": 1,
+      "subset_sha256": "621a7b50f902a2a8be6cd6a1a8abcbe3c1f9b4ca21b5917bc5fc12ab4a81fe97",
+      "call_order": [
+        "compact",
+        "legacy"
+      ],
+      "modes": {
+        "compact": {
+          "system_prompt_chars": 1476,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        },
+        "legacy": {
+          "system_prompt_chars": 3459,
+          "schema_format_chars": 2030,
+          "status": "offline_size_only",
+          "attempts": 0,
+          "retries": 0,
+          "elapsed_seconds": null,
+          "grounded_output": null,
+          "output_sha256": null,
+          "ollama_eval_count": null,
+          "output_token_count": null,
+          "total_duration_ns": null,
+          "load_duration_ns": null,
+          "eval_duration_ns": null,
+          "prompt_eval_duration_ns": null,
+          "eval_count": null,
+          "prompt_eval_count": null,
+          "tokens_per_second": null
+        }
+      },
+      "prompt_char_reduction_pct": 57.33
+    }
+  ],
+  "caution": "Prompt length is NOT a measured runtime improvement. Benchmark both validity and latency on the same local Ollama model.",
+  "benchmark_sha256": "d48fac588f16918494b17e329787a22d36a9c203b2ce4edf0ee8fbd4c317eba3",
+  "acceptance": {
+    "experiment": "ollama_compact_vs_legacy",
+    "paired_samples": [],
+    "median_speedup_x": null,
+    "semantic_quality_approved": false,
+    "safe_to_enable_automatically": false,
+    "local_opt_in_recommended": false,
+    "min_required_speedup_x": 1.1,
+    "blockers": [
+      "insufficient_paired_valid_model_samples",
+      "runtime_speedup_not_proven",
+      "human_semantic_quality_goldset_not_attached_or_unacceptable",
+      "model_provenance_pending",
+      "insufficient_distinct_subset_samples",
+      "failed_or_unmeasured_pairs",
+      "response_model_mismatch_or_pending"
+    ],
+    "outcome": "await_windows_ollama_and_human_goldset"
+  }
+}

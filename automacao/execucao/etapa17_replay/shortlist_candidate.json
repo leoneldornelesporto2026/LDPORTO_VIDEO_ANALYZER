@@ -1,0 +1,10 @@
+{
+  "candidate_ids": [
+    "MOMENT_00006_0005"
+  ],
+  "homologated": false,
+  "human_review_required": true,
+  "hypothetical_diagnostic_ids_not_shortlist": [],
+  "publish_ready": false,
+  "status": "REVIEW_REQUIRED"
+}

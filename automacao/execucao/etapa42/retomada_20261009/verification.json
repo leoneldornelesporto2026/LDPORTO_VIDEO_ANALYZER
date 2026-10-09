@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "junit": {
+    "tests": 1178,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2
+  },
+  "synthetic_ffmpeg_smoke": "passed_not_human_review",
+  "checkpoints_01_42_present": true,
+  "unknown_gpu_ollama_preserved": true,
+  "ready_to_publish": false,
+  "syntax": {
+    "parsed_files": 220,
+    "failures": [],
+    "bytecode_written": false
+  },
+  "exit_code": 0
+}

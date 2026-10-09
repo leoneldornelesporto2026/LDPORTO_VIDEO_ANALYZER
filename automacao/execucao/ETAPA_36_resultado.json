@@ -1,0 +1,21 @@
+{
+  "status": "DONE",
+  "summary": "Etapa 36 implementada: detecção temporal nos quatro lados com crop efetivo, relatório por preview e revisão obrigatória em casos duvidosos. Checkpoint registrado; ZIP não gerado conforme instrução.",
+  "files_changed": [
+    "src/ldporto/preview_verifier.py",
+    "src/ldporto/preview_renderer.py",
+    "src/ldporto/preview_integration.py",
+    "src/tests/test_stage36_preview_borders.py",
+    "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_36.md"
+  ],
+  "tests": [
+    "Regressão final: 209 passed in 20.41s; exit code 0.",
+    "Fixtures offline e MP4s sintéticos renderizados e decodificados localmente.",
+    "Falhas iniciais corrigidas e documentadas no checkpoint."
+  ],
+  "risks": [
+    "Geometria recorrente não prova origem da borda; revisão humana permanece necessária.",
+    "Homologação com mídia real e Curator pendente.",
+    "preview_approved permanece null; publish_ready=false."
+  ]
+}

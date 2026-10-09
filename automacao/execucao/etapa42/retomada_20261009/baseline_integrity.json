@@ -1,0 +1,10 @@
+{
+  "CHATGPT_REVIEW.zip": {
+    "sha256": "5a9da201f984d63de2c68dbd9aee4c03365b9e0815b1fb041130d4da02b5f073",
+    "matches_recorded_baseline": true
+  },
+  "SECOND_CURATION_READY.zip": {
+    "sha256": "8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349",
+    "matches_recorded_baseline": true
+  }
+}

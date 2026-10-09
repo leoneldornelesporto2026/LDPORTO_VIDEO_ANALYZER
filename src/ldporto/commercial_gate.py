@@ -7,11 +7,34 @@ from collections import Counter
 import math
 
 from .editorial import classify_content, rank_candidate
+from .ocr import validate_observations
+from .integrity_contracts import capability_contract
+
+
+def commercial_evidence_state(analysis, candidate_id=None):
+    contract = capability_contract(analysis)
+    capability = contract['stages'].get('17c_commercial_visual')
+    if capability is None:
+        return None  # Legacy imports have no visual measurement contract.
+    state = capability['state']
+    visual = analysis.get('commercial_visual_s8') or {}
+    inspected = visual.get('inspected_candidate_ids')
+    if candidate_id and inspected is not None and candidate_id not in inspected:
+        return 'unavailable_dependency'
+    return state
+
+
+def require_commercial_review(classification, state):
+    """Confirmed exclusions dominate; missing visual evidence never clears risk."""
+    if classification.get('eligibility') == 'excluded' or state in (None, 'measured_ok'):
+        return classification
+    return {**classification, 'eligibility': 'review', 'needs_review': True,
+            'review_reason': 'commercial_visual_' + state, 'visual_capability_state': state}
 
 
 SALE_SIGNALS = {'price', 'installment', 'discount', 'store', 'product', 'sales_cta',
                 'urgency', 'payment', 'sponsor', 'event', 'domain', 'contact',
-                'recommendation', 'health_claim', 'benefit_claim'}
+                'recommendation', 'health_claim', 'benefit_claim', 'guest_invitation'}
 
 
 def _interval(candidate):
@@ -38,6 +61,11 @@ def _precursors(classification):
     return set((classification or {}).get('signals') or []) & SALE_SIGNALS
 
 
+def _voice(row):
+    value = row.get('speaker_id') or row.get('speaker')
+    return value if isinstance(value, str) and value.strip().upper() not in {'', 'UNKNOWN', 'UNASSIGNED'} else None
+
+
 def build_commercial_blocks(segments, visual_texts=None, *, merge_gap_seconds=2.0):
     """Strong ASR commercial spans, merged only across genuine time adjacency.
 
@@ -51,6 +79,7 @@ def build_commercial_blocks(segments, visual_texts=None, *, merge_gap_seconds=2.
     # windows must be adjacent and every marked row needs lexical sales evidence.
     classifications = [classify_content(row.get('text', ''), [row.get('segment_id')]) for row in ordered]
     seed_indices = {i for i, c in enumerate(classifications) if c['eligibility'] == 'excluded'}
+    voice_conflicts = set()
     for index in range(len(ordered)):
         group = []
         for cursor in range(index, min(len(ordered), index + 4)):
@@ -61,8 +90,11 @@ def build_commercial_blocks(segments, visual_texts=None, *, merge_gap_seconds=2.
                 continue
             combined = classify_content(' '.join(str(r.get('text') or '') for r in group))
             if combined['eligibility'] == 'excluded':
-                seed_indices.update(k for k in range(index, cursor + 1)
-                                    if _precursors(classifications[k]))
+                marked = {k for k in range(index, cursor + 1) if _precursors(classifications[k])}
+                voices = {_voice(r) for r in group if _voice(r) is not None}
+                if len(voices) > 1 and not any(classifications[k]['eligibility'] == 'excluded' for k in marked):
+                    voice_conflicts.update(marked)
+                seed_indices.update(marked)
                 break
     runs, current, last_index = [], None, None
     for index, row in enumerate(ordered):
@@ -89,16 +121,28 @@ def build_commercial_blocks(segments, visual_texts=None, *, merge_gap_seconds=2.
         if preceding:
             precursor = preceding[-1]
             evidence = classify_content(precursor.get('text', ''), [precursor.get('segment_id')])
-            if len(_precursors(evidence)) >= 2 and evidence['eligibility'] != 'excluded':
+            run_voices = {_voice(s) for s in ordered if s.get('segment_id') in run['segment_ids'] and _voice(s)}
+            different_voice = _voice(precursor) is not None and run_voices and _voice(precursor) not in run_voices
+            if (len(_precursors(evidence)) >= 2 and evidence['eligibility'] != 'excluded' and
+                    not evidence.get('reported_commercial_context') and not different_voice):
                 run['start'] = float(precursor['start'])
                 run['segment_ids'].insert(0, precursor.get('segment_id'))
                 run['signals'] = sorted(set(run['signals']) | _precursors(evidence))
                 run['text'] = str(precursor.get('text') or '') + ' ' + run['text']
     blocks = []
     for n, row in enumerate(runs, 1):
+        source_rows = [s for s in ordered if s.get('segment_id') in row['segment_ids']]
+        voices = sorted({_voice(s) for s in source_rows if _voice(s) is not None})
+        classification = classify_content(row['text'], [x for x in row['segment_ids'] if x])
+        if any(ordered[k].get('segment_id') in row['segment_ids'] for k in voice_conflicts):
+            classification = {**classification, 'eligibility': 'review', 'needs_review': True,
+                              'review_reason': 'split_offer_across_different_voices'}
         blocks.append({'block_id': f'COMMERCIAL_{n:04d}', 'start': row['start'], 'end': row['end'],
                        'segment_ids': [x for x in row['segment_ids'] if x],
-                       'signals': row['signals'], 'classification': classify_content(row['text']),
+                       'signals': row['signals'], 'classification': classification,
+                       'voice_evidence': {'speaker_ids': voices,
+                           'continuity': 'different_observed_voices' if len(voices) > 1 else
+                               'same_observed_voice' if len(voices) == 1 and all(_voice(s) for s in source_rows) else None},
                        'origin': 'strong_canonical_transcript', 'visual_corroboration': [v for v in (visual_texts or [])
                            if isinstance(v, dict) and _as_range(v) and row['start'] <= float(v['start']) <= row['end']],
                        'needs_review': True})
@@ -140,7 +184,9 @@ def refine_candidates(candidates, segments, visual_texts=None, cfg=None, *, comm
             ranked['default_shortlist_eligible'] = False
             local = ranked['commercial_classification']
         # OCR-only offers are a REVIEW, not confirmed spoken advertisements.
-        if local.get('eligibility') == 'excluded' and audio_only.get('eligibility') != 'excluded':
+        if prior.get('eligibility') != 'excluded' and ((local.get('eligibility') == 'excluded' or
+                (local.get('eligibility') == 'review' and visual and
+                 classify_content(' '.join(v['text'] for v in visual))['eligibility'] == 'excluded')) and audio_only.get('eligibility') != 'excluded'):
             local = {**local, 'eligibility': 'review', 'needs_review': True,
                      'classifier_method': 's8_ocr_unconfirmed',
                      'visual_only_sale_unconfirmed': True,
@@ -150,9 +196,10 @@ def refine_candidates(candidates, segments, visual_texts=None, cfg=None, *, comm
         # be erased by candidate-local re-ranking. Reject partial excerpts too.
         intersecting = [block for block in blocks if _overlap(window, (block['start'], block['end'])) > 0]
         if intersecting:
-            strongest = max(intersecting, key=lambda b: _overlap(window, (b['start'], b['end'])))
+            strongest = max(intersecting, key=lambda b: (
+                b['classification'].get('eligibility') == 'excluded', _overlap(window, (b['start'], b['end']))))
             prior = ranked['commercial_classification']
-            if audio_only.get('eligibility') == 'excluded' or _overlap(window, (strongest['start'], strongest['end'])) >= min(2., window[1] - window[0]):
+            if strongest['classification'].get('eligibility') == 'excluded':
                 ranked['commercial_classification'] = {**strongest['classification'],
                     'eligibility': 'excluded', 'needs_review': True,
                     'classifier_method': 's8_grounded_block_overlap',
@@ -160,7 +207,7 @@ def refine_candidates(candidates, segments, visual_texts=None, cfg=None, *, comm
                     'block_interval': {'start': strongest['start'], 'end': strongest['end']},
                     'evidence_segment_ids': strongest['segment_ids']}
                 ranked['default_shortlist_eligible'] = False
-            elif _precursors(prior):
+            elif prior.get('eligibility') != 'excluded':
                 ranked['commercial_classification'] = {**prior, 'eligibility': 'review',
                     'needs_review': True, 'review_reason': 'near_commercial_block', 'block_id': strongest['block_id']}
                 ranked['default_shortlist_eligible'] = False
@@ -171,14 +218,27 @@ def refine_candidates(candidates, segments, visual_texts=None, cfg=None, *, comm
         ranked['commercial_gate_reason'] = ranked.get('commercial_gate_reason') or (
             'confirmed_commercial' if status == 'excluded' else 'needs_manual_commercial_review' if status == 'review' else 'eligible')
         ranked['commercial_block_refs'] = [block['block_id'] for block in intersecting]
+        ranked['excluded_commercial_interval_ids'] = sorted(set(
+            candidate.get('excluded_commercial_interval_ids') or []) | {
+            block['block_id'] for block in intersecting if block['classification'].get('eligibility') == 'excluded'})
+        ranked['content_type'] = ranked['commercial_classification']['content_type']
+        ranked['commercial_score'] = ranked['commercial_classification']['commercial_score']
         rows.append(ranked)
     return sorted(rows, key=lambda r: r.get('editorial_score_final') or 0, reverse=True)
 
 
-def apply_commercial_refinement(understanding, segments, visual_texts, cfg):
+def apply_commercial_refinement(understanding, segments, visual_texts, cfg, *, commercial_visual=None):
     blocks = build_commercial_blocks(segments, visual_texts)
     rows = refine_candidates(understanding.get('main_moments', []), segments, visual_texts, cfg,
                              commercial_blocks=blocks)
+    if commercial_visual is not None:
+        evidence = {'commercial_visual_s8': commercial_visual}
+        for row in rows:
+            row['commercial_classification'] = require_commercial_review(
+                row['commercial_classification'], commercial_evidence_state(evidence, row.get('moment_id')))
+            if row['commercial_classification']['eligibility'] != 'eligible':
+                row['default_shortlist_eligible'] = False
+                row['commercial_gate_reason'] = row['commercial_classification'].get('review_reason', 'confirmed_commercial')
     eligible = [row for row in rows if row.get('default_shortlist_eligible', True) and
                 (row.get('commercial_classification') or {}).get('eligibility') == 'eligible']
     max_moments = max(0, int(cfg.get('max_moments', 12)))
@@ -200,7 +260,9 @@ def targeted_ocr(video, candidates, cfg, limit=16):
     first/last observation does NOT establish continuous display duration.
     """
     if not cfg.get('enabled'):
-        return {'status': 'skipped', 'texts': [], 'scope': 'selected_candidates', 'reason': 'ocr_disabled'}
+        return {'status': 'skipped', 'texts': [], 'scope': 'selected_candidates', 'reason': 'ocr_disabled',
+                'capability_state': 'not_measured_disabled',
+                'measurement_state': 'not_measured', 'commercial_present': None}
     try:
         import cv2
         import pytesseract
@@ -209,11 +271,16 @@ def targeted_ocr(video, candidates, cfg, limit=16):
         pytesseract.get_tesseract_version()
     except (ImportError, OSError, RuntimeError) as exc:
         return {'status': 'unavailable', 'texts': [], 'reason': 'optional_tesseract_missing',
+                'capability_state': 'unavailable_dependency',
+                'measurement_state': 'not_measured', 'commercial_present': None,
                 'detail': type(exc).__name__}
     cap = cv2.VideoCapture(str(video))
     if not cap.isOpened():
-        return {'status': 'unavailable', 'texts': [], 'reason': 'video_decode_unavailable'}
-    texts, sampled, errors, inspected_ids = [], 0, 0, []
+        cap.release()
+        return {'status': 'unavailable', 'texts': [], 'reason': 'video_decode_unavailable',
+                'capability_state': 'unavailable_dependency',
+                'measurement_state': 'not_measured', 'commercial_present': None}
+    texts, sampled, measured, errors, inspected_ids = [], 0, 0, 0, []
     try:
         for row in candidates[:max(0, int(limit))]:
             start, end = _interval(row)
@@ -235,6 +302,7 @@ def targeted_ocr(video, candidates, cfg, limit=16):
                 except (RuntimeError, pytesseract.TesseractError):
                     errors += 1
                     continue
+                measured += 1
                 groups = {}
                 for i, token in enumerate(data['text']):
                     try:
@@ -263,7 +331,11 @@ def targeted_ocr(video, candidates, cfg, limit=16):
                                   'duration_unknown': True, 'needs_review': True})
     finally:
         cap.release()
-    return {'status': 'measured' if sampled else 'partial', 'texts': texts,
+    return {'status': 'measured' if measured and not errors else 'partial', 'texts': validate_observations(texts),
+            'capability_state': ('failed' if errors and not measured else
+                                 'measured_partial' if errors or not measured else 'measured_ok'),
+            'measurement_state': 'measured' if measured else 'not_measured', 'commercial_present': None,
+            'measured_frames': measured,
             'sampled_frames': sampled, 'failed_frames_or_ocr': errors,
             'scope': 'selected_candidate_observations', 'max_frames': max(0, int(limit))*3,
             'continuity_established': False, 'requested_candidate_count': len(candidates),

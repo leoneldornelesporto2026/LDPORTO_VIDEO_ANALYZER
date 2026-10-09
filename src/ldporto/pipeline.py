@@ -8,6 +8,7 @@ from .core import Context, file_hash, setup_logging, output_lock, logging_sessio
 from .media import resolve_input, inspect
 from .audio import extract_audio, audio_metrics, sound_events
 from .transcription import TranscriptionEngine
+from .uncertain_words_audit import audit_uncertain_words
 from .diarization import DiarizationEngine, align_speakers
 from .scenes import SceneEngine
 from .vision import VisionEngine, ActiveSpeakerEngine
@@ -189,7 +190,7 @@ def analyze(source, cfg, output=None, force=False):
             "16_understanding", cfg["understanding"],
             lambda: run_understanding(ctx, metadata, transcript, diarization, vision, active,
                                       semantic, shots, cfg["understanding"]),
-            code_files=["understanding.py", "story_recovery.py", "semantic.py", "editorial.py", "core.py"])
+            code_files=["understanding.py", "story_recovery.py", "semantic.py", "editorial.py", "editorial_intelligence.py", "core.py"])
         master_data = ctx.step(
             "17_master_timeline", {"schema": "2.0"},
             lambda: build_master_timeline(metadata, transcript, scenes, semantic.get("topics", []),
@@ -211,9 +212,10 @@ def analyze(source, cfg, output=None, force=False):
         commercial_visual = ctx.step('17c_commercial_visual',
             {'ranges': digest(graphics_candidates), 'ocr': cfg['ocr'], 'limit': cfg['export']['second_curation_visual_candidate_limit']},
             lambda: _optional_visual_result(targeted_ocr(ctx.video, graphics_candidates, cfg['ocr'], cfg['export']['second_curation_visual_candidate_limit'])),
-            code_files=['commercial_gate.py', 'editorial.py', 'pipeline.py'], requires=['16_understanding'])
+            code_files=['commercial_gate.py', 'ocr.py', 'editorial.py', 'pipeline.py'], requires=['16_understanding'])
         understanding = apply_commercial_refinement(understanding, transcript['segments'],
-            [{**r, 'source': 'ocr'} for r in ocr.get('texts', [])] + commercial_visual.get('texts', []), cfg['understanding'])
+            [{**r, 'source': 'ocr'} for r in ocr.get('texts', [])] + commercial_visual.get('texts', []), cfg['understanding'],
+            commercial_visual=commercial_visual)
         from .targeted_asr import run_targeted_repair
         targeted_asr = ctx.step('17d_targeted_asr',
             {'config': {k: cfg['transcription'].get(k) for k in ('targeted_repair_enabled', 'targeted_max_regions', 'targeted_max_audio_seconds', 'model', 'beam_size', 'vad_filter', 'glossary', 'import_file')},
@@ -234,6 +236,7 @@ def analyze(source, cfg, output=None, force=False):
             lambda: ok(review_selected_clips(transcript['words'], understanding.get('main_moments', []),
                      selected_ids=understanding.get('editorial_shortlist', []),
                      alternatives=targeted_asr.get('alternatives', []),
+                     targeted_report=targeted_asr,
                      events=events.get('events', []), caption_config=cfg['captions'],
                      threshold=cfg['transcription']['low_confidence'])),
             code_files=['subtitle_review.py', 'timeline.py'],
@@ -314,6 +317,8 @@ def analyze(source, cfg, output=None, force=False):
             "tracklet_observations": vision.get("tracklet_observations", []),
             "reid_merge_decisions": reid.get("merge_decisions", []),
             "transcription_quality": transcript.get("quality_metrics", {}),
+            "uncertain_words_audit": audit_uncertain_words(
+                transcript, cfg['transcription']['low_confidence'], diarization.get('overlaps', [])),
             "diarization_quality": diarization.get("alignment_metrics", {}),
             "person_motion": motion.get("people", []),
             "speaker_person_summary": active.get("mapping_summary", []),

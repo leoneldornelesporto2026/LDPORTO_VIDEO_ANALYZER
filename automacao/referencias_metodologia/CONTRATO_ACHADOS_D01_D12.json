@@ -1,0 +1,134 @@
+{
+  "diagnostic_contract_version": "1.0",
+  "purpose": "Contrato proposto para relatórios D01-D12; não é o schema de decisões do analisador.",
+  "required_root_fields": [
+    "diagnostic_contract_version",
+    "stage",
+    "source_id",
+    "findings",
+    "limitations",
+    "pending_validation"
+  ],
+  "stage_values": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10",
+    "D11",
+    "D12"
+  ],
+  "finding_required_fields": [
+    "finding_id",
+    "priority",
+    "status",
+    "summary",
+    "evidence",
+    "current_behavior",
+    "proposed_behavior",
+    "component_to_locate",
+    "dependencies",
+    "acceptance",
+    "validation_state"
+  ],
+  "priority_values": [
+    "P0",
+    "P1",
+    "P2"
+  ],
+  "status_values": [
+    "confirmed_in_export",
+    "confirmed_in_code",
+    "implementation_hypothesis",
+    "missing_evidence",
+    "product_requirement"
+  ],
+  "validation_state_values": [
+    "observed",
+    "specified_not_executed",
+    "executed",
+    "pending_media",
+    "pending_code",
+    "pending_environment"
+  ],
+  "evidence_fields": [
+    "artifact",
+    "field",
+    "value",
+    "candidate_id",
+    "segment_ids",
+    "word_ids",
+    "source_interval"
+  ],
+  "notes": [
+    "Campos sem evidência usam null ou lista vazia com motivo; não usar zero para ausência.",
+    "Intervalos da fonte são segundos absolutos; tempos do corte precisam ser identificados.",
+    "Arquivo/função real somente quando código foi inspecionado; senão componente a localizar.",
+    "Aceitação lista procedimento, entrada e resultado esperado.",
+    "Cada hipótese inclui o teste ou inspeção necessário para confirmá-la."
+  ],
+  "example": {
+    "diagnostic_contract_version": "1.0",
+    "stage": "D01",
+    "source_id": "tpcF5ri6GS4",
+    "findings": [
+      {
+        "finding_id": "D01-REF-Q-001",
+        "priority": "P0",
+        "status": "confirmed_in_export",
+        "summary": "O candidato selecionado referencia perguntas sem registro local no qa_pairs.",
+        "evidence": [
+          {
+            "artifact": "editorial/candidate_catalog.json",
+            "field": "candidates[candidate_id=MOMENT_00006_0005].question_answer_linkage",
+            "value": [
+              "Q_0114",
+              "Q_0115"
+            ],
+            "candidate_id": "MOMENT_00006_0005",
+            "segment_ids": [],
+            "word_ids": [],
+            "source_interval": [
+              1191.66,
+              1251.44
+            ]
+          },
+          {
+            "artifact": "editorial/qa_pairs.json",
+            "field": "[].question_id",
+            "value": "Q_0114 e Q_0115 ausentes",
+            "candidate_id": null,
+            "segment_ids": [],
+            "word_ids": [],
+            "source_interval": null
+          }
+        ],
+        "current_behavior": "O export permite ler os IDs, mas não resolver os dois registros nesse arquivo.",
+        "proposed_behavior": "Exportar registro ou estado/escopo explícito para cada referência necessária.",
+        "component_to_locate": "Produtor dos vínculos Q e exportador do handoff; código não fornecido.",
+        "dependencies": [
+          "Contrato e escopo das perguntas candidatas e respondidas"
+        ],
+        "acceptance": [
+          {
+            "procedure": "Percorrer vínculos Q de todos os candidatos",
+            "input": "Pacote regenerado",
+            "expected": "Cada vínculo resolve registro local ou declara escopo externo/estado indisponível com motivo"
+          }
+        ],
+        "validation_state": "observed"
+      }
+    ],
+    "limitations": [
+      "A causa na implementação ainda precisa do código."
+    ],
+    "pending_validation": [
+      "Inspecionar exportador e consumidor Q&A no projeto atual."
+    ]
+  }
+}

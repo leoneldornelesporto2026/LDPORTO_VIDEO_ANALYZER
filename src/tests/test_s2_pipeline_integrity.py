@@ -142,7 +142,7 @@ def test_final_commercial_metrics_identical_in_every_artifact(tmp_path):
 
 def test_technical_preview_not_human_approval():
     analysis = analysis_fixture()
-    analysis['preview_validation'] = {'status': 'ok', 'verifier_uses_rendered_frames': True}
+    analysis['preview_validation'] = {'status': 'ok', 'verifier_uses_rendered_frames': True, 'sampled_frames': 3}
     result = quality_gate(analysis, {'diarization': {'enabled': False}, 'vision': {'enabled': False}})
     assert result['preview_technical_verified'] is True
     assert result['preview_approved'] is False and result['publication_ready'] is False

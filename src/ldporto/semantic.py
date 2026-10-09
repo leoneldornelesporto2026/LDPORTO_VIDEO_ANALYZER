@@ -228,6 +228,8 @@ def salvage_semantic_components(data, group, chunk_index):
         return None, {}
     for key in ('topics', 'moments'):
         for item_index, source in enumerate(data.get(key, []) if isinstance(data.get(key), list) else []):
+            if not isinstance(source, dict):
+                continue
             try:
                 item = deepcopy(source)
                 if 'start_segment_id' in item:
@@ -278,6 +280,49 @@ def salvage_semantic_components(data, group, chunk_index):
     return {'topics': sorted(topics, key=lambda t: t['start']), 'moments': moments}, preserved
 
 
+def recover_semantic_evidence(outputs, group, chunk_index):
+    """Prefer earlier evidence; a failed repair cannot erase valid components."""
+    combined = {'locale': 'pt-BR', 'topics': [], 'moments': []}
+    seen = {'topics': set(), 'moments': set()}
+    for data in outputs:
+        if not isinstance(data, dict) or data.get('locale') != 'pt-BR':
+            continue
+        for key in seen:
+            for row in data.get(key, []) if isinstance(data.get(key), list) else []:
+                if not isinstance(row, dict):
+                    # Retain positions for existing PRESERVED IDs; salvage skips it.
+                    combined[key].append(row)
+                    continue
+                checksum = digest(row)
+                if checksum not in seen[key]:
+                    combined[key].append(row)
+                    seen[key].add(checksum)
+    if not combined['topics'] and not combined['moments']:
+        return None, {}
+    return salvage_semantic_components(combined, group, chunk_index)
+
+
+def propagate_semantic_degradation(rows, topics):
+    """Annotate only rows referencing affected source segments, without scoring."""
+    by_segment = {}
+    for topic in topics:
+        if topic.get('degraded_reason'):
+            for sid in topic.get('evidence_segment_ids', []):
+                by_segment.setdefault(sid, set()).update(topic['degraded_reason'])
+    for row in rows:
+        ids = set(row.get('evidence_segment_ids', []))
+        ids.update(row.get('question_segment_ids', []))
+        ids.update(row.get('answer_segment_ids', []))
+        if row.get('question_segment_id'):
+            ids.add(row['question_segment_id'])
+        reasons = set(row.get('degraded_reason') or [])
+        for sid in ids:
+            reasons.update(by_segment.get(sid, ()))
+        if reasons:
+            row.update(degraded_reason=sorted(reasons), needs_review=True)
+    return rows
+
+
 def repair_ollama_output(cfg, group, invalid_data, error):
     """One bounded structural repair. It may only reuse segment IDs already supplied."""
     import jsonschema
@@ -285,6 +330,11 @@ def repair_ollama_output(cfg, group, invalid_data, error):
     valid_ids = [row.get("segment_id") for row in group]
     positions = {reference: index for index, reference in enumerate(valid_ids)}
     original = deepcopy(invalid_data)
+    if isinstance(original, dict) and original.get('locale') == 'pt-BR':
+        # Missing/malformed collections are not evidence, but valid siblings are.
+        for key in ('topics', 'moments'):
+            if not isinstance(original.get(key), list):
+                original[key] = []
     # Expand independently: one invalid range must not poison valid siblings.
     if isinstance(original, dict):
         for key in ('topics', 'moments'):
@@ -767,6 +817,57 @@ def classify_hook(text):
     return {'hook_type': kind, 'hook_strength': strength, 'method': 'grounded_hook_cues_not_probability', 'needs_review': True}
 
 
+def _qa_terms(text):
+    # Small explicit PT-BR inflection families; these are lexical heuristics.
+    families = {'grav': r'^(?:gravacao|gravacoes|gravar|gravou|gravei|gravamos|gravando)$',
+                'comec': r'^(?:comecou|comecei|comecar|comecamos|comecando)$',
+                'resolv': r'^(?:resolveu|resolvi|resolver|resolvemos|resolvendo)$'}
+    return {next((root for root, pattern in families.items() if re.match(pattern, term)), term)
+            for term in terms(text)}
+
+
+def _qa_continuity(question, text, previous=''):
+    """Independent textual cues, never a score or proof of a correct answer."""
+    value, prompt = normalized(text).strip(), normalized(question).strip()
+    shared = sorted(_qa_terms(text) & _qa_terms(question + ' ' + previous))
+    marker = None
+    if previous:
+        if re.match(r'^(?:depois|em seguida|continuando|voltando|retomando|como eu dizia|mas ai|por isso)\b', value):
+            marker = 'continuation_cue'
+        elif not previous.rstrip().endswith(('.', '?', '!')) and re.match(r'^(?:em|no|na|com|e|mas|para)\b', value):
+            marker = 'asr_fragment_cue'
+    elif re.match(r'^(?:sim|nao)\b', value) and (
+            classify_question(question)['question_type'] == 'yes_no_question' or len(prompt.split()) <= 2):
+        marker = 'polar_response_cue'
+    elif re.match(r'^(?:porque|pois)\b', value) and re.match(r'^(?:por que|porque)\b', prompt):
+        marker = 'causal_response_cue'
+    elif re.match(r'^(?:quando|no dia|em \d|eu comecei)\b', value) and re.match(r'^quando\b', prompt):
+        marker = 'temporal_response_cue'
+    elif re.match(r'^eu (?:estava|comecei|fiz|aprendi)\b', value) and re.search(r'\b(?:aconteceu|carreira|resolveu)\b', prompt):
+        marker = 'experience_response_cue'
+    return shared, marker
+
+
+def _qa_intervention(text, anchor):
+    value = normalized(text).strip()
+    if re.fullmatch(r'(?:serio|verdade|nossa|ah|ahn|hum|hmm|opa|hein|ta|ne|entendi|certo|ok|muito bom|que legal|conte|conta para nos)[.!? ,]*', value):
+        return 'reaction_cue'
+    if re.fullmatch(r'(?:como assim|em que sentido|o que quer dizer)[? .!]*', value):
+        return 'clarification_cue'
+    if classify_question(text)['answer_expected'] and terms(text) & terms(anchor) and re.match(
+            r'^(?:ou seja|quer dizer|voce quer dizer|quando voce diz|o que significa)\b', value):
+        return 'clarification_cue'
+    return None
+
+
+def _qa_question_extension(text, previous):
+    value = normalized(text).strip()
+    if re.match(r'^(?:e |ou melhor|quer dizer)', value):
+        return bool(_qa_terms(text) & _qa_terms(previous) or re.fullmatch(
+            r'e como (?:resolveu|foi|aconteceu|fez)[? .!]*', value))
+    return False
+
+
 def questions_answers(segments):
     """Associate adjacent speaker turns, including multi-part questions and ASR fragments.
 
@@ -785,71 +886,149 @@ def questions_answers(segments):
         question_rows = [s]
         answers, interruptions = [], []
         responder = None
+        clarification_speaker = None
+        clarification_context = ''
+        stop_reason = None
+        association_evidence, intervention_evidence = [], []
+        pending_interventions = []
         last_end = s.get('end', 0)
         for next_s in rows[i + 1:i + 33] if expected else []:
-            if next_s.get('start', 0) - last_end > (10 if not answers else 7):
+            gap = next_s.get('start', 0) - last_end
+            if gap > (10 if not answers else 20):
+                stop_reason = 'pause_exceeds_search_window'
                 break
             if next_s.get('end', 0) - s.get('end', 0) > 125:
+                stop_reason = 'answer_search_window_exhausted'
                 break
-            if s.get('speaker') is None or next_s.get('speaker') is None:
+            if not s.get('speaker') or not next_s.get('speaker'):
                 # No reliable turn ownership -> do not fabricate linked answer.
+                stop_reason = 'missing_speaker_evidence'
                 break
             text = next_s.get('text', '').strip()
             duration = max(0, next_s.get('end', 0)-next_s.get('start', 0))
             question_kind = classify_question(text)
+            question_text = ' '.join(q.get('text', '') for q in question_rows)
+            anchor = question_text + ' ' + ' '.join(a.get('text', '') for a in answers)
+            intervention = _qa_intervention(text, anchor)
+            topic_change = bool(re.search(r'\b(?:mudando de assunto|outro assunto|agora sobre|vamos falar de)\b', normalized(text)))
+            if topic_change:
+                stop_reason = 'topic_change_observed'
+                break
             if responder is None and next_s['speaker'] == s['speaker']:
+                if clarification_speaker and not question_kind['answer_expected'] and _qa_terms(text) & _qa_terms(anchor):
+                    interruptions.append(next_s['segment_id'])
+                    clarification_context += ' ' + text
+                    intervention_evidence.append({'segment_id': next_s['segment_id'], 'kind': 'clarification_context',
+                                                  'start': next_s['start'], 'end': next_s['end'], 'speaker': next_s['speaker']})
+                    last_end = next_s.get('end', last_end)
+                    continue
                 if len(question_rows) < 5 and next_s.get('start', 0) - last_end <= 5 and (
-                    question_kind['answer_expected'] or not text.endswith(('.', '!'))):
+                    (question_kind['answer_expected'] and _qa_question_extension(text, question_text)) or
+                    (not question_kind['answer_expected'] and not text.endswith(('.', '!')))):
                     question_rows.append(next_s)
                     last_end = next_s.get('end', last_end)
                     continue
-                if duration <= 2.5 and len(text.split()) <= 8:
+                if intervention and duration <= 12 and len(text.split()) <= 30:
                     interruptions.append(next_s['segment_id'])
+                    intervention_evidence.append({'segment_id': next_s['segment_id'], 'kind': intervention,
+                                                  'start': next_s['start'], 'end': next_s['end'], 'speaker': next_s['speaker']})
                     last_end = next_s.get('end', last_end)
                     continue
+                stop_reason = 'new_question_before_answer' if question_kind['answer_expected'] else 'intervention_relevance_unresolved'
                 break
             if responder is None:
                 if question_kind['answer_expected']:
                     # Another question before any answer: unresolved chain.
+                    if intervention == 'clarification_cue' and duration <= 12 and len(text.split()) <= 30 and (
+                            clarification_speaker is None or clarification_speaker == next_s['speaker']):
+                        clarification_speaker = next_s['speaker']
+                        interruptions.append(next_s['segment_id'])
+                        intervention_evidence.append({'segment_id': next_s['segment_id'], 'kind': intervention,
+                                                      'start': next_s['start'], 'end': next_s['end'], 'speaker': next_s['speaker']})
+                        last_end = next_s.get('end', last_end)
+                        continue
+                    stop_reason = 'clarification_before_answer_unresolved' if intervention == 'clarification_cue' else 'new_question_before_answer'
                     break
                 if duration <= 2.5 and len(text.split()) <= 3 and normalized(text) in {
                     'ahn', 'ah', 'hum', 'hmm', 'opa', 'hein', 'ta', 'ne'}:
                     interruptions.append(next_s['segment_id'])
+                    intervention_evidence.append({'segment_id': next_s['segment_id'], 'kind': 'reaction_cue',
+                                                  'start': next_s['start'], 'end': next_s['end'], 'speaker': next_s['speaker']})
                     last_end = next_s.get('end', last_end)
                     continue
                 responder = next_s['speaker']
+                if clarification_speaker and responder != clarification_speaker:
+                    stop_reason = 'clarification_speaker_changed'
+                    break
+                shared, marker = _qa_continuity(question_text + clarification_context, text)
+                if not (shared or marker):
+                    stop_reason = 'answer_relevance_unresolved'
+                    break
                 answers.append(next_s)
+                association_evidence.append({'segment_id': next_s['segment_id'], 'start': next_s['start'],
+                    'end': next_s['end'], 'speaker': next_s['speaker'], 'speaker_matches_responder': True,
+                    'shared_terms': shared, 'response_cue': marker, 'pause_seconds': gap,
+                    'intervening_segment_ids': list(interruptions)})
                 last_end = next_s.get('end', last_end)
                 continue
             if next_s['speaker'] == responder:
-                if question_kind['answer_expected'] and len(text.split()) >= 5:
-                    break  # new, independent question, not the old answer
+                if question_kind['answer_expected']:
+                    stop_reason = 'new_question_during_answer'
+                    break
+                shared, marker = _qa_continuity(question_text, text, answers[-1].get('text', ''))
+                responder_gap = next_s['start'] - answers[-1]['end']
+                if responder_gap > 40:
+                    stop_reason = 'pause_exceeds_resume_window'
+                    break
+                # A generic "depois" can open an unrelated story. A finished
+                # sentence needs lexical continuity; an ASR fragment also has
+                # grammatical dependency as independent evidence.
+                fragment = marker == 'asr_fragment_cue'
+                if not (shared or fragment) or (gap > 7 and not shared):
+                    stop_reason = 'answer_continuation_unresolved'
+                    break
                 answers.append(next_s)
+                association_evidence.append({'segment_id': next_s['segment_id'], 'start': next_s['start'],
+                    'end': next_s['end'], 'speaker': next_s['speaker'], 'speaker_matches_responder': True,
+                    'shared_terms': shared, 'response_cue': marker, 'pause_seconds': gap,
+                    'responder_pause_seconds': responder_gap,
+                    'intervening_segment_ids': list(pending_interventions)})
+                pending_interventions.clear()
                 last_end = next_s.get('end', last_end)
                 continue
-            if duration <= 3.0 and len(text.split()) <= 9:
+            if intervention and next_s['speaker'] == s['speaker'] and duration <= 12 and len(text.split()) <= 30:
                 interruptions.append(next_s['segment_id'])
+                pending_interventions.append(next_s['segment_id'])
+                intervention_evidence.append({'segment_id': next_s['segment_id'], 'kind': intervention,
+                                              'start': next_s['start'], 'end': next_s['end'], 'speaker': next_s['speaker']})
                 last_end = next_s.get('end', last_end)
                 continue
+            stop_reason = ('new_question_during_answer' if question_kind['answer_expected'] else
+                           'third_speaker_intervention_unresolved' if next_s['speaker'] != s['speaker'] else
+                           'intervention_relevance_unresolved')
             break
+        else:
+            if expected and len(rows) - i - 1 > 32:
+                stop_reason = 'answer_segment_search_limit'
         question_text = ' '.join(q.get('text', '') for q in question_rows)
         answer_text = ' '.join(a.get('text', '') for a in answers) if answers else None
-        shared = terms(question_text) & terms(answer_text or '')
-        direct = bool(answer_text and re.match(
-            r'^(?:sim|nao|porque|pois|me chamo|eu sou|olha[, ]|eu (?:acho|diria|comecei|aprendi|fiz)|foi|era|comecou|a gente|nos|quando|no dia|em \d)',
-            normalized(answer_text).strip()))
-        # Evidence-qualified candidate association, not validated factual answer.
+        shared = _qa_terms(question_text) & _qa_terms(answer_text or '')
+        direct = bool(association_evidence and association_evidence[0]['response_cue'])
+        # Length is diagnostic only; it cannot authorize an association.
         substantive = bool(answer_text and len(terms(answer_text)) >= 4 and
                            len(answer_text.split()) >= 7 and
                            classification['question_type'] in {'direct_question', 'yes_no_question'})
-        relevance = bool(answer_text and (shared or direct or substantive))
+        relevance = bool(answer_text and association_evidence)
         unresolved_reason = ('answer_not_expected' if not expected else
                              'missing_speaker_evidence' if not s.get('speaker') else
+                             stop_reason if stop_reason else
                              'no_subsequent_answer_span' if not answers else
                              'answer_relevance_unresolved' if not relevance else None)
         if not relevance:
             answers, answer_text = [], None
-        closes = bool(answer_text and answer_text.rstrip().endswith(('.', '?', '!')) and
+        if pending_interventions and not stop_reason:
+            unresolved_reason = 'answer_resume_not_observed'
+        closes = bool(answer_text and not unresolved_reason and answer_text.rstrip().endswith(('.', '?', '!')) and
                       not answer_text.rstrip().endswith(('...', '…')))
         pairs.append({'question_id': f'Q_{len(pairs):04}', **classification,
             'question': question_text, 'question_start': s['start'],
@@ -864,15 +1043,19 @@ def questions_answers(segments):
             'answer_status': 'linked_candidate' if answers else 'not_expected' if not expected else 'unresolved',
             'answer_completeness': 'sentence_complete_requires_review' if closes else 'partial' if answers else None,
             'answer_relevance': {'shared_terms': sorted(shared), 'direct_response_marker': direct,
-                                 'substantive_different_speaker_candidate': substantive} if answers else None,
+                                 'substantive_different_speaker_candidate': False,
+                                 'substantive_turn_observed': substantive} if answers else None,
+            'association_evidence': association_evidence,
+            'intervention_evidence': intervention_evidence,
             'answer_span': {'start': answers[0]['start'], 'end': answers[-1]['end']} if answers else None,
             'interruption_count': len(interruptions), 'intervening_segment_ids': interruptions,
             'question_answer_complete': bool(answers and closes),
             'association_status': 'answered_candidate' if answers else 'unresolved',
             'unresolved_reason': unresolved_reason,
-            'answer_relevance_method': 'speaker_turn_multifragment_lexical_or_substantive_candidate' if relevance else None,
-            'evidence_segment_ids': [q['segment_id'] for q in question_rows] + [a['segment_id'] for a in answers],
-            'method': 'multiturn_speaker_response_heuristic_v3', 'inference': True,
+            'answer_relevance_method': 'speaker_lexical_response_and_continuation_cues' if relevance else None,
+            'evidence_segment_ids': [r['segment_id'] for r in rows if r['segment_id'] in
+                {q['segment_id'] for q in question_rows} | {a['segment_id'] for a in answers} | set(interruptions)],
+            'method': 'multiturn_speaker_response_heuristic_v4', 'inference': True,
             'confidence': None, 'needs_review': True})
     return pairs
 
@@ -937,6 +1120,7 @@ class SemanticEngine:
                 key = semantic_cache_key(cfg, group, model_fingerprint)
                 record = ctx.cache / "semantic_chunks" / f"{key[:24]}.json"
                 model_output = None
+                original_output = None
                 if record.exists() and not ctx.force:
                     try:
                         cached = read_json(record)
@@ -957,6 +1141,7 @@ class SemanticEngine:
                     try:
                         result = ground_model_output(model_output, group, index)
                     except Exception as exc:
+                        original_output = deepcopy(model_output)
                         entry.update(initial_invalid=True, repair_attempted=True,
                                      initial_error_category=semantic_failure_category(exc))
                         if used_calls >= call_budget:
@@ -971,7 +1156,7 @@ class SemanticEngine:
                                             "source_hash": ctx.signature, "progress_index": index, "model_fingerprint": model_fingerprint})
                 except Exception as exc:
                     entry.update(fallback=True, fallback_used=True, error_category=semantic_failure_category(exc), error=scrub(exc))
-                    result, preservation = salvage_semantic_components(model_output, group, index)
+                    result, preservation = recover_semantic_evidence([original_output, model_output], group, index)
                     entry.update(preservation)
                     if hasattr(exc, 'metadata'):
                         entry['call'] = exc.metadata
@@ -980,6 +1165,10 @@ class SemanticEngine:
             if result is None:
                 result = heuristic(group, index)
                 heuristic_count += 1
+            if entry['fallback_used']:
+                entry['degraded_reason'] = [f"{entry['chunk_id']}:{entry['error_category']}"]
+                for row in result['topics'] + result['moments']:
+                    row.update(degraded_reason=list(entry['degraded_reason']), needs_review=True)
             entry["duration_seconds"] = round(time.monotonic() - chunk_started, 6)
             call_meta.append(entry)
             topics.extend(result["topics"])
@@ -1041,6 +1230,7 @@ class SemanticEngine:
                 'complete_sentence': True, 'method': 'canonical_sentence_boundary', 'inference': True,
                 'needs_review': True} for segment in transcript['segments'] if ending_quality(segment)['clean']]
         qas = questions_answers(transcript["segments"])
+        propagate_semantic_degradation(qas, topics)
         return ok({"topics": topics, "moments": moments, "program_sections": sections, "primary_editorial_theme": primary,
                    "secondary_editorial_themes": secondary, "topic_quality": topic_quality,
                    "candidate_hooks": hooks, "candidate_endings": endings, "questions_answers": qas, **qa_contract(qas),
@@ -1054,4 +1244,3 @@ class SemanticEngine:
                    "structural_repair": {"initial_invalid": any(entry["initial_invalid"] for entry in call_meta),
                                          "repair_attempted": bool(repairs), "repair_success": any(entry["repair_success"] for entry in call_meta),
                                          "fallback_used": bool(fallback_count)}}, "partial" if fallback_count or global_failed or (editorial_review or {}).get('status') == 'partial' or not groups else "ok", notes)
-

@@ -1,0 +1,7 @@
+model,model_digest,ollama_version,seed,index,repeat,subset_sha256,mode,status,system_prompt_chars,elapsed_seconds,attempts,retries,eval_count,prompt_eval_count,total_duration_ns,load_duration_ns,eval_duration_ns,prompt_eval_duration_ns,tokens_per_second,topic_count,moment_count,output_sha256,error_type
+qwen3:14b,,,42,0,0,7ff29f3cf12a0f4bd816ec28c8b6f30eba1472bde70776455dcc5b966cecbd12,compact,offline_size_only,1476,,0,0,,,,,,,,,,,
+qwen3:14b,,,42,1,0,1bfd7d9f5770891afb597a7cb2726a95e1045cdc6ffb9425da4201e3c4ebc9a1,compact,offline_size_only,1476,,0,0,,,,,,,,,,,
+qwen3:14b,,,42,2,0,621a7b50f902a2a8be6cd6a1a8abcbe3c1f9b4ca21b5917bc5fc12ab4a81fe97,compact,offline_size_only,1476,,0,0,,,,,,,,,,,
+qwen3:14b,,,42,0,1,7ff29f3cf12a0f4bd816ec28c8b6f30eba1472bde70776455dcc5b966cecbd12,compact,offline_size_only,1476,,0,0,,,,,,,,,,,
+qwen3:14b,,,42,1,1,1bfd7d9f5770891afb597a7cb2726a95e1045cdc6ffb9425da4201e3c4ebc9a1,compact,offline_size_only,1476,,0,0,,,,,,,,,,,
+qwen3:14b,,,42,2,1,621a7b50f902a2a8be6cd6a1a8abcbe3c1f9b4ca21b5917bc5fc12ab4a81fe97,compact,offline_size_only,1476,,0,0,,,,,,,,,,,

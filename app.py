@@ -316,7 +316,11 @@ class App:
         stage_eta = human_duration(snapshot['stage_eta_seconds'], True) if not eta_range else human_duration(eta_range[0], True) + ' - ' + human_duration(eta_range[1], True)
         total_range = snapshot.get('total_eta_range_seconds')
         total_eta = human_duration(snapshot['total_eta_seconds'], True) if not total_range else human_duration(total_range[0], True) + ' - ' + human_duration(total_range[1], True)
-        self.elapsed_text.set('Decorrido: ' + human_duration(snapshot['elapsed_seconds']) + ' | ETA etapa: ' + stage_eta + ' | ETA total: ' + total_eta)
+        eta_evidence = (' | amostras: ' + str(snapshot['eta_sample_count']) +
+                        (' | total usa baseline; hardware atual pendente' if snapshot['future_eta_basis'] == 'baseline_weights_unvalidated_on_current_hardware' else ' | historico compativel')) if snapshot['stage_eta_seconds'] is not None else ''
+        self.elapsed_text.set('Decorrido: ' + human_duration(snapshot['elapsed_seconds']) + ' | ETA etapa: ' + stage_eta + ' | ETA total: ' + total_eta + eta_evidence)
+        if snapshot.get('blocking_reason'):
+            self.execution_diagnostic.set(str(snapshot['stage_label']) + ': ' + snapshot['status'] + '. ' + snapshot['blocking_reason'])
         self.next_stage_text.set('Proxima etapa: ' + str(snapshot['next_stage_label'] or 'aguardando'))
         status_labels = {'running':'Em execucao', 'ok':'Concluido', 'partial':'Parcial', 'degraded':'Degradado',
                          'skipped':'Desativado', 'unavailable':'Indisponivel', 'failed':'Falhou', 'blocked':'Bloqueado', 'cancelled':'Interrompido'}
@@ -363,6 +367,9 @@ class App:
                 save_json(output, report)
                 message = ('CPU lógico: ' + str(report.get('logical_cpus')) +
                            '\nNVIDIA: ' + ('detectada' if report.get('gpu', {}).get('available') else 'indisponível') +
+                           '\nRAM disponível (bytes): ' + str(report.get('ram_available_bytes')) +
+                           '\nRAM processo (bytes): ' + str(report.get('working_set_bytes')) +
+                           '\nVRAM livre por GPU (MiB): ' + str([gpu.get('vram_free_mib') for gpu in report.get('gpu', {}).get('gpus', [])] or None) +
                            '\nFFmpeg: ' + ('disponível' if report.get('ffmpeg') else 'ausente') +
                            '\nParalelismo adaptativo: desativado até benchmark A/B' +
                            '\nRelatório: ' + str(output))

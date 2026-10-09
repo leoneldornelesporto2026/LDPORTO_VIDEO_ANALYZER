@@ -12,7 +12,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 
 from .curator_bridge import audit_second_curation_package
-from .curator_delivery import file_sha256, verify_mp4, probe
+from .curator_delivery import file_sha256, verify_mp4, probe, load_json, finalize_batch
 from .performance_acceptance import resource_diagnostic
 
 BENCHMARK_KEYS = ('micro_track_ratio', 'speaker_person_mapping_coverage', 'active_speaker_coverage',
@@ -67,11 +67,33 @@ def _runtime_checks():
     return runtime
 
 
+def _offline_runtime_checks():
+    """Probe only installed CPU tools; never contact Ollama or inspect GPU."""
+    runtime = {'python311_windows': platform.system() == 'Windows' and
+               platform.python_version_tuple()[:2] == ('3', '11'),
+               'gpu': {'available': None, 'reason': 'offline_not_measured'},
+               'ollama_local': {'reachable': None, 'model_count': None,
+                                'reason': 'offline_not_contacted'},
+               'ffmpeg': shutil.which('ffmpeg'), 'ffprobe': shutil.which('ffprobe'),
+               'ffmpeg_encoder_libx264': False, 'scope': 'offline_cpu_tools_only'}
+    if runtime['ffmpeg']:
+        try:
+            proc = subprocess.run([runtime['ffmpeg'], '-hide_banner', '-encoders'],
+                                  capture_output=True, text=True, encoding='utf-8',
+                                  errors='replace', timeout=20)
+            runtime['ffmpeg_encoder_libx264'] = proc.returncode == 0 and 'libx264' in proc.stdout
+        except (OSError, subprocess.SubprocessError):
+            pass
+    return runtime
+
+
 def homologate(*, package=None, source=None, preview=None, batch_manifest=None,
-               analysis=None, baseline=None, human_reviews=None, junit=None):
+               analysis=None, baseline=None, human_reviews=None, junit=None, render_plan=None,
+               offline=False):
     """Read-only real deployment report. Reports unknown as not evaluated."""
     r = {'schema_version': '11.1', 'created_at': datetime.now(timezone.utc).isoformat(),
-         'verification_scope': 'local_evidence_read_only', 'runtime': _runtime_checks(),
+         'verification_scope': 'local_evidence_read_only',
+         'runtime': _offline_runtime_checks() if offline else _runtime_checks(),
          'automated_tests': 'NOT_RUN_IN_THIS_COMMAND', 'editorial_human_approval': False,
          'ready_to_publish': False, 'full_real_technical_flow': False, 'blockers': [], 'warnings': []}
     package_hash = file_sha256(package) if package and Path(package).is_file() else None
@@ -120,6 +142,20 @@ def homologate(*, package=None, source=None, preview=None, batch_manifest=None,
                       'reports': [verify_mp4(c['file'], c.get('probe', {}).get('duration', 0)) for c in batch.get('clips', [])]}
         if not r['batch']['reports'] or any(x['status'] == 'BLOCKED' for x in r['batch']['reports']):
             r['blockers'].append('BATCH_MP4_TECHNICAL_FAILURE')
+        r['batch']['independent_review_verified'] = False
+        if render_plan and human_reviews:
+            try:
+                plan = load_json(render_plan)
+                if plan.get('source_sha256') != source_hash or plan.get('package_sha256') != package_hash:
+                    raise ValueError('HOMOLOGATION_PLAN_PROVENANCE_MISMATCH')
+                if batch.get('canary_report', {}).get('sha256') != r.get('preview', {}).get('sha256'):
+                    raise ValueError('HOMOLOGATION_CANARY_PREVIEW_MISMATCH')
+                finalize_batch(plan, batch, load_json(human_reviews))
+                r['batch']['independent_review_verified'] = True
+            except (ValueError, KeyError, OSError, RuntimeError, subprocess.SubprocessError) as exc:
+                r['batch']['review_issue'] = str(exc)
+        if not r['batch']['independent_review_verified']:
+            r['blockers'].append('BATCH_HASH_BOUND_INDEPENDENT_REVIEW_PENDING')
     else:
         r['blockers'].append('INDEPENDENT_MP4_BATCH_NOT_SUPPLIED')
     current, previous = _analysis(analysis), _analysis(baseline)
@@ -138,7 +174,9 @@ def homologate(*, package=None, source=None, preview=None, batch_manifest=None,
                        data.get('source_sha256') == source_hash and
                        data.get('preview_sha256') == r['preview']['sha256'])
         r['human_review']['hashes_bound_to_current_media'] = bool(hashes_bound)
-        if data.get('reviewer') and hashes_bound and all(data.get('checks', {}).get(k) is True for k in REVIEW_ITEMS):
+        if (str(data.get('reviewer') or '').strip() and hashes_bound and
+            r.get('batch', {}).get('independent_review_verified') is True and
+            all(data.get('checks', {}).get(k) is True for k in REVIEW_ITEMS)):
             r['editorial_human_approval'] = True
     if junit:
         try:

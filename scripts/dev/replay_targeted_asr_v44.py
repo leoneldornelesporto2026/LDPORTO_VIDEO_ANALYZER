@@ -20,11 +20,15 @@ def main():
     read = lambda path: json.loads(path.read_text(encoding='utf-8-sig'))
     metadata = read(folder / 'analysis_summary.json')['metadata']
     transcript = {'words': read(folder / 'words.json'), 'segments': read(folder / 'transcript_segments.json')}
-    candidates = read(ROOT / '.cache/v44_validation/P0C_commercial_replay/main_moments.json')
-    arcs = read(ROOT / '.cache/v44_validation/P0D_story_replay/story_arcs.json')
+    # Consume the final exported selection from this same analysis, never an
+    # intermediate commercial replay with an unrelated/stale candidate list.
+    candidates = read(folder / 'main_moments.json')
+    shortlist = read(folder / 'analysis.json')['editorial_shortlist']
+    arcs = read(folder / 'story_arcs.json')
     ctx = Context(folder / metadata['filename'], output, cfg, metadata['sha256'], logging.getLogger('v44-targeted'))
     result = run_targeted_repair(ctx, {'mono': str(folder / 'audio/original_mono_16k.wav')}, transcript,
-                                candidates, arcs, read(folder / 'questions_answers.json'), metadata['duration'])
+                                candidates, arcs, read(folder / 'questions_answers.json'), metadata['duration'],
+                                shortlist_ids=shortlist)
     output.mkdir(parents=True, exist_ok=True)
     (output / 'targeted_asr_repair.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps({k: v for k, v in result.items() if k != 'alternatives'}, ensure_ascii=False))

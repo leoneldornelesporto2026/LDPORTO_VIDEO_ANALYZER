@@ -6,6 +6,7 @@ usage: py -3.11 scripts/dev/review_editorial_s3.py --package X.zip --out report.
 """
 import argparse
 import json
+import math
 import sys
 import zipfile
 from pathlib import Path
@@ -66,7 +67,13 @@ def evaluate(candidates, segments, arcs, qas, editorial_ready, max_items=12, min
     review = []
     for m in candidates:
         begin, finish = m.get('ideal_start'), m.get('ideal_end')
-        if not isinstance(begin, (int, float)) or not isinstance(finish, (int, float)) or begin >= finish:
+        if (isinstance(begin, bool) or isinstance(finish, bool)
+                or not isinstance(begin, (int, float)) or not isinstance(finish, (int, float))
+                or not math.isfinite(begin) or not math.isfinite(finish) or begin < 0 or begin >= finish):
+            item = dict(m)
+            item['editorial_blockers'] = sorted(set((m.get('editorial_blockers') or []) + ['invalid_source_interval']))
+            item['default_shortlist_eligible'] = False
+            review.append(item)
             continue
         evidence = m.get('evidence_segment_ids') or []
         narrative = narrative_integrity(by_arc.get(m.get('story_arc_id')), evidence)

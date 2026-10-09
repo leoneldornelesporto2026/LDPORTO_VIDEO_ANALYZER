@@ -5,7 +5,7 @@ from .core import Context, digest, read_json, write_json, setup_logging, output_
 from .camera_director import build_camera_director
 from .global_camera_planner import build_global_camera_plan
 
-PLANNER_CODE = ['global_camera_planner.py', 'director_config.py', 'camera_geometry.py', 'camera_preflight.py', 'temporal.py', 'director_integration.py']
+PLANNER_CODE = ['global_camera_planner.py', 'camera_evidence.py', 'director_config.py', 'camera_geometry.py', 'camera_preflight.py', 'temporal.py', 'director_integration.py']
 DIRECTOR_CODE = ['camera_director.py', 'director_config.py', 'camera_motion.py',
                  'camera_evidence.py', 'interview_layout.py', 'broadcast_graphics.py',
                  'preview_verifier.py',
@@ -67,6 +67,7 @@ def attach_director(analysis, director):
         rows, analysis.get('metadata', {}).get('duration', 0), director.get('metrics', {}).get('switches_suppressed'))}
     analysis['camera_director_schema_version'] = '4.3'
     analysis['camera_director_timeline'] = rows
+    analysis['camera_director_focus_window_audit'] = director.get('focus_window_audit', [])
     analysis['camera_director_debug'] = director.get('debug')
     analysis['camera_director_config'] = director.get('config')
     analysis['smart_zoom_events'] = director.get('zoom_events', [])

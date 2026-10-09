@@ -15,9 +15,11 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'src'))
 from ldporto.person_reid import build_person_identities
 from ldporto.config import DEFAULTS
-from ldporto.visual_identity_audit import audit_embedding_gaps
+from ldporto.visual_identity_audit import audit_embedding_gaps, compare_embedding_recovery
+from ldporto.core import file_hash
 from ldporto.identity_goldset import (sample_tracklets, write_annotation_csv,
-                                      read_annotation_csv, evaluate_annotations, write_contact_sheet)
+                                      read_annotation_csv, evaluate_annotations, write_contact_sheet,
+                                      sample_reid_pairs, compare_identity_annotations)
 
 
 def read_artifact(source, filename):
@@ -49,8 +51,12 @@ def analyze(source, *, sample_limit=96):
         reid = existing.get('data', existing)
     else:
         reid = build_person_identities(vision, DEFAULTS['vision'])['data']
-    return (audit_embedding_gaps(vision, reid),
-            sample_tracklets(vision, reid, limit=sample_limit))
+    report = audit_embedding_gaps(vision, reid)
+    summary = read_artifact(source, 'analysis_summary.json') or {}
+    report['source_sha256'] = (summary.get('metadata') or {}).get('sha256')
+    report['producer_version'] = summary.get('producer_version')
+    report['reid_review_pairs'] = sample_reid_pairs(reid, limit=sample_limit)
+    return report, sample_tracklets(vision, reid, limit=sample_limit)
 
 
 def main():
@@ -60,10 +66,25 @@ def main():
     parser.add_argument('--video', type=Path, help='Fonte local para quadros de revisao visual (opcional)')
     parser.add_argument('--evaluate', type=Path, help='CSV revisado manualmente, annotation_status=verified')
     parser.add_argument('--sample-limit', type=int, default=96)
+    parser.add_argument('--comparison-records', type=Path,
+                        help='JSON com before/after: hashes da fonte/protocolo/amostra e verified_quality humana')
+    parser.add_argument('--identity-comparison-records', type=Path,
+                        help='JSON before/after com source_sha256, protocol_sha256 e annotations verificadas')
     args = parser.parse_args()
     if not 1 <= args.sample_limit <= 500:
         parser.error('--sample-limit deve estar entre 1 e 500')
     report, samples = analyze(args.source, sample_limit=args.sample_limit)
+    if args.video:
+        expected_hash = report.get('source_sha256')
+        if not expected_hash or file_hash(args.video) != expected_hash:
+            raise ValueError('Fonte do contact sheet nao comprovada pelo SHA256 da analise.')
+    if args.comparison_records:
+        records = json.loads(args.comparison_records.read_text(encoding='utf-8-sig'))
+        report['comparability'] = compare_embedding_recovery(records['before'], records['after'])
+        report['comparability']['scope'] = 'supplied_comparison_records_only'
+    if args.identity_comparison_records:
+        records = json.loads(args.identity_comparison_records.read_text(encoding='utf-8-sig'))
+        report['identity_comparison'] = compare_identity_annotations(records['before'], records['after'])
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output/'tracking_s4_report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding='utf-8')
     csv_path = args.output/'identity_annotations.csv'

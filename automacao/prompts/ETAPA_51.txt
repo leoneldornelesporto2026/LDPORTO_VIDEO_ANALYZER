@@ -1,0 +1,23 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 51/52 — Performance controlada, Ollama A/B e cache por etapa
+
+OBJETIVO: reduzir tempo de Ollama/tracking sem sacrificar mérito editorial.
+CÓDIGO: semantic.py, ollama_local.py, perf_telemetry.py (verificar nome), core.py, vision.py, config.py, tests stage40/41, test_v47_r3b_performance.py.
+BASE real: semantic 1h30m39s, tracking 44m44s, compact_prompt:false, 66 chamadas Ollama; sem cache hit em full-run.
+IMPLEMENTE:
+1. Benchmark A/B inteiramente determinístico para fixtures e opt-in para Ollama local real, com entradas/hashes/prompt_schema/model/num_ctx/temperature fixos, cache isolado, comparações de completude JSON, refs, custos, tokens, latência, ranking e qualidade (quando anotada). Não declarar ganho em fixture como ganho real.
+2. Revisitar compact_prompt já existente mas manter opt-in false por padrão até evidência real; validação contrato robusta, fallback medido sem repetir o vídeo integral.
+3. Instrumentar cache hits/misses por etapa, dependências e invalidadores; métricas de memória/GPU/CPU quando medidas, null quando ausentes, ETA adaptativo honesto na GUI.
+4. Perfil de visão serial/paralelo opt-in com orçamento de VRAM e conflitos PyTorch/MediaPipe; sem instalar modelos/gastar recursos por padrão.
+5. Testes offline determinísticos de hash e cache e contrato de saída; comando de benchmarking real somente documentado com confirmação explícita.
+CRITÉRIO: preservar qualidade sobre velocidade, resultados comparáveis, sem mudar configuração operacional automaticamente.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_51.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

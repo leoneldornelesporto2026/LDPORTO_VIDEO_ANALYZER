@@ -15,6 +15,40 @@ from .social_output import build_social_output
 from .run_status import build_run_manifest
 from .compact_artifacts import compact_analysis_document, create_compact_artifacts
 from .analysis_quality import quality_gate
+from .build_provenance import exporter_identity
+from .qa_audit import audit_qa
+
+
+def _run_manifest(analysis, ctx, issues=None):
+    """Read checkpoint identities without changing cache keys or inference sources."""
+    from copy import deepcopy
+    from .core import read_json, file_hash
+    stages = deepcopy(analysis.get('stage_status') or {})
+    for name, state in stages.items():
+        if state.get('artifact_snapshot_reused'):
+            continue
+        metrics = getattr(ctx, 'stage_metrics', {}).get(name) or {}
+        origin = deepcopy(state.get('execution_provenance') or {})
+        if 'cache_hit' in metrics:
+            origin['origin'] = 'cache' if metrics['cache_hit'] else 'executed'
+        # Stage names are internal, but reject paths in imported analyses.
+        if Path(name).name == name and '/' not in name and '\\' not in name:
+            checkpoint = Path(ctx.output) / 'cache' / ctx.signature[:16] / (name + '.json')
+            try:
+                record = read_json(checkpoint)
+                if state.get('key') and record.get('key') == state['key']:
+                    origin['checkpoint_sha256'] = file_hash(checkpoint)
+            except (OSError, ValueError, TypeError):
+                pass
+        if name == '20_handoff':
+            identity = exporter_identity()
+            origin.update(origin='executed', analyzer_build=identity['analyzer_build'],
+                          code_fingerprint=identity['code_fingerprint'])
+        state['execution_provenance'] = origin
+    return build_run_manifest(analysis.get('metadata') or {}, stages,
+                              analysis.get('issues', []) if issues is None else issues,
+                              analysis.get('analysis_quality'), analysis.get('run_manifest'),
+                              analysis.get('provenance'))
 
 
 
@@ -322,7 +356,7 @@ class ReportEngine:
         serialization_started=time.monotonic()
         ctx.progress('20_handoff', substage='local_artifacts')
         analysis.setdefault("stage_status", {})["20_handoff"] = {"status": "ok", "method": "uncached_export"}
-        analysis["run_manifest"] = build_run_manifest(analysis.get("metadata", {}), analysis["stage_status"], analysis.get("issues", []), analysis.get('analysis_quality', {}))
+        analysis["run_manifest"] = _run_manifest(analysis, ctx)
         analysis["analysis_status"] = analysis["run_manifest"]["analysis_status"]
         analysis["summary"] = summary(analysis)
         analysis["second_curation_package"] = build_second_curation_package(analysis)
@@ -359,6 +393,7 @@ class ReportEngine:
             "question_candidates.json":analysis.get("question_candidates",analysis["questions_answers"]),
             "question_answer_pairs.json":analysis.get("question_answer_pairs",[]),
             "qa_summary.json":analysis.get("qa_metrics",{}), "program_sections.json":analysis.get("program_sections",[]),
+            "qa_audit.json": audit_qa(analysis, candidates=analysis['second_curation_package']['candidates']),
             "editorial_moments.json": analysis["editorial_moments"],
             "ollama_editorial_review.json": analysis.get("ollama_editorial_review"),
             "caption_segments.json": caption_segments,
@@ -430,6 +465,13 @@ class ReportEngine:
             "run_manifest_schema_version": "1.0",
             "no_final_video_rendered": True,
         }
+        exports['manifest.json'].update(
+            run_id=analysis['run_manifest']['run_id'],
+            analyzer_build=analysis['run_manifest']['analyzer_build'],
+            code_fingerprint=analysis['run_manifest']['code_fingerprint'],
+            build_provenance=analysis['run_manifest']['build_provenance'])
+        exports['manifest.json']['second_curation_schema_version'] = analysis['second_curation_package'].get('schema_version')
+        exports['manifest.json']['run_manifest_schema_version'] = analysis['run_manifest'].get('schema_version')
         for filename, data in exports.items():
             write_json(ctx.output/filename, data)
         stories_dir = ctx.output / "STORIES_PACKAGE"
@@ -517,7 +559,7 @@ class ReportEngine:
                                             'integrity_contracts.py', 'commercial_gate.py', 'social_output.py',
                                             'analysis_quality.py', '../../schemas/second_curation_decisions.schema.json',
                                             'preview_renderer.py'],
-                output_version='1.1-s2-integrity', requires=['20_handoff'])
+                output_version='1.2-stage06-report-contract', requires=['20_handoff'])
             if package_result.get('path'):
                 from .second_curation_export import validate_core_package
                 if validate_core_package(package_result['path'])['status'] != 'valid':
@@ -533,15 +575,33 @@ class ReportEngine:
                     canonical_quality = final('summary/quality_summary.json')
                     canonical_shortlist = final('editorial/default_shortlist.json')['candidate_ids']
                     canonical_candidates = final('editorial/candidate_catalog.json')['candidates']
+                    canonical_qa = final('editorial/qa_pairs.json')
                     canonical_social = final('social/stories_manifest.json')
+                write_json(ctx.output / 'qa_audit.json', audit_qa(
+                    analysis, exported_rows=canonical_qa, candidates=canonical_candidates))
                 analysis['candidate_metrics'] = canonical_summary['candidate_metrics']
                 analysis['editorial_shortlist'] = canonical_shortlist
                 analysis['second_curation_package']['candidates'] = canonical_candidates
                 analysis['second_curation_package']['filtering_summary']['default_shortlist_ids'] = canonical_shortlist
+                analysis['second_curation_package']['filtering_summary'].update(
+                    commercial_candidates=canonical_summary['candidate_metrics']['excluded_commercial_count'],
+                    default_ineligible_candidates=sum(not row.get('default_shortlist_eligible') for row in canonical_candidates),
+                    commercial_eligibility_invariant_violations=sum(
+                        (row.get('commercial_classification') or {}).get('eligibility') == 'excluded'
+                        and bool(row.get('default_shortlist_eligible')) for row in canonical_candidates))
+                analysis['second_curation_package']['social_output_summary']['story_count'] = len(canonical_social['stories'])
                 analysis['second_curation_package']['candidate_catalog_mode'] = 'final_export_validated'
                 analysis['social_output'] = canonical_social
                 analysis['quality_gate'] = canonical_quality['quality_gate']
+                analysis['final_package_gate'] = canonical_quality['final_package_gate']
+                analysis['subtitle_review_metrics'] = canonical_summary['subtitle_review_metrics']
+                analysis['analysis_quality']['quality_status'] = analysis['quality_gate']['status']
+                analysis['analysis_quality']['quality_gate_issues'] = analysis['quality_gate']['issues']
+                analysis['second_curation_package']['candidate_count'] = len(canonical_candidates)
+                analysis['second_curation_package'].setdefault('benchmark_metrics', {})['candidate_metrics'] = analysis['candidate_metrics']
                 analysis['summary']['candidate_metrics'] = canonical_summary['candidate_metrics']
+                analysis['summary'].update(quality_gate=analysis['quality_gate'],
+                    final_package_gate=analysis['final_package_gate'], subtitle_review_metrics=analysis['subtitle_review_metrics'])
                 write_json(ctx.output / 'video_summary.json', analysis['summary'])
                 write_json(ctx.output / 'second_curation_package.json', analysis['second_curation_package'])
                 write_json(ctx.output / 'quality_gate.json', analysis['quality_gate'])
@@ -559,8 +619,10 @@ class ReportEngine:
             analysis['second_curation_export'] = package_result
             analysis['stage_status'].update(ctx.states)
             analysis['stage_runtime'].update(ctx.stage_metrics) if 'stage_runtime' in analysis else analysis.update(stage_runtime=dict(ctx.stage_metrics))
-            analysis['run_manifest'] = build_run_manifest(analysis.get('metadata', {}), analysis['stage_status'], analysis.get('issues', []) + ctx.issues, analysis.get('analysis_quality', {}))
+            analysis['run_manifest'] = _run_manifest(analysis, ctx, analysis.get('issues', []) + ctx.issues)
             analysis['analysis_status'] = analysis['run_manifest']['analysis_status']
+            analysis['summary']['analysis_status'] = analysis['analysis_status']
+            write_json(ctx.output / 'video_summary.json', analysis['summary'])
             metrics = analysis['analysis_quality']
             metrics.update(second_curation_package_bytes=package_result.get('bytes'), second_curation_file_count=package_result.get('file_count'),
                            second_curation_dangling_refs=(package_result.get('validation') or {}).get('dangling_references'),
@@ -572,6 +634,14 @@ class ReportEngine:
             write_json(ctx.output / 'second_curation_export.json', package_result)
             write_json(ctx.output / 'run_manifest.json', analysis['run_manifest'])
             write_json(ctx.output / 'analysis_quality.json', metrics)
+            # Rebuild every consumer after final selection, causes and export status settle.
+            create_compact_artifacts(analysis, ctx.output, export_cfg)
+            write_json(ctx.output / 'CHATGPT_ANALYSIS_HANDOFF.json', build_chatgpt_handoff(
+                analysis, compact=not export_cfg.get('legacy_full_analysis', False)))
+            (ctx.output / 'CHATGPT_ANALYSIS_HANDOFF.md').write_text(handoff_markdown(analysis), encoding='utf-8')
+            write_json(ctx.output / 'llm_insights.json', llm_insights(analysis))
+            (ctx.output / 'report.md').write_text(markdown_report(analysis), encoding='utf-8')
+            (ctx.output / 'report.html').write_text(html_report(analysis), encoding='utf-8')
             summary_path = ctx.output / 'analysis_summary.json'
             from .core import read_json
             compact_summary = read_json(summary_path)
@@ -586,6 +656,7 @@ class ReportEngine:
                 # The compact document was created BEFORE the final ZIP. Keep
                 # every reference checksum in sync after applying final gates.
                 from .core import file_hash
+                document = compact_analysis_document(analysis, ctx.output)
                 source_ref = (document.get('collection_refs') or {}).get('second_curation_package')
                 if source_ref:
                     source_ref['sha256'] = file_hash(ctx.output / 'second_curation_package.json')
@@ -599,6 +670,7 @@ class ReportEngine:
                 write_json(ctx.output / 'analysis.json', document)
             outputs.append(ctx.output / 'second_curation_export.json')
             final_manifest.update(stage_status=analysis['stage_status'], analysis_status=analysis['analysis_status'],
+                                  build_provenance=analysis['run_manifest']['build_provenance'],
                                   second_curation_export=package_result, files=[name for name in dict.fromkeys(final_manifest['files'] + ['second_curation_export.json'])
                                                                             if (ctx.output / name).is_file()])
             write_json(ctx.output / 'manifest.json', final_manifest)
@@ -621,7 +693,7 @@ def exports_placeholder():
     return (
         "analysis.json", "video_summary.json", "llm_insights.json", "timeline.json",
         "words.json", "speakers.json", "people.json", "people_observations.json",
-        "scenes.json", "topics.json", "questions_answers.json", "editorial_moments.json",
+        "scenes.json", "topics.json", "questions_answers.json", "qa_audit.json", "editorial_moments.json",
         "ollama_editorial_review.json", "caption_segments.json", "speaker_person_mapping.json",
         "transcription_alternatives.json", "low_confidence_words.json", "ocr_text.json",
         "audio_analysis.json", "video_analysis.json",

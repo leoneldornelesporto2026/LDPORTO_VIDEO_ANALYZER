@@ -12,6 +12,8 @@ from .paths import PROJECT_ROOT
 def resource_snapshot():
     result = {'process_cpu_seconds': time.process_time(), 'working_set_bytes': None,
               'peak_process_memory_bytes': None, 'system_ram_bytes': None, 'available_ram_bytes': None}
+    from .performance_acceptance import physical_memory_available
+    result['available_ram_bytes'] = physical_memory_available()
     if os.name == 'nt':
         import ctypes
         from ctypes import wintypes

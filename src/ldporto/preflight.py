@@ -178,10 +178,14 @@ def validate_vision_assets(cfg):
             from .vision import LipEngine
             landmarker=LipEngine(vision)
             models['face_landmarker']={'ok':True}
-        if vision['body_detection'] and vision['body_backend']=='yolo':
-            from ultralytics import YOLO
-            body=YOLO(str(asset_path(vision['yolo_model'])))
-            models['yolo']={'ok':True}
+        if vision['body_detection']:
+            from .vision import load_local_yolo
+            body, backend = load_local_yolo(vision)
+            if body is None:
+                hog = cv2.HOGDescriptor()
+                hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+            models['body_backend']={'ok':True, **backend,
+                                    'quality':'degraded' if body is None else 'not_validated'}
         return {'ok':all(model['ok'] for model in models.values()),'models':models,'inference_executed':False}
     except Exception as exc:
         return {'ok':False,'error':scrub(f'{type(exc).__name__}: {exc}'),'models':models,'inference_executed':False}
@@ -281,15 +285,12 @@ def run_preflight(cfg, output=None):
             vision_checks["mediapipe"] = _import_check("mediapipe", cfg)
             vision_checks["landmarker_model"] = _file_check(vision["landmarker_model"], checksum=True)
         if vision["body_detection"]:
-            if vision["body_backend"] == "yolo":
-                vision_checks["yolo"] = _import_check("ultralytics", cfg)
-                vision_checks["yolo_model"] = _file_check(vision["yolo_model"], checksum=True)
-            else:
-                try:
-                    import cv2
-                    vision_checks["hog"] = {"ok": hasattr(cv2, "HOGDescriptor")}
-                except Exception as exc:
-                    vision_checks["hog"] = {"ok": False, "error": scrub(exc)}
+            # YOLO is optional; the local-only loader reports its fallback in model_load.
+            try:
+                import cv2
+                vision_checks["hog"] = {"ok": hasattr(cv2, "HOGDescriptor")}
+            except Exception as exc:
+                vision_checks["hog"] = {"ok": False, "error": scrub(exc)}
         if vision_checks and all(check.get('ok') for check in vision_checks.values()):
             vision_checks['model_load']=validate_vision_assets(cfg)
     register("vision", vision["enabled"], vision_checks,

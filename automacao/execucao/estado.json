@@ -1,0 +1,2103 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-10-08T13:12:48+00:00",
+  "updated_at": "2026-10-09T14:31:49+00:00",
+  "completed": 42,
+  "active": 43,
+  "status": "RUNNING",
+  "stages": [
+    {
+      "n": 1,
+      "title": "Reconciliação de versões e baseline",
+      "result": "DONE",
+      "summary": "Baseline reproduzível criado. Base atual S9–S11 reconciliada; execução histórica reporta S4, partial/P1_DEGRADED e 55→52→1 candidatos. Checkpoint completo registrado. ZIP não gerado conforme instrução do orquestrador.",
+      "when": "2026-10-08T13:32:29+00:00",
+      "seconds": null,
+      "files_changed": [
+        "automacao/baselines/BASELINE.json",
+        "automacao/baselines/BASELINE_TECNICO.md",
+        "scripts/dev/baseline_etapa01.py"
+      ],
+      "tests_reported_by_codex": [
+        "Importações básicas: exit code 0.",
+        "Regressão offline: 34 passed, 6 deselected; exit code 0.",
+        "Geração determinística, evidências intactas e hashes declarados dos dois ZIPs conferidos: exit code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_01_pytest.log",
+      "python_files_checked": 170,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_01.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/PARCIAL_ETAPA_01_1791465630.zip",
+        "sha256": "13b1a55840cc2b38a556dd1c51b857c584dc40646b64fb29e4c4fbf8776f0032",
+        "bytes": 1030199
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_01.zip",
+        "sha256": "a5be8588d5b4c90ee13dcc450d8b358c60b79493cb6940e019c5c75b8e99e688",
+        "bytes": 1030308
+      },
+      "risks": [
+        "Hashes dos fontes executados historicamente indisponíveis: null.",
+        "295/296 arquivos conferem; divergência preexistente em test_v43_runtime.py preservada.",
+        "Homologação real S9–S11 e aprovação humana permanecem pendentes; publicação não autorizada."
+      ],
+      "offline_recovery": true
+    },
+    {
+      "n": 2,
+      "title": "Verdade do build nos manifests",
+      "result": "DONE",
+      "summary": "Etapa 02 implementada: manifests preservam identidade histórica, distinguem o exportador e expõem divergências e replay misto sem afirmar execução completa sem prova. Checkpoint registrado.",
+      "when": "2026-10-08T13:45:18+00:00",
+      "seconds": 626.7,
+      "files_changed": [
+        "src/ldporto/build_provenance.py",
+        "src/ldporto/replay.py",
+        "src/ldporto/reports.py",
+        "src/ldporto/run_status.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/test_build_manifest_truth.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 78 passed, 1 skipped (display Tk indisponível), 1 deselected; exit 0.",
+        "Após último ajuste: 8 testes focalizados aprovados; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_02_pytest.log",
+      "python_files_checked": 172,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_02.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_02.zip",
+        "sha256": "a5be8588d5b4c90ee13dcc450d8b358c60b79493cb6940e019c5c75b8e99e688",
+        "bytes": 1030308
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_02.zip",
+        "sha256": "346699fc763aeff8eff93714a5d07304a6732b91633f699950e0587da612c886",
+        "bytes": 1034973
+      },
+      "risks": [
+        "Sem atestação de execução completa, analysis_status permanece partial; hashes desconhecidos permanecem null.",
+        "Homologação com mídia/modelos e interface gráfica pendente. ZIP do projeto reservado ao orquestrador."
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Referências Q&A e IDs quebrados",
+      "result": "DONE",
+      "summary": "Corrigidas referências Q&A sem apagar vínculos ou inventar conteúdo. Reproduzidas 123 ocorrências históricas com 111 IDs ausentes; lógica atual resolve todas usando registros reais. Checkpoint registrado.",
+      "when": "2026-10-08T13:53:17+00:00",
+      "seconds": 428.9,
+      "files_changed": [
+        "src/ldporto/integrity_contracts.py",
+        "src/ldporto/second_curation.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/fixtures/joao_gordo_qa_references.json",
+        "src/tests/test_qa_reference_handoff.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 53 passed, 3 deselected; exit 0.",
+        "Dados históricos em memória: 174 registros, zero referências ausentes e zero erros."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_03_pytest.log",
+      "python_files_checked": 173,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_03.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_03.zip",
+        "sha256": "346699fc763aeff8eff93714a5d07304a6732b91633f699950e0587da612c886",
+        "bytes": 1034973
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_03.zip",
+        "sha256": "aa79f1b7b88b672d3e0a198c7e6f2fa64df3877b746072fcf354506f8223eafe",
+        "bytes": 1038927
+      },
+      "risks": [
+        "Homologação de mídia e Curator pendente; testes visuais desmarcados.",
+        "ZIP do projeto não gerado, conforme instrução de snapshot pelo orquestrador."
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Estados READY e capacidade por etapa",
+      "result": "DONE",
+      "summary": "Etapa 04 implementada: capacidades desconhecidas preservam null, câmera degradada não bloqueia revisão editorial com evidências suficientes, preview exige frames amostrados e alterações de artefatos invalidam sua verificação. Aprovação humana e publicação permanecem separadas.",
+      "when": "2026-10-08T13:59:33+00:00",
+      "seconds": 316.4,
+      "files_changed": [
+        "schemas/curation_index.schema.json",
+        "src/ldporto/analysis_quality.py",
+        "src/ldporto/integrity_contracts.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/test_s2_pipeline_integrity.py",
+        "src/tests/test_stage04_readiness.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 72 passed, 3 deselected; exit code 0.",
+        "Checkpoint registra comandos, falhas iniciais, correções e limitações."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_04_pytest.log",
+      "python_files_checked": 174,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_04.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_04.zip",
+        "sha256": "aa79f1b7b88b672d3e0a198c7e6f2fa64df3877b746072fcf354506f8223eafe",
+        "bytes": 1038927
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_04.zip",
+        "sha256": "5b3502fbd88429a0fc756e94c8633c1a27c03a9a145ba847fb232d4863592f8c",
+        "bytes": 1041657
+      },
+      "risks": [
+        "Renderização real e fluxo de aprovação no Curator permanecem pendentes de homologação.",
+        "Consumidores devem aceitar null nas capacidades desconhecidas.",
+        "ZIP não gerado, conforme instrução atual do orquestrador."
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Grafo de dependências para replay seletivo",
+      "result": "DONE",
+      "summary": "Replay editorial corrigido para invalidar por argumentos reais; grafo downstream completado e caches caros preservados. Checkpoint da etapa 05 registrado. Nenhum ZIP gerado, conforme instrução atual.",
+      "when": "2026-10-08T14:06:45+00:00",
+      "seconds": 370.2,
+      "files_changed": [
+        "src/ldporto/pipeline.py",
+        "src/ldporto/replay.py",
+        "src/ldporto/run_status.py",
+        "src/tests/test_stage05_selective_replay.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 87 passed, 4 deselected; exit code 0.",
+        "Compatibilidade de replay: 4 passed, 36 deselected; exit code 0.",
+        "Cache hit, invalidação seletiva, preservação de ASR/embedding e rejeição de checksum adulterado comprovados com fixtures."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_05_pytest.log",
+      "python_files_checked": 175,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_05.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_05.zip",
+        "sha256": "5b3502fbd88429a0fc756e94c8633c1a27c03a9a145ba847fb232d4863592f8c",
+        "bytes": 1041657
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_05.zip",
+        "sha256": "f10a50218fc609bdd74f63afa99e18909ce55ec465f98e9296e1cce213b5c966",
+        "bytes": 1044438
+      },
+      "risks": [
+        "Caches downstream anteriores podem ter miss conservador; nenhum cache existente foi removido.",
+        "GPU, modelos, mídia e preview reais não executados; homologação documentada no checkpoint."
+      ]
+    },
+    {
+      "n": 6,
+      "title": "Gate global e relatórios coerentes",
+      "result": "DONE",
+      "summary": "Etapa 06 implementada: contadores, causas e gates sincronizados entre relatórios e handoffs; divergências por campo bloqueiam validação. Checkpoint registrado. Snapshot do projeto delegado ao orquestrador conforme instrução.",
+      "when": "2026-10-08T14:15:39+00:00",
+      "seconds": 472.2,
+      "files_changed": [
+        "src/ldporto/compact_artifacts.py",
+        "src/ldporto/handoff.py",
+        "src/ldporto/integrity_contracts.py",
+        "src/ldporto/reports.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/test_stage06_report_coherence.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 129 passed, 3 deselected; exit 0.",
+        "Após ajuste final: 7 testes focados aprovados; exit 0.",
+        "Evidência histórica P1_DEGRADED inspecionada somente para leitura."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_06_pytest.log",
+      "python_files_checked": 176,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_06.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_06.zip",
+        "sha256": "f10a50218fc609bdd74f63afa99e18909ce55ec465f98e9296e1cce213b5c966",
+        "bytes": 1044438
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_06.zip",
+        "sha256": "b27a65b4eaacc3e4eaab11ef1d73e102aa171858c8945ad5a4301bb38c310185",
+        "bytes": 1047979
+      },
+      "risks": [
+        "Preview real, áudio e aprovação humana não homologados.",
+        "Cache downstream do estágio 21 será regenerado; caches caros preservados."
+      ]
+    },
+    {
+      "n": 7,
+      "title": "Diagnóstico dos 128 Q&A candidatos",
+      "result": "DONE",
+      "summary": "Etapa 07 implementada com auditor rastreável e checkpoint. Evidência histórica: 128 candidatos, 37 pares associados, 15 completos por heurística; sem escuta, todos exigem revisão.",
+      "when": "2026-10-08T14:25:36+00:00",
+      "seconds": 532.0,
+      "files_changed": [
+        "scripts/dev/audit_qa.py",
+        "src/ldporto/qa_audit.py",
+        "src/ldporto/reports.py",
+        "src/tests/test_stage07_qa_audit.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 98 passed, exit 0.",
+        "Teste focado após ajuste final: 16 passed, exit 0.",
+        "Auditoria histórica e verificação dos hashes: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_07_pytest.log",
+      "python_files_checked": 179,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_07.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_07.zip",
+        "sha256": "b27a65b4eaacc3e4eaab11ef1d73e102aa171858c8945ad5a4301bb38c310185",
+        "bytes": 1047979
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_07.zip",
+        "sha256": "09dca13cd7bcc5d356e1463eae02fd74e21a5d2a6a3f65a8c2012275febbb41f",
+        "bytes": 1055609
+      },
+      "risks": [
+        "Pares suspeitos dependem de revisão humana com áudio; não são falsos pares confirmados.",
+        "Benchmark R4.9-S4 não comprova execução do Analyzer atualizado.",
+        "ZIP do projeto não gerado, conforme instrução específica; snapshots cabem ao orquestrador."
+      ]
+    },
+    {
+      "n": 8,
+      "title": "Respostas retomadas após interrupção",
+      "result": "DONE",
+      "summary": "Etapa 08 implementada: retomadas exigem evidências de continuidade; ambiguidades e mudanças de tema geram motivos pendentes. Checkpoint registrado. Nenhum ZIP gerado, conforme instrução desta execução.",
+      "when": "2026-10-08T14:37:52+00:00",
+      "seconds": 676.2,
+      "files_changed": [
+        "src/ldporto/semantic.py",
+        "src/tests/test_s3_editorial_intelligence.py",
+        "src/tests/test_stage07_qa_audit.py",
+        "src/tests/test_stage08_resumed_answers.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 183 passed in 17.63s; exit 0.",
+        "Validação sintática e conferência do checkpoint: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_08_pytest.log",
+      "python_files_checked": 180,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_08.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_08.zip",
+        "sha256": "09dca13cd7bcc5d356e1463eae02fd74e21a5d2a6a3f65a8c2012275febbb41f",
+        "bytes": 1055609
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_08.zip",
+        "sha256": "676e2b7865321464e869474e1469d1ee9dc465b1b3d2e571a0888e3b07064a53",
+        "bytes": 1060133
+      },
+      "risks": [
+        "Associação permanece heurística e exige revisão humana com áudio.",
+        "Nenhum pipeline completo ou teste audiovisual executado."
+      ]
+    },
+    {
+      "n": 9,
+      "title": "Arcos completos: introdução até desfecho",
+      "result": "DONE",
+      "summary": "Etapa 09 implementada: recuperação entre chunks com continuidade e limites temporais, preservando payoff ausente como null. Sete histórias antigas auditadas; checkpoint registrado. Sem ZIP, conforme instrução específica.",
+      "when": "2026-10-08T14:45:54+00:00",
+      "seconds": 418.6,
+      "files_changed": [
+        "src/ldporto/story_recovery.py",
+        "src/ldporto/understanding.py",
+        "src/tests/test_stage09_story_arcs.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final offline: 212 passed in 17.29s; exit 0.",
+        "Validação sintática dos três arquivos Python e conteúdo do checkpoint: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_09_pytest.log",
+      "python_files_checked": 181,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_09.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_09.zip",
+        "sha256": "676e2b7865321464e869474e1469d1ee9dc465b1b3d2e571a0888e3b07064a53",
+        "bytes": 1060133
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_09.zip",
+        "sha256": "1e2719f3e695e8bb631934321a4fab45b12453d89cacb958b0ea7d1ccdd3ec73",
+        "bytes": 1063230
+      },
+      "risks": [
+        "Continuidade e desfecho permanecem heurísticos sujeitos à revisão humana.",
+        "Não houve reanálise audiovisual nem comprovação de recuperação no vídeo João Gordo."
+      ]
+    },
+    {
+      "n": 10,
+      "title": "Piadas, setup, punchline e reação",
+      "result": "DONE",
+      "summary": "Etapa 10 implementada: contexto de humor limitado por tema/shot, distinção entre reação e punchline candidata, e bloqueio de cortes antes do desfecho. Checkpoint registrado; ZIP reservado ao orquestrador.",
+      "when": "2026-10-08T14:53:00+00:00",
+      "seconds": 363.9,
+      "files_changed": [
+        "src/ldporto/editorial.py",
+        "src/ldporto/editorial_intelligence.py",
+        "src/ldporto/understanding.py",
+        "src/tests/test_stage10_humor.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 238 passed, exit 0.",
+        "26 testes focados: passed, exit 0.",
+        "Validação sintática dos quatro arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_10_pytest.log",
+      "python_files_checked": 182,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_10.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_10.zip",
+        "sha256": "1e2719f3e695e8bb631934321a4fab45b12453d89cacb958b0ea7d1ccdd3ec73",
+        "bytes": 1063230
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_10.zip",
+        "sha256": "64b410397e4db585ca98f58840bcfcdce0b2731ac178cccca63a933ed78405af",
+        "bytes": 1067263
+      },
+      "risks": [
+        "Humor semântico e reação acústica exigem homologação audiovisual; confirmação permanece null.",
+        "editorial.py participa do fingerprint de semantic; eventual replay deve considerar essa dependência. Nenhum cache existente foi alterado."
+      ]
+    },
+    {
+      "n": 11,
+      "title": "Limites e completude dos cortes",
+      "result": "DONE",
+      "summary": "Etapa 11 implementada: decisões cortar/expandir/pendente com contexto literal, riscos e orçamento; original preservado e expansões bloqueadas por tema/comercial. Checkpoint registrado. ZIP não gerado conforme instrução da execução.",
+      "when": "2026-10-08T15:00:58+00:00",
+      "seconds": 413.9,
+      "files_changed": [
+        "src/ldporto/editorial.py",
+        "src/ldporto/second_curation.py",
+        "src/ldporto/understanding.py",
+        "src/tests/test_stage11_discourse_boundaries.py"
+      ],
+      "tests_reported_by_codex": [
+        "17 testes focalizados aprovados; exit 0.",
+        "Regressão: 255 passed in 18.76s; exit 0.",
+        "Verificação sintática dos quatro arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_11_pytest.log",
+      "python_files_checked": 183,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_11.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_11.zip",
+        "sha256": "64b410397e4db585ca98f58840bcfcdce0b2731ac178cccca63a933ed78405af",
+        "bytes": 1067263
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_11.zip",
+        "sha256": "0dcfb1bfdeb11d514df3b7e24d1c49d9fb160f8efae384542a9c87e1145105df",
+        "bytes": 1071584
+      },
+      "risks": [
+        "Completude semântica e transições implícitas exigem revisão humana; confirmação permanece null.",
+        "Sem reanálise audiovisual ou homologação no Curator independente."
+      ]
+    },
+    {
+      "n": 12,
+      "title": "Preservação de bons candidatos e recuperação",
+      "result": "DONE",
+      "summary": "Etapa 12 implementada: recuperação/revisão separada de bloqueios, candidatos e alternativas preservados, ausências explícitas sem promoção artificial. Checkpoint registrado; ZIP reservado ao orquestrador.",
+      "when": "2026-10-08T15:06:49+00:00",
+      "seconds": 286.8,
+      "files_changed": [
+        "src/ldporto/second_curation.py",
+        "src/ldporto/story_recovery.py",
+        "src/ldporto/understanding.py",
+        "src/tests/test_stage12_candidate_recovery.py"
+      ],
+      "tests_reported_by_codex": [
+        "Focados: 7 passed, exit 0.",
+        "Regressão: 262 passed em 18.28s, exit 0.",
+        "Validação AST: quatro arquivos válidos, exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_12_pytest.log",
+      "python_files_checked": 184,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_12.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_12.zip",
+        "sha256": "0dcfb1bfdeb11d514df3b7e24d1c49d9fb160f8efae384542a9c87e1145105df",
+        "bytes": 1071584
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_12.zip",
+        "sha256": "a7aa069ec7228f97afd2664720361516da31775210fa0b8eccbb07ff6667b392",
+        "bytes": 1075323
+      },
+      "risks": [
+        "Homologação audiovisual e Curator pendentes; testes offline não comprovam payoff real.",
+        "Hook ausente permanece null; recuperação não autoriza publicação."
+      ]
+    },
+    {
+      "n": 13,
+      "title": "Explicabilidade e motivos de exclusão",
+      "result": "DONE",
+      "summary": "Etapa 13 implementada: diagnósticos estáveis por candidato, contadores multirrótulo e separação entre score, confiança e prontidão de renderização. Evidência histórica explica 51 exclusões entre 52 candidatos, com razões sobrepostas.",
+      "when": "2026-10-08T15:12:27+00:00",
+      "seconds": 271.4,
+      "files_changed": [
+        "src/ldporto/editorial_intelligence.py",
+        "src/tests/test_stage13_explainability.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão pertinente: 271 passed, exit 0.",
+        "Testes focalizados finais: 5 passed, exit 0.",
+        "Verificação sintática dos dois arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_13_pytest.log",
+      "python_files_checked": 185,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_13.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_13.zip",
+        "sha256": "a7aa069ec7228f97afd2664720361516da31775210fa0b8eccbb07ff6667b392",
+        "bytes": 1075323
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_13.zip",
+        "sha256": "5c674775317ae406d3f0be55138e1a4f88b1580e7932a3d4561807870ded9600",
+        "bytes": 1078441
+      },
+      "risks": [
+        "Evidência S4 antiga; nenhuma reanálise audiovisual executada.",
+        "Renderização e aprovação humana permanecem pendentes; shortlist não implica publish_ready.",
+        "ZIP não gerado conforme instrução específica; snapshots cabem ao orquestrador."
+      ]
+    },
+    {
+      "n": 14,
+      "title": "Fallback semântico sem perda de candidatos",
+      "result": "DONE",
+      "summary": "Etapa 14 implementada: recuperação determinística por chunk, preservação de candidatos válidos e propagação localizada de degraded_reason. Checkpoint registrado; ZIP não gerado conforme instrução do orquestrador.",
+      "when": "2026-10-08T15:18:35+00:00",
+      "seconds": 303.9,
+      "files_changed": [
+        "src/ldporto/editorial.py",
+        "src/ldporto/semantic.py",
+        "src/ldporto/understanding.py",
+        "src/tests/test_stage14_semantic_fallback.py"
+      ],
+      "tests_reported_by_codex": [
+        "6 testes focados aprovados.",
+        "Regressão final: 278 passed in 18.28s; exit 0.",
+        "Transcrição e cache de visão sintéticos permaneceram intactos.",
+        "Verificação sintática dos quatro arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_14_pytest.log",
+      "python_files_checked": 186,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_14.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_14.zip",
+        "sha256": "5c674775317ae406d3f0be55138e1a4f88b1580e7932a3d4561807870ded9600",
+        "bytes": 1078441
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_14.zip",
+        "sha256": "5f1dbb6799edcf420f80579a8367e99c9ad494e0047502cb355772f269701709",
+        "bytes": 1081237
+      },
+      "risks": [
+        "Homologação com Ollama real e Curator pendente; testes executados exclusivamente offline com fixtures sintéticas."
+      ]
+    },
+    {
+      "n": 15,
+      "title": "Deduplicação e versões alternativas",
+      "result": "DONE",
+      "summary": "Etapa 15 implementada: deduplicação conservadora, primary escolhido por completude/qualidade/evidência, motivos registrados e alternates navegáveis com IDs preservados. Checkpoint criado; ZIP reservado ao orquestrador.",
+      "when": "2026-10-08T15:25:15+00:00",
+      "seconds": 336.2,
+      "files_changed": [
+        "src/ldporto/editorial.py",
+        "src/ldporto/second_curation.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/test_stage15_dedup_alternates.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final offline: 286 passed in 20.25s; exit code 0.",
+        "Fixtures verificam limites alternativos, histórias distintas, preservação de IDs, navegação e gates de publicação."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_15_pytest.log",
+      "python_files_checked": 187,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_15.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_15.zip",
+        "sha256": "5f1dbb6799edcf420f80579a8367e99c9ad494e0047502cb355772f269701709",
+        "bytes": 1081237
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_15.zip",
+        "sha256": "5d9cea75e8282e2af2ded08831dd885542e9ce6fc633bcd2c0aa95da58182189",
+        "bytes": 1084309
+      },
+      "risks": [
+        "Limiares precisam de homologação com histórias reais anotadas.",
+        "Curator independente não foi executado; nenhuma reanálise de vídeo realizada."
+      ]
+    },
+    {
+      "n": 16,
+      "title": "Diversidade de assuntos e shortlist sem cota",
+      "result": "DONE",
+      "summary": "Etapa 16 implementada: diversidade em quatro dimensões após blockers absolutos, shortlist sem cota e motivos explícitos. Checkpoint registrado; ZIP fica a cargo do orquestrador.",
+      "when": "2026-10-08T15:32:59+00:00",
+      "seconds": 404.5,
+      "files_changed": [
+        "src/ldporto/editorial_intelligence.py",
+        "src/ldporto/second_curation.py",
+        "src/ldporto/second_curation_export.py",
+        "src/ldporto/social_output.py",
+        "src/ldporto/understanding.py",
+        "src/tests/test_stage13_explainability.py",
+        "src/tests/test_stage16_shortlist_diversity.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 326 passed in 20.40s; exit code 0.",
+        "16 casos sintéticos da etapa 16 validaram diversidade, ausência de cota, qualidade e blockers."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_16_pytest.log",
+      "python_files_checked": 188,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_16.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_16.zip",
+        "sha256": "5d9cea75e8282e2af2ded08831dd885542e9ce6fc633bcd2c0aa95da58182189",
+        "bytes": 1084309
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_16.zip",
+        "sha256": "9909ed5b8420be98662d915dd1d7b96bd0cdcf60392892554afafa6703f71a45",
+        "bytes": 1088135
+      },
+      "risks": [
+        "Limiares heurísticos precisam de homologação com dados reais e Curator independente.",
+        "Não houve reanálise de mídia nem execução de pipeline completo."
+      ]
+    },
+    {
+      "n": 17,
+      "title": "Replay editorial dos 52 candidatos",
+      "result": "DONE",
+      "summary": "Replay offline dos 52 candidatos concluído: zero mudanças de seleção e 27 mudanças de motivos. Shortlist proposta com um item, não homologada, publish_ready=false. Checkpoint registrado; sem ZIP conforme instrução específica.",
+      "when": "2026-10-08T15:38:16+00:00",
+      "seconds": 253.0,
+      "files_changed": [
+        "scripts/dev/replay_editorial_stage17.py",
+        "scripts/dev/review_editorial_s3.py",
+        "src/tests/test_stage17_editorial_replay.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão pertinente: 245 passed, exit 0.",
+        "Duas execuções produziram artefatos idênticos byte a byte.",
+        "Verificados 52 IDs no CSV e hashes dos insumos e saídas, exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_17_pytest.log",
+      "python_files_checked": 190,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_17.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_17.zip",
+        "sha256": "9909ed5b8420be98662d915dd1d7b96bd0cdcf60392892554afafa6703f71a45",
+        "bytes": 1088135
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_17.zip",
+        "sha256": "1477619eb8820ffcd2fe2f7909794f1a33e1711191975a1f9a19856df8cd3ea3",
+        "bytes": 1092939
+      },
+      "risks": [
+        "Export histórico R4.9-S4; scores e fronteiras reutilizados, sem recálculo upstream.",
+        "Sem homologação de mídia, preview ou Curator; payoff confirmado permanece null."
+      ]
+    },
+    {
+      "n": 18,
+      "title": "Handoff editorial autocontido",
+      "result": "DONE",
+      "summary": "Etapa 18 implementada: handoff com auditoria de referências, contexto e cobertura por candidato; lacunas essenciais bloqueiam editorial_ready. Checkpoint registrado. Sem ZIP de entrega, conforme instrução do orquestrador.",
+      "when": "2026-10-08T15:47:11+00:00",
+      "seconds": 465.2,
+      "files_changed": [
+        "src/ldporto/editorial_handoff_audit.py",
+        "src/ldporto/second_curation.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/test_stage18_handoff_audit.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 144 passed in 42.10s; exit 0.",
+        "ZIP histórico: hashes dos membros, CRC e 12 contact sheets verificados.",
+        "Hashes do relatório e da evidência preservada conferidos; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_18_pytest.log",
+      "python_files_checked": 192,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_18.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_18.zip",
+        "sha256": "1477619eb8820ffcd2fe2f7909794f1a33e1711191975a1f9a19856df8cd3ea3",
+        "bytes": 1092939
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_18.zip",
+        "sha256": "4142ec413700726b977d2ca5b7793633ce01d2510403dbb2bada5db1948ce672",
+        "bytes": 1097958
+      },
+      "risks": [
+        "O pacote histórico falha no contrato atual: 164 referências Q&A não resolvidas e divergências de workflow/preview.",
+        "Curator independente e homologação humana não executados; publicação permanece bloqueada."
+      ]
+    },
+    {
+      "n": 19,
+      "title": "Auditoria das palavras incertas",
+      "result": "DONE",
+      "summary": "Auditoria implementada com categorias, denominadores e planilhas de escuta. Evidência histórica: 534/6.840 palavras sinalizadas (7,81%); 19,33% não reproduzido. Checkpoint 19 registrado. Sem ZIP, conforme instrução específica.",
+      "when": "2026-10-08T15:55:35+00:00",
+      "seconds": 434.9,
+      "files_changed": [
+        "src/ldporto/pipeline.py",
+        "src/ldporto/uncertain_words_audit.py",
+        "src/tests/test_stage19_uncertain_words.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 78 passed in 25.54s; exit 0.",
+        "Hashes, contagens CSV, partição das flags e correções null verificados; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_19_pytest.log",
+      "python_files_checked": 194,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_19.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_19.zip",
+        "sha256": "4142ec413700726b977d2ca5b7793633ce01d2510403dbb2bada5db1948ce672",
+        "bytes": 1097958
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_19.zip",
+        "sha256": "f05f63c9fb83213338c24a249355d0abe2e774abb082210120ae2584494748c7",
+        "bytes": 1103531
+      },
+      "risks": [
+        "Escuta humana pendente; nenhuma correção confirmada.",
+        "Origem e denominador dos 19,33% não identificados.",
+        "Sem marcadores de risada na evidência; capitalização apenas sugere amostras de nomes."
+      ]
+    },
+    {
+      "n": 20,
+      "title": "Targeted ASR segue shortlist final",
+      "result": "DONE",
+      "summary": "Etapa 20 implementada: corrigido S7 descartando candidatos com intervalo ideal válido e start/end nulos. Targeted ASR segue a shortlist, registra pendências de orçamento/mídia e propaga hipóteses com proveniência. Checkpoint criado; sem ZIP, conforme instrução específica.",
+      "when": "2026-10-08T16:04:16+00:00",
+      "seconds": 449.2,
+      "files_changed": [
+        "scripts/dev/replay_targeted_asr_v44.py",
+        "src/ldporto/pipeline.py",
+        "src/ldporto/subtitle_review.py",
+        "src/ldporto/targeted_asr.py",
+        "src/tests/test_stage20_targeted_shortlist.py"
+      ],
+      "tests_reported_by_codex": [
+        "Focalizados: 33 passed; exit 0.",
+        "Regressão final: 101 passed in 26.08s; exit 0.",
+        "Sintaxe dos cinco arquivos Python validada; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_20_pytest.log",
+      "python_files_checked": 195,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_20.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_20.zip",
+        "sha256": "f05f63c9fb83213338c24a249355d0abe2e774abb082210120ae2584494748c7",
+        "bytes": 1103531
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_20.zip",
+        "sha256": "99033363f994960141e4318d9b7c6168635256a3acc3f7900c9e0d85ff929150",
+        "bytes": 1107402
+      },
+      "risks": [
+        "ASR real e pipeline completo não executados; homologação com áudio original permanece pendente.",
+        "Hipóteses não substituem a transcrição original nem concedem aprovação de publicação."
+      ]
+    },
+    {
+      "n": 21,
+      "title": "Alinhamento e aprovação humana de SRT",
+      "result": "DONE",
+      "summary": "Etapa 21 implementada: SRT relativo ao corte, diagnósticos temporais, resolução explícita de divergências críticas e aprovação humana vinculada ao SHA-256. Checkpoint obrigatório registrado. Nenhum ZIP gerado.",
+      "when": "2026-10-08T16:13:23+00:00",
+      "seconds": 475.4,
+      "files_changed": [
+        "scripts/dev/audit_subtitles_s7.py",
+        "src/ldporto/subtitle_review.py",
+        "src/tests/test_stage21_subtitle_alignment.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final offline: 119 passed in 27.48s; exit 0.",
+        "Sintaxe dos três arquivos Python e existência do checkpoint verificadas; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_21_pytest.log",
+      "python_files_checked": 196,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_21.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_21.zip",
+        "sha256": "99033363f994960141e4318d9b7c6168635256a3acc3f7900c9e0d85ff929150",
+        "bytes": 1107402
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_21.zip",
+        "sha256": "535d447ae7217ea2441213ce460adf9dbb10c8e072342956a4372c4c78a2f918",
+        "bytes": 1112885
+      },
+      "risks": [
+        "Fidelidade ao áudio e sincronismo real dependem de escuta e homologação humana.",
+        "Aprovação de legendas não libera preview nem publicação."
+      ]
+    },
+    {
+      "n": 22,
+      "title": "Estilos, legibilidade e karaokê seguro",
+      "result": "DONE",
+      "summary": "Etapa 22 implementada: regras de legibilidade, karaokê condicionado à evidência do corte e fallback por frase preservando preferências. Checkpoint registrado; nenhum ZIP gerado, conforme instrução.",
+      "when": "2026-10-08T16:22:26+00:00",
+      "seconds": 466.0,
+      "files_changed": [
+        "src/ldporto/curator_delivery.py",
+        "src/ldporto/social_output.py",
+        "src/ldporto/subtitle_review.py",
+        "src/ldporto/subtitle_style.py",
+        "src/tests/test_stage22_subtitle_style.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 110 passed in 18.93s; exit 0.",
+        "Preview sintético FFmpeg 1080×1920 renderizado e inspecionado visualmente.",
+        "Sintaxe Python e hashes dos artefatos verificados; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_22_pytest.log",
+      "python_files_checked": 198,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_22.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_22.zip",
+        "sha256": "535d447ae7217ea2441213ce460adf9dbb10c8e072342956a4372c4c78a2f918",
+        "bytes": 1112885
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_22.zip",
+        "sha256": "83972a5ba89b0c68bb9d7b70b0a796caee91e2b9b54cc153274fbeae200f9eed",
+        "bytes": 1117973
+      },
+      "risks": [
+        "Sincronismo com áudio real, fontes e área segura nas redes exigem homologação humana.",
+        "Preview sintético não concede aprovação de publicação."
+      ]
+    },
+    {
+      "n": 23,
+      "title": "Títulos honestos e Stories diversos",
+      "result": "DONE",
+      "summary": "Etapa 23 implementada: títulos com evidência e revisão explícita, rejeição de clickbait sem suporte e Stories variados por categoria e momento. Checkpoint registrado.",
+      "when": "2026-10-08T16:29:08+00:00",
+      "seconds": 327.7,
+      "files_changed": [
+        "src/ldporto/second_curation_export.py",
+        "src/ldporto/social_output.py",
+        "src/tests/test_stage23_honest_titles.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 143 passed in 20.00s; exit code 0.",
+        "Validação sintática dos três arquivos Python alterados: exit code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_23_pytest.log",
+      "python_files_checked": 199,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_23.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_23.zip",
+        "sha256": "83972a5ba89b0c68bb9d7b70b0a796caee91e2b9b54cc153274fbeae200f9eed",
+        "bytes": 1117973
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_23.zip",
+        "sha256": "e466014b4cc0c4814ed0ff427d04cbd18a1766ebb7d00475f87f6c504ee41fd7",
+        "bytes": 1120997
+      },
+      "risks": [
+        "Suporte literal não comprova verdade factual; títulos continuam sujeitos à revisão humana e escuta.",
+        "Paráfrases são rejeitadas conservadoramente; principal permanece null quando falta suporte seguro.",
+        "Homologação com áudio e preview reais permanece pendente. ZIP não gerado, conforme instrução do orquestrador."
+      ]
+    },
+    {
+      "n": 24,
+      "title": "Eventos sonoros e trilha autoral",
+      "result": "DONE",
+      "summary": "Etapa 24 implementada: planejamento conservador de eventos, preservação de performances, instrumental configurável e mix com limite de pico. Checkpoint registrado; sem ZIP, conforme instrução local.",
+      "when": "2026-10-08T16:36:18+00:00",
+      "seconds": 356.4,
+      "files_changed": [
+        "src/ldporto/audio.py",
+        "src/ldporto/curator_delivery.py",
+        "src/ldporto/second_curation_export.py",
+        "src/tests/test_stage24_audio_plan.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 149 passed in 22.35s; exit 0.",
+        "FFmpeg real com fixtures sintéticas: mix, render, pico decodificado, preservação de fontes e recusa de sobrescrita.",
+        "Validação sintática dos quatro arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_24_pytest.log",
+      "python_files_checked": 200,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_24.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_24.zip",
+        "sha256": "e466014b4cc0c4814ed0ff427d04cbd18a1766ebb7d00475f87f6c504ee41fd7",
+        "bytes": 1120997
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_24.zip",
+        "sha256": "a258e120be6b43845d5c4d17e9d18dc3a604963d5a026ea598e100f9fadc739d",
+        "bytes": 1124906
+      },
+      "risks": [
+        "Escuta e homologação com áudio real pendentes; ducking desativado e origens sem prova permanecem null.",
+        "Planos antigos com instrumental exigem novo planejamento e revisão."
+      ]
+    },
+    {
+      "n": 25,
+      "title": "YOLO, HOG e pessoas sentadas",
+      "result": "DONE",
+      "summary": "Etapa 25 implementada: YOLO exige pesos locais; fallback HOG registra motivo, execução e qualidade degradada. Evidência antiga do João Gordo reporta ModuleNotFoundError. Checkpoint criado; ZIP reservado ao orquestrador.",
+      "when": "2026-10-08T16:43:37+00:00",
+      "seconds": 357.5,
+      "files_changed": [
+        "src/ldporto/preflight.py",
+        "src/ldporto/vision.py",
+        "src/tests/test_stage25_body_backends.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 113 passed in 12.12s; exit 0.",
+        "Validação sintática dos três arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_25_pytest.log",
+      "python_files_checked": 201,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_25.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_25.zip",
+        "sha256": "a258e120be6b43845d5c4d17e9d18dc3a604963d5a026ea598e100f9fadc739d",
+        "bytes": 1124906
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_25.zip",
+        "sha256": "700301d70d6608ca3e78f8613a49cb07b8164d21154111b44c65925e56f19dd8",
+        "bytes": 1128946
+      },
+      "risks": [
+        "YOLO real, NVIDIA e recall real de pessoas sentadas não foram homologados.",
+        "Alterações em vision.py invalidam logicamente checkpoints anteriores; nenhum cache real foi apagado ou reexecutado."
+      ]
+    },
+    {
+      "n": 26,
+      "title": "Micro-tracklets e embeddings rejeitados",
+      "result": "DONE",
+      "summary": "Etapa 26 implementada: causas de embeddings ausentes, resgate facial conservador, contact sheets anotáveis e auditoria de comparabilidade. Checkpoint registrado; sem gerar ZIP.",
+      "when": "2026-10-08T17:36:00+00:00",
+      "seconds": 520.3,
+      "files_changed": [
+        "scripts/dev/audit_tracking_s4.py",
+        "src/ldporto/identity_goldset.py",
+        "src/ldporto/vision.py",
+        "src/ldporto/visual_identity_audit.py",
+        "src/tests/test_stage26_embedding_gaps.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 132 passed in 10.85s; exit 0.",
+        "Auditoria das evidências antigas em memória; exit 0.",
+        "CLI --help; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_26_pytest.log",
+      "python_files_checked": 202,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_26.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_26.zip",
+        "sha256": "700301d70d6608ca3e78f8613a49cb07b8164d21154111b44c65925e56f19dd8",
+        "bytes": 1128946
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_26.zip",
+        "sha256": "dddfbadf1276c7f611d625279fddcb06b289b70f834dc6b9fad77692e5a893b3",
+        "bytes": 1133689
+      },
+      "risks": [
+        "Não comprovada redução real de sem-embedding ou melhora de falsos merges; exige homologação humana.",
+        "Os arquivos antigos possuem contagens e escopos diferentes dos 817/916 citados; não permitem recuperar causas ausentes retroativamente."
+      ]
+    },
+    {
+      "n": 27,
+      "title": "Re-ID conservador entre cortes de TV",
+      "result": "DONE",
+      "summary": "Etapa 27 implementada: margem facial global, veto temporal preservado, proteção contra deriva de clusters e pares anônimos para revisão. Checkpoint registrado; ZIP não gerado conforme instrução.",
+      "when": "2026-10-08T20:51:34+00:00",
+      "seconds": 323.9,
+      "files_changed": [
+        "scripts/dev/audit_tracking_s4.py",
+        "src/ldporto/identity_goldset.py",
+        "src/ldporto/person_reid.py",
+        "src/tests/test_stage27_conservative_reid.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 162 passed in 12.21s; exit code 0.",
+        "CLI com artefatos sintéticos, --help e verificação sintática: aprovados."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_27_pytest.log",
+      "python_files_checked": 203,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_27.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_27.zip",
+        "sha256": "dddfbadf1276c7f611d625279fddcb06b289b70f834dc6b9fad77692e5a893b3",
+        "bytes": 1133689
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_27.zip",
+        "sha256": "1e39cfc6bb066e7e8df70afc7a5fd9de28780ae6936f00a75ff9b159d6234957",
+        "bytes": 1138036
+      },
+      "risks": [
+        "Melhora de fragmentação e falsos merges em vídeo real permanece pendente de revisão humana comparável.",
+        "Busca facial completa pode aumentar custo CPU em galerias maiores."
+      ]
+    },
+    {
+      "n": 28,
+      "title": "Associação voz ↔ pessoa por evidência",
+      "result": "DONE",
+      "summary": "Etapa 28 implementada: suporte temporal cruzado com diarização, latência por janelas independentes e associação provisória separada da fala confirmada. Três locutores investigados nas evidências antigas, sem forçar IDs. Checkpoint obrigatório registrado; ZIP não gerado conforme instrução.",
+      "when": "2026-10-08T20:59:06+00:00",
+      "seconds": 368.6,
+      "files_changed": [
+        "src/ldporto/active_speaker.py",
+        "src/ldporto/perception_diagnostics.py",
+        "src/ldporto/speaker_roles.py",
+        "src/ldporto/speaker_signals.py",
+        "src/tests/test_stage28_voice_person_evidence.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final offline: 161 passed in 13.72s; exit 0.",
+        "13 testes novos, incluindo voz conhecida fora da tela com person_id=null.",
+        "Validação sintática dos cinco arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_28_pytest.log",
+      "python_files_checked": 204,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_28.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_28.zip",
+        "sha256": "1e39cfc6bb066e7e8df70afc7a5fd9de28780ae6936f00a75ff9b159d6234957",
+        "bytes": 1138036
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_28.zip",
+        "sha256": "d650d63e6a75e52d3c7d35edc4dc0ba78f2499a905e6bc219b0d07d4697d4e72",
+        "bytes": 1141794
+      },
+      "risks": [
+        "Identidades reais continuam pendentes; evidências R4.9-S4 não comprovam o código atual.",
+        "Cobertura visual permanece estimativa por amostras; homologação audiovisual real não executada.",
+        "Plano aberto exige label explícito; nenhuma resposta conversacional foi inventada."
+      ]
+    },
+    {
+      "n": 29,
+      "title": "Active Speaker local e consenso temporal",
+      "result": "DONE",
+      "summary": "Etapa 29 implementada: consenso temporal exige votos qualificados, rejeita janelas contaminadas por interrupções e preserva null sem evidência suficiente. Checkpoint registrado.",
+      "when": "2026-10-08T21:05:37+00:00",
+      "seconds": 310.6,
+      "files_changed": [
+        "src/ldporto/active_speaker.py",
+        "src/ldporto/speaker_goldset.py",
+        "src/ldporto/speaker_roles.py",
+        "src/ldporto/speaker_signals.py",
+        "src/tests/test_stage29_active_speaker_consensus.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final offline: 176 passed in 13.96s; exit 0.",
+        "Verificação sintática dos cinco arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_29_pytest.log",
+      "python_files_checked": 205,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_29.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_29.zip",
+        "sha256": "d650d63e6a75e52d3c7d35edc4dc0ba78f2499a905e6bc219b0d07d4697d4e72",
+        "bytes": 1141794
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_29.zip",
+        "sha256": "237a145fb5ac7f37ca447b192aa2be0e63b3829a67506784c315418c02c1dba5",
+        "bytes": 1144946
+      },
+      "risks": [
+        "Qualidade em vídeo real e benchmark humano representativo permanecem pendentes; fixtures são sintéticas.",
+        "LR-ASD/TalkNet permanecem desabilitados.",
+        "ZIP não gerado conforme instrução: snapshots cabem ao orquestrador."
+      ]
+    },
+    {
+      "n": 30,
+      "title": "Shots, planos e estabilidade de cena",
+      "result": "DONE",
+      "summary": "Etapa 30 implementada: rastreabilidade entre shots, classificação conservadora e reset de crop/movimento nos cortes. Checkpoint registrado; nenhum ZIP gerado.",
+      "when": "2026-10-08T21:12:53+00:00",
+      "seconds": 358.9,
+      "files_changed": [
+        "src/ldporto/camera_timeline.py",
+        "src/ldporto/person_motion.py",
+        "src/ldporto/shots.py",
+        "src/tests/test_stage30_shot_continuity.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 237 passed in 14.08s; exit code 0.",
+        "Sintaxe dos quatro arquivos Python validada; exit code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_30_pytest.log",
+      "python_files_checked": 206,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_30.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_30.zip",
+        "sha256": "237a145fb5ac7f37ca447b192aa2be0e63b3829a67506784c315418c02c1dba5",
+        "bytes": 1144946
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_30.zip",
+        "sha256": "6aa2b92974a192ca3817303ddd1314ba41627da4c6b3352f8ce708557a7b3a92",
+        "bytes": 1148896
+      },
+      "risks": [
+        "Validação audiovisual real pendente; testes usam fixtures offline.",
+        "TV e reação exigem evidência explícita; ausência permanece desconhecida.",
+        "Não renderizado zoom nem reexecutado pipeline completo."
+      ]
+    },
+    {
+      "n": 31,
+      "title": "Camera Director e 1,95% de foco",
+      "result": "DONE",
+      "summary": "Etapa 31 implementada. Reproduzidos 1,947% no export antigo, exclusivamente como fallback visual. Corrigidos gates de confirmação/contradição e adicionada auditoria por janela. Checkpoint registrado; sem ZIP conforme instrução.",
+      "when": "2026-10-08T21:20:32+00:00",
+      "seconds": 373.8,
+      "files_changed": [
+        "src/ldporto/camera_director.py",
+        "src/ldporto/camera_evidence.py",
+        "src/ldporto/director_integration.py",
+        "src/ldporto/global_camera_planner.py",
+        "src/tests/test_stage31_focus_audit.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline: 261 passed in 20.85s; exit 0.",
+        "Sintaxe: cinco arquivos aprovados; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_31_pytest.log",
+      "python_files_checked": 207,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_31.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_31.zip",
+        "sha256": "6aa2b92974a192ca3817303ddd1314ba41627da4c6b3352f8ce708557a7b3a92",
+        "bytes": 1148896
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_31.zip",
+        "sha256": "b297c612c063442fd5508df00a78e39fd58515f2d70d90a326e4a1dafb6a7501",
+        "bytes": 1152591
+      },
+      "risks": [
+        "Homologação audiovisual real pendente; evidências S4 não comprovam melhoria na versão atual."
+      ]
+    },
+    {
+      "n": 32,
+      "title": "Zoom, crop e split sem câmera nervosa",
+      "result": "DONE",
+      "summary": "Etapa 32 implementada: preflight futuro, split seguro, cooldown persistente e contadores separados. Evidência antiga explica 183 oportunidades bloqueadas por falta de foco confirmado. Checkpoint registrado.",
+      "when": "2026-10-08T21:26:58+00:00",
+      "seconds": 303.7,
+      "files_changed": [
+        "src/ldporto/camera_director.py",
+        "src/ldporto/camera_motion.py",
+        "src/ldporto/camera_preflight.py",
+        "src/tests/test_stage32_safe_camera.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 272 passed in 20.98s; exit 0, incluindo 11 casos novos.",
+        "Verificação sintática dos quatro arquivos Python: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_32_pytest.log",
+      "python_files_checked": 208,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_32.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_32.zip",
+        "sha256": "b297c612c063442fd5508df00a78e39fd58515f2d70d90a326e4a1dafb6a7501",
+        "bytes": 1152591
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_32.zip",
+        "sha256": "1a5ef30c7149f33045775cc9a43068a827a87ada194cce6c147a473c3ec3d189",
+        "bytes": 1155456
+      },
+      "risks": [
+        "Segurança baseada em amostras; qualidade audiovisual em vídeo real ainda requer homologação.",
+        "ZIP não gerado conforme instrução específica; snapshots cabem ao orquestrador."
+      ]
+    },
+    {
+      "n": 33,
+      "title": "OCR, GC e comerciais visuais",
+      "result": "DONE",
+      "summary": "Etapa 33 implementada: OCR opcional com validação espacial/temporal e uncertain; GC exige geometria semelhante a texto; ausência de OCR preserva not_measured/null. Checkpoint registrado. ZIP reservado ao orquestrador.",
+      "when": "2026-10-08T21:32:33+00:00",
+      "seconds": 257.6,
+      "files_changed": [
+        "src/ldporto/broadcast_graphics.py",
+        "src/ldporto/commercial_gate.py",
+        "src/ldporto/editorial.py",
+        "src/ldporto/ocr.py",
+        "src/ldporto/pipeline.py",
+        "src/tests/test_stage33_ocr_graphics.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 232 passed in 25.08s; exit 0.",
+        "AST: seis arquivos válidos; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_33_pytest.log",
+      "python_files_checked": 209,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_33.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_33.zip",
+        "sha256": "1a5ef30c7149f33045775cc9a43068a827a87ada194cce6c147a473c3ec3d189",
+        "bytes": 1155456
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_33.zip",
+        "sha256": "463179ec4ce5ac1ab811df4a4e6ede37b9ac7b93fb2164916e20730e44951fd5",
+        "bytes": 1159275
+      },
+      "risks": [
+        "Tesseract/pytesseract ausentes; OCR real requer homologação no Windows.",
+        "Geometria e persistência são heurísticas amostradas; candidatos visuais continuam sujeitos a revisão."
+      ]
+    },
+    {
+      "n": 34,
+      "title": "Gate comercial entre produtores e Stories",
+      "result": "DONE",
+      "summary": "Etapa 34 implementada: exclusões comerciais preservadas até Stories e Curator; menções neutras elegíveis e ambiguidades encaminhadas à revisão. Checkpoint registrado. Sem gerar ZIP, conforme instrução da execução.",
+      "when": "2026-10-08T21:38:57+00:00",
+      "seconds": 301.9,
+      "files_changed": [
+        "src/ldporto/commercial_gate.py",
+        "src/ldporto/editorial.py",
+        "src/ldporto/second_curation.py",
+        "src/ldporto/second_curation_export.py",
+        "src/ldporto/social_output.py",
+        "src/tests/test_stage34_commercial_gate.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão offline final: 179 passed in 15.09s; exit code 0.",
+        "Falhas intermediárias e correções documentadas no checkpoint."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_34_pytest.log",
+      "python_files_checked": 210,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_34.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_34.zip",
+        "sha256": "463179ec4ce5ac1ab811df4a4e6ede37b9ac7b93fb2164916e20730e44951fd5",
+        "bytes": 1159275
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_34.zip",
+        "sha256": "1092cad39b25a9f40ef2abbc8991ca689b71436a9dfb0eb852003a384a54b141",
+        "bytes": 1162491
+      },
+      "risks": [
+        "Classificação lexical requer revisão de contextos ambíguos.",
+        "OCR real e aplicativo Curator independente não foram homologados; ausência de evidência permanece null.",
+        "Nenhum estado de publicação foi promovido."
+      ]
+    },
+    {
+      "n": 35,
+      "title": "Safe area: títulos, GC e legendas",
+      "result": "DONE",
+      "summary": "Etapa 35 implementada: planejamento conjunto de título e legenda cruzando rostos, OCR/GC e crop, com fallback conservador e validação pós-render obrigatória. Checkpoint registrado; ZIP não gerado conforme instrução.",
+      "when": "2026-10-08T21:45:29+00:00",
+      "seconds": 306.0,
+      "files_changed": [
+        "src/ldporto/preview_verifier.py",
+        "src/ldporto/safe_area.py",
+        "src/ldporto/social_output.py",
+        "src/tests/test_stage35_safe_area.py"
+      ],
+      "tests_reported_by_codex": [
+        "Focalizados: 37 passed; exit code 0.",
+        "Regressão final: 192 passed in 12.98s; exit code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_35_pytest.log",
+      "python_files_checked": 212,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_35.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_35.zip",
+        "sha256": "1092cad39b25a9f40ef2abbc8991ca689b71436a9dfb0eb852003a384a54b141",
+        "bytes": 1162491
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_35.zip",
+        "sha256": "97c7d18e9c2634228e1bfde2c8b1b3cf18537e97dcc3815c934d5a48b78fb3fa",
+        "bytes": 1168831
+      },
+      "risks": [
+        "Geometria amostrada não certifica segurança contínua nem legibilidade final.",
+        "Render social e split exigem homologação no Curator; safe_area_approved permanece null."
+      ]
+    },
+    {
+      "n": 36,
+      "title": "Previews canários e falso UNEXPECTED_BORDER",
+      "result": "DONE",
+      "summary": "Etapa 36 implementada: detecção temporal nos quatro lados com crop efetivo, relatório por preview e revisão obrigatória em casos duvidosos. Checkpoint registrado; ZIP não gerado conforme instrução.",
+      "when": "2026-10-08T21:53:12+00:00",
+      "seconds": 376.3,
+      "files_changed": [
+        "src/ldporto/preview_integration.py",
+        "src/ldporto/preview_renderer.py",
+        "src/ldporto/preview_verifier.py",
+        "src/tests/test_stage36_preview_borders.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 209 passed in 20.41s; exit code 0.",
+        "Fixtures offline e MP4s sintéticos renderizados e decodificados localmente.",
+        "Falhas iniciais corrigidas e documentadas no checkpoint."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_36_pytest.log",
+      "python_files_checked": 213,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_36.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_36.zip",
+        "sha256": "97c7d18e9c2634228e1bfde2c8b1b3cf18537e97dcc3815c934d5a48b78fb3fa",
+        "bytes": 1168831
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_36.zip",
+        "sha256": "d0fada8b3ef59a1ddb4c61bbcc7b6856145084f3ba4009e49be1b03a35b22dea",
+        "bytes": 1172920
+      },
+      "risks": [
+        "Geometria recorrente não prova origem da borda; revisão humana permanece necessária.",
+        "Homologação com mídia real e Curator pendente.",
+        "preview_approved permanece null; publish_ready=false."
+      ]
+    },
+    {
+      "n": 37,
+      "title": "Importação de decisões e contratos Curator",
+      "result": "DONE",
+      "summary": "Etapa 37 implementada: importação determinística com dry-run, hashes, journal atômico, replay idempotente e recálculo de dependentes. Checkpoint obrigatório registrado. Nenhum ZIP gerado.",
+      "when": "2026-10-08T22:00:37+00:00",
+      "seconds": 348.8,
+      "files_changed": [
+        "scripts/dev/curator_s9.py",
+        "src/ldporto/curator_bridge.py",
+        "src/ldporto/curator_delivery.py",
+        "src/ldporto/second_curation_decisions.py",
+        "src/tests/test_stage37_curator_import.py"
+      ],
+      "tests_reported_by_codex": [
+        "Inicial: 18 passed; exit code 0.",
+        "Regressão pertinente: 107 passed; exit code 0.",
+        "Focalizado final, incluindo CLI: 17 passed; exit code 0.",
+        "CLI import-decisions --help: exit code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_37_pytest.log",
+      "python_files_checked": 214,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_37.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_37.zip",
+        "sha256": "d0fada8b3ef59a1ddb4c61bbcc7b6856145084f3ba4009e49be1b03a35b22dea",
+        "bytes": 1172920
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_37.zip",
+        "sha256": "517254d4a284948c89f0f01e09b374067143a07a7882538fc145c3a6ccfbc889",
+        "bytes": 1178672
+      },
+      "risks": [
+        "Curator independente não fornecido nem homologado.",
+        "Testes utilizaram fixtures sintéticas; mídia real permanece pendente de revisão.",
+        "Journal exige escritor único local; não autentica aprovação humana."
+      ]
+    },
+    {
+      "n": 38,
+      "title": "Shorts e Stories MP4 independentes",
+      "result": "DONE",
+      "summary": "Etapa 38 implementada: validação H.264/AAC, 1080×1920 e decodificação integral; falhas isoladas por Story. Canário, lote e Short sintéticos preservados com hashes e sidecars. Checkpoint registrado; sem ZIP de entrega.",
+      "when": "2026-10-08T22:06:21+00:00",
+      "seconds": 245.8,
+      "files_changed": [
+        "src/ldporto/curator_delivery.py",
+        "src/tests/test_stage38_independent_mp4.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão pertinente: 105 passed in 34.05s; exit code 0.",
+        "Smoke preservado: 1 passed in 3.37s; exit code 0.",
+        "MP4 sintéticos confirmados H.264/AAC, 1080×1920, DAR 9:16 e decode_exit_code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_38_pytest.log",
+      "python_files_checked": 215,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_38.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_38.zip",
+        "sha256": "517254d4a284948c89f0f01e09b374067143a07a7882538fc145c3a6ccfbc889",
+        "bytes": 1178672
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_38.zip",
+        "sha256": "44bbd68cc5ee5bfc0818f134d49777b07fd09593113a2785121cb4cd32ebbcc0",
+        "bytes": 1181748
+      },
+      "risks": [
+        "Fonte real com hash original e revisão humana permanecem pendentes.",
+        "Checklists dos testes são simulados; nenhum MP4 foi aprovado ou publicado."
+      ]
+    },
+    {
+      "n": 39,
+      "title": "Gate canário, hashes e aprovação humana",
+      "result": "DONE",
+      "summary": "Etapa 39 implementada: hashes de dependências, invalidação de aprovação, escuta explícita e revisão individual obrigatória. PARTIAL permanece bloqueado. Checkpoint registrado; nenhum ZIP gerado.",
+      "when": "2026-10-08T22:12:46+00:00",
+      "seconds": 268.8,
+      "files_changed": [
+        "scripts/dev/homologation_s11.py",
+        "src/ldporto/curator_delivery.py",
+        "src/ldporto/homologation_s11.py",
+        "src/tests/test_s9_s10_s11_delivery.py",
+        "src/tests/test_stage39_human_hash_gate.py"
+      ],
+      "tests_reported_by_codex": [
+        "Integração FFmpeg: 15 passed; exit 0.",
+        "Gates e integração: 41 passed; exit 0.",
+        "Regressão complementar após correção: 116 passed; exit 0.",
+        "CLI --help: exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_39_pytest.log",
+      "python_files_checked": 216,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_39.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_39.zip",
+        "sha256": "44bbd68cc5ee5bfc0818f134d49777b07fd09593113a2785121cb4cd32ebbcc0",
+        "bytes": 1181748
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_39.zip",
+        "sha256": "1225d2c53383d77f8752f1d17251e8b3d0eddc3275cf55f0b96d60f0d7a712ad",
+        "bytes": 1185129
+      },
+      "risks": [
+        "Homologação perceptual com mídia real e aprovação humana permanecem pendentes.",
+        "Aprovações antigas sem os novos hashes exigem nova revisão."
+      ]
+    },
+    {
+      "n": 40,
+      "title": "A/B com Ollama real e prompt compacto",
+      "result": "DONE",
+      "summary": "Etapa 40 implementada: A/B reproduzível, CSV por variação, dry-run offline e recomendação condicionada a ganho real e revisão humana de qualidade. Checkpoint registrado; nenhum ZIP gerado conforme instrução vigente.",
+      "when": "2026-10-08T22:20:05+00:00",
+      "seconds": 320.4,
+      "files_changed": [
+        "scripts/dev/benchmark_semantic_r3b.py",
+        "scripts/dev/performance_s10.py",
+        "src/ldporto/ollama_local.py",
+        "src/ldporto/performance_acceptance.py",
+        "src/ldporto/semantic_benchmark.py",
+        "src/tests/fixtures/stage40_transcription_synthetic.json",
+        "src/tests/test_stage40_semantic_benchmark.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 74 passed in 14.26s; exit code 0.",
+        "CLI dry-run: seis registros por variação; exit code 0; recomendação bloqueada.",
+        "Help das duas CLIs: exit code 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_40_pytest.log",
+      "python_files_checked": 218,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_40.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_40.zip",
+        "sha256": "1225d2c53383d77f8752f1d17251e8b3d0eddc3275cf55f0b96d60f0d7a712ad",
+        "bytes": 1185129
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_40.zip",
+        "sha256": "a91b58703a5da697d1eb557ef9412e0c4b77f7e29578dbca74d710af4812d477",
+        "bytes": 1191844
+      },
+      "risks": [
+        "Ollama real e desempenho NVIDIA não foram medidos.",
+        "Qualidade, histórias e ranking reais dependem de revisão humana vinculada ao relatório.",
+        "Nenhum ganho real comprovado; caches e gates de publicação preservados."
+      ]
+    },
+    {
+      "n": 41,
+      "title": "Visão serial/paralelo, cache e recursos GUI",
+      "result": "DONE",
+      "summary": "Etapa 41 implementada: benchmark A/B limitado por memória, telemetria, preservação de checkpoints e GUI com evidências de ETA e motivos de bloqueio. Nenhuma otimização ativada. Checkpoint obrigatório registrado; ZIP reservado ao orquestrador.",
+      "when": "2026-10-08T22:27:31+00:00",
+      "seconds": 321.7,
+      "files_changed": [
+        "app.py",
+        "scripts/dev/benchmark_vision_r3b.py",
+        "src/ldporto/progress.py",
+        "src/ldporto/runtime_metrics.py",
+        "src/tests/test_stage41_vision_resources.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 112 passed, 1 skipped; exit 0.",
+        "Smoke sem GPU por fixture: indisponibilidade indicada, nenhuma inferência ou otimização.",
+        "Retomada preservou bytes e mtime do checkpoint e artefato válidos.",
+        "CLI diagnóstica Windows sem inferência: exit 0; speedup_x=null.",
+        "Sintaxe dos cinco arquivos Python: AST OK; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_41_pytest.log",
+      "python_files_checked": 219,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_41.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_41.zip",
+        "sha256": "a91b58703a5da697d1eb557ef9412e0c4b77f7e29578dbca74d710af4812d477",
+        "bytes": 1191844
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_41.zip",
+        "sha256": "cb58c82c44c7a4912af6e162396b9f4a818ee4758dca589a9d5cd212b17cd4ce",
+        "bytes": 1197063
+      },
+      "risks": [
+        "A/B real dos detectores no hardware alvo permanece pendente; nenhum ganho demonstrado.",
+        "GUI nativa pendente: teste ignorado por ausência de display Tk; controles simulados passaram.",
+        "Orçamento limita frames retidos; VRAM é snapshot global, sem medição de pico."
+      ]
+    },
+    {
+      "n": 42,
+      "title": "Homologação final e relatório real",
+      "result": "DONE",
+      "summary": "Etapa 42 revalidada. Corrigida a lista permitida da raiz para incluir o relatório obrigatório. Relatório e checkpoint atualizados com resultados e hashes reais.",
+      "when": "2026-10-09T14:26:35+00:00",
+      "seconds": 393.0,
+      "files_changed": [
+        "FINAL_HOMOLOGACAO.md",
+        "docs/CHANGELOG_ETAPA_42.md",
+        "docs/S9_S11_REAL_TEST.md",
+        "src/tests/test_v43_runtime.py"
+      ],
+      "tests_reported_by_codex": [
+        "Regressão final: 1176 passed, 2 skipped, 1 deselected; exit 0.",
+        "Focalizados: 3 passed; exit 0.",
+        "Sintaxe: 220 arquivos sem erros; exit 0.",
+        "Smoke FFmpeg sintético aprovado na regressão.",
+        "CLI offline: exit 2 esperado, BLOCKED_OR_PENDING.",
+        "Hashes e checkpoints 01–42 verificados; exit 0."
+      ],
+      "pytest_log": "automacao/execucao/logs/ETAPA_42_pytest.log",
+      "python_files_checked": 220,
+      "checkpoint": "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_42.md",
+      "before_snapshot": {
+        "file": "automacao/execucao/snapshots/ANTES_ETAPA_42.zip",
+        "sha256": "e8bf4937952bacb168adba4c53f5197cec00aaf375f9618c46db771b829eef87",
+        "bytes": 1227128
+      },
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/LDPORTO_STAGE_42.zip",
+        "sha256": "2b4e60d7b3cd1786d550cfcfa56c284d941c2198da0eaa52a6415e404f75d60a",
+        "bytes": 1228602
+      },
+      "risks": [
+        "Homologação real de João Gordo e revisão editorial/auditiva humana permanecem pendentes; publicação desabilitada.",
+        "ZIP não gerado conforme instrução vigente: snapshot reservado ao orquestrador."
+      ]
+    }
+  ],
+  "baseline_snapshot": {
+    "file": "automacao/execucao/snapshots/ETAPA_00_BASELINE.zip",
+    "sha256": "9b1644cce06845763f5f1ff9c72cd34e7d84f588b0db974a0bd0d9cf34f74625",
+    "bytes": 918336
+  },
+  "last_snapshot": {
+    "file": "automacao/execucao/snapshots/LDPORTO_STAGE_42.zip",
+    "sha256": "2b4e60d7b3cd1786d550cfcfa56c284d941c2198da0eaa52a6415e404f75d60a",
+    "bytes": 1228602
+  },
+  "last_manifest_sha256": "4ec49f85ab22410eb4a1c29eb3441bb913f2299928b7217c75dd3e9e28d3a9f9",
+  "last_manifest": {
+    ".gitignore": "9b694c7db7bbc3ff8823514526aae9064d01c5cb2c6956938f1d9ac49f7b1329",
+    ".package/PROJECT_EXPORT_MANIFEST.json": "f444faf48dfe87aa3099cbb9f3ea3ed0516d9f72aa24fcb1df12a06fb02aed4a",
+    ".package/PROJECT_EXPORT_README.txt": "32d060a03ae760a02136c69d9f79353dd5df15740e4e5eb5cf8a36488c03a636",
+    ".package/PROJECT_EXPORT_TREE.txt": "944c5b0d569bb0682f7604f6101aeb9123aaee48521a9edcd97b4aa3dcb441f8",
+    "ABRIR_ANALYZER.bat": "c8cb2e09e178acab8f1c1688bc5ff1feb5c22267d2cb49ab6d999547f1cf2392",
+    "AGENTS.md": "0ffa51b0d40666be49059818bc264e89a20a497a5a1f79e783434cd0910d1e8a",
+    "analyze.py": "85486a59fa102dba7424f1ba9e2014fdac9eb3a3208261b7d67333a1554ef152",
+    "app.py": "d7dd19536a3d8ee60713fc84251dded3a687de6b7cd47a45fa75d98f729f14ac",
+    "automacao/BASELINE_AUTOPILOT.json": "a3feff7f6ed78ae96e8f4a817a897392faa025daa4a641c6c0f225dc8d6c61f3",
+    "automacao/baselines/BASELINE.json": "38b0c16a7e29b8c7a327ff80947b19615c1bdf58a6b3971604ff10166103677a",
+    "automacao/baselines/BASELINE_TECNICO.md": "731ae423666227e8f685acc16176c71695b605643d6f0e5e59872a63fdc73205",
+    "automacao/GITIGNORE_TRECHO.txt": "de0d707926c73ccbe13b734b459cabcee6178dc8b59bba2da9553c903bcd1a2c",
+    "automacao/GUIA_INICIO.md": "c4eb1fe040ed5085d596f3afa75a7628a5fc880a84b3f1c9e96384e226a621ac",
+    "automacao/MAPA_ETAPAS.json": "d642dac96a1c96f6c480c6f20e3bee47e810ec7aae68b31e2f2655141c42aa21",
+    "automacao/prompts/ETAPA_01.txt": "885c28f10730618973138c110140e17f9b81291de18acd254db9bd13bafdfbe1",
+    "automacao/prompts/ETAPA_02.txt": "7371d3770c430760808d891379b487d16bea9ca60dbe22a60b54645af5cdf24e",
+    "automacao/prompts/ETAPA_03.txt": "75a1575eb07675a05741dbd96482522a1361630981911cee2a5ef522d5caad62",
+    "automacao/prompts/ETAPA_04.txt": "4146fdb97023a754ebba10792b999473c4d5d13f443bf9a7a66ade63f7d21a66",
+    "automacao/prompts/ETAPA_05.txt": "0638697c8664a90db628224869f3a72c170c9a6ecf64403a11f5d6b191f52c64",
+    "automacao/prompts/ETAPA_06.txt": "dc60a89571367bdb4df002939c27c47bac038df60dfd19725f213ffff22eef53",
+    "automacao/prompts/ETAPA_07.txt": "0032da85b9dbdddb3c472b0bc84df028fb2a32c9aabff77aea56104285168d6b",
+    "automacao/prompts/ETAPA_08.txt": "2060eef7f9591c6a45606cf932393c4f5189f231cef2fe147f691b253373caa3",
+    "automacao/prompts/ETAPA_09.txt": "6429f7ea9c7d7dcc6c4eebde4003399e15ef4421a231cd45ff9721f355c5f63d",
+    "automacao/prompts/ETAPA_10.txt": "5dd91191541abc5b95f4c7f81be717c51d9653ccdb9904d8d6f2e9e246b1e20f",
+    "automacao/prompts/ETAPA_11.txt": "ef2d05cd8bd13f3f65284be50b0bc8294e2ad7894a0d3d1d9c52ac1e2a39b4c8",
+    "automacao/prompts/ETAPA_12.txt": "175f0733a8824b6e54b3ff5d1d5aa6494fa94477ce4245bdf7e791e7541aa241",
+    "automacao/prompts/ETAPA_13.txt": "926d5c337c050b3796a0d1c5e822ed05df7d2bc1d46eabebcc6ffa0fe321215e",
+    "automacao/prompts/ETAPA_14.txt": "2f01168973b27687f4bb9567361c74e233c04ce77e4ca954b66b235c3da95009",
+    "automacao/prompts/ETAPA_15.txt": "421212a43c335a391a0339d7779499a8e9b145a1a7ceb16f760898b8db593d81",
+    "automacao/prompts/ETAPA_16.txt": "25e8a32de9ff27087c785e2a628c858a24ef3f09df8de3b544b1b11bb889085b",
+    "automacao/prompts/ETAPA_17.txt": "caefd0cdf5d9a5c69854e43cba0392a597fd43716df50fb02cc1a06b48dd7421",
+    "automacao/prompts/ETAPA_18.txt": "67861a7a5acaf6faa09c62cc1d16cded7884b87bd135572ddb2b755cad0cbc9b",
+    "automacao/prompts/ETAPA_19.txt": "066e69097b7e4d86be09ab27f729bb761900e6ef23051ed2319747fca10e5001",
+    "automacao/prompts/ETAPA_20.txt": "2c83d93995602121976be106aff691e77e372806f88d3d0b16c76138c4873684",
+    "automacao/prompts/ETAPA_21.txt": "2e139bffac3a7bfa71f34f3f490beda954eef3f6e22ce4310a1e1aed5025701b",
+    "automacao/prompts/ETAPA_22.txt": "55c74206a284eeb8fd1a80b1595822207071bb4fa3dc3dd13830218351441004",
+    "automacao/prompts/ETAPA_23.txt": "f5a707b66fd567bb4340d72e26d38dce04939eb857834a9236634db11d390799",
+    "automacao/prompts/ETAPA_24.txt": "a6d63dfad1e972886255a804484f39cc941966d463eb0306c5b9fdd34787b015",
+    "automacao/prompts/ETAPA_25.txt": "fd02443b7aa45d13b2cce6a3f0ecdfee58d611f766221ee1c5d1493331cfbd22",
+    "automacao/prompts/ETAPA_26.txt": "00c77bf2b4aaa96140069267c36d7b0e0ae00e0e69d5b84b9b09ef9183ea7e2d",
+    "automacao/prompts/ETAPA_27.txt": "29ba7870ce29af8bc66f6a4d99aae4b8b4e2f06f664ea43d14072642b47e4ed0",
+    "automacao/prompts/ETAPA_28.txt": "0ce104c73882f0f1a2ae9b8ece6d38dcf5d10c18a4b1c281ef9f7bb945529ab3",
+    "automacao/prompts/ETAPA_29.txt": "f9e07bd218a145abd137d240c369bd08ad62f5d4927053ca8e42d67725b4246d",
+    "automacao/prompts/ETAPA_30.txt": "0379170e9e23c74b13bf5d50cb5bf191d0b55e8bf2b8fa86ee5adf197d47b8a7",
+    "automacao/prompts/ETAPA_31.txt": "37d580990f0f206b4eed6739ebeb2245c1532f30ed33f2512d5707ed8a21261a",
+    "automacao/prompts/ETAPA_32.txt": "1f324d7c1faa5b0d6a99ebdcbe7372589ef1b570c7c53301924b08cd7bea6474",
+    "automacao/prompts/ETAPA_33.txt": "36c4db01310eabdd9147db169453b35a074810647f7dde2426c249237c509564",
+    "automacao/prompts/ETAPA_34.txt": "f38f00688416c2974b01000c1af5106b71fee716cef60ca81e41a2bdc1a8ef7e",
+    "automacao/prompts/ETAPA_35.txt": "c56b79d9e9a5d5cf24c49c1357aaf69c0b2d0996e32989e53f38f1c66f12e6a0",
+    "automacao/prompts/ETAPA_36.txt": "988819c4eafeaa151b4a30349f6b00e138451e46b57e5be5ba8270ef92b53910",
+    "automacao/prompts/ETAPA_37.txt": "ab1e9156972744c01d7abed103792f590a475bc79511ca37616875d8bb8c9289",
+    "automacao/prompts/ETAPA_38.txt": "19c003040e92a334ee9feb41f3da416b5ef56df0662ce7d853932c00721d6396",
+    "automacao/prompts/ETAPA_39.txt": "a4ef4fed459b709e8a155f97b6a525fc1312c18ab5219030caec8f51fd4f2e3c",
+    "automacao/prompts/ETAPA_40.txt": "a416d24a422a2d8cf83fcd3743ef846c8400823703f26909fbf37b43a734edb7",
+    "automacao/prompts/ETAPA_41.txt": "b422e41fe4612b26633d0d3d2e9bf2165e79add92f028b358be4c9e960e2369f",
+    "automacao/prompts/ETAPA_42.txt": "917c141ee5e821245088401450c64d57a512ce5c0d3eece54cb7494c26ae7785",
+    "automacao/prompts/ETAPA_43.txt": "bbfdc0d86ded7e17cf2c0610dd4f71420e324fb86e539ca4eeb525ac5ef9d35b",
+    "automacao/prompts/ETAPA_44.txt": "8f49b84af7506c431e21c7cbf1676947a8facbecb2c2e567126351175e2111b2",
+    "automacao/prompts/ETAPA_45.txt": "a9988818f627c7548130777e72654a07455cc4839cfea2dda8efa2f8c9835f74",
+    "automacao/prompts/ETAPA_46.txt": "77e975099b7a1ca165f5fa218b507229414642666529dff2e79b4c6b0dadcdac",
+    "automacao/prompts/ETAPA_47.txt": "8a83fe0490a54d7e30ddd1db45d15b30cb552fa3513053990c10f3512db89e1a",
+    "automacao/prompts/ETAPA_48.txt": "2f86909d30e34a92c46f51595a71aa5ef432ff9d852ee644c2d170f8db6ad97f",
+    "automacao/prompts/ETAPA_49.txt": "3b13786246a1fddeb7f793b8ad7ad0ad9a5d27a9a2db618d44c88dfd0f15c62e",
+    "automacao/prompts/ETAPA_50.txt": "fe7b626c42238051eb6fb91ab57d3c15a00a5638498ae88242e692744cc6ec8d",
+    "automacao/prompts/ETAPA_51.txt": "3401d261d91ac338a72d3bfcf7689076c93876a55bf48efbe875de1f131eb8cd",
+    "automacao/prompts/ETAPA_52.txt": "9577327dcf02b2c0bd13a54f879d735972699722d00a1adb47265c134c88e1fa",
+    "automacao/referencias_metodologia/BASELINE_VERIFICADA.json": "d80c658a431bd850f1bbdcc84e3791f2e30f4737a143fdfbdfab272be3d9d855",
+    "automacao/referencias_metodologia/CONTRATO_ACHADOS_D01_D12.json": "52cc0a8cf8af24a1726c9eeb9968f42cc3655593ef6386dcf436acd57ee78783",
+    "automacao/referencias_metodologia/D01_INTEGRIDADE_CONTRATOS_ARQUITETURA_NORMAL.txt": "72b605f76821f329c877cf35fb5e4b2890379b55a8b042443e0cdd22c0a1488f",
+    "automacao/referencias_metodologia/D02_TRANSCRICAO_DIARIZACAO_MASTER_TIMELINE_NORMAL.txt": "4789f5b150d48d007dc3075b766c095ba47a3bcef684f16ff028c1755c14ed78",
+    "automacao/referencias_metodologia/D03_TRACKING_REID_IDENTIDADE_PERSISTENTE_NORMAL.txt": "883a8efe5280b760d2b21561df67f274a34a454723e76f929254c079315f7975",
+    "automacao/referencias_metodologia/D04_ACTIVE_SPEAKER_MAPEAMENTO_AUDIO_VISUAL_NORMAL.txt": "d768d69a7627fe1fda6b4e5da4bd77f763af4cce16fa41b23092e6cf5e533969",
+    "automacao/referencias_metodologia/D05_SHOTS_CAMERA_MOVIMENTO_ZOOM_NORMAL.txt": "d4ecbf703400764e0b73bc41c9667d55eab6dd1bcb334bc827a6cd28b94c4228",
+    "automacao/referencias_metodologia/D06_COMPREENSAO_TOPICOS_ARCOS_PERGUNTAS_NORMAL.txt": "fa73c28202e79fbc3f5fee979e22b9e7d1194458bd305e9bd9357345a18b121e",
+    "automacao/referencias_metodologia/D07_CANDIDATOS_LIMITES_RANKING_SELECAO_NORMAL.txt": "90f2022a6e5a5ad10bc58bf8cb02cf785a3a7ea600903a10095079bc4612b140",
+    "automacao/referencias_metodologia/D08_AUDIO_MUSICA_EVENTOS_COMERCIAIS_OCR_NORMAL.txt": "24d9e4c70e2abb7bebd83086ee00e0a4ac05fe01dc4f9ff8ac534bf4249a81d0",
+    "automacao/referencias_metodologia/D09_LEGENDAS_TITULOS_STORIES_IDENTIDADE_NORMAL.txt": "f69b847a65c8ce584a4595ac52f9ad582f148ca9fc7d4c48b9786e28aefea6f1",
+    "automacao/referencias_metodologia/D10_HANDOFF_DECISOES_REPLAY_RENDER_PREVIEW_NORMAL.txt": "c63121529f01e121bfb4ca5b4330ba4e86e658de675fce8f0125eb2e7eb13d0a",
+    "automacao/referencias_metodologia/D11_DESEMPENHO_CACHE_GUI_OBSERVABILIDADE_NORMAL.txt": "94beb937ef14cc4d7c4cdfcd294c765622f47115139ce3cddd421abe10736fb0",
+    "automacao/referencias_metodologia/D12_TESTES_PRIORIDADES_HANDOFF_NORMAL_NORMAL.txt": "74a867a4d35591b6e91966f8a34296d8485958c07bcb7193f1a642b6999924f9",
+    "automacao/referencias_metodologia/DIAGNOSTICO_PACOTE_ATUAL.md": "4c5ceacb13b67f66c2fe84403263c83908c3cd0055b6b6b3953d0a42355da3dc",
+    "automacao/referencias_metodologia/LEIA_PRIMEIRO.md": "2c516fc19b1cfb14396b2ff1812f5bf99e7a39d33f50b5ba97a6ead3463d500d",
+    "automacao/RESUMO_DA_ENTREGA.md": "3abb99514be4f9110fa7585f610aa8a6abe38f33cdd1c3698e363f3b3ef77dfc",
+    "CHANGELOG_V43.md": "56aeaade909f466fb3fe8235e6130118a36764c9f9c8252a7f4cfc9b88b3b98f",
+    "compare_runs.py": "f5debe3b84f91dfcf5d58c43d2e8b9df9b7e7a54248d0ee331feb49ecfbd5550",
+    "config/config.yaml": "89583e088e97e78164338dbfa66808a6e33c1cceb9d9967abb2db4006bf64463",
+    "CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat": "874f3c7ceadd4805d78ce64f4c135cc6a7a6a029512c0ecec147404ab5927981",
+    "CORRIGIR_GPU_WINDOWS.bat": "7c3fa88501d807f5ada1d14284f49b5f3c2b184725be89e4628746325834acc8",
+    "DIAGNOSTICO_GPU_WINDOWS.bat": "7730f1af2c0c4448289147ae7d107ee976034f355495a9b6be0d0d306d338ceb",
+    "DIAGNOSTICO_WINDOWS.bat": "795bf60b3bea047973ddc7f35b05039b72052a3e8cd359c34c3a71231bc92446",
+    "docs/ARQUITETURA.md": "f2baedf5b877ac1036f08647ce8bbd3e5f07a2e49cf048e360be7c26615862f4",
+    "docs/AUDIO_AVANCADO.md": "224e24a92f1022fb295baf19fa4293e7b0bc6a2d9d836334b8e88ca4e390fca8",
+    "docs/CAMERA_DIRECTOR_V3.md": "6f50f88b12f1f0ccf04d65ec53c8afd0c092d9c169fe62918eae8f7f680dcec7",
+    "docs/CAMERA_PARAMETERS.md": "2b60bb3a29e3caa76b0bf150a018071cb04d9724bcba619044e8dfb001686cf7",
+    "docs/CHANGELOG_ETAPA_42.md": "ca2c9ccc1fa65904a62a955fb0f2fbeecbc49185912174d49b83d03252e2afaf",
+    "docs/CHANGELOG_V44.md": "5885df4ed6e439272857570a81543a06972f1ce62d3cca27b0b27a11030a61bb",
+    "docs/CONTRATO_DADOS.md": "b2bfca194d8073da210900aad78c3f696bb88275e4e9f48d84c625543866168b",
+    "docs/DIRECTOR_BENCHMARK.json": "cc5e66794fde0fd9de5f6f49ec90343f5cde8e91b55be51d7896bffe7d917817",
+    "docs/FILES_CHANGED_V3.md": "e09a10bbfdcd6bdf2988c788a063bff5dce01840ff674d70ed40cab02ad10ef5",
+    "docs/FONTES.md": "6e7ea9920bb2633efb8e58dadbadf7e00dcdb97155420e5c922965bdd561a5bf",
+    "docs/R3_CAMERA_PERCEPTION_PART1.md": "f80ef2ef17f287a60240f788db963face56061c59f6e2d2b24d0afb9eaa6c86b",
+    "docs/R3B_PERFORMANCE_20261007.md": "8ac4fb95c0a8d95b8900a736b68b4f9fe6008592069cc2092fa1bbb82791e7a9",
+    "docs/R4_FINAL_HOMOLOGACAO_20261007.md": "21bf2146007fd23603ef9031102ef147eb781b833ab69e17ac14cc992f6be713",
+    "docs/releases/DELIVERY_MANIFEST_V3.json": "ae6362ddfcde19d4ce3fee7f17066be015c7472bfba9e2a0e4269de06edb050a",
+    "docs/releases/DELIVERY_MANIFEST_V4.json": "3a0d8fd1dd041099691dee3a669e3e45b3f701d8fbc348016d0529bb97fd8750",
+    "docs/releases/README.md": "c1df8339d264fa146143a26c92b6839589450a2e6aa6f9f3f3defb31e01e0e51",
+    "docs/reports/WORKER_FINAL_REPORT_V42.md": "50b1e836ac29c5354b47d73b0d5fdb0294f18304734ca7b83241d7f1e686da52",
+    "docs/REPOSITORY_STRUCTURE.md": "c0ab272b91326bac80039de0a2984803faae65e74240c942ef292648eec32992",
+    "docs/REQUISITOS_RECEBIDOS.txt": "6224839dba64c9fd5d8ab1a91aea9feeb07e0538dc73cb8d9283b1e69950f897",
+    "docs/ROADMAP_R2_R3_20261007.md": "beddb3f71961c5e879ac984933adecde4572abd4feefc90b9fcc59e567381cf7",
+    "docs/ROUND2_VISUAL_IDENTITY.md": "d0d197e8fef86c944c327a43d0327f6cc8f32150b6d6202cb44451d2c6daf84d",
+    "docs/S11_AUTOMATED_TESTS.xml": "3a9048a4b245e08fc681eafb48601c63e8a6a08c8ef167eb58fa92cceec62733",
+    "docs/S11_TECHNICAL_VALIDATION_20261008.md": "5391e0c4c791db936a905f0c988e5b31d3b0f0ac77021ba457fb5261d7496c02",
+    "docs/S1_UNDERSTANDING_CONTRACT_FIX.md": "605fd79b168c9a44c8c9ef37650b0ec3828b283fd80dd3cf514dc522aa012e9f",
+    "docs/S2_PIPELINE_INTEGRITY_HARDENING.md": "6970d24544e2dd4a40109456679fe89b2b1468a744a9d867452e228f72072d7b",
+    "docs/S3_INTELIGENCIA_EDITORIAL_20261007.md": "937d296b7b6432ff53911d10bba43622600f60664fd7459592187225683a2e11",
+    "docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md": "8e39c4450820b7966a053b6eefe3753b9ff74e9496da3c32a6ca25f8bb9504bb",
+    "docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md": "f6af43f50230c972fff247fcb20d5b29303d7be8939d3cabdf6e19fea1a1c981",
+    "docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md": "045cba63a1741c3aecaa12ec71874ee8a216661f0e9bfdcc6b9ab5f6550205b0",
+    "docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md": "de44b9aeefbdc149a1bef7c99e7a77f2061c0b5fd3720d39676adb942f3f928f",
+    "docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md": "d97eeba472effec384515e1f070405a8c7aa4bcb986af02a681afa5534e4ca1b",
+    "docs/S9_S11_REAL_TEST.md": "96aa4efa96ad9d662e7a3c1ca51b93427a887ac807e7141c5d470440b0e5404e",
+    "docs/setup/LEIA_PRIMEIRO.md": "01920adb66c71fe605557e1a8e7a73215a94cd5795f064e908ae5b24cc4cafc9",
+    "docs/setup/OLLAMA_MAXIMO.md": "78d14b1cc7f449b100ae46aa490bf59c7c85df32d608a1af972d19eb426813ec",
+    "docs/TEST_REPORT_V3.md": "57d59ef62ffff7aa2c91c537224f5cfa2f0bd397f13a9b9327ab66bbd03cac72",
+    "docs/TEST_RESULTS_V3.xml": "0f929204f8b976213409e336e5bb2ec743ff743c6284e4617422a1c163696646",
+    "docs/troubleshooting/GPU_FIX_NOTES.md": "5bf9e1a54f2cc14cb0b3e918bd8eaac7d81434464b6e35fca53b300ce79283e7",
+    "docs/V43_ARCHITECTURE.md": "ffbfc0f0eff7cabd4fc0b02a63055e7098a5c45ba51281dd745e17c3946c8e8f",
+    "docs/V43_AUDIT_COMPLETION.md": "06440cdf4d7272bdfb4582daf53207bd02bf6e82ddfb3e65f2eca79f91399a0f",
+    "docs/V43_IMPLEMENTATION_LEDGER.md": "bb35588876dc6e5803cd9fdbd0c788c8a5e1a7604b2a24933b985cac3156142a",
+    "docs/V43_PERFORMANCE.md": "846ef3a20662ff49af4bb4eec54aa86b4c1f5df49ce5fa7248eaf468d195fa86",
+    "docs/V43_REAL_BENCHMARK.md": "32e579ebdff010576953481abf05eb897a4410e502b1125a4aa9eb065be79613",
+    "docs/V43_REPOSITORY_CLEANUP.md": "91bf3a80aab361144ac129e4910b3596dfb6c4c4a06f5801f9cd5ac3f281502f",
+    "docs/V44_BASELINE_RECONCILIATION.md": "bc4e108b371599f15b7fcaacb3c7e87f32995371763ccecf0505e36d4451e4cf",
+    "docs/V44_BENCHMARK_REPORT.md": "68c33ded8cd1c28e114f015355deba2c492e21510d3e023871e26a85c122f6be",
+    "docs/V44_FINAL_AUDIT.md": "d4e08830468515e957986da90e12500e3b33e5128f3becd57cc8926d4ce27449",
+    "docs/V44_FINALIZATION.md": "08ea6e69791e141e884e9a9add036e87713e44754ab275aa5f65fb6ee074da80",
+    "docs/V44_IMPLEMENTATION_LEDGER.md": "ef9457574b8dda9355494bfd37871fb6f885a097198aabbeee670801dda2c351",
+    "docs/V44_R3_STABILIZATION.md": "454be2ec1daaad216afca75b804ce6c29f01018f85fb398a4fd12cf57fe74d29",
+    "docs/V44_R4_2_INTEGRITY_VISION.md": "6cd84511f417c7e2be14e7807b5c8c9388fa1985d21ba38444a2f3ff4ba829c2",
+    "docs/V44_R4_SOCIAL_OUTPUT.md": "568087e96cace4398771a50442a4010845241d2cc2167c5542907e571ad41502",
+    "docs/V4_2_BENCHMARK_COMPARISON.md": "624aea47336460b42403a8effa06107438f146fe73555852c78660f7302e8b23",
+    "docs/V4_2_IMPLEMENTATION_REPORT.md": "78af312970ea5550f9c7fedd5a417a4f8eee82160463f11ce99a83705ad2df2e",
+    "docs/V4_2_REAL_BENCHMARK_FINDINGS.md": "d1b2fa28ff62ad65d8725d05ffa4278df65aee8664a71ae40e44c0aebe2a0709",
+    "docs/V4_2_REQUIREMENT_MATRIX.md": "aff8de65e2fa9f5c867b4b0ec92b11bd1c804b016a02139751edc05792e72f62",
+    "docs/V4_2_WINDOWS_HOMOLOGATION.md": "1838dc5d2e54295ffb1cf6336b0ff70ae86e79d3e8318a5cc1fc9e7fb4231cfd",
+    "docs/V4_ASD_CANDIDATES_20261004.md": "67b6f4d9915d56ae23f0c0e323890bd27f972765f0456c2bb13b14f059858507",
+    "docs/V4_CACHE_RESUME.md": "f985a150f49f4e5ca8daf13a896e09a9028bbe195d6ac19d3822e3f6ca5b2e43",
+    "docs/V4_FINAL_ARCHITECTURE.md": "449f0365533ed302673945ee022efa68850c0392f8e2e99b05ba7d817992bd5d",
+    "docs/V4_GLOBAL_PLANNER.md": "9553ef36734af788f72d7bb63241b80e691d6832c913705b771aa3e7c37fefe1",
+    "docs/V4_IMPLEMENTATION_REPORT.md": "77525fbfebab0706c19be7c3057f79561786ac35b235df4c59ae1eee30d66330",
+    "docs/V4_OVERRIDES.md": "85319b1b1f597989f6c828da02cb807c1f517c2a71e6ae3952022a9bdc6096ea",
+    "docs/V4_PREVIEW_RENDERER_VERIFIER.md": "57c95dd6f4b6609dc6c71e86af8ad6d57f24ce884e40f6caba0816a1879ca311",
+    "docs/V4_REQUIREMENT_MATRIX.md": "242b7e546e3c64111780b32c07663574ceddbc61db16c81d2bc7b73eeabc21cc",
+    "docs/V4_SECOND_CURATION.md": "079c64f8f651369d6e7f64ad29890cbae4c90b1d18823bccc019d00e8e50c10c",
+    "docs/V4_WINDOWS_PY311_HOMOLOGATION.md": "5741620a9668ec5e39489522a76b9b26949e7fcd92b1f5cbf4ab1e73cceae674",
+    "docs/VALIDACAO.md": "239d9d8e935a55827028e971b942cd6e66ade0e31b864ea0c33f0925f37d755a",
+    "docs/WORKER_DISCOVERY_AUDIT.md": "d834653354e39f69f88a3385047e4fdb34ae72e243e60136b0b2683008ac58df",
+    "docs/WORKER_DISCOVERY_AUDIT_V43.md": "bdd2c6d578d07dc3d6e6e76e5810065fa35612d4402b4a30056561da86bb9984",
+    "examples/llm_insights_DEMONSTRACAO_SINTETICA.json": "6e49e3c15e97eb599cd7861d5efbaa11e8c76cfd95df8e650f30b0ebebaf330f",
+    "examples/mapping_example.json": "c1cc46964ea078994f8ae1d70e96377a73a6200d124534bd9c427b9c949c016a",
+    "examples/README.md": "4a8a9579194e72026dac4da2be413c914e70eac73197712f60d6544964f37767",
+    "exportar_ldporto.py": "3f211db9e1b411d20c930612f336a5a034106c3ac998002698f35fa40f6dfc51",
+    "FINAL_HOMOLOGACAO.md": "e8183ce16cf5c4ad2543ffcfb1d796a3ad97b3eeadda68dfec53a922e13e3b35",
+    "INSTALAR_AVANCADO_WINDOWS.bat": "b593df2a22a83273c1a9de1c1a4eb21ea7034d8f50bd4226f97c0cc5b1b4e5fb",
+    "INSTALAR_WINDOWS.bat": "4b46a081658b0918ac2dd7d11e21f365c051b9b54b0d48df944bfe6efc1aff04",
+    "install.py": "b0c4d7ded370a9bfc193c622880f0768366113585e9334bd287fd41536e7d2ab",
+    "orquestrador.py": "582aaf49c40cbf231b7ec3617e5946d828ead111211acfd3b78856051112c27f",
+    "pytest.ini": "00b4fac49dd1dc95ba5800c9ac2699c8425fb06710552aacd5c2756349b04c64",
+    "README.md": "4202c729cef8a0fe5fe23416e5b20488aed8fc02b52d2295f7cb1e2e721d3058",
+    "requirements/audio-events.txt": "efdee938c9a5b7e2f2cff1d001479ce106e065ba5a63f6aabbe4cc3fca9aa9af",
+    "requirements/demucs.txt": "f45b019f88df1aa27ce66f5ff8d6a8466c4b9ebd5ee41b1d4259089a262b87aa",
+    "requirements/dev.txt": "48e58c704466b6259e69ad68f1a20b51f6856b2506fb7169bc3700e7b40b1131",
+    "requirements/diarization.txt": "5d9fac096a15a2d8609abb8dd41ee4b7e749da6122a6929cf22a4c034e085cfc",
+    "requirements/gpu-windows.txt": "40833eb46603c0c292e83d07a374aae17232d844841200d655f959f53fd5a69d",
+    "requirements/ocr.txt": "b50cf457cd28d38398260556e1e0c32f988a98581d8e1dff61aed4365a9c739b",
+    "requirements/README.md": "06929bb03c239eed3571e08dd8401a33991b6e823fc2fff27268171b8921c9a7",
+    "requirements/vision.txt": "8b7a9e3407c881cfff75c29d140332d616496e5f5ca268707603181e841da61f",
+    "requirements/yolo.txt": "59f6cfac2f20ce288ed2119ea508ad061309d26f055394e9cde8f7ae4bda3ef4",
+    "requirements.txt": "cf8afbcf6a7422aecb39a34fa0c6980217025aac04abca316ff1a769ec458521",
+    "schemas/camera_director_debug.schema.json": "e456802d4fe73d984be98fa0ae9788274701a69c673c4a12610cfd3a6612f02e",
+    "schemas/camera_director_timeline.schema.json": "3f7bb6e819c3136a0f2b82a7b08bf78acfef61dffba0647d797e50de01f8f861",
+    "schemas/camera_plan.schema.json": "da926dac11cb6d7eefd3fa07c971cb46d49cc559b62b3c357f8b543c00542a92",
+    "schemas/compact_analysis.schema.json": "9311586795d70d9f27e5980eac3369640ab501068a79c530489d1bcf73bbd089",
+    "schemas/curation_catalog.schema.json": "bf44d9fde3ab1585c889c32304b30098a079647c255380174a59362760b45d30",
+    "schemas/curation_index.schema.json": "cdbe4c09bdc5c06bbfe77eeaa5ce53eb992daf24c56e978dc4ce91af1fa47bce",
+    "schemas/editorial_candidate.schema.json": "e4478261244d1d4c150cc6fea8e6f3e6cc5ddd45d1f9eae1af1c4d5e70219ca1",
+    "schemas/performance_feedback.schema.json": "50406ac58a30a7a458093d689cded69fbe50ede311d82cab12029d46fba8c134",
+    "schemas/preflight.schema.json": "be953325d32bb32c7b51ba53c20ca140da890ce15c4f905eac691947f4020378",
+    "schemas/preview_validation.schema.json": "55bfc3e98999fa4460d53b507bee5317c81481a07792894e4f472d9fb2b152a6",
+    "schemas/review_overrides.schema.json": "09768baa439e570e8f4a9125fd3f8cc8e41fffb10ac15e85cb2ced1d8e57d493",
+    "schemas/run_manifest.schema.json": "999a7b3e3caf8c64760107c43cfd27948118c89ce1825918b25d8b3ef03815bb",
+    "schemas/second_curation_decisions.schema.json": "a374d1f749a3f4e1685c5a65c759ee50efe0ac06c7f7141840f3a96e5865eef8",
+    "schemas/second_curation_package.schema.json": "8fb8c8d429d78e9c146105e65ff4c95e130b09891fb324eaa37b6ec0277d4d0a",
+    "schemas/social_output.schema.json": "3730d9f3912d4773872719387fe0f45ee94f0e8f0168b99b049cfa4223ffc9af",
+    "scripts/configure_ollama.py": "425f8c1802d11d8385248bd97ffb78988ad437249dbb35321a55ce5a3beb323b",
+    "scripts/dev/audit_camera_s6.py": "bc3e663f0b887bd74e2b25d00dbf75f3cd31caba313a8049e4c0d1d9b97ff63b",
+    "scripts/dev/audit_commercial_stories_s8.py": "bfc76dd6ba2a3004af3d61ec7574cafc37c6daf4b730b124a48cd32d9a920447",
+    "scripts/dev/audit_pipeline_integrity_s2.py": "6b184d69fcaaddb1ac1598421e8c0b2b98a459718090ebf68b608cb3aca9b9ab",
+    "scripts/dev/audit_qa.py": "c40951a68c8f5a641d60a369193f9b6a2b67fce08168c944cfcf77fac4a2e591",
+    "scripts/dev/audit_speaker_s5.py": "402d40d5b815b9508ce3894f7ef0a2c4a6c20a83c2ec80558d7b24b8af618820",
+    "scripts/dev/audit_subtitles_s7.py": "1cc7bf5b42561f409ef24c87717dbc2425fb43064d858d0fec59a80661f6b654",
+    "scripts/dev/audit_tracking_s4.py": "2d7b0cfa0c2813fd005aa9830bcf4f1ddf99f2d10018b2f73be63e967831ff4a",
+    "scripts/dev/baseline_etapa01.py": "59b000d18a4c62e550f249bceb24c54ffab572fdcf4330fd5320f7dc6a9e90af",
+    "scripts/dev/benchmark_semantic_r3b.py": "b8aa2758a563aeaba1dbf4f67617018e0d4eee836ec7caede577c4bae0b1ddbf",
+    "scripts/dev/benchmark_vision_r3b.py": "b7d3982dd3c38b18ad80f379bb99cf9351d1f98d1353406027419a9d937842c0",
+    "scripts/dev/bridge_curator_r4.py": "0f6601edf845bc5cbaa7700487a6ef26d4a17114bb2c12f1245631fccd436334",
+    "scripts/dev/compare_runs.py": "8fd42e48056835684926610a15d3bacc7f90ffde8600fb564bf0c97d1a8474ec",
+    "scripts/dev/curator_s9.py": "9ea7aaad60653c59bdc14e2e80a05d811f7accca880cfc19d3f15e807f86320f",
+    "scripts/dev/finalize_v44.py": "e35d65da1621e5a288f19810ced0a9b55367f1dc5f4d4f184c9babc346745716",
+    "scripts/dev/homologate_r4.py": "4f80049c32fc0b1c87f27726d9725bb5e492c21a94e71b38af63ae8d4b36d114",
+    "scripts/dev/homologation_s11.py": "ef97ea25e907163e2418f6b4573112e9bab753d693dad34091a3806baaeaa97d",
+    "scripts/dev/monitor_full_v44.py": "5857b2ad535ba528003bff1972c927fc98a44c006b4670ff7edebc2d5e867554",
+    "scripts/dev/performance_diagnostics_r3.py": "5e55169df527d3d38d1da8df7ffe64720b894927b7f2be6c9a38e75daa32e3c8",
+    "scripts/dev/performance_s10.py": "22f84c87503332ef5602123c5d9e8b4db8d46757a25bbe5eb2b5494831bd00b6",
+    "scripts/dev/replay_camera_v44.py": "27af16e7982f6a9e7614ccf05c1594e6c715a9121c4a950c30aeca4f6bc39c90",
+    "scripts/dev/replay_commercial_v44.py": "143e203a52da3e12a67445fa0924d38026bcadafb43f611ce55f3623aaf856f1",
+    "scripts/dev/replay_editorial_stage17.py": "218e51be6698dacba70aed6356560e2b08496775acd89fb4182a801b647a828d",
+    "scripts/dev/replay_perception_v44.py": "77e1f866d427892f5708918bdf68b06de79b9bec9903f053a52461c52cc343de",
+    "scripts/dev/replay_second_curation_v44.py": "cf6d530a514a5abdb1bfd7c9934663a5d408da7399f0f3bd7b6f9b589c4268d1",
+    "scripts/dev/replay_targeted_asr_v44.py": "9db64bdd5a0d118a9baa52d466b968f37c8b4fd58ba6b8b5f9d38a8233851b75",
+    "scripts/dev/replay_understanding_snapshot.py": "ac64c610e4eb807c3925d06a999e5da33b18b735e1caea403f123fe6de7fabc7",
+    "scripts/dev/replay_visual_identity_r2.py": "8b8c7466425f080ef9446fdcbc9e7d246c2cb6198d1d135aa5e5b1d0e8dd89ed",
+    "scripts/dev/report_full_v44.py": "1ff7a8a9644d181cc6e2da1a7b433141d240d27c6aa7021c0a75ea9b84e466a8",
+    "scripts/dev/resume_full_v44_benchmark.py": "ec46ba94298a83c65f76c7f44d6f2715db7a2c7df8bc2b1524e6a18c57795d58",
+    "scripts/dev/review_editorial_s3.py": "940ec40685dd9aa09e47df37fee453a93be150e9b059e20559fda07ec4b006ae",
+    "scripts/dev/run_full_v44_benchmark.py": "97b1cdd2f302db74a9b17989a5c8c0aaf2874cf1fc134f8f440e51667eadbeb4",
+    "scripts/dev/start_real_test_s11.py": "732517336107e314d54165dbd7f4351f518870968cb91b14dce8e677d6a4cca5",
+    "scripts/dev/validate_diarization_cache_v44.py": "ccf7be9ce8c492343cdf4ae69c039271b4b0b9dcde2b7b6ff85a9c2f88cc8f5c",
+    "scripts/download_models.py": "220ac7d00fb741c827d17dd39539c0c580ddb571be7f11cebafb358369d732b7",
+    "scripts/export/exportar_ldporto.py": "cab06f1e8256438f321cbf48928d894c46250e8b1d67dfbdbbb981f83e52b951",
+    "scripts/generate_director_fixture.py": "7a4d5f114c43f91e7adc1670ea4345e803589a2558839e6bf3d22277a4c2b40e",
+    "scripts/README.md": "13332a39730c23d1ba1a7ac57c30ca05835cac128c6c64e545c24b5c8be50be8",
+    "scripts/test_gpu.py": "03060a47a5fd134edde524376c92c641adf35b41f63a2cd2134661f72d3e7e27",
+    "scripts/windows/CHECK_RUNTIME.bat": "a7139a6315893810b3fa1fb98c49c2ecdf64795e7cb6159e33c166eabdc609e5",
+    "scripts/windows/diagnostics/DIAGNOSTICO_GPU_WINDOWS.bat": "ac00e67c7bbe9a7208b72173de28efccb3edcd10b6c6e345ebe8ec78fb6c03a0",
+    "scripts/windows/diagnostics/DIAGNOSTICO_WINDOWS.bat": "d5e9a44d07412a9933b077d947e2b5ed0241ebe4c9e0d840a0aa60ef38e52973",
+    "scripts/windows/gpu/CORRIGIR_GPU_WINDOWS.bat": "2439fb116491d0b575f098a75e5ac7909b25e8f32c36971455038aebe0ad0505",
+    "scripts/windows/install/INSTALAR_AVANCADO_WINDOWS.bat": "a62d9c729a25d37574f81c8f6ad0cadb3d4afec16a59bb58ac024893502e2fff",
+    "scripts/windows/install/INSTALAR_WINDOWS.bat": "d11961262b4580b2eb023fbe978d60afba10d5600a2fb8f99315fa6bb3fb6d7b",
+    "scripts/windows/ollama/CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat": "5c7f302429bf19187309ff4bf083e7b595f5c0dee0b15a922f22da9cf9d09827",
+    "scripts/windows/TESTAR_FLUXO_REAL_WINDOWS.bat": "87dc0b80e1b045c7e67cb68b7eb756bc60c1617774a913d5e0a428d7a707a214",
+    "scripts/windows/testing/TESTAR_WINDOWS.bat": "95bbd9752d47146b213f77955bb943fe58f1250be267cdc7879c17e637b60921",
+    "src/ldporto/__init__.py": "428d6b47347477e0c800f652b7b47da222c8bdea50c4a8babaab4e9ba7a531e6",
+    "src/ldporto/active_speaker.py": "8385d079c2c0e08a47ebce7da88948e3c298935781cc9c7fc6fcc974446d8ae0",
+    "src/ldporto/analysis_quality.py": "00f688856e627e95e288be9d6563ff962a0e842e7fe630c757f4d65e10996932",
+    "src/ldporto/asd_backend.py": "43c8a95b918a38b85a60d1415e526f080380fe2bca5ab4d563a8cb3f610fc10d",
+    "src/ldporto/audio.py": "716dc223c0f6301b4f9c7a46102fb6f9909f7552e15f5c149fce0432fa7a2d12",
+    "src/ldporto/baseline_audit.py": "fea801fd561f751756760960021603112947a4a18d8d8b71db86d619ac32264c",
+    "src/ldporto/broadcast_graphics.py": "4cf7c49b659a8d4f3588baa18b399a59d9750cffe6a9d68577db47d14012c1c0",
+    "src/ldporto/build_provenance.py": "08f856dcea7918fdd710f95537d1e347578db39484b5822d4700f506c458491a",
+    "src/ldporto/camera_director.py": "9776452386200dca94302b6992503c629921baef96b99d16c686f1c81b0fdddd",
+    "src/ldporto/camera_evidence.py": "e905139b8f448f4d1d2056f2166be10879aed275351c3ade3ea709f6c1821bdf",
+    "src/ldporto/camera_geometry.py": "bb1f9d336324ef57a98a488e758f12c6642654e9505f79a969fda5798da7a0bc",
+    "src/ldporto/camera_motion.py": "a6eca282f2c11c9c99471f6e14b7d1b45d9e08a10ab23e9986e4c7ffb8d1ab0e",
+    "src/ldporto/camera_preflight.py": "882a850b343634fbca33147feb5db76b97f53554346ad140108bbd62c6412c30",
+    "src/ldporto/camera_timeline.py": "4a73360aa274160b637b7065e9d3f7dcc3c65016afd451b4d6d1833e3cb4f803",
+    "src/ldporto/commercial_gate.py": "cc7a630005e7b7d267f661148a201b9caff85e893400090d118d610ef90dcc39",
+    "src/ldporto/compact_artifacts.py": "73b275323fd43cbaba3adebaa423a2d094d9a631fe0887a4656acdd479918ed4",
+    "src/ldporto/config.py": "cbb0b4b3c0726b7ae33dd9c78c99e9e6fcea5026fb01078f0ce52d154805994a",
+    "src/ldporto/core.py": "2ac7bda4caf65e609b515cbf847e7e8364e71c2a02aff13d30689a8f1c4ea7d4",
+    "src/ldporto/curator_bridge.py": "e56781894519472ee8f5c2095849390ff6a521487a0234bf268240aa8d0aff02",
+    "src/ldporto/curator_delivery.py": "f9a1ee6ea445ecbef9f19bcb3dfa19379d8c92ae344a9eb1e4e207e3f602b688",
+    "src/ldporto/diagnostic_dashboard.py": "9fe768a356b5434100e4feb5e72c875596701d2132b6525d08ba501c4a896c52",
+    "src/ldporto/diarization.py": "40ce6844c3ec935d1229f882314e69e5c3eba954e7ac27423d59b7d61ba468c8",
+    "src/ldporto/director_config.py": "137d7fa35ff538c389988a2a367e8cacbf95792e05543d42d375f511efd11d7d",
+    "src/ldporto/director_integration.py": "56a1cdffb065e4fef357b05132cfd6c8bea15f0f8a1e40370b031e519ae54783",
+    "src/ldporto/editorial.py": "03e8f95d1ad27cf234da7515318f1be675372930fee9f49a2f90f120f9627fe6",
+    "src/ldporto/editorial_handoff_audit.py": "adadc4b0b9d1d8f7122a78e096d7b7882f53e6e39dac871bd7d2e65f0122a204",
+    "src/ldporto/editorial_intelligence.py": "6995c8308e1939874e50baa90a0e883dc00c7529af3eb927fba98a28ec1c2d6a",
+    "src/ldporto/face_quality.py": "6ba5111b6ee1ec45b7f21a2a6203acd751cee0356e90f342296572b9946674f9",
+    "src/ldporto/global_camera_planner.py": "a2cb30e8107a30332f7d3a4dc8adbead89968075b161e01347c0125ba7fc6f6b",
+    "src/ldporto/gpu_runtime.py": "1e23ced03282c9ca768ebd5357a08f5a21ca451e8d8a8733fa830fc955f68d3e",
+    "src/ldporto/handoff.py": "ad4bd951bd53fd781acf8cf17d39ee4774d22554d75de008168e76646fa48459",
+    "src/ldporto/homologation_s11.py": "70adc5be236b33e32a880a70af9c5ebe91ba682c98208a389f330926e77af54f",
+    "src/ldporto/identity_goldset.py": "55319506c86b6ccae5e99fb1d2e2b1778a7a2139a4e3f2a29cd10da8242e98ec",
+    "src/ldporto/integrity_contracts.py": "a32bf3af00adf5fc7b5079cef4b11465a49463b4eb84f014def6fe3857f8c2e1",
+    "src/ldporto/interview_layout.py": "067c397975797c5edf4bae04c5fba94dec9f691418a7667bb5428c30bf748c55",
+    "src/ldporto/master_timeline.py": "d226a4cce0fce2561a97c37c2a9304ef26ca9930ad6e3f72fa77b09e05713085",
+    "src/ldporto/media.py": "88b0e14ba03f8a742e620f37939eac7ee0c724a04c82924d1b4d7a54aff0c126",
+    "src/ldporto/media_runtime.py": "67d2433fb4015677a3f7cbdb252bd0adac2b6ebcebd21751385d23f5c76f8205",
+    "src/ldporto/model_cache.py": "fcd0277eca2fa01cca33ea58bb482b53fe87c6bbdd2689b104bc1954ff906f52",
+    "src/ldporto/ocr.py": "e54e23802b4a4fcc3945557f1e0392f3f278821242bf071b98c0e23150f29c54",
+    "src/ldporto/ollama_local.py": "7bed8bf489b8f8aa2da06d944a83545eb404de653e8ee796e56611095ce2904f",
+    "src/ldporto/paths.py": "eccdac6fad2a387548d071e8e930f3b681ee6f6064e608f8473b0e66201396d2",
+    "src/ldporto/perception_diagnostics.py": "7dfeb9c5b7dfd0f76d60e08f4d37ea9ca24e01213d82158b5ff67fdba3e30f5f",
+    "src/ldporto/performance.py": "48869a8c316ea0206343cddcab7b61055582242a37226dfde48ce46593cdf9dd",
+    "src/ldporto/performance_acceptance.py": "82aab04c6a3b596d88444b4be3e03d16d9f960651205e55bdad79b2f540a922d",
+    "src/ldporto/person_motion.py": "833241aed57cf908ed877275e5f8485bb88edb7343e811231d0dc7f4f21ff71a",
+    "src/ldporto/person_reid.py": "b081a5bb76dbc7fffceb264a81dbf2e9e75cbf965b7a24f032134b7665e4902f",
+    "src/ldporto/pipeline.py": "80fcb849b7f65c19cc8aa681641ca6776e97f6c80057abe1c708012b7cb4b0b5",
+    "src/ldporto/preflight.py": "bff2acb7f2d509941d58048343a679d0cd9845b2319aeb0e1f2c521fc0a00ded",
+    "src/ldporto/preview_integration.py": "1cd030ef6c1e70e8cfecb3f0ed2916b49a035478bfc43cc0d875b27fded6d692",
+    "src/ldporto/preview_renderer.py": "c4a7399da6307915eeee95c72e6955722f7ede5968c43e5b89f91be16dd435d4",
+    "src/ldporto/preview_verifier.py": "6ab03e9022f786546893fd65a4da3d6545bb36fe4954fa1826e510066df1bc79",
+    "src/ldporto/progress.py": "372d3ce275966c3e903e877b182d418c597087a7dc6d3b621d99f9f7486f00d9",
+    "src/ldporto/qa_audit.py": "a2ef3c3c4edbc5fa81e05cc1691f0b33f829c51dc87bdb1af52a58682cdeabd0",
+    "src/ldporto/replay.py": "0f24e99a8d0410ddac09ebc597a92f795b6fd804fea5ac6afaf3441d667c0e6c",
+    "src/ldporto/reports.py": "c8a17fd8c5b0eaf21291b693247594f7a4f2f3800e82d8e67b66ba2c969610a3",
+    "src/ldporto/review_overrides.py": "a2057e18215dcb47d2837658e50eb73f78d10961c358a7ffda2b7e99e96deb12",
+    "src/ldporto/run_status.py": "a0f0a862fa513b9b023693296a2ec82abbd25b534aec2a1e226262680e3ff259",
+    "src/ldporto/runtime_metrics.py": "ce8db899d488de7e5cff63839e51887ae8d384e3a57d23f30787d58cacf916b7",
+    "src/ldporto/safe_area.py": "73e40f6f98a7084ce378f2e697ac6a63579f71602acdb1fcaf8638c43c3ecfb8",
+    "src/ldporto/scenes.py": "228345a91a9581b4bfd5934d14fc7c4db10d115101cdbbd322f2119406571df2",
+    "src/ldporto/second_curation.py": "5a9cc268811496e357b6bfc824e16b1cfac942afc8310341de1acdfcddac7af3",
+    "src/ldporto/second_curation_decisions.py": "66cacf246eafd10e1e7e3f2c4283819bfa73f58b2d671fc6f1b7de491ee424f3",
+    "src/ldporto/second_curation_export.py": "806d561437f480a9c943662d9303e29da4e0413e01966fe439e85411e1a36d25",
+    "src/ldporto/semantic.py": "85d104f34defb0067f947979842bcb6b5adf10635abe42688a7a1d3f21ddf2dc",
+    "src/ldporto/semantic_benchmark.py": "40256c1c448a5f033994640c2600a9d6eaf26411bfb6b9796b5227cce418ee26",
+    "src/ldporto/shots.py": "f53e34601f465899dcdc32dbb5fcc4f92b7e2d014f859e407c7df233d25cb970",
+    "src/ldporto/social_output.py": "53c74e15231c705140f8086cf2de70492e842695b1f648f886a9e5f243a706e6",
+    "src/ldporto/speaker_goldset.py": "325620b63d277f5980ddabc4e20cb90808e9b4d7d47e6c33f574e02bf9a46eda",
+    "src/ldporto/speaker_roles.py": "4d3c3e982ef37d7b43638272cff9aa56b98aa12a575074c21d7f5b72f1a6790b",
+    "src/ldporto/speaker_signals.py": "4f1e64a477675f1c107582f86679404b624429898ba8502b3527be25c8c4e9a0",
+    "src/ldporto/storage.py": "1d343bcd3ca2b060b2bc6e6be7d99624022f942547a3771dfa2fee1bc1a161fa",
+    "src/ldporto/storage_dialog.py": "10df8cebc5b5046d57094b90a8ccbd62eb4ad47ce92e1cb543d10cf6e771eb4a",
+    "src/ldporto/story_recovery.py": "576635869b9271e32cab1a9612bff72003c5ac0fe8f198b55146f457ca92d578",
+    "src/ldporto/subtitle_review.py": "73720cb3d1a8fae8514372be96b4064aeb56a418bc6cdf9aeac9610f4f913849",
+    "src/ldporto/subtitle_style.py": "71fef2fc99798eab2f3ff3dba64b571e6738823a3761231a557f881bcd579eaf",
+    "src/ldporto/targeted_asr.py": "adde1746f91c714072884f7918d36c3afe30c5688d0114ce1138721aebca5fcd",
+    "src/ldporto/temporal.py": "f1c637e879eadd8878edee530f93b980f8d699f2f26f76753841340651d29ca5",
+    "src/ldporto/timeline.py": "e1e6bd9cfea50f72fdaf8ec228ee0a768e04fce4f29a167c418ebc90c89dc75c",
+    "src/ldporto/transcription.py": "d251cb19d143cf61ae60cc2ae407e682ef98ff98db505b0fd025d0f2be90ceff",
+    "src/ldporto/uncertain_words_audit.py": "d1b6ae5546d76d5a9483bbfbd103db877a0337f5e765e454c81731fa9c07298e",
+    "src/ldporto/understanding.py": "520e0726196e5f06f02db0ee4285d5e591796b91eb78bdb332daf055fc3b2a57",
+    "src/ldporto/vision.py": "161ace8a87b4284006a1080a187b86ba2c8713eb48d2de93011be3dc67fc09d2",
+    "src/ldporto/vision_checkpoint.py": "a58bdee62955b27168572d655e6b365732ff8add5961f8564f294d9997b84e89",
+    "src/ldporto/visual_identity_audit.py": "a8b806fc12590199ada8b043695fc9093fd1b8821bba4bcfb6e9121e2691f2d5",
+    "src/ldporto/visual_sampling.py": "ac9930498b67e2fadf75f5082da6823947bac85bdc5964a6ebcd707b5c8875b0",
+    "src/tests/director_fixtures.py": "7de15be38f9442689aa51121c1cb2c131deae2e330aeedcaeea5b0f2e52ec3cd",
+    "src/tests/fixtures/joao_gordo_qa_references.json": "fe8fcc39074d9370b5b8cc5c8a4270521b2ba8c28d55e44a255c04e38d8afdb1",
+    "src/tests/fixtures/legacy_analysis/llm_insights.json": "741d8830d48ef9e543a99f498af3d9a8e0fb24f451c46bedf2838d64d57773eb",
+    "src/tests/fixtures/legacy_analysis/scenes.json": "39b3b4eca85d915cc9c25354dc937230ab74ff265d999595305ce6d736e8264b",
+    "src/tests/fixtures/legacy_analysis/speakers.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+    "src/tests/fixtures/legacy_analysis/timeline.json": "b67aa14823d28907c51f0bfc6e8ff6b3afc7bf58597401fe5aad9a0a48e7793f",
+    "src/tests/fixtures/legacy_analysis/words.json": "48764cab74972b322935936a5986ce406b311307a8740727e726003a6f892861",
+    "src/tests/fixtures/s1_clovis_proof.json": "04e06fbbe080d1ce7b8aae85bda12547f834c70af7fe9ae7175867c3a6474113",
+    "src/tests/fixtures/s1_emerson_proof.json": "bc42b1bbcd2f30c63283c75e0d5581de1b0623d4fd495101a33fc55e6dc0e0a7",
+    "src/tests/fixtures/stage40_transcription_synthetic.json": "ba1d85a48c8677c579a35a88504b8f88e930a9045c5272f9f5b9daa0f823e3ef",
+    "src/tests/fixtures/v44/commercial_false_negatives.json": "c1753dcefd29bda4057ee3588532cf0b36e1ee903f062807d21bfca2c5e1187f",
+    "src/tests/test_autopilot_orquestrador.py": "100e4cb9c9b32282fbd96a244441036d06b767d8ebdf93a0bd6fe9c32d45eb29",
+    "src/tests/test_build_manifest_truth.py": "284abfea36160b7ce8f15d5a37e7b1f853a90bb0341d8175bf63c6dc825f9e52",
+    "src/tests/test_camera_director.py": "795ca7ee396b515e40e39188ae4e2a67b1d59f06b0895f8db79d4d40a72f5333",
+    "src/tests/test_director_integration.py": "7cb2456e12241ed55200988df07a5503260677b6a71bc135d9dc7575fbb7b7e9",
+    "src/tests/test_qa_reference_handoff.py": "771d26d10e84b8dd1673b1e226dc15568e75fd0df709d837e71e22e8cf83125d",
+    "src/tests/test_s2_pipeline_integrity.py": "0c15f64cae08d702a1e1b81bc363a0c931a4d55c2240084f1aac4d514c52a071",
+    "src/tests/test_s3_editorial_intelligence.py": "8ad3c912de4b6f0ecb2c79ff60e8bc76857fd0c376cc9eaaf880f93cfb83bc52",
+    "src/tests/test_s3_editorial_reviewer.py": "5273f0dadc9c87ff3cd8d7f41afffe383bfb66c47730fc2781351b469eda1226",
+    "src/tests/test_s4_tracking_face_recovery.py": "3b8b7ea1204c43c2a70fae15ce0137b24156256ccd21735c60e89626679dc0d8",
+    "src/tests/test_s5_speaker_person_active.py": "297258f94fd85b2cb8aad075ea2b26de8726afab785ed09f3ce277a4f6b564f8",
+    "src/tests/test_s6_camera_director_smart_zoom.py": "f67156c86b1057cd136c06631b1e8697d894dd543a851bfdc10369f0d988ca1f",
+    "src/tests/test_s7_subtitle_review.py": "884940a19dc0a61349e546b71ecdd1e13a258c85883758842a21ef2becacc285",
+    "src/tests/test_s8_commercial_graphics_stories.py": "1989b162e948b093bf0a3844269fef48d276a56c2c6db3408d3df75aa73bb0b8",
+    "src/tests/test_s9_s10_s11_delivery.py": "d5f9aa524f4883b87bddbe7b90ceb7f04a11ba2a148275f58b0ff2a89e5b0096",
+    "src/tests/test_stage04_readiness.py": "1da9e5f2fa801dd48b11734cedbf63b4964047ac78f35aa503c62873896b23a4",
+    "src/tests/test_stage05_selective_replay.py": "02266a32f1047c479f508d5f77a5adb639ac5f8a6ade248e6e8cca9108d4a57d",
+    "src/tests/test_stage06_report_coherence.py": "f3528ca84d41abc6546389fb51e3c89416f62d499a05235a1d2be3dc84ae5ec9",
+    "src/tests/test_stage07_qa_audit.py": "63cbd26957b02a84aa7d3148404b944b99eaf659a0b44f25fdf9f57e53cc423b",
+    "src/tests/test_stage08_resumed_answers.py": "fce7869fdaa2c29be01dfed7cdd9d272ff9d8cd58e9969f8fc13e2f3af7e552b",
+    "src/tests/test_stage09_story_arcs.py": "67c846070b546930c076fa8ce455f04daa97e7c0d593c736a72de694c7dabcb3",
+    "src/tests/test_stage10_humor.py": "d2b75c7403d9a0cbb2fea7a7ffe1687316ebf0ab7062ab8536aa402df221f46e",
+    "src/tests/test_stage11_discourse_boundaries.py": "29f29b0b691f50d11f932355d20e147f2f033e652cf36f2b7848f633c65c9f85",
+    "src/tests/test_stage12_candidate_recovery.py": "9e9dc43974fbe793bf17e160105bbe6dfce1c47e139e625061a29dc68cf39f9b",
+    "src/tests/test_stage13_explainability.py": "cb1847851bb97ce39a8545ef497ec333eb0ea059f2fce8406d8cac0846e483e5",
+    "src/tests/test_stage14_semantic_fallback.py": "696f2ccd9794a8c9f1ad14307852bd2d04c7cd1e53e9862ad7ea0301894a6a39",
+    "src/tests/test_stage15_dedup_alternates.py": "dc5a51fff1eba0acfa5cd72c492df52185d4d8f99f8b43967549934c3a114e1c",
+    "src/tests/test_stage16_shortlist_diversity.py": "43e7f48308bfb669b5499dd7f631448ffad1e4c638d743ea5864f051c6140b4f",
+    "src/tests/test_stage17_editorial_replay.py": "bdf85fb135fc8610152aa578f51c45a4f3fa2ff4a740f9fc11a7230627e2594a",
+    "src/tests/test_stage18_handoff_audit.py": "8745b60e685bd291deddcd4a13f5c9635c58be18374165cc6dc14bee8f3e229a",
+    "src/tests/test_stage19_uncertain_words.py": "5ca709aae10cc2fca10cf270d2b9f1fd4dead78c0bb0c0188ae8813140da8634",
+    "src/tests/test_stage20_targeted_shortlist.py": "5d0be8af2fddf1ff610c779c197118879acf4c7adeaa37827c6ed369558d17f9",
+    "src/tests/test_stage21_subtitle_alignment.py": "4fb0d235c5e672a32bdff103ccdd8909211f77405b084c7f199866f4c044b591",
+    "src/tests/test_stage22_subtitle_style.py": "b8f62a3a9519c7ab2a6998a2eb0976e5063305ce9f1f792dfe858357504caf66",
+    "src/tests/test_stage23_honest_titles.py": "e0ec56adc04978d1c5715b3006c1b9870a477c2336d0e60ff2db1354ccfca7e0",
+    "src/tests/test_stage24_audio_plan.py": "39680fd7abb673f4fa0f2c3f780d0a4003c5dd21914f53b7e349a81bd11666f6",
+    "src/tests/test_stage25_body_backends.py": "ed4bb0eec8cd6cf1ba86dfab75bf85fecfb5b4397e4057dd163f6a39dc9ead5a",
+    "src/tests/test_stage26_embedding_gaps.py": "18a3a003c65b6039cd83c50648dd99aeb13fda5c68e0a38646980e4a1ad4a655",
+    "src/tests/test_stage27_conservative_reid.py": "e6e8db0439685c3e5deec30dfa335aee02dc3b34e294ffed449bf433b6e1d43e",
+    "src/tests/test_stage28_voice_person_evidence.py": "a0fd950adbaecbc4e1bf8543056375c1d3b0a5b8f50d40c52d727032f72daf0b",
+    "src/tests/test_stage29_active_speaker_consensus.py": "716d749569234c16bddd45005f7cde6b0d7388665238b8910e1d778e1e48ecd2",
+    "src/tests/test_stage30_shot_continuity.py": "a8564427753af4254d0687792f004b4ad710a293101cfee0c08b5fd771f9ac91",
+    "src/tests/test_stage31_focus_audit.py": "34b31e8c8b77efc0db1b61f95a1ad593bcb19481c37073927fa425e0cc6a52af",
+    "src/tests/test_stage32_safe_camera.py": "1216bef3d9c5a3c805d4a414e86d81e7ba793e04d3ec9ad28c3c28ef9e8fb7db",
+    "src/tests/test_stage33_ocr_graphics.py": "56514f804236c4f59cb1037cca859bc240932264c073db4c0fb0d724422ae29d",
+    "src/tests/test_stage34_commercial_gate.py": "c22adaab41fc28b210863a772b36b78fab6b5629be6ef0e9508ab002ac7cc782",
+    "src/tests/test_stage35_safe_area.py": "b8aec98384a7efb0231f2112e34ce5ed58a61a0be8ebaf70ce9d912bc5b04549",
+    "src/tests/test_stage36_preview_borders.py": "77244a675ce456e8b24e018b8880b26c4440aaf0550e2b3ea47234c9505af633",
+    "src/tests/test_stage37_curator_import.py": "73b750eea9a22093aacfc37211cfc6ab6dc1e6a7518641883332fb55a30a8c7f",
+    "src/tests/test_stage38_independent_mp4.py": "56ec907104344448b83aeba691ecedb0e32a6595900025f17439df99276ba4f7",
+    "src/tests/test_stage39_human_hash_gate.py": "7c3dfd24b1c0da3329ab9b654780f4d1bad7230b0140c2b8c717c9413d482ba3",
+    "src/tests/test_stage40_semantic_benchmark.py": "b737b0074ab514a392f6dc98227c4581cbec73a9ca5b81a2233253e6b1dd9913",
+    "src/tests/test_stage41_vision_resources.py": "db5cb75505ae1f7db2aad4ab0fb7cc8b680e864a30a6365fb74a732015ddffaf",
+    "src/tests/test_stage42_homologation_offline.py": "72f427e34d0d4de9dcc236f2e38869c4da1cdf97fcad25ff160238b0eb9ab904",
+    "src/tests/test_understanding_session1.py": "9a68aa54b68fcb98ae6c3c4bc20a005bae918eac6538d7aa42372cca3629edb2",
+    "src/tests/test_v2_perception.py": "e2af80a23b864edf84636aa5abeb940d5be66863f20b81b135e1980ad1014aa8",
+    "src/tests/test_v42_cache.py": "61f23c8255a5ec1f7887dd3ef447f23b58c093902c8b4546153a49b3b8af7acd",
+    "src/tests/test_v42_camera.py": "97bfc394a3609441af7170a9736273418abe08bd298c863e543c31fe91e67289",
+    "src/tests/test_v42_editorial.py": "17c835a99a65f36b2be7bf4b702ffd634acc5b0994da05eafb32560682408f70",
+    "src/tests/test_v42_export.py": "8f611b1e49cd2a7db441a07b58eefedab8789fcb0798b7764d14ccddec989c38",
+    "src/tests/test_v42_perception.py": "27b7d45c94ccaf562a834aab095c0658d173c34471ab0391f3f34a5166f71a0b",
+    "src/tests/test_v42_preflight.py": "794c170f64f5d10d265bd7c0d5719e52f00dfe7a5310a2f8b1b6b3b825a4f530",
+    "src/tests/test_v42_security.py": "518c1388e0c148da6892fb4e7fed297a1220c8d972b45c9c7747bab16bb155d0",
+    "src/tests/test_v43_camera.py": "10ba3935d0daf4bb256378ad164f4457dd725b5428d7e11f06457fdb5c454d07",
+    "src/tests/test_v43_editorial.py": "b3b49a7b246edf2be85c8f0c40edf12ef8b6c703508da5878a9e5de3abf06bad",
+    "src/tests/test_v43_handoff.py": "37443750165596eed8bfbcbf3d5a7e2bf0f21da3cb4aa9a429ad392a035fd5d5",
+    "src/tests/test_v43_perception.py": "f464a9615b2e1f04cdc3bdf0f10173f50a1f8de09a20c5ebe9ab7936583e3e5d",
+    "src/tests/test_v43_runtime.py": "33a38007fecfb2608d62d05cb177b39b028b5abe7007356b0fc108a35e81225b",
+    "src/tests/test_v43_semantic.py": "eae1cc804ba7cd4a599fe052c90efce614741dfbe58b9278f0ea889e913346c0",
+    "src/tests/test_v44_camera.py": "eba957c2f27cdc28692b373506028e5642261d75426e0caa77b20242c53dbba6",
+    "src/tests/test_v44_commercial.py": "8c51aa2d6f8edb213752f0ad345eb6e21076f6d7354fac8029c7c9075a1609a4",
+    "src/tests/test_v44_compare.py": "dd78cccebbe118e5607321f75738a96c030f956ed8137506dc3d6f1d88548894",
+    "src/tests/test_v44_diarization_cache.py": "83c32baa48530fb2d6e21b2784f779094c709bdfa9336714bc7fdd978fda2cbd",
+    "src/tests/test_v44_failure_categories.py": "a4de9aeed1555a96067238a73056cececa9a46ed5f35bfb28a81b5a4dac959ae",
+    "src/tests/test_v44_observability_patch.py": "f9d2d5f4d76aaad230a3e1f907f285ba0cdb5affb8f756d4b9cadb761d733f86",
+    "src/tests/test_v44_ops.py": "e62980c6805533c5f84f118d72cb645ecea82ebfd9218e380644d9a5b5c036b9",
+    "src/tests/test_v44_perception.py": "d8c3aa8d65f3acebcb483d00393e72bff929a69ec43ea4b0a56623340cf6bfec",
+    "src/tests/test_v44_replay_commercial.py": "c1c858ac827e306655cb59240db1bbb4984e18593a9ebc6e6cb969d7e5faae7f",
+    "src/tests/test_v44_reporting_robustness.py": "b55cbfa0399dce307e3ca8aed2ef0d0557832f4588614cf6c30580773cc265ec",
+    "src/tests/test_v44_second_curation.py": "e09aa8db05ee2f07ce921b359912bcd9856f2a291b05fb71fe7cecb8ea74a4f4",
+    "src/tests/test_v44_semantic_story.py": "6dcb388a266d26be4bad114f753253b1bfa87e719845b893d677b9d1177c597d",
+    "src/tests/test_v44_social_output.py": "a9a48eee05c35b7eef3c45c698cb1c9ad5103a873b33a3394f50e275be06b5c3",
+    "src/tests/test_v44_targeted_asr.py": "d0f2ed42730b34442828c15011bd5e8dd7ea0f63fa5f406aeebf6a8e9d947359",
+    "src/tests/test_v45_r3_resource_budget.py": "dd78b3a16be6fc253a93ebc4ee6b38f42790f8ea47a15273fb1b5d42fcd338db",
+    "src/tests/test_v45_visual_identity_final.py": "d5097afe591be1e2566145d49a9aac755a339f2c5cc61e255de23846d1eb92d7",
+    "src/tests/test_v45_visual_identity_round2.py": "4f28b4a36692bea68bdca07da0ec3012f05d5c8786ed46bb6f19ceb54843742a",
+    "src/tests/test_v46_r3_camera_perception.py": "ac61c4f03914e60186a7a638365f0915fb6eec985e9785e33ae41aac52de20c1",
+    "src/tests/test_v47_r3b_performance.py": "16d5e4a7ce2f1351cb561fe183f9a5a1e9a1ed815a4fe2197cc8a2fcf2579a67",
+    "src/tests/test_v48_r4_homologation.py": "3786bcf21a6d3a6af362dcc28c44c7c1d79fd08e58f4fd6bfaed7f9c5bf0a97d",
+    "src/tests/test_v4_final.py": "de05782745cc5731e5bdc67a6871fe216f22348ae19c128aab3b65e6ddb33ccf",
+    "TESTAR_WINDOWS.bat": "cbf4bb3b7d93a4fc8e9b43874063015c55d9aa602d818b33f4e3a185b3d24f27"
+  },
+  "evidence_sha256": {
+    "CHATGPT_REVIEW.zip": "5a9da201f984d63de2c68dbd9aee4c03365b9e0815b1fb041130d4da02b5f073",
+    "SECOND_CURATION_READY.zip": "8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349"
+  },
+  "guard_hashes": {
+    "orquestrador.py": "582aaf49c40cbf231b7ec3617e5946d828ead111211acfd3b78856051112c27f",
+    "automacao/MAPA_ETAPAS.json": "d642dac96a1c96f6c480c6f20e3bee47e810ec7aae68b31e2f2655141c42aa21",
+    "AGENTS.md": "0ffa51b0d40666be49059818bc264e89a20a497a5a1f79e783434cd0910d1e8a",
+    "src/tests/test_autopilot_orquestrador.py": "100e4cb9c9b32282fbd96a244441036d06b767d8ebdf93a0bd6fe9c32d45eb29",
+    "automacao/prompts/ETAPA_01.txt": "885c28f10730618973138c110140e17f9b81291de18acd254db9bd13bafdfbe1",
+    "automacao/prompts/ETAPA_02.txt": "7371d3770c430760808d891379b487d16bea9ca60dbe22a60b54645af5cdf24e",
+    "automacao/prompts/ETAPA_03.txt": "75a1575eb07675a05741dbd96482522a1361630981911cee2a5ef522d5caad62",
+    "automacao/prompts/ETAPA_04.txt": "4146fdb97023a754ebba10792b999473c4d5d13f443bf9a7a66ade63f7d21a66",
+    "automacao/prompts/ETAPA_05.txt": "0638697c8664a90db628224869f3a72c170c9a6ecf64403a11f5d6b191f52c64",
+    "automacao/prompts/ETAPA_06.txt": "dc60a89571367bdb4df002939c27c47bac038df60dfd19725f213ffff22eef53",
+    "automacao/prompts/ETAPA_07.txt": "0032da85b9dbdddb3c472b0bc84df028fb2a32c9aabff77aea56104285168d6b",
+    "automacao/prompts/ETAPA_08.txt": "2060eef7f9591c6a45606cf932393c4f5189f231cef2fe147f691b253373caa3",
+    "automacao/prompts/ETAPA_09.txt": "6429f7ea9c7d7dcc6c4eebde4003399e15ef4421a231cd45ff9721f355c5f63d",
+    "automacao/prompts/ETAPA_10.txt": "5dd91191541abc5b95f4c7f81be717c51d9653ccdb9904d8d6f2e9e246b1e20f",
+    "automacao/prompts/ETAPA_11.txt": "ef2d05cd8bd13f3f65284be50b0bc8294e2ad7894a0d3d1d9c52ac1e2a39b4c8",
+    "automacao/prompts/ETAPA_12.txt": "175f0733a8824b6e54b3ff5d1d5aa6494fa94477ce4245bdf7e791e7541aa241",
+    "automacao/prompts/ETAPA_13.txt": "926d5c337c050b3796a0d1c5e822ed05df7d2bc1d46eabebcc6ffa0fe321215e",
+    "automacao/prompts/ETAPA_14.txt": "2f01168973b27687f4bb9567361c74e233c04ce77e4ca954b66b235c3da95009",
+    "automacao/prompts/ETAPA_15.txt": "421212a43c335a391a0339d7779499a8e9b145a1a7ceb16f760898b8db593d81",
+    "automacao/prompts/ETAPA_16.txt": "25e8a32de9ff27087c785e2a628c858a24ef3f09df8de3b544b1b11bb889085b",
+    "automacao/prompts/ETAPA_17.txt": "caefd0cdf5d9a5c69854e43cba0392a597fd43716df50fb02cc1a06b48dd7421",
+    "automacao/prompts/ETAPA_18.txt": "67861a7a5acaf6faa09c62cc1d16cded7884b87bd135572ddb2b755cad0cbc9b",
+    "automacao/prompts/ETAPA_19.txt": "066e69097b7e4d86be09ab27f729bb761900e6ef23051ed2319747fca10e5001",
+    "automacao/prompts/ETAPA_20.txt": "2c83d93995602121976be106aff691e77e372806f88d3d0b16c76138c4873684",
+    "automacao/prompts/ETAPA_21.txt": "2e139bffac3a7bfa71f34f3f490beda954eef3f6e22ce4310a1e1aed5025701b",
+    "automacao/prompts/ETAPA_22.txt": "55c74206a284eeb8fd1a80b1595822207071bb4fa3dc3dd13830218351441004",
+    "automacao/prompts/ETAPA_23.txt": "f5a707b66fd567bb4340d72e26d38dce04939eb857834a9236634db11d390799",
+    "automacao/prompts/ETAPA_24.txt": "a6d63dfad1e972886255a804484f39cc941966d463eb0306c5b9fdd34787b015",
+    "automacao/prompts/ETAPA_25.txt": "fd02443b7aa45d13b2cce6a3f0ecdfee58d611f766221ee1c5d1493331cfbd22",
+    "automacao/prompts/ETAPA_26.txt": "00c77bf2b4aaa96140069267c36d7b0e0ae00e0e69d5b84b9b09ef9183ea7e2d",
+    "automacao/prompts/ETAPA_27.txt": "29ba7870ce29af8bc66f6a4d99aae4b8b4e2f06f664ea43d14072642b47e4ed0",
+    "automacao/prompts/ETAPA_28.txt": "0ce104c73882f0f1a2ae9b8ece6d38dcf5d10c18a4b1c281ef9f7bb945529ab3",
+    "automacao/prompts/ETAPA_29.txt": "f9e07bd218a145abd137d240c369bd08ad62f5d4927053ca8e42d67725b4246d",
+    "automacao/prompts/ETAPA_30.txt": "0379170e9e23c74b13bf5d50cb5bf191d0b55e8bf2b8fa86ee5adf197d47b8a7",
+    "automacao/prompts/ETAPA_31.txt": "37d580990f0f206b4eed6739ebeb2245c1532f30ed33f2512d5707ed8a21261a",
+    "automacao/prompts/ETAPA_32.txt": "1f324d7c1faa5b0d6a99ebdcbe7372589ef1b570c7c53301924b08cd7bea6474",
+    "automacao/prompts/ETAPA_33.txt": "36c4db01310eabdd9147db169453b35a074810647f7dde2426c249237c509564",
+    "automacao/prompts/ETAPA_34.txt": "f38f00688416c2974b01000c1af5106b71fee716cef60ca81e41a2bdc1a8ef7e",
+    "automacao/prompts/ETAPA_35.txt": "c56b79d9e9a5d5cf24c49c1357aaf69c0b2d0996e32989e53f38f1c66f12e6a0",
+    "automacao/prompts/ETAPA_36.txt": "988819c4eafeaa151b4a30349f6b00e138451e46b57e5be5ba8270ef92b53910",
+    "automacao/prompts/ETAPA_37.txt": "ab1e9156972744c01d7abed103792f590a475bc79511ca37616875d8bb8c9289",
+    "automacao/prompts/ETAPA_38.txt": "19c003040e92a334ee9feb41f3da416b5ef56df0662ce7d853932c00721d6396",
+    "automacao/prompts/ETAPA_39.txt": "a4ef4fed459b709e8a155f97b6a525fc1312c18ab5219030caec8f51fd4f2e3c",
+    "automacao/prompts/ETAPA_40.txt": "a416d24a422a2d8cf83fcd3743ef846c8400823703f26909fbf37b43a734edb7",
+    "automacao/prompts/ETAPA_41.txt": "b422e41fe4612b26633d0d3d2e9bf2165e79add92f028b358be4c9e960e2369f",
+    "automacao/prompts/ETAPA_42.txt": "917c141ee5e821245088401450c64d57a512ce5c0d3eece54cb7494c26ae7785",
+    "automacao/prompts/ETAPA_43.txt": "bbfdc0d86ded7e17cf2c0610dd4f71420e324fb86e539ca4eeb525ac5ef9d35b",
+    "automacao/prompts/ETAPA_44.txt": "8f49b84af7506c431e21c7cbf1676947a8facbecb2c2e567126351175e2111b2",
+    "automacao/prompts/ETAPA_45.txt": "a9988818f627c7548130777e72654a07455cc4839cfea2dda8efa2f8c9835f74",
+    "automacao/prompts/ETAPA_46.txt": "77e975099b7a1ca165f5fa218b507229414642666529dff2e79b4c6b0dadcdac",
+    "automacao/prompts/ETAPA_47.txt": "8a83fe0490a54d7e30ddd1db45d15b30cb552fa3513053990c10f3512db89e1a",
+    "automacao/prompts/ETAPA_48.txt": "2f86909d30e34a92c46f51595a71aa5ef432ff9d852ee644c2d170f8db6ad97f",
+    "automacao/prompts/ETAPA_49.txt": "3b13786246a1fddeb7f793b8ad7ad0ad9a5d27a9a2db618d44c88dfd0f15c62e",
+    "automacao/prompts/ETAPA_50.txt": "fe7b626c42238051eb6fb91ab57d3c15a00a5638498ae88242e692744cc6ec8d",
+    "automacao/prompts/ETAPA_51.txt": "3401d261d91ac338a72d3bfcf7689076c93876a55bf48efbe875de1f131eb8cd",
+    "automacao/prompts/ETAPA_52.txt": "9577327dcf02b2c0bd13a54f879d735972699722d00a1adb47265c134c88e1fa"
+  },
+  "python_sources_checked": 169,
+  "baseline_pytest_log": "automacao/execucao/logs/ETAPA_00_pytest.log",
+  "recovered_failures": [
+    {
+      "when": "2026-10-08T13:32:29+00:00",
+      "stage": 1,
+      "reason": {
+        "when": "2026-10-08T13:20:30+00:00",
+        "stage": 1,
+        "reason": "Testes automatizados falharam (1), veja automacao/execucao/logs/ETAPA_01_pytest.log",
+        "elapsed_s": 439.9
+      },
+      "method": "offline_relocation_and_independent_pytest",
+      "codex_reinvoked": false
+    }
+  ],
+  "plan_expansions": [
+    {
+      "when": "2026-10-09T14:17:27+00:00",
+      "previous_max": 42,
+      "new_max": 52,
+      "added_prompts": [
+        "automacao/prompts/ETAPA_43.txt",
+        "automacao/prompts/ETAPA_44.txt",
+        "automacao/prompts/ETAPA_45.txt",
+        "automacao/prompts/ETAPA_46.txt",
+        "automacao/prompts/ETAPA_47.txt",
+        "automacao/prompts/ETAPA_48.txt",
+        "automacao/prompts/ETAPA_49.txt",
+        "automacao/prompts/ETAPA_50.txt",
+        "automacao/prompts/ETAPA_51.txt",
+        "automacao/prompts/ETAPA_52.txt"
+      ],
+      "protected_files_adopted": [
+        "src/tests/test_autopilot_orquestrador.py"
+      ],
+      "executor_upgraded": true,
+      "source_changes": [
+        "automacao/prompts/ETAPA_43.txt",
+        "automacao/prompts/ETAPA_44.txt",
+        "automacao/prompts/ETAPA_45.txt",
+        "automacao/prompts/ETAPA_46.txt",
+        "automacao/prompts/ETAPA_47.txt",
+        "automacao/prompts/ETAPA_48.txt",
+        "automacao/prompts/ETAPA_49.txt",
+        "automacao/prompts/ETAPA_50.txt",
+        "automacao/prompts/ETAPA_51.txt",
+        "automacao/prompts/ETAPA_52.txt",
+        "orquestrador.py",
+        "src/tests/test_autopilot_orquestrador.py"
+      ],
+      "snapshot": {
+        "file": "automacao/execucao/snapshots/EXPANSAO_PROMPTS_52_1791555447.zip",
+        "sha256": "e8bf4937952bacb168adba4c53f5197cec00aaf375f9618c46db771b829eef87",
+        "bytes": 1227128
+      }
+    }
+  ],
+  "paused_manifest_sha256": "4ec49f85ab22410eb4a1c29eb3441bb913f2299928b7217c75dd3e9e28d3a9f9"
+}

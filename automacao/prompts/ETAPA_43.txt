@@ -1,0 +1,23 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 43/52 — Contrato P0 e estado de evidências comerciais
+
+OBJETIVO: tornar explícita a diferença entre capacidade comercial não medida, falha, necessidade de revisão humana e exclusão confirmada; não aprovar comercial desconhecido.
+CÓDIGO PRINCIPAL: src/ldporto/integrity_contracts.py, src/ldporto/second_curation.py, src/ldporto/second_curation_export.py, src/ldporto/pipeline.py, src/ldporto/commercial_gate.py; testes test_stage33_ocr_graphics.py, test_stage34_commercial_gate.py, test_s2_pipeline_integrity.py.
+BASE REAL: auditoria Clóvis 217 candidatos, OCR disabled, stage_status.17c_commercial_visual=skipped e P0_FAIL. Usa o zip como evidência, não como projeto novo.
+IMPLEMENTE:
+1. Contrato de capacidade por etapa com estado explícito: measured_ok, measured_partial, not_measured_disabled, unavailable_dependency, failed. Preserve status legados e motivo de perda; a política deve ser compatível com leitores v1.
+2. Não permitir que 17c=skipped por OCR opcional torne inválido o trabalho editorial que tem transcrição, momentos e IDs úteis. O 'editorial_integrity_ready' deve separar falha estrutural de lacuna de capacidade. A revisão comercial fica pendente e IMPEDIRÁ liberação da publicação, mas não a fila humana provisória.
+3. Requisitos obrigatórios do pipeline (16_understanding etc.) continuam fail-closed se falharam realmente. Qualquer exclusão comercial conhecida prevalece para shortlist e Stories. IDs quebrados, corrupção de artefato e P0 estrutural continuam bloqueando.
+4. Relatório com lista de capacidades não medidas e 'readiness_reasons' precisos; estado desconhecido nunca tratado como 'eligible'.
+TESTES: OCR disabled + transcrição válida produz fila revisável, publicação falsa; OCR erro não vira aprovado; comercial excluído continua excluído; rota de compatibilidade de schema; full pytest. Não editar 42 prompts, evidências ou análise antiga.
+CRITÉRIO: gates independentes, sem downgrade silencioso de risco, sem alteração de vídeo/modelos.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_43.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

@@ -97,8 +97,24 @@ def main():
     parser.add_argument('--candidate-id', action='append', dest='candidate_ids', default=None)
     parser.add_argument('--apply-reviewed-csv', help='CSV assinado após escutar o áudio; valida e exporta SRT revisado')
     parser.add_argument('--review-dir', help='Pasta com subtitle_review_s7.json e .draft.srt')
+    parser.add_argument('--approve-srt', metavar='CANDIDATE_ID', help='Aprovar versao exata do SRT corrigido em --output')
+    parser.add_argument('--srt-sha256', help='SHA-256 do arquivo corrigido que o humano revisou')
+    parser.add_argument('--reviewer', help='Responsavel pela aprovacao humana')
+    parser.add_argument('--audio-listened', action='store_true', help='Atesta escuta do audio original')
+    parser.add_argument('--check-srt-approval', metavar='CANDIDATE_ID', help='Revalidar gate de legendas em --output')
     args = parser.parse_args()
-    if args.apply_reviewed_csv:
+    if sum(bool(mode) for mode in (args.apply_reviewed_csv, args.approve_srt, args.check_srt_approval)) > 1:
+        parser.error('Escolha apenas uma operacao de revisao/aprovacao/verificacao')
+    if args.approve_srt:
+        from ldporto.subtitle_review import approve_reviewed_subtitles
+        result = approve_reviewed_subtitles(args.output, args.approve_srt,
+            expected_sha256=args.srt_sha256, reviewer=args.reviewer, audio_listened=args.audio_listened)
+    elif args.check_srt_approval:
+        from ldporto.subtitle_review import subtitle_finalization_gate
+        result = subtitle_finalization_gate(args.output, args.check_srt_approval)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0 if result['subtitles_final_allowed'] else 2
+    elif args.apply_reviewed_csv:
         from ldporto.subtitle_review import apply_human_subtitle_review
         if not args.review_dir:
             parser.error('--review-dir é obrigatório com --apply-reviewed-csv')
@@ -108,7 +124,8 @@ def main():
             parser.error('analysis é obrigatório para construir revisão offline')
         result = audit(args.analysis, args.output, explicit_ids=args.candidate_ids)
     print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

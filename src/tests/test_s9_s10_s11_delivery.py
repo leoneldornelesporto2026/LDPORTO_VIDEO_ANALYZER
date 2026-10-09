@@ -9,13 +9,13 @@ import pytest
 
 from ldporto.curator_delivery import (prepare_plan, save_json, file_sha256, validate_plan,
                                       approve_canary, render_clip, render_batch,
-                                      verify_approval, finalize_batch, verify_mp4)
+                                      verify_approval, finalize_batch, verify_mp4, CHECKS, canonical_hash)
 from ldporto.performance_acceptance import evaluate_vision_ab, evaluate_semantic_ab, review_checkpoint_state
 from ldporto.homologation_s11 import metric_delta, homologate
 from ldporto.second_curation_export import build_core_package
 from test_v43_handoff import analysis_fixture
 
-ALL_REVIEWED = {key: True for key in ('editorial','commercial','subtitles','camera','audio','safe_area','payoff')}
+ALL_REVIEWED = {key: True for key in CHECKS}  # Synthetic review only; no human evidence.
 
 
 @pytest.fixture(scope='module')
@@ -76,6 +76,7 @@ def test_s9_real_ffmpeg_canary_with_full_approval_and_independent_batch(tmp_path
     with pytest.raises(ValueError, match='MISSING_PER_CLIP'):
         finalize_batch(plan, manifest, {'clips': []})
     reviews = {'clips': [{'id': c['id'], 'sha256': c['sha256'], 'reviewer': 'Synthetic-Test-Reviewer',
+                          'plan_sha256': plan['plan_sha256'], 'render_report_sha256': canonical_hash(c),
                           'checklist': ALL_REVIEWED} for c in manifest['clips']]}
     final = finalize_batch(plan, manifest, reviews)
     assert final['state'] == 'REVIEWED_FINAL_FILES' and final['publication_ready'] is False

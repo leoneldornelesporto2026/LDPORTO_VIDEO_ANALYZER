@@ -1,5 +1,6 @@
 """Read-only, fail-closed bridge from validated second-curation ZIP to legacy Curator V2.
 
+The independent Curator application is not bundled or verified by this bridge.
 The bridge produces *suggestions* for the Curator; it never marks a clip or video
 as publication-ready, nor invents camera or visual observations.
 """

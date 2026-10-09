@@ -1,0 +1,28 @@
+{
+  "algorithm": "SHA-256",
+  "scope": "current_workspace_stage42_resume_files_not_full_project_snapshot",
+  "files": {
+    "src/ldporto/homologation_s11.py": "70adc5be236b33e32a880a70af9c5ebe91ba682c98208a389f330926e77af54f",
+    "scripts/dev/homologation_s11.py": "ef97ea25e907163e2418f6b4573112e9bab753d693dad34091a3806baaeaa97d",
+    "scripts/dev/start_real_test_s11.py": "732517336107e314d54165dbd7f4351f518870968cb91b14dce8e677d6a4cca5",
+    "src/tests/test_stage42_homologation_offline.py": "72f427e34d0d4de9dcc236f2e38869c4da1cdf97fcad25ff160238b0eb9ab904",
+    "src/tests/test_v43_runtime.py": "33a38007fecfb2608d62d05cb177b39b028b5abe7007356b0fc108a35e81225b",
+    "FINAL_HOMOLOGACAO.md": "e8183ce16cf5c4ad2543ffcfb1d796a3ad97b3eeadda68dfec53a922e13e3b35",
+    "docs/S9_S11_REAL_TEST.md": "96aa4efa96ad9d662e7a3c1ca51b93427a887ac807e7141c5d470440b0e5404e",
+    "docs/CHANGELOG_ETAPA_42.md": "ca2c9ccc1fa65904a62a955fb0f2fbeecbc49185912174d49b83d03252e2afaf",
+    "automacao/execucao/checkpoints/CHECKPOINT_ETAPA_42.md": "62dd4198a44dd6b480c8caf556256577c5f05def990d767d0790bb2b2f03d01f",
+    "automacao/execucao/etapa42/retomada_20261009/baseline_integrity.json": "af575e74a1bf92e5f37b1949efb392345ddbd9d31d6a405e6cc164245f0c7235",
+    "automacao/execucao/etapa42/retomada_20261009/focused.log": "7a88c7a212539a29e5de2496d7b8a838ca15f4ae8f4992488355415ae1074e78",
+    "automacao/execucao/etapa42/retomada_20261009/focused_final.log": "738339ad03b00478debe6a3b504a5711049c03c2ef65b1d746a2adec1e866cfc",
+    "automacao/execucao/etapa42/retomada_20261009/homologation_cli.log": "9093e4a5121a2e7c9f6b8118590029aa657b7d8d5a395dc8d6568e7120cf2979",
+    "automacao/execucao/etapa42/retomada_20261009/homologation_offline.json": "a9d433d6867de541025313aa89228872745dcc67484b9fbe02f14a8a65c37470",
+    "automacao/execucao/etapa42/retomada_20261009/homologation_offline.md": "ead453ee8fcba7ca696cce1b239d42cc64c5edd2750f63e49bd1ec90f939c5dd",
+    "automacao/execucao/etapa42/retomada_20261009/regression.log": "463cec4e8b882686af6c81747ab3f6113ce909ef1d4619e2429be9083ff87a5e",
+    "automacao/execucao/etapa42/retomada_20261009/regression.xml": "538558db01f5ae02797a9e521db0fea110fa3e312d2f35e88f3d65d286caab30",
+    "automacao/execucao/etapa42/retomada_20261009/regression_final.log": "fbf9930a1bf372627a6f7ccc820d939469d88da1e51708da46633052a36cba73",
+    "automacao/execucao/etapa42/retomada_20261009/regression_final.xml": "e0a650f3308782aa55d9c07c29af99e2f01cadcaf2c8b6703d13403b175b826f",
+    "automacao/execucao/etapa42/retomada_20261009/syntax.json": "7c19df2e837bb466f6acc45b65d2281385fc21970f50d488fad280510a845743",
+    "automacao/execucao/etapa42/retomada_20261009/syntax_final.json": "7c19df2e837bb466f6acc45b65d2281385fc21970f50d488fad280510a845743",
+    "automacao/execucao/etapa42/retomada_20261009/verification.json": "9104cb14c029245e84af096c73f6a7a55c7821a0a65d7509bb0d55c19d0b79db"
+  }
+}

@@ -6,7 +6,8 @@ from . import __version__
 from .editorial import normalize_context
 from .transcription import word_text
 from .temporal import union_duration
-from .integrity_contracts import audit_editorial_contract
+from .integrity_contracts import (audit_editorial_contract, build_question_reference_table,
+                                  audit_question_references)
 
 
 def _rows_in(rows, start, end):
@@ -66,7 +67,8 @@ def _candidate_source(analysis):
                     astart = alternate.get('ideal_start', (alternate.get('core_moment') or {}).get('start', start))
                     aend = alternate.get('ideal_end', (alternate.get('core_moment') or {}).get('end', end))
                     rows.append({**alternate, '_start': astart, '_end': aend,
-                                 'alternate_of': m['moment_id'], 'duplicate_group_id': m['moment_id']})
+                                 'alternate_of': m['moment_id'], 'duplicate_group_id': m['moment_id'],
+                                 'dedup_selection': m.get('dedup_selection')})
         return rows
     integrity_ready, integrity_reason = _understanding_integrity(analysis)
     return [{**m, '_start':m.get('possible_start',m.get('start',0)), '_end':m.get('possible_end',m.get('end',0)),
@@ -82,7 +84,7 @@ def build_second_curation_package(analysis):
     active=analysis.get('active_speaker',[]); plan=(analysis.get('camera_plan') or {}).get('selected_global_path',[])
     director=analysis.get('camera_director_timeline',[]); shots=analysis.get('shots',[])
     arcs=analysis.get('story_arcs',[]); thumbs=analysis.get('thumbnail_candidates',[])
-    qas=analysis.get('questions_answers',[])
+    qas=build_question_reference_table(analysis, [])
     participants=analysis.get('participants',[])
     topics=analysis.get('topics',[])
     topic_index = {topic['topic_id']: topic for topic in topics}
@@ -99,7 +101,7 @@ def build_second_curation_package(analysis):
         before=[s for s in segments if s.get('end',0)<=start][-2:]
         after=[s for s in segments if s.get('start',0)>=end][:2]
         arc=next((a for a in arcs if overlap(start,end,a.get('start',0),a.get('end',0))>0),None)
-        qa=[q for q in qas if overlap(start,end,q.get('question_start',0),q.get('answer_end') or q.get('question_end',0))>0]
+        qa=[q for q in qas if overlap(start,end,q.get('question_start') or 0,q.get('answer_end') or q.get('question_end') or 0)>0]
         people=sorted({r.get('person_id') for r in arows if r.get('person_id')})
         speakers=sorted({s.get('speaker') for s in srows if s.get('speaker')})
         editorial=m.get('editorial') or {}
@@ -120,13 +122,19 @@ def build_second_curation_package(analysis):
         candidates.append({
             'candidate_id': cid, 'rank': rank, 'start': start, 'end': end,
             'original_rank': m.get('rank', rank), 'alternate_of': m.get('alternate_of'),
+            'alternate_ref': m.get('alternate_ref'),
+            'dedup_selection': m.get('dedup_selection'),
             'duplicate_group_id': m.get('duplicate_group_id') or cid if m.get('alternates') else m.get('duplicate_group_id'),
             'duration':end-start, 'content_type':m.get('content_type','uncertain'),
             'categories': m.get('categories', []),
+            'editorial_format': m.get('editorial_format'),
             'core_interval':{key:(m.get('core_moment') or m).get(key) for key in ('start','end')},
             'ideal_interval':{'start':start,'end':end},
             'alternate_starts':m.get('alternate_starts') or sorted({value for value in [m.get('possible_start'),m.get('ideal_start')] if isinstance(value,(int,float)) and math.isfinite(value)}),
             'alternate_ends':m.get('alternate_ends') or sorted({value for value in [m.get('possible_end'),m.get('ideal_end')] if isinstance(value,(int,float)) and math.isfinite(value)}),
+            **{key: m.get(key) for key in ('original_interval', 'alternate_start', 'alternate_end',
+                'boundary_decision', 'boundary_decision_reasons', 'boundary_risks',
+                'boundary_duration_budget', 'standalone_context_evidence', 'clean_start')},
             'alternates':[{key:alternate.get(key) for key in ('moment_id','ideal_start','ideal_end','evidence_segment_ids','editorial_score_final')}
                           for alternate in m.get('alternates',[])],
             'transcript_literal': word_text(wrows) if wrows else ' '.join(s.get('text','') for s in srows).strip(),
@@ -149,16 +157,17 @@ def build_second_curation_package(analysis):
             'narrative_integrity': m.get('narrative_integrity'),
             'humor_integrity': m.get('humor_integrity'),
             'editorial_blockers': m.get('editorial_blockers', []),
-            'question_answer_linkage': [q.get('question_id') for q in qa],
+            'question_answer_linkage': (m.get('question_answer_linkage') or []) + [
+                q['question_id'] for q in qa
+                if q['question_id'] not in (m.get('question_answer_linkage') or [])],
             'topic': m.get('topic') or topic_row.get('topic'), 'story_arc': arc.get('story_arc_id') if arc else m.get('story_arc_id'),
             'topic_summary': topic_row.get('summary'), 'story_type': (arc or {}).get('kind'),
             'primary_topic_id':primary_topic,
             'secondary_topic_ids':[topic_id for topic_id in topic_ids if topic_id != primary_topic],
             'program_section_id':m.get('program_section_id'),
             'clean_opening':m.get('clean_opening'), 'clean_ending':m.get('clean_ending'),
-            'standalone_assessment': m.get('standalone_class') or m.get('standalone') or
-                ('standalone_candidate_requires_review' if m.get('clean_opening') and m.get('clean_ending') and (m.get('standalone_score') or 0) >= .7 else
-                 'context_required' if context['context_requirement'] == 'required' else 'unresolved_requires_review'),
+            'standalone_assessment': m.get('standalone_assessment') or
+                ('context_required' if context['context_requirement'] == 'required' else 'unresolved_requires_review'),
             'context_dependency': m.get('context_required'),
             **context,
             'generated_copy':{'kind':'generated_editorial_copy','hook_idea':copy.get('hook_text'),
@@ -168,6 +177,7 @@ def build_second_curation_package(analysis):
             'commercial_visual_evidence': m.get('commercial_visual_evidence', []),
             'commercial_gate_reason': m.get('commercial_gate_reason'),
             'commercial_block_refs': m.get('commercial_block_refs', []),
+            'excluded_commercial_interval_ids': m.get('excluded_commercial_interval_ids', []),
             'editorial_score_raw':m.get('editorial_score_raw'),
             'score_components':m.get('score_components',{}),'penalties':m.get('penalties',{}),
             'score_weights':m.get('score_weights',{}),'editorial_score_final':m.get('editorial_score_final',score),
@@ -175,13 +185,16 @@ def build_second_curation_package(analysis):
             'editorial_quality_score': m.get('editorial_quality_score'),
             'evidence_coverage': m.get('evidence_coverage'), 'ranking_confidence': m.get('ranking_confidence'),
             'ranking_uncertainty': m.get('ranking_uncertainty'),
+            'recovery': m.get('recovery'),
             'duration_contract': m.get('duration_contract'), 'duration_exception': m.get('duration_exception', False),
             'duration_exception_reason': m.get('duration_exception_reason'),
             'hook_type': m.get('hook_type'), 'hook_strength': m.get('hook_score', m.get('hook_strength')),
             'default_shortlist_eligible':bool(m.get('default_shortlist_eligible',True)) and
+                not m.get('excluded_commercial_interval_ids') and
                 (m.get('commercial_classification') or {}).get('eligibility') in (None, 'eligible') and
                 not m.get('_provisional_upstream_incomplete', False),
             'publication_eligible':not m.get('_provisional_upstream_incomplete', False) and
+                not m.get('excluded_commercial_interval_ids') and
                 bool(m.get('default_shortlist_eligible', True)) and
                 (m.get('commercial_classification') or {}).get('eligibility') in (None, 'eligible'),
             'candidate_state':'PROVISIONAL_UPSTREAM_INCOMPLETE' if m.get('_provisional_upstream_incomplete', False) else 'EDITORIAL_CANDIDATE',
@@ -241,7 +254,23 @@ def build_second_curation_package(analysis):
         'quality_warnings':analysis.get('issues',[]),
         'resolvable_index':{c['candidate_id']:i for i,c in enumerate(candidates)},
     }
+    package['question_reference_table'] = build_question_reference_table(analysis, candidates)
     package['reference_validation']=validate_references(analysis,package)
+    from .commercial_gate import commercial_evidence_state, require_commercial_review
+    for candidate in candidates:
+        state = commercial_evidence_state(analysis, candidate['candidate_id'])
+        candidate['commercial_evidence_state'] = state
+        if state not in (None, 'measured_ok'):
+            classification = candidate.get('commercial_classification') or {
+                'content_type': 'uncertain', 'commercial_score': None}
+            candidate['commercial_classification'] = require_commercial_review(classification, state)
+            candidate['default_shortlist_eligible'] = False
+            candidate['publication_eligible'] = False
+        candidate['eligible_for_human_review'] = bool(integrity_ready and candidate['transcript_literal'] and
+            package['reference_validation']['status'] == 'resolved' and
+            not candidate.get('excluded_commercial_interval_ids') and
+            (candidate.get('commercial_classification') or {}).get('eligibility') != 'excluded')
+        candidate['publication_ready'] = False
     return package
 
 
@@ -290,14 +319,13 @@ def validate_references(analysis, package):
         'shots':{row['shot_id'] for row in analysis.get('shots',[]) if row.get('shot_id')},
         'planner_ids':{row['planner_id'] for row in (analysis.get('camera_plan') or {}).get('selected_global_path',[]) if row.get('planner_id')},
         'director_ids':{row['director_id'] for row in analysis.get('camera_director_timeline',[]) if row.get('director_id')},
-        'question_answer_linkage':{row['question_id'] for row in analysis.get('questions_answers',[]) if row.get('question_id')},
         'topic_ids':{row['topic_id'] for row in analysis.get('topics',[]) if row.get('topic_id')},
         'story_arc_ids':{row['story_arc_id'] for row in analysis.get('story_arcs',[]) if row.get('story_arc_id')},
         'program_section_ids':{row['section_id'] for row in analysis.get('program_sections',[]) if row.get('section_id')},
     }
     unresolved=[]
     for candidate in package.get('candidates',[]):
-        checks={key:candidate.get(key,[]) for key in ('word_ids','segment_ids','speaker_ids','person_ids','editorial_participant_ids','shots','question_answer_linkage')}
+        checks={key:candidate.get(key,[]) for key in ('word_ids','segment_ids','speaker_ids','person_ids','editorial_participant_ids','shots')}
         checks.update({key:candidate.get('evidence_references',{}).get(key,[]) for key in ('planner_ids','director_ids')})
         checks.update(topic_ids=([candidate['primary_topic_id']] if candidate.get('primary_topic_id') else [])+candidate.get('secondary_topic_ids',[]),
                   story_arc_ids=[candidate['story_arc']] if candidate.get('story_arc') else [],
@@ -306,5 +334,8 @@ def validate_references(analysis, package):
             for value in values:
                 if value not in index[key]:
                     unresolved.append({'candidate_id':candidate['candidate_id'],'field':key,'id':value})
-    return {'status':'resolved' if not unresolved else 'unresolved','unresolved':unresolved,
+    qa_validation = audit_question_references(package.get('candidates', []), package.get('question_reference_table', []))
+    unresolved.extend(qa_validation['unresolved'])
+    return {'status': 'failed' if qa_validation['errors'] else 'resolved' if not unresolved else 'unresolved',
+            'unresolved':unresolved, 'errors': qa_validation['errors'],
             'checked_candidate_count':len(package.get('candidates',[]))}

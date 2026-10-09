@@ -24,6 +24,9 @@ def preflight_target(person, index, records, metadata, cfg, *, horizon=1.0, zoom
     sid = now['shot'].get('shot_id')
     boxes = [subject_box(current, cfg)]
     samples = 1
+    seen_frames = {now['frame'].get('time')} if now['frame'] else set()
+    last_sample_mid = now['mid']
+    path_max_zoom = baseline['max_zoom']
     next_boundary = min(now['end'] + max(0., horizon), number(now['shot'].get('end'), now['end']))
     cursor = index + 1
     while cursor < len(records) and records[cursor]['mid'] <= next_boundary:
@@ -31,18 +34,23 @@ def preflight_target(person, index, records, metadata, cfg, *, horizon=1.0, zoom
         if other['shot'].get('shot_id') != sid:
             break
         # Ignore intervals that reuse exactly the same visual source frame.
-        if other['frame'] and now['frame'] and other['frame'].get('time') == now['frame'].get('time'):
+        if other['frame'] and other['frame'].get('time') in seen_frames:
             cursor += 1
             continue
         observation = other['obs'].get(person)
         if observation is None:
             return {**baseline, 'safe': False, 'preflight_reason': 'target_lost_in_lookahead',
                     'preflight_sample_count': samples}
+        future_geometry = geometry([observation], metadata, cfg, zoom)
         box = subject_box(observation, cfg)
-        if box is None:
+        if not future_geometry.get('safe') or box is None:
             return {**baseline, 'safe': False, 'preflight_reason': 'unsafe_face_in_lookahead',
                     'preflight_sample_count': samples}
         boxes.append(box)
+        path_max_zoom = min(path_max_zoom, future_geometry['max_zoom'])
+        if other['frame']:
+            seen_frames.add(other['frame'].get('time'))
+        last_sample_mid = other['mid']
         samples += 1
         cursor += 1
     union = [min(box[0] for box in boxes), min(box[1] for box in boxes),
@@ -50,7 +58,7 @@ def preflight_target(person, index, records, metadata, cfg, *, horizon=1.0, zoom
     base = base_size(metadata, cfg)
     if base is None:
         return {'safe': False, 'preflight_reason': 'unknown_source_dimensions'}
-    allowed_zoom = min(baseline['max_zoom'], base[0]/max(union[2]-union[0], 1e-9),
+    allowed_zoom = min(path_max_zoom, base[0]/max(union[2]-union[0], 1e-9),
                        base[1]/max(union[3]-union[1], 1e-9))
     if allowed_zoom < 1.0:
         return {**baseline, 'safe': False, 'preflight_reason': 'future_subjects_do_not_fit',
@@ -65,12 +73,12 @@ def preflight_target(person, index, records, metadata, cfg, *, horizon=1.0, zoom
     return {**baseline, 'safe': True, 'center': [rect['x']+rect['width']/2, rect['y']+rect['height']/2],
             'rect': rect, 'subject_bounds': union, 'max_zoom': allowed_zoom,
             'zoom': effective_zoom, 'preflight_reason': 'observed_safe_path',
-            'preflight_sample_count': samples, 'future_evidence_seconds': max(0., records[min(cursor-1,len(records)-1)]['mid']-now['mid'])}
+            'preflight_sample_count': samples, 'future_evidence_seconds': max(0., last_sample_mid-now['mid'])}
 
 
 def preflight_split(pair, index, records, metadata, cfg, horizon=1.0):
     """Two separately verified panel crops using each panel's real aspect ratio."""
-    if len(pair) != 2:
+    if len(pair) != 2 or len(set(pair)) != 2:
         return {'safe': False, 'reason': 'requires_exactly_two_people'}
     half_cfg = {**cfg, 'output_width': cfg['output_width']/2}
     panels = {}
@@ -84,6 +92,7 @@ def preflight_split(pair, index, records, metadata, cfg, horizon=1.0):
     return {'safe': True, 'left_person': ordered[0], 'right_person': ordered[1],
             'left_crop': panels[ordered[0]]['rect'], 'right_crop': panels[ordered[1]]['rect'],
             'left_crop_safe': True, 'right_crop_safe': True,
+            'subject_bounds': {pid: panels[pid]['subject_bounds'] for pid in pair},
             'panel_aspect_correct': True, 'preflight_samples': {pid: panels[pid]['preflight_sample_count'] for pid in pair}}
 
 

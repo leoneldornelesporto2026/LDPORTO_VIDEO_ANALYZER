@@ -48,7 +48,7 @@ def test_unresolved_story_does_not_get_invented_payoff():
     assert 'story_payoff_not_grounded' in assessment['blockers']
 
 
-def test_qa_multiturn_question_and_long_answer_without_shared_keywords():
+def test_qa_multiturn_question_requires_continuity_after_reaction():
     rows = [segment('Q1', 0, 4, 'HOST', 'O que aconteceu na sua carreira?'),
             segment('Q2', 4, 6, 'HOST', 'E como resolveu?'),
             segment('A1', 6, 14, 'GUEST', 'Eu estava completamente perdido naquela época.'),
@@ -56,11 +56,12 @@ def test_qa_multiturn_question_and_long_answer_without_shared_keywords():
             segment('A2', 16, 27, 'GUEST', 'A gente mudou de cidade e tudo acabou bem.')]
     qa = questions_answers(rows)[0]
     assert qa['question_segment_ids'] == ['Q1', 'Q2']
-    assert qa['answer_segment_ids'] == ['A1', 'A2']
+    assert qa['answer_segment_ids'] == ['A1']
     assert qa['intervening_segment_ids'] == ['INT']
-    assert qa['question_answer_complete']
+    assert not qa['question_answer_complete']
+    assert qa['unresolved_reason'] == 'answer_continuation_unresolved'
     assert qa['needs_review'] is True
-    assert qa_contract([qa])['qa_metrics']['complete_qa_count'] == 1
+    assert qa_contract([qa])['qa_metrics']['complete_qa_count'] == 0
 
 
 def test_qa_missing_speaker_remains_unresolved():
@@ -74,7 +75,7 @@ def test_qa_missing_speaker_remains_unresolved():
 def test_qa_expands_to_source_question_and_full_answer_without_inventing_times():
     rows = [segment('Q', 0, 5, 'HOST', 'Como conseguiu realizar a gravacao?'),
             segment('A1', 5, 12, 'GUEST', 'Eu gravei tudo em uma sala pequena.'),
-            segment('A2', 12, 22, 'GUEST', 'Depois um amigo ajudou a finalizar o trabalho.')]
+            segment('A2', 12, 22, 'GUEST', 'Depois um amigo ajudou a finalizar a gravação.')]
     linked = questions_answers(rows)
     boundary = optimize_boundaries({'start': 5, 'end': 12, 'evidence_segment_ids': ['A1'],
                                     'context_requirement': 'none'}, rows, qa_pairs=linked)

@@ -20,6 +20,37 @@ from .reports import ReportEngine
 REPLAY_STAGES = ('speaker_person', 'active_speaker', 'semantic', 'commercial', 'understanding', 'ranking', 'camera', 'camera_director', 'preview_verifier', 'second_curation', 'handoff')
 
 
+def replay_plan(from_stage):
+    """Describe this runner's scope, without claiming an inference/cache hit."""
+    if from_stage not in REPLAY_STAGES:
+        raise ValueError('Unsupported replay stage.')
+    stages = []
+    if from_stage == 'semantic':
+        stages.append('15_semantic')
+    elif from_stage in ('speaker_person', 'active_speaker'):
+        stages.append('10_active_speaker')
+    if from_stage in ('speaker_person', 'active_speaker', 'semantic', 'commercial', 'understanding', 'ranking'):
+        stages.append('16_understanding')
+    stages.extend(['18b_global_camera_planner', '19_camera_director', '19b_preview_verifier'])
+    return {'schema_version': '1.0', 'from_stage': from_stage,
+            'stages_to_check': stages, 'exports_to_refresh': ['captions', 'reports', 'second_curation'],
+            'snapshot_only': ['04_transcription', '07_people_tracking', '08_person_reid'],
+            'semantic_snapshot_only': from_stage != 'semantic',
+            'cache_hits': None, 'approval_inherited': False}
+
+
+def understanding_replay_params(config, metadata, transcript, diarization, vision, active, semantic, shots):
+    """Hash actual arguments, not the unrelated set of files read for export.
+
+    Includes computed semantic/active results; a snapshot checksum alone cannot
+    identify those. The new contract conservatively misses old downstream caches.
+    """
+    return {'config': config, 'replay_input_contract': '1.0',
+            'inputs': digest({'metadata': metadata, 'transcript': transcript,
+                              'diarization': diarization, 'vision': vision,
+                              'active': active, 'semantic': semantic, 'shots': shots})}
+
+
 def resolve_replay_folder(value):
     folder = Path(value).expanduser().resolve()
     if not folder.is_dir():
@@ -121,8 +152,7 @@ class ReplayArtifacts:
 
 def replay_analysis(folder, cfg, from_stage='understanding', output=None, source=None,
                     expected_source_hash=None, allow_legacy_snapshot=False, force=False):
-    if from_stage not in REPLAY_STAGES:
-        raise ValueError('Unsupported replay stage.')
+    plan_scope = replay_plan(from_stage)
     artifacts = ReplayArtifacts(folder, expected_source_hash, allow_legacy_snapshot)
     from .paths import ANALYSIS_DIR
     output = Path(output or ANALYSIS_DIR / ('replay_v43_' + artifacts.source_hash[:12] + '_' + from_stage)).resolve()
@@ -133,6 +163,10 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
         raise ValueError('Replay media source hash mismatch.')
     metadata = {**artifacts.metadata, 'analyzer_version': __version__,
                 'upstream_analyzer_version': artifacts.metadata.get('analyzer_version'), 'execution_scope':'downstream_replay'}
+    upstream_manifest = artifacts.summary.get('run_manifest') or artifacts.document.get('run_manifest') or {}
+    for field in ('run_id', 'analyzer_build', 'code_fingerprint'):
+        if upstream_manifest.get(field) is not None:
+            metadata[field] = upstream_manifest[field]
     logger = setup_logging(output)
     ctx = Context(Path(source or 'unavailable_source.mp4'), output, copy.deepcopy(cfg), artifacts.source_hash, logger, force)
     ctx.config['understanding']['extract_frames'] = False
@@ -140,6 +174,9 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
     for stage, state in original_states.items():
         ctx.states[stage] = {'status':state.get('status', 'partial'), 'key':digest({'source':artifacts.source_hash, 'stage':stage, 'snapshot':state}),
                              'artifact_snapshot_reused':True, 'upstream_producer':metadata['upstream_analyzer_version']}
+        origin = state.get('execution_provenance') or (upstream_manifest.get('stage_status') or {}).get(stage, {}).get('execution_provenance')
+        if origin:
+            ctx.states[stage]['execution_provenance'] = copy.deepcopy(origin)
         ctx.stage_metrics[stage] = {'elapsed_seconds':None, 'original_elapsed_seconds':(artifacts.summary.get('stage_runtime', {}).get(stage) or {}).get('elapsed_seconds'),
                                    'artifact_snapshot_reused':True, 'executed_in_replay':False}
     words = artifacts.read('words.json', required=True)
@@ -154,7 +191,7 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
                                  'context_after':' '.join(row.get('word', '') for row in words[index + 1:index + 6]),
                                  'context_source':'canonical_neighbor_words_not_new_asr'})
     transcript = {'words':words, 'segments':segments, 'low_confidence_words':review_words,
-                  'quality_metrics':{key:value for key,value in quality_original.items() if any(term in key for term in ('transcription', 'confidence_word', 'timestamp', 'hallucination', 'review_', 'speech_coverage'))}}
+                  'quality_metrics':{key:value for key,value in quality_original.items() if not key.startswith('preview_') and any(term in key for term in ('transcription', 'confidence_word', 'timestamp', 'hallucination', 'review_', 'speech_coverage'))}}
     diarization = {'turns':artifacts.read('speaker_turns.json') or [], 'speakers':artifacts.read('speakers.json') or [],
                    'overlaps':artifacts.read('speech_overlaps.json') or [],
                    'alignment_metrics':{key:value for key,value in quality_original.items() if any(term in key for term in ('diarization', 'speaker_fraction', 'overlap_fraction', 'alignment_coverage', 'unmapped_speech'))}}
@@ -203,9 +240,10 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
                              lambda: build_active_speaker(diarization, vision, evidence, cfg['active_speaker']),
                              code_files=['active_speaker.py', 'perception_diagnostics.py', 'temporal.py'])
         if from_stage in ('speaker_person', 'active_speaker', 'semantic', 'commercial', 'understanding', 'ranking'):
-            understanding = ctx.step('16_understanding', {'config':ctx.config['understanding'], 'snapshot':digest(artifacts.verified)},
+            understanding = ctx.step('16_understanding', understanding_replay_params(
+                ctx.config['understanding'], metadata, transcript, diarization, vision, active, semantic, shots),
                 lambda: run_understanding(ctx, metadata, transcript, diarization, vision, active, semantic, shots, ctx.config['understanding']),
-                code_files=['understanding.py', 'story_recovery.py', 'editorial.py', 'semantic.py'], required=True)
+                code_files=['understanding.py', 'story_recovery.py', 'editorial.py', 'editorial_intelligence.py', 'semantic.py'], required=True)
         else:
             understanding = {'main_moments':artifacts.read('main_moments.json') or [], 'participants':artifacts.read('participants.json') or [],
                              'story_arcs':artifacts.read('story_arcs.json') or [], 'entities':artifacts.read('entities.json') or [],
@@ -236,6 +274,7 @@ def replay_analysis(folder, cfg, from_stage='understanding', output=None, source
                     'unaligned_segments':[], 'issues':list(ctx.issues), 'stage_status':dict(ctx.states), 'stage_runtime':dict(ctx.stage_metrics),
                     **understanding, 'no_final_video_rendered':True,
                     'replay_provenance':{'from_stage':from_stage, 'upstream_source_hash':artifacts.source_hash,
+                        'replay_plan':plan_scope,
                         'source_artifact_checksums':artifacts.verified, 'projection_limitations':artifacts.projections,
                         'asr_rerun':False, 'vision_rerun':False, 'llm_rerun':from_stage == 'semantic',
                         'legacy_snapshot_explicitly_allowed':allow_legacy_snapshot}}

@@ -77,33 +77,46 @@ def evaluate_goldset(rows, *, other_predictions=None):
             raise ValueError('Intervalos anotados invalidos') from None
         if not math.isfinite(a) or not math.isfinite(b) or a >= b:
             raise ValueError('Intervalos anotados invalidos')
+        if any(previous.get('speaker_id') == row.get('speaker_id') and
+               min(b, stop) > max(a, start) for previous, _, start, stop in verified):
+            raise ValueError('Janelas anotadas do mesmo locutor devem ser independentes, sem duplicacao ou overlap')
         verified.append((row, role, a, b))
     errors, eligible, tps, fps, fns, abstentions = [], 0, 0, 0, 0, 0
+    wrong_person, speaking, predictions = 0, 0, 0
     for row, role, a, b in verified:
         if role == 'uncertain':
             continue
         eligible += 1
         expected = row['human_person_id'] if role == 'speaking' else None
+        speaking += expected is not None
         prediction = row.get('predicted_active_person') or None
         if other_predictions is not None:
             key = (row.get('speaker_id'), round(a, 6), round(b, 6))
             prediction = other_predictions.get(key)
+        predictions += bool(prediction)
+        abstentions += not bool(prediction)
         if prediction and prediction == expected:
             tps += 1
         elif prediction and prediction != expected:
             fps += 1
+            wrong_person += expected is not None
             errors.append({'speaker_id': row['speaker_id'], 'start':a, 'end':b,
                            'error':'false_positive_or_wrong_person', 'predicted':prediction,'human':expected})
         elif not prediction and expected:
             fns += 1
-            abstentions += 1
+            errors.append({'speaker_id': row['speaker_id'], 'start':a, 'end':b,
+                           'error':'missed_speaking_window', 'predicted':None,'human':expected})
     precision = tps/(tps+fps) if tps+fps else None
-    recall = tps/(tps+fns) if tps+fns else None
+    recall = tps/speaking if speaking else None
     f1 = 2*precision*recall/(precision+recall) if precision is not None and recall is not None and precision+recall else None
     return {'schema_version':'1.0', 'verified_windows':len(verified),
             'eligible_windows':eligible, 'excluded_uncertain':len(verified)-eligible,
             'true_correct_identifications':tps, 'false_positive_or_wrong_person':fps,
             'missed_speaking_windows':fns, 'correct_abstentions':eligible-tps-fps-fns,
+            'abstained_windows':abstentions, 'abstention_rate':abstentions/eligible if eligible else None,
+            'prediction_coverage':predictions/eligible if eligible else None,
+            'wrong_person_windows':wrong_person,
+            'error_rate_when_predicting':fps/predictions if predictions else None,
             'precision':precision, 'recall':recall, 'f1':f1,
             'review_errors':errors,
             'important_note':'Interval-level snapshot; use representative independent manually labeled windows. Not a benchmark unless annotations are complete and representative.'}

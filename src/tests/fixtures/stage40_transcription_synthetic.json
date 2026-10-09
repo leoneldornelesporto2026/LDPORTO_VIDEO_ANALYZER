@@ -1,0 +1,9 @@
+{
+  "fixture_only": true,
+  "description": "Transcricao sintetica exclusiva para dry-run; nao e fala observada nem evidencia editorial.",
+  "segments": [
+    {"segment_id": "SYNTHETIC_1", "start": 0, "end": 2, "speaker": null, "text": "Texto sintetico para teste offline."},
+    {"segment_id": "SYNTHETIC_2", "start": 1000, "end": 1002, "speaker": null, "text": "Outro texto sintetico para teste offline."},
+    {"segment_id": "SYNTHETIC_3", "start": 2000, "end": 2002, "speaker": null, "text": "Ultimo texto sintetico para teste offline."}
+  ]
+}

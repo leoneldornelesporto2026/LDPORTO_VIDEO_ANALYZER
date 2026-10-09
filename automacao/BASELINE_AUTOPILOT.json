@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "source": {
+    "source_project_export": {
+      "input_zip_name": "LDPORTO_PROJETO_ATUAL_20261008_095709_977293.zip",
+      "sha256": "f41de21820e7046dd4a60c9207107ebf6c49119db1ccfeebb788246cda95937c",
+      "bytes": 773982
+    },
+    "benchmark_second_curation": {
+      "input_zip_name": "SECOND_CURATION_READY_tpcF5ri6GS4_20261008_041938_332406_8ae5ce(3).zip",
+      "sha256": "8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349",
+      "bytes": 1864261
+    },
+    "benchmark_chatgpt_review": {
+      "input_zip_name": "CHATGPT_REVIEW_video_869f6a2b1fdb_20261008_095709_977293.zip",
+      "sha256": "5a9da201f984d63de2c68dbd9aee4c03365b9e0815b1fb041130d4da02b5f073",
+      "bytes": 26956533
+    },
+    "previous_autopilot": {
+      "input_zip_name": "LDPORTO_AUTOPILOT_42_ETAPAS_PRONTO_WINDOWS(1).zip",
+      "sha256": "b9c69a990fad96e5030519d2da0ce3cec4a87a338ceda87871620a7d3c290d6e",
+      "bytes": 2728424
+    },
+    "original_12_stage_prompts": {
+      "input_zip_name": "LDPORTO_PROMPTS_12_ETAPAS_WORK_E_NORMAL(2).zip",
+      "sha256": "cb19df56a870f3114a79f24dd17ca39540a14c4aa42e1b5ce00d7a91aaaaab70",
+      "bytes": 102671
+    }
+  },
+  "stages": 42,
+  "stage_source": "LDPORTO_42_MICROETAPAS_CHATGPT_NORMAL.zip",
+  "source_clip_id": "tpcF5ri6GS4",
+  "source_hash": "bc598e72ec323ce824bcff749e8c1db2cd7d97627307aaf9cec53042bcd12575",
+  "benchmark_build": "R4.9-S4-TRACKING-FACIAL",
+  "note": "Artifacts of one older run are evidence, not proof of current code execution; full reprocessing is not claimed."
+}

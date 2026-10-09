@@ -1,0 +1,23 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 50/52 — Active Speaker/Camera: goldset, safe crop, zoom entregue
+
+OBJETIVO: medir e melhorar visual com amostras anotáveis, não aceitar números bonitos de Re-ID sem correspondência real.
+CÓDIGO: person_reid.py, active_speaker.py, speaker_person_mapping.py (confirme), camera_director.py, global_camera_planner.py, preview_verifier.py, preview_renderer.py, visual identity tests stage26-36.
+BASE: 6494 tracks, 4627 microtracklets; 584 micro com embedding; foco resolvido 4,31%; active_speaker confirmado 0,058%; 6 zoom propostos, zero entregues; canários 2 FACE_OR_HEAD_CLIPPED.
+IMPLEMENTE:
+1. Ferramenta offline de criar revisão goldset 10-20 trechos: tracklet, person identity, offscreen, active speaker, cortes simultâneos, plano, bounding boxes e incerteza; deixar rótulos humanos vazios até usuário preencher.
+2. Comparador antes/depois com false split, false merge, speaker-person false binding, cobertura verificada e amostras com origem; sem afirmar melhoria só por cobertura/fragmentação.
+3. Estabilidade do framing, safe area de legendas/GC e cabeça, fallback na fonte quando alvo incerto; checar bordas, imagens 9:16 e 16:9 e visibilidade do rosto. Eventual split-screen para falantes simultâneos só com ambos visíveis/IDs confirmados.
+4. Zoom emitido conta apenas quando chega ao render timeline e preview, não ao planner; se zero, registrar motivo por proposta (no_support, border, low_res, head_clipping etc.).
+5. Testes de crops e timeline com boxes sintéticas, fallback, TV-cut fake, pessoas em dois planos, canários edge clipping; não executar detector completo sem dados reais.
+CRITÉRIO: diagnóstico reproduzível de onde estão os 95,69% fallback; zero classificação falsa de entrega sem render.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_50.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

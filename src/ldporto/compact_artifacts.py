@@ -152,6 +152,9 @@ def create_compact_artifacts(analysis, folder, cfg=None):
                'semantic_metrics':analysis.get('semantic_metrics',{}),'candidate_metrics':analysis.get('candidate_metrics',{}),
                'stage_runtime':analysis.get('stage_runtime',{}),'stage_status':manifest.get('stage_status',analysis.get('stage_status',{})),
                'editorial_shortlist':analysis.get('editorial_shortlist',[]),
+               'quality_gate':analysis.get('quality_gate',{}),
+               'final_package_gate':analysis.get('final_package_gate'),
+               'subtitle_review_metrics':analysis.get('subtitle_review_metrics'),
                'primary_editorial_theme':analysis.get('primary_editorial_theme'),
                'preview_status':(analysis.get('preview_validation') or {}).get('status','not_measured'),
                'warnings':analysis.get('issues',[]),'detailed_evidence':'review_evidence/'}

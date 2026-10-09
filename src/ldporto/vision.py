@@ -218,6 +218,36 @@ class Tracker:
         return result
 
 
+def load_local_yolo(cfg):
+    """Select optional YOLO using an existing local asset, never a download name."""
+    report = {"requested": cfg["body_backend"], "initialized": None,
+              "fallback_reason": None, "exception_type": None, "device": "cpu"}
+    if not cfg["body_detection"]:
+        report["fallback_reason"] = "body_detection_disabled"
+        return None, report
+    if cfg["body_backend"] == "hog":
+        report.update(initialized="hog", fallback_reason="hog_configured")
+        return None, report
+    model = asset_path(cfg["yolo_model"])
+    if not model.is_file():
+        report.update(initialized="hog", fallback_reason="yolo_local_model_missing")
+        return None, report
+    try:
+        from ultralytics import YOLO
+    except Exception as exc:
+        report.update(initialized="hog", fallback_reason="yolo_import_failed",
+                      exception_type=type(exc).__name__)
+        return None, report
+    try:
+        body = YOLO(str(model.resolve()))
+    except Exception as exc:
+        report.update(initialized="hog", fallback_reason="yolo_model_load_failed",
+                      exception_type=type(exc).__name__)
+        return None, report
+    report["initialized"] = "yolo"
+    return body, report
+
+
 class PersonDetectionEngine:
     def __init__(self, cfg, notes, offline=False):
         import cv2
@@ -244,24 +274,31 @@ class PersonDetectionEngine:
         if self.sface is None:
             notes.append("SFace ausente: IDs persistem apenas por continuidade; uma pessoa "
                          "pode receber novo ID após trocar câmera. Contagem é de tracks.")
+        self.yolo, self.body_backend_report = load_local_yolo(cfg)
         if cfg["body_detection"]:
-            if cfg["body_backend"] in ("yolo", "auto"):
-                try:
-                    from ultralytics import YOLO
-                    model = asset_path(cfg["yolo_model"])
-                    if not model.is_file() and (offline or cfg["body_backend"] == "auto"):
-                        raise Unavailable("YOLO local nao encontrado; nao baixar modelo implicitamente.")
-                    self.yolo = YOLO(str(model) if model.is_file() else cfg["yolo_model"])
-                except Exception as exc:
-                    notes.append(f"YOLO indisponível ({type(exc).__name__}); usando HOG.")
             if self.yolo is None:
-                self.hog = cv2.HOGDescriptor()
-                self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
-                if self.overlap_budget["enabled"]:
-                    from concurrent.futures import ThreadPoolExecutor
-                    self._hog_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ldporto-hog-cpu")
-                notes.append("HOG identifica melhor corpos inteiros. Pessoas sentadas podem "
-                             "aparecer somente com caixa de rosto; não foi inventada caixa de corpo.")
+                self._activate_hog()
+
+    def _activate_hog(self):
+        self.hog = self.cv2.HOGDescriptor()
+        self.hog.setSVMDetector(self.cv2.HOGDescriptor_getDefaultPeopleDetector())
+        if self.overlap_budget["enabled"]:
+            from concurrent.futures import ThreadPoolExecutor
+            self._hog_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ldporto-hog-cpu")
+        self.notes.append("Visão de corpos degradada: HOG; motivo=" +
+                          str(self.body_backend_report["fallback_reason"]) +
+                          ". Corpos sentados/ocultos podem faltar; caixas de rosto são preservadas "
+                          "sem inventar corpo ou identidade por localização.")
+
+    def backend_execution(self):
+        counts = {name: self.calls.get(name + "_inference_calls", 0) for name in ("yolo", "hog")}
+        executed = [name for name in counts if counts[name]]
+        return {**self.body_backend_report, "executed_backends": executed,
+                "counts_scope": "current_process_only",
+                "inference_calls": counts,
+                "successful_calls": {name: self.calls.get(name + "_successful_calls", 0) for name in counts},
+                "quality": "degraded" if self.hog is not None else "not_validated" if self.yolo is not None else "disabled",
+                "seated_recall_validated": None, "nvidia_validated": None}
 
     def close(self):
         if getattr(self, "_hog_pool", None) is not None:
@@ -269,12 +306,15 @@ class PersonDetectionEngine:
             self._hog_pool = None
 
     def _hog_boxes(self, frame, width, height):
+        self.calls["hog_inference_calls"] += 1
         values, scores = self.hog.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.08)
+        self.calls["hog_successful_calls"] += 1
         bodies = []
         for coords, score in sorted(zip(values, scores), key=lambda pair: float(pair[1]), reverse=True):
             box = bbox(coords, width, height)
             if all(iou(box, b["bbox"]) < .5 for b in bodies):
-                bodies.append({"bbox": box, "confidence": None, "hog_score": float(score)})
+                bodies.append({"bbox": box, "confidence": None, "hog_score": float(score),
+                               "source": "hog"})
         return bodies
 
     def set_frame_context(self, time, shot_id, shot_duration=None):
@@ -305,20 +345,36 @@ class PersonDetectionEngine:
             (not cascade or time - self.last_body_time >= self.cfg.get("body_refresh_seconds", .5)))
         hog_future = self._hog_pool.submit(self._hog_boxes, frame, width, height) if scheduled_hog else None
         used_history = set()
-        if isinstance(self.face, cv2.CascadeClassifier):
+        face_detector_status = 'available'
+        if self.face is None:
+            face_detector_status = 'unavailable'
+            self.calls['face_detector_unavailable_frames'] += 1
+        elif isinstance(self.face, cv2.CascadeClassifier):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            for values in self.face.detectMultiScale(gray, 1.1, 5, minSize=(30, 30)):
+            try:
+                haar_detections = self.face.detectMultiScale(gray, 1.1, 5, minSize=(30, 30))
+            except (cv2.error, ValueError, RuntimeError):
+                haar_detections = []
+                face_detector_status = 'error'
+                self.calls['face_detector_failed_frames'] += 1
+            for values in haar_detections:
                 faces.append({"face_bbox": bbox(values, width, height),
                               "confidence": None, "embedding": None, "eyes": None,
                               "face_quality": None, "embedding_missing_reason": "sface_unavailable_haar_fallback",
                               "face_detection_source": "haar"})
         else:
             self.face.setInputSize((width, height))
-            _, detections = self.face.detect(frame)
+            try:
+                _, detections = self.face.detect(frame)
+            except (cv2.error, ValueError, RuntimeError):
+                detections = None
+                face_detector_status = 'error'
+                self.calls['face_detector_failed_frames'] += 1
             # A second, bounded YuNet pass may recover small faces in a long
             # studio shot. Never hallucinate a face or stretch a face embedding.
             base_count = len(detections) if detections is not None else 0
-            if self.cfg.get('face_rescue_upsample', False) and base_count < 2:
+            if (face_detector_status == 'available' and
+                    self.cfg.get('face_rescue_upsample', False) and base_count < 2):
                 cooldown = float(self.cfg.get('face_rescue_cooldown_seconds', 2.0))
                 # Empty shots deserve an immediate retry. When a face is already
                 # visible, limit the multi-face rescue to periodic checks.
@@ -340,6 +396,17 @@ class PersonDetectionEngine:
                                 added = 0
                                 for proposal in sorted(corrected, key=lambda r: -float(r[14])):
                                     box = bbox(proposal[:4], width, height)
+                                    # Judge the ORIGINAL pixels, never the enlarged crop.
+                                    rescue_quality = assess_face(frame, box,
+                                        confidence=float(proposal[14]),
+                                        eyes=[{'x': float(proposal[i])/width,
+                                               'y': float(proposal[i+1])/height} for i in (4, 6)],
+                                        min_pixels=int(self.cfg.get('face_min_pixels_for_embedding', 28)),
+                                        min_sharpness=float(self.cfg.get('face_min_sharpness_for_embedding', 18)),
+                                        min_confidence=float(self.cfg.get('face_min_confidence_for_embedding', .74)))
+                                    if not rescue_quality['embedding_eligible']:
+                                        self.calls['face_rescue_quality_rejections'] += 1
+                                        continue
                                     if all(iou(box, bbox(existing[:4], width, height)) < .45
                                            for existing in kept):
                                         kept.append(proposal)
@@ -347,6 +414,8 @@ class PersonDetectionEngine:
                                 if kept:
                                     detections = np.stack(kept)
                                 self.calls['face_rescue_detected_faces'] += added
+                        except (cv2.error, ValueError, RuntimeError):
+                            self.calls['face_rescue_failed_calls'] += 1
                         finally:
                             self.face.setInputSize((width, height))
                     else:
@@ -385,7 +454,7 @@ class PersonDetectionEngine:
                             raise ValueError("Face embedding nao finito ou degenerado")
                         embedding = embedding / norm
                         self.calls["successful_embeddings"] += 1
-                    except (cv2.error, ValueError, TypeError):
+                    except (cv2.error, ValueError, TypeError, RuntimeError):
                         embedding = None
                         reason = 'embedding_extraction_failed'
                         self.calls["failed_embeddings"] += 1
@@ -407,6 +476,7 @@ class PersonDetectionEngine:
                               "eyes": eyes, "face_quality": quality,
                               "embedding_missing_reason": reason,
                               "face_detection_source": "yunet"})
+        self.last_face_detector_status = face_detector_status
         self.phase_seconds['face_embedding']+=embedding_seconds
         self.phase_seconds['face_detection']+=max(0.0,perf_counter()-face_started-embedding_seconds)
         body_started=perf_counter()
@@ -418,11 +488,22 @@ class PersonDetectionEngine:
         elif self.yolo or self.hog:
             self.calls["body_detection_calls_avoided"] += 1
         if self.yolo and run_body:
-            out = self.yolo.predict(frame, classes=[0], verbose=False, conf=0.5, device="cpu")[0]
-            for row in out.boxes:
-                x1, y1, x2, y2 = row.xyxy[0].cpu().numpy()
-                bodies.append({"bbox": bbox([x1, y1, x2-x1, y2-y1], width, height),
-                               "confidence": finite_or_none(float(row.conf[0]))})
+            self.calls["yolo_inference_calls"] += 1
+            try:
+                out = self.yolo.predict(frame, classes=[0], verbose=False, conf=0.5, device="cpu")[0]
+                for row in out.boxes:
+                    x1, y1, x2, y2 = row.xyxy[0].cpu().numpy()
+                    bodies.append({"bbox": bbox([x1, y1, x2-x1, y2-y1], width, height),
+                                   "confidence": finite_or_none(float(row.conf[0])), "source": "yolo"})
+                self.calls["yolo_successful_calls"] += 1
+            except Exception as exc:
+                self.body_backend_report.update(fallback_reason="yolo_inference_failed",
+                                                exception_type=type(exc).__name__)
+                self.yolo = None
+                bodies = []
+                self._activate_hog()
+                if width >= 64 and height >= 128:
+                    bodies.extend(self._hog_boxes(frame, width, height))
         elif self.hog and run_body and width >= 64 and height >= 128:
             bodies.extend(hog_future.result() if hog_future else self._hog_boxes(frame, width, height))
         self.phase_seconds['body_detection']+=perf_counter()-body_started
@@ -445,6 +526,9 @@ class PersonDetectionEngine:
                                "bbox_kind": "body" if body else "face",
                                "face_bbox": f["face_bbox"], "face_visible": True,
                                "body_visible": body is not None, "eyes_position": f["eyes"],
+                               "body_detection_source": body.get("source") if body else None,
+                               "body_detection_confidence": body.get("confidence") if body else None,
+                               "body_hog_score": body.get("hog_score") if body else None,
                                "embedding": f["embedding"], "detection_confidence": f["confidence"],
                                "face_quality": f.get('face_quality'),
                                "embedding_missing_reason": f.get('embedding_missing_reason'),
@@ -455,7 +539,13 @@ class PersonDetectionEngine:
                                    "face_visible": False, "body_visible": True,
                                    "eyes_position": None, "embedding": None,
                                    "detection_confidence": b["confidence"],
-                                   "embedding_missing_reason": "body_only_no_face_detected",
+                                   "body_detection_source": b.get("source"),
+                                   "body_detection_confidence": b.get("confidence"),
+                                   "body_hog_score": b.get("hog_score"),
+                                   "embedding_missing_reason": (
+                                       'face_detector_unavailable' if face_detector_status == 'unavailable'
+                                       else 'face_detector_error' if face_detector_status == 'error'
+                                       else "body_only_no_face_detected"),
                                    "face_quality": None})
         return detections
 
@@ -502,6 +592,8 @@ class VisionEngine:
             raise Unavailable("Instale opencv-python para análise visual.")
         notes = []
         detector = PersonDetectionEngine(cfg, notes, ctx.config["offline"])
+        ctx.logger.info("Visão: backend de corpos inicializado: %s",
+                        getattr(detector, "body_backend_report", None))
         detector_counters = getattr(detector, "calls", None)
         detector_calls = detector_counters if isinstance(detector_counters, dict) else defaultdict(int)
         tracker = Tracker(cfg)
@@ -636,6 +728,10 @@ class VisionEngine:
                     scene_duration = scenes[scene_index]["end"] - scenes[scene_index]["start"] if scenes else None
                     detector.set_frame_context(time, scene_id, scene_duration)
                 detections = detector.detect(frame)
+                quality['face_detector_status'] = getattr(detector, 'last_face_detector_status', None)
+                checkpoint_backend['body'] = "yolo" if detector.yolo is not None else "hog" if detector.hog is not None else None
+                if hasattr(detector, "backend_execution"):
+                    quality["body_backend_execution"] = detector.backend_execution()
                 timings['face_body_embedding_detection']+=perf_counter()-phase_started
                 phase_started=perf_counter()
                 current = tracker.update(detections, time, scene_id)
@@ -762,6 +858,8 @@ class VisionEngine:
                  'last_missing_lip_burst':scheduler.last_missing_lip_burst if math.isfinite(scheduler.last_missing_lip_burst) else -10})
         if not frames:
             raise RuntimeError("Nenhum frame foi decodificado.")
+        backend_execution = detector.backend_execution() if hasattr(detector, "backend_execution") else None
+        ctx.logger.info("Visão: execução de backend de corpos: %s", backend_execution)
         # Mouth activity is temporal change, not raw mouth opening. Preserve null when
         # landmarks are absent or the sampling gap is too large.
         by_person = defaultdict(list)
@@ -798,7 +896,11 @@ class VisionEngine:
                                    'boundary_scheduled_frames_with_face':sum(bool(frame.get('boundary_face_observed')) for frame in frames),
                                    'boundary_scheduled_frames_with_embedding':sum(bool(frame.get('boundary_fresh_embedding_observed')) for frame in frames),
                                    'face_detection_backend': 'haar' if isinstance(getattr(detector, 'face', None), cv2.CascadeClassifier) else 'yunet_or_test_backend',
-                                   'body_detection_backend': checkpoint_backend['body'],
+                                   'body_detection_backend': (backend_execution['executed_backends'][0]
+                                       if backend_execution and len(backend_execution['executed_backends']) == 1
+                                       else 'mixed' if backend_execution and backend_execution['executed_backends']
+                                       else None),
+                                   'body_backend_execution': backend_execution,
                                    'short_shot_scheduled_frames':sum(bool(frame.get('short_shot_scheduled')) for frame in frames),
                                    'short_shot_scheduled_frames_with_face':sum(bool(frame.get('short_shot_face_observed')) for frame in frames),
                                    'short_shot_scheduled_frames_with_fresh_embedding':sum(bool(frame.get('short_shot_fresh_embedding_observed')) for frame in frames),
@@ -817,7 +919,8 @@ class VisionEngine:
                                            getattr(detector, 'overlap_budget', {}).get('enabled')),
                                    'gpu_time_seconds':None,'gpu_time_reason':'not_instrumented',
                                    'phase_accounting':'detector_subphases_partition_combined_detection; do_not_sum_both'},
-                   "quality": {"sample_count": len(frames), "actual_width": width, "actual_height": height,
+                  "quality": {"body_detection": backend_execution,
+                               "sample_count": len(frames), "actual_width": width, "actual_height": height,
                                "mean_brightness": float(np.mean([f["brightness"] for f in frames])),
                                "black_frame_samples": sum(f["possible_black_frame"] for f in frames),
                                "freeze_frame_samples": sum(f["possible_freeze_frame"] for f in frames)}},

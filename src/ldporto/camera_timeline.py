@@ -12,6 +12,9 @@ def build_camera_timeline(metadata, vision, shots, active_speaker, person_motion
         intervals=shots or [{'start':0.0,'end':duration,'shot_id':None,'scene_id':None,'shot_type':'unknown'}]
         fallback=[{'start':shot['start'],'end':shot['end'],'visual_observed_at':None,
                    'shot_id':shot.get('shot_id'),'scene_id':shot.get('scene_id'),'shot_type':shot.get('shot_type','unknown'),
+                   'shot_role':shot.get('shot_role','unknown'),'primary_visual_person':None,
+                   'reaction_people':[],'participant_links':shot.get('participant_links',[]),
+                   'crop_continuity':'source_preservation_without_visual_evidence','face_presence':'unknown',
                    'active_person':None,'active_person_confidence':None,'visible_people':[],
                    'vertical_crop':{'safe':False,'recommended_layout':'full_frame','recommended_zoom':1.0,
                                     'center_x':.5,'center_y':.5}, 'movement':None,'camera_score':None,
@@ -34,6 +37,7 @@ def build_camera_timeline(metadata, vision, shots, active_speaker, person_motion
         pieces = max(1, math.ceil((b-a)/maximum))
         bounds.update(a+(b-a)*i/pieces for i in range(1, pieces))
     rows, observed_seconds = [], 0.
+    previous_shot = None
     for a, b in zip(sorted(bounds), sorted(bounds)[1:]):
         if b-a < 1e-8:
             continue
@@ -51,25 +55,41 @@ def build_camera_timeline(metadata, vision, shots, active_speaker, person_motion
         obs = observations.get(person, {})
         center = obs.get('head_center') or obs.get('center') or {'x': .5, 'y': .5}
         confs = [number(r.get('confidence')) for r in matches if person and r.get('person_id') == person]
-        safe = bool(obs.get('safe_crop_possible')) if person else False
+        safe = bool(obs.get('safe_crop_possible') and obs.get('face_visible')) if person else False
         both_safe = len(persons) == 2 and all(observations[p].get('safe_crop_possible') for p in persons)
         layout = ('split_candidate' if overlap and both_safe else 'single_person' if person and safe else
                   'two_person' if len(visible) == 2 else 'group' if len(visible) > 2 else 'full_frame')
-        if shot.get('shot_type') in {'broll', 'b_roll', 'screen', 'screen_capture', 'logo', 'empty', 'title_card'}:
+        boundary_reset = bool(rows and shot.get('shot_id') != previous_shot)
+        if shot.get('shot_role') == 'tv_cut' or shot.get('shot_type') in {'broll', 'b_roll', 'screen', 'screen_capture', 'logo', 'empty', 'title_card'}:
             person, safe, layout = None, False, 'full_frame'
-        motion = motion_index.near(person, mid, shot.get('start', a), shot.get('end', b)) if person else None
+        motion = motion_index.near(person, frame['time'], shot.get('start', a), shot.get('end', b)) if person and frame else None
+        if motion and (motion.get('track_id') != obs.get('track_id') or
+                       motion.get('scene_id', shot.get('scene_id')) != shot.get('scene_id')):
+            motion = None
+        if boundary_reset:
+            safe, layout = False, 'full_frame'
+        if not safe:
+            center = {'x': .5, 'y': .5}
         if frame:
             observed_seconds += b-a
         rows.append({'start': a, 'end': b, 'visual_observed_at': frame['time'] if frame else None,
             'scene_id': shot.get('scene_id'), 'shot_id': shot.get('shot_id'),
             'shot_type': shot.get('shot_type', 'unknown'), 'active_person': person,
+            'shot_role': shot.get('shot_role', 'unknown'),
+            'primary_visual_person': shot.get('primary_visual_person'),
+            'reaction_people': shot.get('reaction_people', []),
+            'participant_links': shot.get('participant_links', []),
+            'crop_continuity': 'reset_at_source_boundary' if boundary_reset else 'within_shot',
+            'face_presence': 'observed' if obs.get('face_visible') and person else 'unknown',
             'active_person_confidence': max(confs) if confs else None, 'visible_people': visible,
             'center': [center['x'], center['y']], 'movement': motion,
             'vertical_crop': {'safe': safe, 'center_x': center['x'], 'center_y': center['y'],
                               'recommended_zoom': 1., 'recommended_layout': layout},
             'camera_score': shot.get('camera_score'),
-            'evidence': (['sampled_frame'] if frame else [])+(['active_speaker'] if person else []),
+            'evidence': (['sampled_frame'] if frame else [])+(['active_speaker'] if person else [])+
+                        (['source_boundary_crop_reset'] if boundary_reset else []),
             'inference': True, 'speech_overlap': overlap})
+        previous_shot = shot.get('shot_id')
     return ok({'timeline': rows, 'coverage': observed_seconds/duration if duration else 0.},
               'ok' if duration and observed_seconds >= .8*duration else 'partial',
               ['Janelas limitadas por shots/locutores; sem observação próxima, foco null. Zoom final pertence ao Director.'])

@@ -1,6 +1,8 @@
 # R4.9 / Sessões 9–11 — Teste real e critérios de homologação
 
-**Base:** R4.9/S8, incremental. **Separação obrigatória:** testes automáticos e MP4 sintético ≠ aprovação editorial do vídeo Emerson/Clóvis. Esta distribuição contém Analyzer + ponte local renderizadora em FFmpeg. O projeto independente `LDPORTO_VIDEO_CURATOR` NÃO estava anexado: não houve alteração ou teste do código daquele aplicativo. A ponte legada `bridge_curator_r4.py` continua disponível.
+**Retomada 2026-10-09:** usar o código presente no workspace. Referências a exportação e execuções datadas abaixo são históricas. Evidências novas da revalidação offline estão em `automacao/execucao/etapa42/retomada_20261009/`; consultar a seção de retomada de `FINAL_HOMOLOGACAO.md`. Os comandos de vídeo real deste roteiro não foram executados nesta retomada. Usar sempre caminhos novos de saída, inclusive para o relatório offline, preservando os artefatos anteriores.
+
+**Base vigente:** workspace acumulado até a etapa 42, exportado em 2026-10-08 às 09:57. Os exemplos históricos abaixo não são resultados desta versão. **Separação obrigatória:** testes automáticos e MP4 sintético ≠ aprovação editorial. Esta distribuição contém Analyzer + ponte local renderizadora em FFmpeg. O aplicativo independente `LDPORTO_VIDEO_CURATOR` não foi homologado nesta etapa. A ponte legada `bridge_curator_r4.py` continua disponível.
 
 ## S9 — entregas operacionais
 
@@ -99,7 +101,7 @@ O recibo `REVIEWED_FINAL_FILES` **não posta** em YouTube/TikTok/Instagram, nem 
   --sample-indices 0 2 4 --run-model --output "C:\analises\s10_semantic_ab.json"
 
 .venv\Scripts\python.exe scripts\dev\benchmark_vision_r3b.py `
-  --video "C:\videos\emerson_clovis_original.mp4" --frames 18 --output "C:\analises\s10_vision_ab.json"
+  --run-detectors --video "C:\videos\emerson_clovis_original.mp4" --frames 18 --repeats 3 --max-width 960 --max-frame-mib 64 --output "C:\analises\s10_vision_ab.json"
 
 .venv\Scripts\python.exe scripts\dev\performance_s10.py `
   --semantic-report "C:\analises\s10_semantic_ab.json" `
@@ -107,7 +109,7 @@ O recibo `REVIEWED_FINAL_FILES` **não posta** em YouTube/TikTok/Instagram, nem 
   --output "C:\analises\S10_PERFORMANCE.json"
 ```
 
-O benchmark A/B já existente compara face/HOG serial e paralelo **com o mesmo detector e os mesmos frames**. O relatório S10 bloqueia a recomendação de paralelismo se caixas, número de chamadas ou speedup não passarem o gate. O Ollama usa o mesmo schema e grounding; throughput tokens/s e tempo são medidos quando o modelo local responde; avaliações sem modelo são apenas tamanho do prompt. **Qualidade semântica real depende de uma amostra rotulada manualmente.**
+O benchmark de visão atual executa HOG CPU serial/paralelo nos mesmos frames somente com `--run-detectors`; sem essa opção registra diagnóstico sem inferência. Compara detecções e contadores, verifica hashes e sempre recomenda manter paralelismo desativado até validação manual. O benchmark semântico usa o mesmo schema e grounding; tokens/s só existem quando o backend fornece contagem e tempo válidos. Sem `--run-model` mede apenas prompts, sem consultar Ollama. **Qualidade semântica real depende de uma amostra rotulada manualmente.**
 
 Não alterar `config.yaml`, número de threads, CPU/GPU concorrente ou apagar cache com base em uma única execução. Os checkpoints existentes e ETA com histórico permanecem preservados. O botão **Recursos S10** da GUI exibe CPU/GPU/FFmpeg disponíveis; não mexe nos recursos.
 
@@ -131,6 +133,8 @@ E a homologação, depois do lote:
   --analysis "C:\analises\EMERSON_CLOVIS" `
   --baseline "C:\analises\BASELINE_ANTERIOR" `
   --junit "C:\analises\S11_AUTOMATED_TESTS.xml" `
+  --render-plan "C:\analises\TESTE_S11\CURATOR_S9_PLAN.json" `
+  --human-reviews "C:\analises\TESTE_S11\reviews.json" `
   --output "C:\analises\TESTE_S11\S11_HOMOLOGACAO_FINAL.json"
 ```
 
@@ -148,3 +152,35 @@ Relatório também em Markdown. Para registrar aprovação editorial no S11, pas
 ### Estado desta entrega
 
 Automatização, regressão e renderização técnica foram exercitadas com **vídeo sintético**, não com Emerson/Clóvis. Não houve acesso à GPU Windows, Ollama do usuário nem ao código independente do Curator. Portanto, a fase S11 **não está homologada para publicação real**. Não chamar esses testes de validação editorial definitiva.
+
+## Roteiro vigente — etapa 42, João Gordo (Windows)
+
+O relatório desta execução está em `FINAL_HOMOLOGACAO.md`; resultados antigos acima são históricos. Nesta etapa executam-se testes offline no Windows, sem inferência CUDA/Ollama e sem vídeo bruto. Nunca executar o pipeline completo por este roteiro. Não instalar dependências, baixar modelos ou limpar cache. Usar o Python 3.11 e FFmpeg já instalados; se faltarem, registrar pendência.
+
+1. Registrar `python --version`, `ffmpeg -version`, `ffprobe -version` e hashes dos scripts usados. Em futura sessão autorizada, diagnosticar CUDA com `nvidia-smi` e disponibilidade Ollama com `ollama list` (não faz inferência). GPU detectada não prova execução CUDA. Guardar saídas, exit codes, hardware, versões e modelos locais usados.
+2. Conferir `Get-FileHash -Algorithm SHA256 "CAMINHO_DO_ORIGINAL\tpcF5ri6GS4.mp4"` contra `bc598e72ec323ce824bcff749e8c1db2cd7d97627307aaf9cec53042bcd12575`. Nesta etapa o original não foi aberto nem procurado nas pastas de mídia. Hash divergente bloqueia; nunca editar hash para passar.
+3. Ler os gates do pacote. `automacao/evidencias/SECOND_CURATION_READY.zip` é S4 antigo e registra `partial/P1_DEGRADED`, Stories `REVIEW_REQUIRED`, preview não aprovado. O nome READY não permite canário nem publicação. Se o gate rejeitar, registrar a rejeição; não promover artificialmente o estado. O pacote S4 pode servir somente para replay downstream rotulado como legado.
+4. Replay editorial offline seletivo disponível, sem ASR/visão/Ollama e sem extração sobre fontes. Não executado na etapa 42; reutilizar também as evidências já registradas no checkpoint 17. Usar uma pasta de saída nova:
+
+```powershell
+python scripts/dev/replay_editorial_stage17.py `
+  --review-package automacao/evidencias/CHATGPT_REVIEW.zip `
+  --curation-package automacao/evidencias/SECOND_CURATION_READY.zip `
+  --output-dir automacao/execucao/etapa42/replay_editorial_NOVO
+```
+
+Esse replay reaplica lógica editorial a scores/intervalos antigos; não mede o Analyzer atual no vídeo nem confirma fidelidade auditiva. Para replay de câmera, `replay_camera_v44.py FOLDER --output NOVO --active-folder FOLDER_ATIVO` requer os artefatos correspondentes e procedência conferida. Não usar `replay_second_curation_v44.py` para João Gordo: ele contém caminhos e decisões fixos de outro vídeo. Replay de ASR/visão exige motivo técnico e autorização futura específica, sem invalidar cache caro por mera correção downstream.
+
+5. Quando houver pacote atual comprovadamente elegível e fonte autenticada, executar apenas o canário com `start_real_test_s11.py --package PACOTE_ATUAL --source ORIGINAL --output PASTA_NOVA`. O script existente preserva gates, produz um corte 1080×1920 e não executa ASR/visão. Não executado com João Gordo nesta etapa. Não usar `--draft-captions` como aprovação de transcrição.
+6. Assistir e ouvir canário e fonte nos mesmos intervalos; revisar pergunta/resposta, contexto/payoff, comerciais, rosto, falante ativo, câmera, GC, área segura e cada legenda. Registrar IDs, timestamps, arquivo, hash, revisor e motivos; itens não revisados ficam null/pendentes. Somente então usar approve/batch/finalize conforme os comandos acima. Revisar cada Short/Story separadamente com áudio original. Mudança de decisão, plano, fonte ou preview exige nova revisão vinculada aos hashes.
+7. Para `homologation_s11.py`, `reviews.json` precisa conter tanto `clips` com as revisões individuais do finalize quanto `reviewer`, `checks` globais e hashes de package/source/preview descritos acima. Informar `--render-plan` é indispensável à validação independente do lote. Sem todos os insumos o relatório deve continuar `BLOCKED_OR_PENDING`; `ready_to_publish` permanece false.
+
+Relatório offline, sem consulta Ollama/GPU, com caminho novo:
+
+```powershell
+python scripts/dev/homologation_s11.py --offline `
+  --junit automacao/execucao/etapa42/regression.xml `
+  --output automacao/execucao/etapa42/homologation_offline.json
+```
+
+Exit 2 é esperado quando faltam fonte/canário/lote/revisão humana. Não equivale a falha da suíte. Não chamar a entrega de “100% homologada”. Snapshot final e ZIP ficam exclusivamente com o orquestrador; checkpoints 01–42, changelog e script do teste real devem estar no snapshot.

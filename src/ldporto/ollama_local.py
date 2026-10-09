@@ -188,7 +188,11 @@ def chat(url: str, model: str, messages: list[dict], schema: dict, cfg: dict) ->
         meta['failure_category'] = 'empty_thinking_only' if message.get('thinking') else 'empty_content'
         meta['recommended_action'] = 'disable_thinking_or_reduce_structured_output_budget' if result.get('done_reason') == 'length' else 'check_model_and_api_contract'
         raise OllamaContentError('Ollama retornou resposta sem message.content; done_reason=' + str(result.get('done_reason')) + '; ' + meta['failure_category'], meta)
-    parsed = json.loads(content,parse_constant=lambda value: (_ for _ in ()).throw(ValueError('JSON nao finito: '+value)))
+    try:
+        parsed = json.loads(content,parse_constant=lambda value: (_ for _ in ()).throw(ValueError('JSON nao finito: '+value)))
+    except ValueError as exc:
+        meta['failure_category'] = 'invalid_json'
+        raise OllamaContentError('Ollama retornou JSON invalido.', meta) from exc
     return parsed, meta
 
 

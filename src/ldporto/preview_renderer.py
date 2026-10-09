@@ -259,6 +259,7 @@ def render_preview(source, timeline, metadata, output, interval=None, output_wid
     return ok({'path': str(output.resolve()), 'start': start, 'end': end, 'duration': end-start,
                'width': int(output_width), 'height': int(output_height), 'fps': fps,
                'frames': frame_count, 'audio_muxed': audio_muxed,
+               'source_width': sw, 'source_height': sh,
                'timing_mode': 'source_seek_with_cfr_technical_preview',
                'keyframes_consumed': True, 'final_social_render': False},
               'ok', ['Preview técnico CFR; o renderizador social final continua fora desta etapa.'], [output])

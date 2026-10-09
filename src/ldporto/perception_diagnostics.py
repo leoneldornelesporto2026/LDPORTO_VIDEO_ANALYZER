@@ -86,8 +86,14 @@ def speaker_diagnostics(diarization, vision, raw, summaries, affinity, intervals
         speech = union_duration(turns[speaker])
         visible_times = sorted({row['time'] for row in faces})
         spans = [{'start': a, 'end': b} for a, b in zip(visible_times, visible_times[1:]) if 0 < b - a <= .6]
+        visible_seconds = union_duration([r for r in delivered if r.get('contemporary_face_observed')]) if delivered else union_duration(spans)
         result.append({'speaker_id': speaker, 'person_id': summary.get('person_id'),
-                       'speech_duration': speech, 'visible_overlap': union_duration(spans),
+                       'speech_duration': speech, 'visible_overlap': visible_seconds,
+                       'visible_overlap_basis': 'bounded_sample_intervals' if delivered else 'sample_span_proxy',
+                       'association_status': summary.get('association_status', 'UNRESOLVED'),
+                       'speech_without_resolved_face_seconds': union_duration([r for r in delivered if r.get('speech_without_resolved_face')]),
+                       'observed_wide_shot_seconds': union_duration([r for r in delivered if r.get('wide_shot_observed')]),
+                       'no_contemporary_frame_seconds': union_duration([r for r in delivered if r.get('visual_state') == 'NO_CONTEMPORARY_FRAME']),
                        'candidate_people': sorted(people), 'positive_windows': summary.get('positive_windows', 0),
                        'negative_windows': sum(row.get('negative_windows', 0) for row in candidates),
                        'offscreen_windows': sum(row.get('active_speaker_state') == 'OFFSCREEN' for row in delivered),

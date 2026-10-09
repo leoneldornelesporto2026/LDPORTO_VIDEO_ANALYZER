@@ -83,12 +83,16 @@ class WeightedProgress:
         state = {**self.states.get(stage, {}), **event}
         state.setdefault('started_at', self.clock())
         self.states[stage] = state
-        if state.get('status') == 'running':
-            self.current_stage = stage
+        self.current_stage = stage
         current, elapsed = state.get('current'), state.get('elapsed_seconds')
-        if isinstance(current, (int, float)) and isinstance(elapsed, (int, float)):
+        valid = lambda value: isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0
+        if valid(current) and valid(elapsed):
             previous = self.last_units.get(stage)
-            if previous and current > previous[0] and elapsed >= previous[1]:
+            if previous and (current < previous[0] or elapsed < previous[1]):
+                self.samples.pop(stage, None)
+                self.last_units.pop(stage, None)
+                previous = None
+            if previous and current > previous[0] and elapsed > previous[1]:
                 self.samples.setdefault(stage, deque(maxlen=12)).append((elapsed - previous[1]) / (current - previous[0]))
             if not previous or current > previous[0]:
                 self.last_units[stage] = current, elapsed
@@ -99,7 +103,8 @@ class WeightedProgress:
         stage = self.current_stage
         state = self.states.get(stage, {})
         total, current = state.get('total'), state.get('current')
-        stage_fraction = min(1., max(0., current / total)) if isinstance(total, (int, float)) and total > 0 and isinstance(current, (int, float)) else None
+        valid = lambda value: isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0
+        stage_fraction = min(1., max(0., current / total)) if valid(total) and total > 0 and valid(current) else None
         completed = sum(self.weights[name] for name, value in self.states.items() if value.get('status') in TERMINAL)
         partial = self.weights.get(stage, 0) * (stage_fraction or 0) if state.get('status') not in TERMINAL else 0.
         fraction = (completed + partial) / max(1e-9, sum(self.weights.values()))
@@ -108,7 +113,7 @@ class WeightedProgress:
             self.last_fraction = 1.
         samples = list(self.samples.get(stage, []))
         stage_eta = eta_range = None
-        if len(samples) >= 3 and stage_fraction is not None and total > current:
+        if not self.finished and state.get('status') == 'running' and len(samples) >= 3 and stage_fraction is not None and total > current:
             center = median(samples)
             ordered = sorted(samples)
             lower, upper = ordered[int((len(ordered) - 1) * .1)], ordered[int((len(ordered) - 1) * .9)]
@@ -131,6 +136,9 @@ class WeightedProgress:
                 'stage_eta_range_seconds': eta_range,
                 'total_eta_range_seconds': total_range,
                 'historical_stage_count': len(self.historical),
+                'eta_sample_count': len(samples),
+                'future_eta_basis': 'matching_runtime_history' if all(name in self.historical for name in remaining) else 'baseline_weights_unvalidated_on_current_hardware',
+                'blocking_reason': state.get('cause') if state.get('status') in {'blocked', 'failed', 'unavailable', 'cancelled'} else None,
                 'eta_basis': 'rolling_unit_median_and_empirical_range' if stage_eta is not None else 'calculating',
                 'next_stage': next_stage, 'next_stage_label': STAGE_LABELS.get(next_stage),
                 'status': state.get('status', 'waiting'), 'substage': state.get('substage'),

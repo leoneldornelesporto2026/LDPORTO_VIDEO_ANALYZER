@@ -20,6 +20,13 @@ def detect_graphics(frames, fps=2., visual_text=None):
             continue
         y0, y1 = max(a, a + int(occupied[0]) - 4), min(b, a + int(occupied[-1]) + 5)
         band = persistence[y0:y1]
+        # A desk/rectangle can have persistent wide edges. Require several
+        # compact glyph-like components inside the band, beyond its outline.
+        count, _, stats, _ = cv2.connectedComponentsWithStats(band.astype(np.uint8), 8)
+        glyphs = [s for s in stats[1:count] if 2 <= s[2] <= 40 and
+                  4 <= s[3] <= 32 and 5 <= s[4] <= 600]
+        if len(glyphs) < 5 or y1-y0 > 60:
+            continue
         edge_density = float(band.mean())
         horizontal = float(np.mean([part.mean() > .02 for part in np.array_split(band, 4, axis=1)]))
         temporal_change = float(np.mean(np.std(gray[:, y0:y1].astype(float), axis=0)) / 255)
@@ -27,9 +34,11 @@ def detect_graphics(frames, fps=2., visual_text=None):
             continue
         regions.append({'kind': kind, 'x_start': 0., 'x_end': 1., 'y_start': y0 / 180, 'y_end': y1 / 180,
                         'persistent': True, 'confidence': .75, 'needs_review': True,
+                        'uncertain': True, 'commercial_confirmed': None,
                         'evidence': {'edge_density': edge_density, 'horizontal_coverage': horizontal,
                                      'fixed_coordinate_persistence': .75, 'color_stability_proxy': 1 - temporal_change,
-                                     'sample_count': len(frames), 'observed_seconds': len(frames) / fps},
+                                     'sample_count': len(frames), 'glyph_component_count': len(glyphs),
+                                     'observed_seconds': (len(frames)-1) / fps if fps > 0 else None},
                         'ocr_text': visual_text or [], 'measurement': 'graphic_candidate_not_text_recognition'})
     return {'schema_version': '1.0', 'regions': regions, 'status': 'measured', 'ocr_required': False}
 

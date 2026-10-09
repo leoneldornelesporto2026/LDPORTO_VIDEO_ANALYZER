@@ -1,0 +1,960 @@
+﻿segment_index,segment_id,start,end,text,word_count,flagged_word_count,categories,corrected_text,listening_status
+0,SEG_00000,0.0,0.72,Olha seus,2,1,"[""asr_confidence""]",,pending_original_audio
+1,SEG_00001,0.72,1.46,lixos.,1,0,[],,pending_original_audio
+2,SEG_00002,3.55,3.91,"Hoje,",1,0,[],,pending_original_audio
+3,SEG_00003,4.03,8.59,"nada mais, nada menos que de convidado aqui, nosso irmão João Gordo, moleque.",13,0,[],,pending_original_audio
+4,SEG_00004,8.59,16.65,"Aí, ó, pra quem falava aí que sair da igreja nunca ia me trazer nada, trouxe os maiores satanistas e adoradores de satanagem desse mundo pro meu círculo de amizade, exatamente.",31,1,"[""asr_confidence""]",,pending_original_audio
+5,SEG_00005,19.97,20.91,Faltou o charuto,3,0,"[""overlapping_speech""]",,pending_original_audio
+6,SEG_00006,20.91,21.03,e,1,0,[],,pending_original_audio
+7,SEG_00007,21.03,22.07,a pinga.,2,0,[],,pending_original_audio
+8,SEG_00008,22.13,23.55,"Faltou o charuto e a pinga aqui hoje, moleque.",9,0,[],,pending_original_audio
+9,SEG_00009,23.71,24.71,"Faltou mesmo, cara.",3,0,[],,pending_original_audio
+10,SEG_00010,24.89,39.75,"Nós vamos hoje, se você não é burro, não é suficiente, você foi minimamente alfabetizado, você já viu o título do vídeo aí, Que é zoando de crente Só que hoje é vídeo Não é igual que eu fico aqui Porra, vendo 10 vídeos Porque eu não vou trazer o João Gordo aqui Pra ficar vendo vídeo de crente aqui Porra, por 40 minutos Então a gente vai ver uns 4 vídeos aqui",73,5,"[""asr_confidence""]",,pending_original_audio
+11,SEG_00011,39.75,42.53,"Pra falar mal de crente E vamos trocar uma ideia rapidão também, né?",13,0,[],,pending_original_audio
+12,SEG_00012,42.59,45.47,"Porque já são 8h34 da noite Puta, é chato",9,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+13,SEG_00013,45.47,46.33,ficar,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+14,SEG_00014,46.33,52.97,"aqui vendo vídeo de crente É muito chato É vendo política o dia inteiro, cara Aquele malafaia retardado, cara Então, tu vê porque você quer, né?",26,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+15,SEG_00015,53.07,54.89,"É, então Imagina nós Mas eu já",7,0,"[""overlapping_speech""]",,pending_original_audio
+16,SEG_00016,54.89,59.77,"fico saturado Então, imagina a gente Que é nossa obrigação Já acordar lendo essas coisas Cara,",16,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+17,SEG_00017,59.79,59.97,há,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+18,SEG_00018,59.97,65.71,"anos já que eu escuto o nome do Bolsonaro, Malafaia, esses nomes todo dia, toda hora, cara, eu não aguento mais.",21,4,"[""asr_confidence""]",,pending_original_audio
+19,SEG_00019,65.89,66.85,Qual foi a primeira vez que tu,7,0,[],,pending_original_audio
+20,SEG_00020,66.85,67.53,viu,1,0,[],,pending_original_audio
+21,SEG_00021,67.53,69.27,"o nome do Malafaia, que tu lembra assim de...",9,0,[],,pending_original_audio
+22,SEG_00022,69.27,70.97,"Filha da puta, pra mim eu lembro, tem",8,0,"[""overlapping_speech""]",,pending_original_audio
+23,SEG_00023,70.97,71.59,um momento muito,3,0,"[""overlapping_speech""]",,pending_original_audio
+24,SEG_00024,71.59,71.83,específico.,1,0,"[""overlapping_speech""]",,pending_original_audio
+25,SEG_00025,72.01,72.07,que,1,0,"[""overlapping_speech""]",,pending_original_audio
+26,SEG_00026,72.07,73.85,"foi lá na Record, porque eu trabalhei na Record, você tá ligado, né?",13,0,"[""overlapping_speech""]",,pending_original_audio
+27,SEG_00027,73.95,74.53,"Sim, sim, sim.",3,0,"[""overlapping_speech""]",,pending_original_audio
+28,SEG_00028,74.79,78.07,"E foi lá, eu achei o nome escrotaço, assim, cara, o nome de gente bem escrota.",16,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+29,SEG_00029,78.07,79.25,"Ah, você ficou com raiva do nome, direto.",8,0,"[""overlapping_speech""]",,pending_original_audio
+30,SEG_00030,79.25,79.51,Do nome,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+31,SEG_00031,79.51,80.47,"Malafaia, cara, que nome",4,0,"[""overlapping_speech""]",,pending_original_audio
+32,SEG_00032,80.47,80.99,"horrível,",1,0,[],,pending_original_audio
+33,SEG_00033,81.03,81.17,cara.,1,0,[],,pending_original_audio
+34,SEG_00034,81.25,83.81,"Aí vem o pastor antes, fica primeiro, pastor Malafaia.",9,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+35,SEG_00035,84.33,86.45,"O meu foi quando eu vi o vídeo do aluguel, mano.",11,0,[],,pending_original_audio
+36,SEG_00036,86.45,87.85,E pra mim ele era só um pregador qualquer.,9,1,"[""asr_confidence""]",,pending_original_audio
+37,SEG_00037,87.97,88.57,Quando eu vi o vídeo...,5,0,[],,pending_original_audio
+38,SEG_00038,88.57,89.17,Eu era crente ainda.,4,1,"[""asr_confidence""]",,pending_original_audio
+39,SEG_00039,89.25,92.19,"Quando eu vi o vídeo da alugada, ele pedindo dinheiro da alugada da galera, aí eu fiquei maluco.",18,1,"[""asr_confidence""]",,pending_original_audio
+40,SEG_00040,92.31,94.63,"Eu falei, mano, esse cara é arrombado É escroto, é escroto.",11,0,"[""overlapping_speech""]",,pending_original_audio
+41,SEG_00041,94.63,94.83,É,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+42,SEG_00042,94.83,95.39,bem escroto mesmo.,3,0,"[""overlapping_speech""]",,pending_original_audio
+43,SEG_00043,95.57,100.47,"Antes da gente ver o primeiro vídeo aqui, eu queria saber do teu contato com religião.",16,0,"[""overlapping_speech""]",,pending_original_audio
+44,SEG_00044,100.51,103.43,Como é foi a tua vida religiosa de João Gordo?,10,0,[],,pending_original_audio
+45,SEG_00045,103.61,104.57,"Tipo, qual foi a tua família?",6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+46,SEG_00046,104.57,104.81,Era?,1,0,"[""overlapping_speech""]",,pending_original_audio
+47,SEG_00047,104.95,105.33,Como é foi?,3,0,"[""overlapping_speech""]",,pending_original_audio
+48,SEG_00048,105.43,106.25,Minha família é católica.,4,0,"[""overlapping_speech""]",,pending_original_audio
+49,SEG_00049,106.41,107.43,Mas qual o nível de católico?,6,1,"[""asr_confidence""]",,pending_original_audio
+50,SEG_00050,107.43,109.15,Não praticante ou esses dois mesmo?,6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+51,SEG_00051,109.35,113.87,"O da minha avó, completamente praticante e fanático ali na Igreja da Senhora das Neves.",15,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+52,SEG_00052,113.93,114.79,Minha avó é da Beata.,5,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+53,SEG_00053,116.45,116.97,e,1,1,"[""asr_confidence""]",,pending_original_audio
+54,SEG_00054,116.97,131.43,eu estudei colégio de freira no são paulo da cruz de emancipacionistas depois eu fiquei um ano em colégio do estado aí eu bombeio de ânimo para me colocou no instituto dom bosco e colégio de padre estralesiano quantos anos eu tinha acho que de 11 e,47,9,"[""asr_confidence""]",,pending_original_audio
+55,SEG_00055,131.43,132.57,é,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+56,SEG_00056,132.57,133.23,colégio,1,0,"[""overlapping_speech""]",,pending_original_audio
+57,SEG_00057,133.23,142.51,de padre era só menino semi interno profissionalizante e os padres sentavam a mão na galera é mesmo o puxão de orelha tapa na cara castigo físico é bem doido,30,4,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+58,SEG_00058,142.51,146.17,"cara isso 76 tipo de castigo físico eles botavam, tipo,",10,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+59,SEG_00059,146.19,148.03,"ajoelhar no milho, tinha que pegar numa",7,1,"[""asr_confidence""]",,pending_original_audio
+60,SEG_00060,148.03,148.35,cruz.,1,0,[],,pending_original_audio
+61,SEG_00061,148.55,150.41,"É quase isso, cara, quase isso, cara.",7,0,[],,pending_original_audio
+62,SEG_00062,150.45,156.67,"Mas assim, quando eu entrei, teve um castigo físico com um professor de física, de educação física, que era lógico que era um militar, né?",25,2,"[""asr_confidence""]",,pending_original_audio
+63,SEG_00063,156.79,157.25,É óbvio.,2,0,[],,pending_original_audio
+64,SEG_00064,157.35,160.03,"E colocou os alunos tudo assim, agachados, com a mão assim, cara.",12,0,[],,pending_original_audio
+65,SEG_00065,160.05,160.29,Tá ligado?,2,0,[],,pending_original_audio
+66,SEG_00066,160.41,160.73,Agachado.,1,0,[],,pending_original_audio
+67,SEG_00067,160.73,164.89,"E quem fosse desistindo, tomava suspensão e tinha prova de matemática no dia seguinte, cara.",15,1,"[""asr_confidence""]",,pending_original_audio
+68,SEG_00068,164.93,165.07,E,1,0,[],,pending_original_audio
+69,SEG_00069,165.07,165.35,era,1,0,[],,pending_original_audio
+70,SEG_00070,165.35,166.83,"tosco demais, cara, tá ligado?",5,0,[],,pending_original_audio
+71,SEG_00071,166.97,168.07,Era tosco demais.,3,0,[],,pending_original_audio
+72,SEG_00072,168.31,170.93,"Hoje em dia, eles iam mandar você fazer esse movimento com o braço, mas só com um.",17,0,[],,pending_original_audio
+73,SEG_00073,171.61,171.93,Peraí.,1,0,"[""overlapping_speech""]",,pending_original_audio
+74,SEG_00074,172.27,172.77,Vai lá.,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+75,SEG_00075,172.85,174.47,Deixa eu só pegar o baseado pra nós aqui.,9,0,"[""overlapping_speech""]",,pending_original_audio
+76,SEG_00076,175.67,179.11,"Amor, eu tô gravando, eu tô aqui com gente de outra religião, cara, desse aí.",15,1,"[""asr_confidence""]",,pending_original_audio
+77,SEG_00077,179.19,185.25,"Foi um moleque, quando eu estudava no quarto ano no colégio de estado, eu esqueci o nome do colégio, mas era ali perto da 39, na Vila Gustavo, cara.",29,2,"[""asr_confidence""]",,pending_original_audio
+78,SEG_00078,185.29,187.95,"Ele chamava Davi, e ele era adventista.",7,0,[],,pending_original_audio
+79,SEG_00079,188.07,190.03,"Caraca, adventista, pra quem não sabe, é aquele dos sete",10,0,"[""overlapping_speech""]",,pending_original_audio
+80,SEG_00080,190.03,190.19,"dias,",1,0,"[""overlapping_speech""]",,pending_original_audio
+81,SEG_00081,190.25,190.41,né?,1,0,"[""overlapping_speech""]",,pending_original_audio
+82,SEG_00082,190.47,190.61,"É,",1,0,"[""overlapping_speech""]",,pending_original_audio
+83,SEG_00083,190.65,191.43,adventista.,1,0,"[""overlapping_speech""]",,pending_original_audio
+84,SEG_00084,191.65,193.65,"Eu nunca tinha ouvido falar, eu tinha 10 anos de idade, cara, tá ligado?",14,1,"[""asr_confidence""]",,pending_original_audio
+85,SEG_00085,193.75,194.81,Na época da ditadura ainda.,5,0,[],,pending_original_audio
+86,SEG_00086,194.91,203.45,"Então, o adventista, a gente tinha um horário muito louco na sexta-feira, porque todo dia, o nosso horário da escola era das três da tarde às sete da noite.",30,1,"[""asr_confidence""]",,pending_original_audio
+87,SEG_00087,203.61,204.63,E esse moleque...,3,0,"[""overlapping_speech""]",,pending_original_audio
+88,SEG_00088,204.63,204.73,"Um inteiro,",2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+89,SEG_00089,204.77,204.89,mano.,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+90,SEG_00090,204.89,205.17,"É,",1,1,"[""asr_confidence""]",,pending_original_audio
+91,SEG_00091,205.27,207.35,"às vezes até 6 da noite, são quase 5 horas, né?",11,2,"[""asr_confidence""]",,pending_original_audio
+92,SEG_00092,207.85,212.15,"E esse moleque, de sexta-feira, ele saia mais cedo, tá ligado?",12,0,[],,pending_original_audio
+93,SEG_00093,212.27,215.13,"Porque ele, por causa do adventismo, não pode ficar na rua.",11,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+94,SEG_00094,215.19,215.39,"Sim,",1,0,"[""overlapping_speech""]",,pending_original_audio
+95,SEG_00095,215.43,215.71,aí,1,0,"[""overlapping_speech""]",,pending_original_audio
+96,SEG_00096,215.71,215.87,ele,1,0,"[""overlapping_speech""]",,pending_original_audio
+97,SEG_00097,215.87,217.77,começou a se interessar pela religião.,6,0,"[""overlapping_speech""]",,pending_original_audio
+98,SEG_00098,218.15,219.05,E todo mundo,3,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+99,SEG_00099,219.05,219.77,quer ficar,2,0,"[""overlapping_speech""]",,pending_original_audio
+100,SEG_00100,219.77,220.81,"com raiva do moleque, meu.",5,0,[],,pending_original_audio
+101,SEG_00101,220.83,221.45,"Ah, ficaram com raiva.",4,0,[],,pending_original_audio
+102,SEG_00102,221.57,223.83,"Ficaram com raiva do moleque, o moleque saia mais cedo, porra, qual é que é?",15,0,[],,pending_original_audio
+103,SEG_00103,223.95,227.55,"E eu lembro dele, era um pequenininho, tipo o cabelo americano, tipo seu, assim.",14,0,[],,pending_original_audio
+104,SEG_00104,227.73,231.01,"E usava, ele e eu usávamos uniforme, calça azul e camisa branca.",12,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+105,SEG_00105,231.07,233.61,"E nessa época a gente não usava uniforme mais, a gente usava tipo avental.",14,1,"[""asr_confidence""]",,pending_original_audio
+106,SEG_00106,233.61,235.07,e E ele já era tirado.,6,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+107,SEG_00107,235.11,247.8,"Aí um dia indo pra casa, a minha avenida tava toda esburacada, tava tendo uma obra da Sabesp, cara, eu zoando com ele, ele pegou uma pilha raiovac assim, ó, e me deu, meu, a pilha raiovac pegou no meu nariz, abriu uma buceta no meu nariz,",47,4,"[""asr_confidence"", ""timestamps""]",,pending_original_audio
+108,SEG_00108,248.34,248.66,"eu,",1,0,[],,pending_original_audio
+109,SEG_00109,249.08,249.52,filho da,2,0,[],,pending_original_audio
+110,SEG_00110,249.52,255.04,"puta, cara, arrebentou meu nariz com uma pilha raiovac, aí, aí começou a minha raiva de crente.",17,0,[],,pending_original_audio
+111,SEG_00111,255.12,255.68,"Ah, foi nesse dia?",4,0,[],,pending_original_audio
+112,SEG_00112,255.78,262.62,"Foi nesse dia, que eu tava meio apilhado, o moleque se defendeu, tadinho, pô, né, deu uma folgada, gordinho, folgada.",20,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+113,SEG_00113,262.62,262.92,"Então,",1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+114,SEG_00114,262.94,265.52,"qual foi a parada que nós temos aqui, né?",9,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+115,SEG_00115,265.64,268.74,"Um oréganozinho, às vezes, é bom aqui no estúdio, pra dar uma arejada no ambiente.",15,1,"[""asr_confidence""]",,pending_original_audio
+116,SEG_00116,269.02,271.56,Qual foi a parada que tu...,6,0,[],,pending_original_audio
+117,SEG_00117,271.56,274.48,"Essa é uma curiosidade que eu gostaria de perguntar pra todo mundo que eu sou fã, assim.",17,0,[],,pending_original_audio
+118,SEG_00118,274.48,274.64,Qual,1,0,[],,pending_original_audio
+119,SEG_00119,274.64,274.78,foi,1,0,[],,pending_original_audio
+120,SEG_00120,274.78,277.28,a maior merda que tu fez na tua infância e adolescência?,11,0,[],,pending_original_audio
+121,SEG_00121,277.34000000000003,279.68,"Tu fala assim, porra, esse aqui, eu podia ter me fudido muito, mano.",13,0,[],,pending_original_audio
+122,SEG_00122,279.82,281.3,E eu era só um jovem idiota.,7,0,"[""overlapping_speech""]",,pending_original_audio
+123,SEG_00123,281.48,281.6,"Ah,",1,0,"[""overlapping_speech""]",,pending_original_audio
+124,SEG_00124,281.6,283.74,"velho, na minha infância, cara, eu mexia em tudo, cara.",10,0,"[""overlapping_speech""]",,pending_original_audio
+125,SEG_00125,283.8,284.56,"Meu pai PM, né?",4,0,[],,pending_original_audio
+126,SEG_00126,284.56,284.9,Meu pai me,3,0,[],,pending_original_audio
+127,SEG_00127,284.9,286.5,"sentava a porrada, velho, tá ligado?",6,0,[],,pending_original_audio
+128,SEG_00128,286.64,287.36,Que combinação boa.,3,1,"[""asr_confidence""]",,pending_original_audio
+129,SEG_00129,287.44,287.65999999999997,"É,",1,0,[],,pending_original_audio
+130,SEG_00130,287.65999999999997,292.76,"e meu pai era, ele era, coitado, Ele tomava uns remédios psiquiátricos, então era tudo, era vezes três.",18,1,"[""asr_confidence""]",,pending_original_audio
+131,SEG_00131,293.3,295.88,"E minha carne era tipo um exército, assim.",8,1,"[""asr_confidence""]",,pending_original_audio
+132,SEG_00132,296.14,296.88,E eu mexia em tudo.,5,1,"[""asr_confidence""]",,pending_original_audio
+133,SEG_00133,297.08,297.86,"Eu era um mexilão, cara.",5,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+134,SEG_00134,297.86,298.14,Era muito,2,0,"[""overlapping_speech""]",,pending_original_audio
+135,SEG_00135,298.14,298.46,rígido,1,0,"[""overlapping_speech""]",,pending_original_audio
+136,SEG_00136,298.46,298.82,a criação.,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+137,SEG_00137,299.06,301.26,"É, e eu mexia em tudo, mexia em tudo, mexia em tudo, cara.",13,0,"[""overlapping_speech""]",,pending_original_audio
+138,SEG_00138,301.32,304.92,"Aí eu pegava a arma dele, tirava as balas e ficava com a arma na cintura o dia inteiro, tá ligado?",21,3,"[""asr_confidence""]",,pending_original_audio
+139,SEG_00139,306.32,306.56,Brincando.,1,0,[],,pending_original_audio
+140,SEG_00140,306.62,311.2,"E eu mexendo nas coisas, abri uma mala uma vez, porque aí achei dentro da mala um monte de cocara, colar.",21,2,"[""asr_confidence""]",,pending_original_audio
+141,SEG_00141,311.24,312.22,"Falei, que porra é essa, mano?",6,0,[],,pending_original_audio
+142,SEG_00142,312.34000000000003,314.42,"E eu ficava brincando com aquilo, não sabia o que que era, cara.",13,1,"[""asr_confidence""]",,pending_original_audio
+143,SEG_00143,314.54,314.78,Tá ligado?,2,0,[],,pending_original_audio
+144,SEG_00144,314.78,320.54,"Cara, no futuro disso aí, cara, eu descobri que meu pai era pai de santo, ele era cristão enrustido.",19,2,"[""asr_confidence""]",,pending_original_audio
+145,SEG_00145,322.15999999999997,322.44,E,1,0,[],,pending_original_audio
+146,SEG_00146,322.44,326.78,"foi numa cena muito louca, cara, que eu tava ali já ajoelhado, meu pai rasgando meus posters.",17,1,"[""asr_confidence""]",,pending_original_audio
+147,SEG_00147,326.94,329.56,"E por causa de escola, eu tava indo mal na escola por causa de rock, tá ligado?",17,0,[],,pending_original_audio
+148,SEG_00148,329.65999999999997,330.38,Eu já era roqueiro já.,5,0,[],,pending_original_audio
+149,SEG_00149,330.48,332.14,Eu tinha uma mala de recorte.,6,0,[],,pending_original_audio
+150,SEG_00150,332.2,336.28,"E a hora que eu fazia, eu conheci uma revista, uma revista pop que é dos anos 70, isso aí, cara.",21,4,"[""asr_confidence""]",,pending_original_audio
+151,SEG_00151,336.32,340.64,"E uma hora ele abriu um poster, um poster do Roger Daltrey, vocalista do The Who.",16,0,[],,pending_original_audio
+152,SEG_00152,340.64,343.46,"É um pôster do filme, tá ligado?",7,1,"[""asr_confidence""]",,pending_original_audio
+153,SEG_00153,343.6,346.12,"Do Pinball Island, que ele tá de Jesus, assim, cara.",10,2,"[""asr_confidence""]",,pending_original_audio
+154,SEG_00154,346.15999999999997,347.36,"Meu pai abriu aquele pôster e falou, que",8,0,[],,pending_original_audio
+155,SEG_00155,347.36,347.82,porra,1,0,[],,pending_original_audio
+156,SEG_00156,347.82,348.28,é essa?,2,0,[],,pending_original_audio
+157,SEG_00157,348.52,349.58,Esse é um sacrilégio!,4,1,"[""asr_confidence""]",,pending_original_audio
+158,SEG_00158,349.7,350.96,Ele começou a rasgar os pôsteres.,6,1,"[""asr_confidence""]",,pending_original_audio
+159,SEG_00159,351.04,353.64,"Eu, não, pai, não rasga meus pôsteres, filho da puta!",10,0,[],,pending_original_audio
+160,SEG_00160,354.36,354.64,Sacrilegio!,1,0,[],,pending_original_audio
+161,SEG_00161,354.88,355.02,Aí,1,0,[],,pending_original_audio
+162,SEG_00162,355.02,356.22,"ele começou a me enforcar, velho.",6,0,[],,pending_original_audio
+163,SEG_00163,356.32,359.62,"Nessa que ele começou a me enforcar, ele colocou a minha mãe, que é uma gritaria, cara.",17,2,"[""asr_confidence""]",,pending_original_audio
+164,SEG_00164,359.94,361.98,"Abaixou um santo no meu pai,",6,0,[],,pending_original_audio
+165,SEG_00165,362.04,362.3,cara.,1,0,[],,pending_original_audio
+166,SEG_00166,362.42,362.7,"Cara,",1,0,"[""overlapping_speech""]",,pending_original_audio
+167,SEG_00167,362.7,363.44,achei que tu ia lembrar,5,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+168,SEG_00168,363.44,364.0,que tava armado,3,0,"[""overlapping_speech""]",,pending_original_audio
+169,SEG_00169,364.0,364.15999999999997,e,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+170,SEG_00170,364.15999999999997,364.84000000000003,quase deu um tiro no teu,6,1,"[""asr_confidence""]",,pending_original_audio
+171,SEG_00171,364.84000000000003,364.96000000000004,pai.,1,0,"[""overlapping_speech""]",,pending_original_audio
+172,SEG_00172,364.98,366.58000000000004,"Eu não sabia que meu pai recebia santo, cara.",9,0,"[""overlapping_speech""]",,pending_original_audio
+173,SEG_00173,366.88,368.06,"Eu não sabia, meu irmão.",5,0,"[""overlapping_speech""]",,pending_original_audio
+174,SEG_00174,368.14,369.18,Meu pai abaixou um santo no meu pai.,8,1,"[""asr_confidence""]",,pending_original_audio
+175,SEG_00175,371.2,372.38,"Minha mãe, calma, filho.",4,1,"[""asr_confidence""]",,pending_original_audio
+176,SEG_00176,372.58000000000004,373.12,É o seu pai.,4,0,[],,pending_original_audio
+177,SEG_00177,373.26,375.96000000000004,"E aí meu pai começou a falar uma língua estranha, que não era aquelas línguas do...",16,1,"[""asr_confidence""]",,pending_original_audio
+178,SEG_00178,375.96000000000004,378.0,"Era tipo um tupi-guarani, assim, sei lá que língua.",10,1,"[""asr_confidence""]",,pending_original_audio
+179,SEG_00179,379.6,380.24,Bagulho cabulosíssimo.,2,0,[],,pending_original_audio
+180,SEG_00180,380.26,382.41999999999996,"Ele me traumatizou a vida inteira, assim.",7,1,"[""asr_confidence""]",,pending_original_audio
+181,SEG_00181,382.46000000000004,383.52,"Que negócio de religião, meu irmão.",6,0,[],,pending_original_audio
+182,SEG_00182,383.6,383.82,Obrigado.,1,0,[],,pending_original_audio
+183,SEG_00183,383.98,384.18,A,1,0,"[""overlapping_speech""]",,pending_original_audio
+184,SEG_00184,384.18,386.2,"agenda de show pra você aí agora, né?",8,0,[],,pending_original_audio
+185,SEG_00185,386.22,387.48,"Sabe que é o melhor momento do vídeo, né?",9,0,[],,pending_original_audio
+186,SEG_00186,387.6,389.74,"Papai aqui tá se despindo pra vender mais, né?",9,0,[],,pending_original_audio
+187,SEG_00187,389.82,390.74,"Então, presta atenção.",3,0,[],,pending_original_audio
+188,SEG_00188,391.1,393.48,"Estarei fazendo show em Mesquita, no Rio de Janeiro.",9,0,[],,pending_original_audio
+189,SEG_00189,393.62,394.38,Rio das Ostras.,3,0,[],,pending_original_audio
+190,SEG_00190,394.53999999999996,395.84000000000003,Campos dos Goitacazes.,3,0,[],,pending_original_audio
+191,SEG_00191,395.91999999999996,396.41999999999996,Campo Grande.,2,0,[],,pending_original_audio
+192,SEG_00192,396.62,397.46000000000004,Não vacila.,2,0,[],,pending_original_audio
+193,SEG_00193,397.52,398.84000000000003,"O show é esse show aqui, tá?",7,1,"[""asr_confidence""]",,pending_original_audio
+194,SEG_00194,398.84000000000003,410.9,"a capinha dele, Anticristo, show novo não está postado na internet, então você só consegue assistir se for assistir ao vivo, só vai ser postado na internet porra, bem depois, ano que vem, aguardo vocês lá, hein, não vacila eu",40,3,"[""asr_confidence""]",,pending_original_audio
+195,SEG_00195,410.9,413.72,"sou meio envolvido com um monte de coisa religiosa assim, cara, não sou ateu,",14,0,[],,pending_original_audio
+196,SEG_00196,413.74,414.65999999999997,acredito num monte de coisa,5,0,"[""overlapping_speech""]",,pending_original_audio
+197,SEG_00197,414.65999999999997,419.76,"então, isso que era uma dúvida, como é, o que tu hoje mas tu já passou pelo ateísmo já?",19,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+198,SEG_00198,419.9,424.38,"Já, não acredito em nada mas ao mesmo tempo acredito em tudo, acredito nisso com o voador é o Raul César, Raul César",23,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+199,SEG_00199,424.86,428.5,"acredito em espírito ruim, acredito em tá ligado, em encosto, mas tu já teve uma experiência",16,0,[],,pending_original_audio
+200,SEG_00200,429.62,430.78,Tem coisa,2,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+201,SEG_00201,430.78,432.36,"que eu não sei explicar, eu já tive sim, tu afirma.",11,1,"[""asr_confidence""]",,pending_original_audio
+202,SEG_00202,433.7,436.12,"Já tive sim, cara, coisa que eu não consigo explicar, tá ligado?",12,0,[],,pending_original_audio
+203,SEG_00203,436.2,436.8,Mas é...,2,1,"[""asr_confidence""]",,pending_original_audio
+204,SEG_00204,436.8,438.88,"tem um monte de coisa que a gente não consegue explicar, tá ligado?",13,1,"[""asr_confidence""]",,pending_original_audio
+205,SEG_00205,439.3,443.3,"Uma aí que tu tem que tu pode falar, assim, que teve uma experiência, se fosse uma essa porra aqui.",20,5,"[""asr_confidence""]",,pending_original_audio
+206,SEG_00206,443.48,444.9,Isso eu tenho muita curiosidade sobre essas paradas.,8,0,[],,pending_original_audio
+207,SEG_00207,445.1,447.65999999999997,"Eu morei em Angatuba um tempo, tá ligado?",8,1,"[""asr_confidence""]",,pending_original_audio
+208,SEG_00208,447.68,448.88,Aqui é uma cidade do interior de São Paulo.,9,0,[],,pending_original_audio
+209,SEG_00209,449.0,451.14,"E ali eu aprendi a fumar maconha, aprendi a beber, aprendi a fazer...",13,0,[],,pending_original_audio
+210,SEG_00210,451.14,451.94,virei doido lá.,3,0,[],,pending_original_audio
+211,SEG_00211,451.94,454.72,"Meu pai me levou pra lá justamente pra me proteger do punk rock, tá ligado?",15,0,[],,pending_original_audio
+212,SEG_00212,454.8,455.8,E lá eu acabei...,4,0,[],,pending_original_audio
+213,SEG_00213,455.8,456.26,Não adiantou?,2,0,[],,pending_original_audio
+214,SEG_00214,456.32,456.68,Não adiantou,2,0,[],,pending_original_audio
+215,SEG_00215,456.68,457.06,porra nenhuma.,2,0,"[""overlapping_speech""]",,pending_original_audio
+216,SEG_00216,457.06,461.32,"Tu acha que se a tua criação fosse menos rígida, você não teria virado outro?",15,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+217,SEG_00217,461.62,461.94,Esse,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+218,SEG_00218,461.94,462.1,eu?,1,0,"[""overlapping_speech""]",,pending_original_audio
+219,SEG_00219,462.2,464.12,"Não, não, eu teria sido outro cara.",7,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+220,SEG_00220,464.18,466.24,Seria um torneiro mecânico lá na Vila Gustavo.,8,0,"[""overlapping_speech""]",,pending_original_audio
+221,SEG_00221,466.48,467.64,"Eu também, eu penso nisso direto.",6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+222,SEG_00222,467.64,472.18,"Seria um crente, pastor, pastor, Tiago Sertinelli, ai caralho!",9,0,"[""overlapping_speech""]",,pending_original_audio
+223,SEG_00223,472.86,473.2,Tá ligado?,2,1,"[""asr_confidence""]",,pending_original_audio
+224,SEG_00224,473.22,477.74,"Eu acho que a repressão, né, e essa parada rígida assim, acaba de foder, mano.",15,1,"[""asr_confidence""]",,pending_original_audio
+225,SEG_00225,477.78,478.02,"É, então",2,1,"[""asr_confidence""]",,pending_original_audio
+226,SEG_00226,478.02,478.14,é,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+227,SEG_00227,478.14,478.76,"você, pai,",2,0,"[""overlapping_speech""]",,pending_original_audio
+228,SEG_00228,478.86,480.2,"que a tia que tá me assistindo aí, acha um",10,2,"[""asr_confidence"", ""overlapping_speech"", ""timestamps""]",,pending_original_audio
+229,SEG_00229,480.2,486.08,absurdo que eu sou o que eu faço seu filho vai virar um grande risco de virar um João Gordo ou um Thiago Santinetti tá?,25,6,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+230,SEG_00230,486.12,486.6,te liga!,2,0,[],,pending_original_audio
+231,SEG_00231,488.38,488.74,é,1,0,[],,pending_original_audio
+232,SEG_00232,488.74,499.52,isso o primeiro vídeo que a gente vai ver aqui de dois ou três vou botar aqui que eu gosto de ver e queria trocar essa ideia contigo de artistas que larga tudo e vira creme existe alguma chance de a gente ter antes do...,45,5,"[""asr_confidence""]",,pending_original_audio
+233,SEG_00233,499.52,500.02,sei lá...,2,1,"[""asr_confidence""]",,pending_original_audio
+234,SEG_00234,500.02,500.58,tá com 61?,3,1,"[""asr_confidence""]",,pending_original_audio
+235,SEG_00235,500.82,501.1,mesmo!,1,1,"[""asr_confidence""]",,pending_original_audio
+236,SEG_00236,501.24,503.64,pô lá para os 80 assim a gente vê mano porra João,12,5,"[""asr_confidence""]",,pending_original_audio
+237,SEG_00237,504.68,505.8,João Gordo aceita,3,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+238,SEG_00238,505.8,506.1,Jesus.,1,0,"[""overlapping_speech""]",,pending_original_audio
+239,SEG_00239,506.7,508.44,"Acho que nem fudendo, velho.",5,0,"[""overlapping_speech""]",,pending_original_audio
+240,SEG_00240,508.5,508.98,"Puta, mano.",2,0,[],,pending_original_audio
+241,SEG_00241,509.22,510.14,É tanta mentira.,3,0,[],,pending_original_audio
+242,SEG_00242,510.22,511.86,"Eu tenho raiva de mentira, tá ligado?",7,0,[],,pending_original_audio
+243,SEG_00243,514.42,516.74,"A Bíblia, os Velhos Testamentos, tá ligado?",7,1,"[""asr_confidence""]",,pending_original_audio
+244,SEG_00244,516.82,517.84,Não dá pra acreditar em porra,6,0,[],,pending_original_audio
+245,SEG_00245,517.84,518.06,nenhuma,1,0,"[""overlapping_speech""]",,pending_original_audio
+246,SEG_00246,518.06,518.48,"ali, cara.",2,0,"[""overlapping_speech""]",,pending_original_audio
+247,SEG_00247,518.56,519.74,Tem alguma na Bíblia que tu acha que se salva ali?,11,0,"[""overlapping_speech""]",,pending_original_audio
+248,SEG_00248,519.8,521.1,"Que tu fala assim, tá, isso aqui é da hora.",10,0,[],,pending_original_audio
+249,SEG_00249,521.2,521.36,"Cara,",1,0,[],,pending_original_audio
+250,SEG_00250,521.4,529.54,"eu acredito que existiu um cara chamado Jesus que chegou lá e pisou na bola com os romanos e com os judeus e sofreu pena capital e morreu na cruz, cara.",31,0,[],,pending_original_audio
+251,SEG_00251,529.58,530.92,Que a cruz era a típica cadeira elétrica,8,0,"[""overlapping_speech""]",,pending_original_audio
+252,SEG_00252,530.92,531.1,dos,1,0,"[""overlapping_speech""]",,pending_original_audio
+253,SEG_00253,531.1,531.3,caras,1,0,[],,pending_original_audio
+254,SEG_00254,531.3,531.56,na época.,2,0,"[""overlapping_speech""]",,pending_original_audio
+255,SEG_00255,531.64,532.16,"Sim, sim, sim.",3,0,"[""overlapping_speech""]",,pending_original_audio
+256,SEG_00256,532.28,532.66,Tá ligado?,2,0,[],,pending_original_audio
+257,SEG_00257,532.66,533.88,E hoje os fãs dele defendem.,6,0,[],,pending_original_audio
+258,SEG_00258,533.98,541.46,"É, então, a cruz, cara, era o, assim, o Pena Capital dos Romanos era o meio mais cruel de punição que tinha, né?",23,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+259,SEG_00259,541.5,546.3199999999999,"Você ficava ali pendurado dois, três dias ali, quebrado, agonizando, tá ligado?",12,0,"[""overlapping_speech""]",,pending_original_audio
+260,SEG_00260,546.4,552.62,"Então acredito que teve esse cara que pegou e deixou todo mundo com raiva, ali os ricos, tá ligado?",19,2,"[""asr_confidence""]",,pending_original_audio
+261,SEG_00261,552.96,554.5,"E mataram o cara, velho, tá ligado?",7,0,[],,pending_original_audio
+262,SEG_00262,554.58,555.92,"E aí ele briga, né?",5,0,[],,pending_original_audio
+263,SEG_00263,555.94,562.08,"E a maior ironia pra mim do negócio é porra, Jesus morre, um dos motivos foi que ele foi contra a própria religião dele.",24,1,"[""asr_confidence""]",,pending_original_audio
+264,SEG_00264,562.08,562.38,Sim.,1,0,[],,pending_original_audio
+265,SEG_00265,562.54,563.34,"Porque ele era judeu, né?",5,1,"[""asr_confidence""]",,pending_original_audio
+266,SEG_00266,563.34,567.22,Então muita gente esquece desse pequeno detalhe de Jesus não criou nenhuma religião.,13,0,[],,pending_original_audio
+267,SEG_00267,567.28,569.8,Ele era de uma religião e morreu sem criar uma religião.,11,0,[],,pending_original_audio
+268,SEG_00268,569.92,573.86,"E aí ele briga com religiosos que estão usando a fé, né, pra ousar as pessoas.",16,0,[],,pending_original_audio
+269,SEG_00269,574.0,576.34,"Aí passa um tempo e criam uma religião pra ele, com o mesmo motivo.",14,1,"[""asr_confidence""]",,pending_original_audio
+270,SEG_00270,576.54,578.06,"Só pra ousar as pessoas ganharem dinheiro sim,",8,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+271,SEG_00271,578.14,578.22,mas,1,0,"[""overlapping_speech""]",,pending_original_audio
+272,SEG_00272,578.22,578.7,tipo assim...,2,0,[],,pending_original_audio
+273,SEG_00273,578.7,579.14,A intenção...,2,0,"[""overlapping_speech""]",,pending_original_audio
+274,SEG_00274,579.48,581.9,"Já deu errado quando criou uma religião pra ele, sacou?",10,0,"[""overlapping_speech""]",,pending_original_audio
+275,SEG_00275,581.92,583.02,Não era pra ter uma religião pra ele.,8,0,"[""overlapping_speech""]",,pending_original_audio
+276,SEG_00276,583.04,583.08,A,1,0,"[""overlapping_speech""]",,pending_original_audio
+277,SEG_00277,583.08,583.46,intenção,1,0,"[""overlapping_speech""]",,pending_original_audio
+278,SEG_00278,583.46,585.74,"do cara era boa, cara, mas distorceram tudo, cara.",9,0,[],,pending_original_audio
+279,SEG_00279,585.8,589.4,E hoje em dia virou essa aberração que é o cristianismo moderno aí.,13,0,[],,pending_original_audio
+280,SEG_00280,589.48,589.72,É.,1,0,[],,pending_original_audio
+281,SEG_00281,590.04,590.36,Desses...,1,0,[],,pending_original_audio
+282,SEG_00282,590.36,591.04,"Saca, meu?",2,0,[],,pending_original_audio
+283,SEG_00283,591.04,591.4,Que é o,3,1,"[""asr_confidence""]",,pending_original_audio
+284,SEG_00284,591.4,595.86,"que a gente vai ver um agora, que é um que eu não sabia que ele tinha virado crente desse jeito, que é o Yud.",25,4,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+285,SEG_00285,596.02,597.6,"Puta, eu fiquei sabendo, o Yud, é, meu?",8,0,"[""overlapping_speech""]",,pending_original_audio
+286,SEG_00286,597.88,599.26,Ele já,2,0,"[""overlapping_speech""]",,pending_original_audio
+287,SEG_00287,599.26,600.06,"foi lá em casa, ó, já.",6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+288,SEG_00288,600.3,602.5,Então eu ia perguntar agora se tu pode gravar alguma coisa com esse...,13,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+289,SEG_00289,602.5,602.98,"Não, tá",2,0,"[""overlapping_speech""]",,pending_original_audio
+290,SEG_00290,602.98,604.76,"beleza, tá beleza, não tem nada contra ele, não, cara.",10,0,"[""overlapping_speech""]",,pending_original_audio
+291,SEG_00291,604.96,605.12,Eu,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+292,SEG_00292,605.12,605.4,também...,1,0,"[""overlapping_speech""]",,pending_original_audio
+293,SEG_00293,605.4,605.76,Ele foi,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+294,SEG_00294,605.76,606.28,salvo?,1,0,"[""overlapping_speech""]",,pending_original_audio
+295,SEG_00295,606.28,606.8199999999999,Ele tava drogado?,3,0,[],,pending_original_audio
+296,SEG_00296,607.04,607.28,Não sei.,2,0,[],,pending_original_audio
+297,SEG_00297,607.42,607.66,Tá ligado?,2,1,"[""asr_confidence""]",,pending_original_audio
+298,SEG_00298,607.8,611.44,"Se o cara tava já no meio do precipício, é só a favor que ele...",15,2,"[""asr_confidence""]",,pending_original_audio
+299,SEG_00299,611.44,613.1,"Aí conta em Cristo, cara, foda-se.",7,0,"[""overlapping_speech""]",,pending_original_audio
+300,SEG_00300,613.16,614.88,"Isso é bom, é tipo o Rodolfo, então.",8,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+301,SEG_00301,615.94,618.12,"Tu foi a favor do Rodolfo sair, então, virar crente.",10,0,[],,pending_original_audio
+302,SEG_00302,618.12,618.48,O,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+303,SEG_00303,618.48,621.72,"Rodolfo, velho, a última vez que eu encontrei com ele foi uma coisa muito bizarra, velho.",16,0,[],,pending_original_audio
+304,SEG_00304,621.8199999999999,623.28,"Eu já contei essa história, não sei se você já velho.",11,3,"[""asr_confidence""]",,pending_original_audio
+305,SEG_00305,623.34,623.58,Já.,1,0,[],,pending_original_audio
+306,SEG_00306,623.74,624.86,Ia ter um show do Rodox,6,0,[],,pending_original_audio
+307,SEG_00307,624.86,625.12,em,1,0,[],,pending_original_audio
+308,SEG_00308,625.12,625.38,Salvador.,1,0,[],,pending_original_audio
+309,SEG_00309,625.8199999999999,630.5,"Rodox, pra quem não sabe, é a banda que virou meio gospel pós o Rodolfo sair do Raimundo, assim.",19,0,"[""overlapping_speech""]",,pending_original_audio
+310,SEG_00310,630.56,630.8199999999999,"Então,",1,0,"[""overlapping_speech""]",,pending_original_audio
+311,SEG_00311,630.84,631.28,ele queria...,2,0,"[""overlapping_speech""]",,pending_original_audio
+312,SEG_00312,631.28,632.8,"Que boa, eu gosto, eu gosto do Rodox.",8,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+313,SEG_00313,632.8,635.8199999999999,Ele ia acabar com a banda porque ele queria que todo mundo virasse crente lá.,15,0,"[""overlapping_speech""]",,pending_original_audio
+314,SEG_00314,635.8199999999999,638.4,"Eu disse, pô, os caras não queriam, Fernandão, cara, os maloqueiros,",11,3,"[""asr_confidence""]",,pending_original_audio
+315,SEG_00315,638.44,638.94,os,1,0,[],,pending_original_audio
+316,SEG_00316,638.94,639.56,"caras ali, cara.",3,0,"[""overlapping_speech""]",,pending_original_audio
+317,SEG_00317,639.62,642.98,"E o último show do Rodox ia ser com o Rato de Porão em Salvador, cara.",16,0,[],,pending_original_audio
+318,SEG_00318,642.98,647.96,"E aí, coincidentemente, cara, o meu banco no avião era do lado",12,0,[],,pending_original_audio
+319,SEG_00319,647.96,650.06,"dele, assim, olha só, um banco vazio no meio dele do lado.",12,2,"[""asr_confidence""]",,pending_original_audio
+320,SEG_00320,650.1800000000001,654.3199999999999,"Aí o tio tentei ir do lado dele, e aí o Rodolfo não conversava com ele desde que antes dele ter virado crente.",23,2,"[""asr_confidence""]",,pending_original_audio
+321,SEG_00321,654.5,658.3199999999999,"Eu conheço ele faz tempo, o Raimundo já abriu pro Rádio Porão, Brasília,",13,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+322,SEG_00322,658.42,658.72,"né, eu",2,0,"[""overlapping_speech""]",,pending_original_audio
+323,SEG_00323,658.72,659.08,conheço,1,0,"[""overlapping_speech""]",,pending_original_audio
+324,SEG_00324,659.08,659.46,ele faz tempo.,3,0,"[""overlapping_speech""]",,pending_original_audio
+325,SEG_00325,659.54,663.1800000000001,"Ele, não, não sei o quê, não tocamos no assunto de Jesus em algum momento.",15,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+326,SEG_00326,663.46,671.3,"Uma hora ele perguntou da minha saúde, eu falei que tava mais ou menos, aí ele começou aquele papo, né, porque sabe que Deus deve ter uma missão pra você aqui na Terra, por isso que ele deixou você viver, né.",41,0,"[""overlapping_speech""]",,pending_original_audio
+327,SEG_00327,671.38,672.74,Eu tenho uma preguiça desse papo.,6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+328,SEG_00328,672.74,675.36,"E eu, não, pode crer, né, tentando sair assim.",9,1,"[""asr_confidence""]",,pending_original_audio
+329,SEG_00329,675.64,679.52,"E fomos juntos, pegamos a van juntos, né, fomos pro hotel juntos, na mesma van.",15,0,[],,pending_original_audio
+330,SEG_00330,679.64,685.76,"Chegou na hora que a van tava rodando, assim, no hotel, um hotel chique, cara, um gramado, cara, tinha uma árvore, assim, cara, eu olhei, cara,",26,1,"[""asr_confidence""]",,pending_original_audio
+331,SEG_00331,685.84,686.76,"eu juro, cara.",3,0,"[""overlapping_speech""]",,pending_original_audio
+332,SEG_00332,686.96,692.08,"Tinha um negão fortão, assim, cara, bem fortão, sem camisa, cara, o cara tava jogando um barro, assim, cara, cagando, cara.",21,0,"[""overlapping_speech""]",,pending_original_audio
+333,SEG_00333,692.1800000000001,695.84,"E tinha uma linguiça desse tamanho saindo do rabo do negão, cara, tá ligado, cara?",15,0,[],,pending_original_audio
+334,SEG_00334,696.14,700.6800000000001,"Aí eu olhei aquilo e falei, caralho, cara, aí abriu, filha da puta!",13,1,"[""asr_confidence""]",,pending_original_audio
+335,SEG_00335,701.06,703.7,"Olha aqui, eu falei, filha da puta, que ela cortou assim, caiu.",12,2,"[""asr_confidence""]",,pending_original_audio
+336,SEG_00336,704.5,704.8199999999999,Bagulho.,1,0,[],,pending_original_audio
+337,SEG_00337,705.86,711.22,Isso marcou o meu último rolê com o Rodolfo.,9,0,[],,pending_original_audio
+338,SEG_00338,711.22,712.48,"Cara, olha só, olha só que doideira.",7,0,[],,pending_original_audio
+339,SEG_00339,712.56,714.84,Foi uma metáfora para o,5,0,"[""overlapping_speech""]",,pending_original_audio
+340,SEG_00340,714.84,716.9,"Rodolfo sendo cortado da sua vida, às vezes.",8,0,"[""overlapping_speech""]",,pending_original_audio
+341,SEG_00341,717.12,717.46,"É, cara.",2,0,[],,pending_original_audio
+342,SEG_00342,717.58,717.7,Uma,1,1,"[""asr_confidence""]",,pending_original_audio
+343,SEG_00343,717.7,721.36,"maquininha de cortar a bosta, pum, caiu.",7,2,"[""asr_confidence"", ""overlapping_speech"", ""timestamps""]",,pending_original_audio
+344,SEG_00344,721.54,722.38,E aí,2,0,"[""overlapping_speech""]",,pending_original_audio
+345,SEG_00345,722.38,723.08,"teve o show, cara.",4,0,[],,pending_original_audio
+346,SEG_00346,723.18,729.04,"Aí no show, era o mesmo camarim, e tava ali o pessoal reunido da banda dele, falou, meu, e aí tava o Fernandão, não sei se vocês viram falar",29,3,"[""asr_confidence""]",,pending_original_audio
+347,SEG_00347,729.04,729.56,"desse cara, cara.",3,1,"[""asr_confidence""]",,pending_original_audio
+348,SEG_00348,729.64,729.86,O Fernandão,2,1,"[""asr_confidence""]",,pending_original_audio
+349,SEG_00349,729.86,729.98,é,1,0,"[""overlapping_speech""]",,pending_original_audio
+350,SEG_00350,729.98,730.44,"invocado,",1,0,"[""overlapping_speech""]",,pending_original_audio
+351,SEG_00351,730.48,730.96,baterista e,2,0,[],,pending_original_audio
+352,SEG_00352,730.96,732.48,"tal, briguento pra caralho.",4,0,"[""overlapping_speech""]",,pending_original_audio
+353,SEG_00353,732.54,735.86,"E aí, cara, ele fez o pessoal orar na nossa frente, cara.",12,0,"[""overlapping_speech""]",,pending_original_audio
+354,SEG_00354,735.9,736.98,"Aí, ó, o pessoal, vamos orar aqui.",7,0,"[""overlapping_speech""]",,pending_original_audio
+355,SEG_00355,737.26,740.78,"Aí juntou os cinco, assim, começaram a orar na nossa frente, faz tudo.",13,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+356,SEG_00356,742.08,743.14,Tá ligado aquela coisa meio...,5,0,[],,pending_original_audio
+357,SEG_00357,743.14,746.72,"Cara, eu acho que isso aí irritou o Fernandão de um jeito, cara, tá ligado?",15,1,"[""asr_confidence""]",,pending_original_audio
+358,SEG_00358,746.78,750.36,"Que na segunda música, velho, ele deu um tiro de meta no bumbo da bateria e acabou o show.",19,1,"[""asr_confidence""]",,pending_original_audio
+359,SEG_00359,750.5,757.64,"Na segunda música, o último show do Rodox, foi o Fernandão dando um tiro de meta na bateria, a bateria voando no meio da galera, assim, uns 30 metros, velho.",30,0,[],,pending_original_audio
+360,SEG_00360,757.7,757.98,Acabou.,1,0,[],,pending_original_audio
+361,SEG_00361,758.68,759.64,"Caralho, irmão, louco.",3,0,[],,pending_original_audio
+362,SEG_00362,759.66,759.9,Acabou.,1,0,[],,pending_original_audio
+363,SEG_00363,759.9,760.12,"Eita,",1,0,"[""overlapping_speech""]",,pending_original_audio
+364,SEG_00364,760.12,762.96,"aí, essa é a minha história que eu tenho com o Rodox.",12,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+365,SEG_00365,762.98,768.5,"Das grandes perdas que gente teve pra Jesus aí, eu acho que foi o Rodox, que pra mim era um excelente cantor de rock, viu?",25,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+366,SEG_00366,768.6,771.3,"E um carinha bem legal também, tá ligado?",8,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+367,SEG_00367,771.3,771.82,É que acho,3,2,"[""asr_confidence""]",,pending_original_audio
+368,SEG_00368,771.82,777.94,"que lá, ele deve ter abusado, deve ter visto alguma coisa horrível, deve ter acontecido alguma coisa forte na vida dele que ele pegou e abraçou",26,2,"[""asr_confidence""]",,pending_original_audio
+369,SEG_00369,777.94,778.14,Jesus.,1,0,"[""overlapping_speech""]",,pending_original_audio
+370,SEG_00370,778.52,787.22,"testemunho, ele falou que uma mulher falou pra ele que a irmã foi orar por ele quando ele tava mauzão, que tava usando droga pra caralho, mal pra caralho, e falou que ele tinha um câncer, mas que Deus ia curar.",41,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+371,SEG_00371,787.28,789.7,"E aí, deu um revestresse na cabeça dele e ele",10,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+372,SEG_00372,789.7,790.8199999999999,aceitou Jesus e foi isso aí.,6,0,[],,pending_original_audio
+373,SEG_00373,790.92,791.06,Aqui,1,0,"[""overlapping_speech""]",,pending_original_audio
+374,SEG_00374,791.06,798.22,"ó, vídeo, vamos só dar uma olhada nesse vídeo, que eu tô vendo um vídeo aqui contigo, eu nem queria que fosse um vídeo normal, então eu tô vendo um vídeo que nem eu vi, é só aparecer no meu YouTube aqui.",42,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+375,SEG_00375,798.22,798.3199999999999,O,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+376,SEG_00376,798.3199999999999,799.64,"título é o do Yudi, não",6,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+377,SEG_00377,799.64,800.24,"confunda,",1,0,[],,pending_original_audio
+378,SEG_00378,800.24,801.86,"sou crente, mas não sou bobo não.",7,1,"[""asr_confidence""]",,pending_original_audio
+379,SEG_00379,802.0,802.4,É assim.,2,0,[],,pending_original_audio
+380,SEG_00380,803.62,803.98,Não,1,0,[],,pending_original_audio
+381,SEG_00381,803.98,804.2,dá.,1,0,[],,pending_original_audio
+382,SEG_00382,804.66,805.02,É,1,0,[],,pending_original_audio
+383,SEG_00383,805.02,806.46,"cada coisa que eu recebo aqui,",6,0,[],,pending_original_audio
+384,SEG_00384,806.58,807.38,e,1,0,[],,pending_original_audio
+385,SEG_00385,807.38,808.12,"eu paro e penso,",4,0,[],,pending_original_audio
+386,SEG_00386,808.3,809.26,eu,1,0,[],,pending_original_audio
+387,SEG_00387,809.39,810.09,me converti.,2,0,[],,pending_original_audio
+388,SEG_00388,810.17,810.53,Só,1,0,[],,pending_original_audio
+389,SEG_00389,810.53,812.45,que as pessoas acabam confundindo muito.,6,0,[],,pending_original_audio
+390,SEG_00390,813.29,813.65,Eu,1,0,[],,pending_original_audio
+391,SEG_00391,813.65,815.73,"sou crente, mas não sou bobo não.",7,0,[],,pending_original_audio
+392,SEG_00392,815.89,817.87,Tu dá 10% do teu salário pra um cara que,11,0,"[""punctuation""]",,pending_original_audio
+393,SEG_00393,817.87,818.99,tu,1,0,[],,pending_original_audio
+394,SEG_00394,818.99,820.75,não faz a menor ideia de onde vai ficar esse dinheiro.,11,1,"[""asr_confidence""]",,pending_original_audio
+395,SEG_00395,820.9300000000001,822.21,"E bobo tu não bobo não, amigo.",7,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+396,SEG_00396,822.53,826.05,"Esse negócio de dízimo é uma coisa muito foda, né cara?",11,1,"[""asr_confidence""]",,pending_original_audio
+397,SEG_00397,826.05,831.23,"Porque as vezes a pessoa precisa dessa grana, o salário mínimo que é R.600,00?",16,6,"[""asr_confidence""]",,pending_original_audio
+398,SEG_00398,831.37,833.0699999999999,"Não, R 1.500,00 né?",6,2,"[""asr_confidence""]",,pending_original_audio
+399,SEG_00399,833.17,833.47,É.,1,1,"[""asr_confidence""]",,pending_original_audio
+400,SEG_00400,833.47,834.0699999999999,"R.500,00.",3,1,"[""asr_confidence""]",,pending_original_audio
+401,SEG_00401,834.15,836.19,"É, então fica R 150,00 e dá para o pastor.",11,4,"[""asr_confidence""]",,pending_original_audio
+402,SEG_00402,836.33,836.61,E,1,0,"[""overlapping_speech""]",,pending_original_audio
+403,SEG_00403,836.61,837.89,o foda é a,4,0,"[""overlapping_speech""]",,pending_original_audio
+404,SEG_00404,837.89,838.97,culpa que eles botam em cima disso.,7,0,[],,pending_original_audio
+405,SEG_00405,839.13,839.49,Se não der.,3,0,"[""overlapping_speech""]",,pending_original_audio
+406,SEG_00406,839.5699999999999,840.29,"É, se não der.",4,0,[],,pending_original_audio
+407,SEG_00407,840.33,840.73,Se não der.,3,0,[],,pending_original_audio
+408,SEG_00408,840.73,848.03,"Se não der, tu é pobre, por exemplo, tu pobre, tu as contas não deu e tu tá aí, pô, não tem como pagar dízimo, ele tem um demônio que ele chama demônio devorador.",34,3,"[""asr_confidence""]",,pending_original_audio
+409,SEG_00409,848.17,852.4300000000001,"Então se você não der o dinheiro lá do dízimo e aí você vai, ah, não tenho dinheiro.",18,1,"[""asr_confidence""]",,pending_original_audio
+410,SEG_00410,852.4300000000001,859.63,"É o demônio devorador que tá fazendo você ser pobre E tá com as finanças ruins Então você tem que voltar a dar o dízimo e oferta Que não é só o dízimo não, tá?",35,2,"[""asr_confidence""]",,pending_original_audio
+411,SEG_00411,859.71,861.67,"Tem o dízimo e a oferta durante os cultos também, tá ligado?",12,1,"[""asr_confidence""]",,pending_original_audio
+412,SEG_00412,861.75,865.73,"E aí tu entra no psicológico da pessoa, porra A pessoa não tá pagando as contas, tu fala que tem um demônio lá É",24,0,"[""overlapping_speech""]",,pending_original_audio
+413,SEG_00413,865.73,866.25,foda,1,0,"[""overlapping_speech""]",,pending_original_audio
+414,SEG_00414,866.25,872.35,"acreditar nesse monte de coisa que o pastor fala Tudo que o pastor fala é verdade, cara O pessoal não tem desconfiômetro Não tem porque é",26,2,"[""asr_confidence""]",,pending_original_audio
+415,SEG_00415,872.35,876.75,"muito bem planejado O esquema, mano, quando tu vem lá de dentro Tu vê que pra toda pergunta que tu",20,0,"[""overlapping_speech""]",,pending_original_audio
+416,SEG_00416,876.75,881.91,"faz Tem uma brecha que eles falam, por exemplo Do dízimo é essa Porra, não tenho dinheiro Você já não tem dinheiro porque você não está dando o dízimo.",29,5,"[""asr_confidence""]",,pending_original_audio
+417,SEG_00417,881.97,883.19,"Mais uma coisa, aquele pastor",5,0,"[""overlapping_speech""]",,pending_original_audio
+418,SEG_00418,883.19,884.39,chapeludo,1,0,"[""overlapping_speech""]",,pending_original_audio
+419,SEG_00419,884.39,886.31,"que vende vassoura, que vende areia do",7,0,[],,pending_original_audio
+420,SEG_00420,886.31,886.53,"Rio,",1,0,"[""overlapping_speech""]",,pending_original_audio
+421,SEG_00421,886.53,887.81,água do Rio,3,0,"[""overlapping_speech""]",,pending_original_audio
+422,SEG_00422,887.81,889.05,"Jordão, tá ligado?",3,0,"[""overlapping_speech""]",,pending_original_audio
+423,SEG_00423,889.41,889.9300000000001,Valdomiro Santiago.,2,0,[],,pending_original_audio
+424,SEG_00424,890.25,891.13,"É, Valdomiro Santiago, cara.",4,0,[],,pending_original_audio
+425,SEG_00425,891.15,894.01,"Vende vassoura que varre o satanás pra fora,",8,0,"[""overlapping_speech""]",,pending_original_audio
+426,SEG_00426,894.01,894.21,cara.,1,0,"[""overlapping_speech""]",,pending_original_audio
+427,SEG_00427,894.31,894.63,"Sim, sim, sim.",3,0,"[""overlapping_speech""]",,pending_original_audio
+428,SEG_00428,894.77,898.17,"Cara, o cara tem que ser muito bom pra comprar um bagulho desse por mil reais e achar que tá dando",21,1,"[""asr_confidence""]",,pending_original_audio
+429,SEG_00429,898.17,898.41,"certo,",1,0,"[""overlapping_speech""]",,pending_original_audio
+430,SEG_00430,898.45,898.53,né?,1,0,"[""overlapping_speech""]",,pending_original_audio
+431,SEG_00431,898.53,898.83,Mas aí eles,3,0,"[""overlapping_speech""]",,pending_original_audio
+432,SEG_00432,898.83,899.0699999999999,falam,1,0,"[""overlapping_speech""]",,pending_original_audio
+433,SEG_00433,899.0699999999999,901.81,"assim, tu pega uma população fragilizada mentalmente, já.",8,0,"[""overlapping_speech""]",,pending_original_audio
+434,SEG_00434,901.9300000000001,903.05,Já por vários motivos.,4,0,[],,pending_original_audio
+435,SEG_00435,903.19,905.19,"Cansado de trabalhar, uma escala desgraçada.",6,1,"[""asr_confidence""]",,pending_original_audio
+436,SEG_00436,905.25,906.69,"Ganha um pouco, tudo fodido.",5,0,[],,pending_original_audio
+437,SEG_00437,906.75,921.03,"Aí ele chega na igreja e lá eles falam assim, o pastor é um anjo de deus na terra então você não pode questionar o que o pastor fala que o pastor está falando está na bíblica o pastor é anjo de deus na terra então se tu questiona o pastor é como se tivesse mandando um pastor tomar no cu é como se tivesse mandando um anjo tomar no cu é uma",73,6,"[""asr_confidence""]",,pending_original_audio
+438,SEG_00438,921.03,921.95,heresia,1,0,[],,pending_original_audio
+439,SEG_00439,921.95,932.45,gigantesca outra coisa que me irrita também é esse pastor milionário com as roupas caríssimas as roupas de grife com os relógios foda isso é,25,4,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+440,SEG_00440,932.45,934.67,uma humilhação pro,3,0,"[""overlapping_speech""]",,pending_original_audio
+441,SEG_00441,934.67,936.13,fiel,1,0,"[""overlapping_speech""]",,pending_original_audio
+442,SEG_00442,936.13,940.69,"o valadão tem uma mochila uma mochila de 400 mil reais, uma mochila de 400 mil reais.",17,1,"[""asr_confidence""]",,pending_original_audio
+443,SEG_00443,940.73,941.99,Vamos ver o que hoje ele tá falando aqui.,9,3,"[""asr_confidence""]",,pending_original_audio
+444,SEG_00444,942.17,945.0699999999999,Tem que ver esse cara falando mesmo?,7,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+445,SEG_00445,945.25,945.35,"Não,",1,0,[],,pending_original_audio
+446,SEG_00446,945.41,946.37,mas tem que terminar de ver que,7,2,"[""asr_confidence""]",,pending_original_audio
+447,SEG_00447,946.37,946.67,agora,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+448,SEG_00448,946.67,946.85,vai,1,0,"[""overlapping_speech""]",,pending_original_audio
+449,SEG_00449,946.85,947.17,ter que ver.,3,0,[],,pending_original_audio
+450,SEG_00450,947.35,947.63,O que,2,0,"[""overlapping_speech""]",,pending_original_audio
+451,SEG_00451,947.63,948.25,eu aprendi,2,0,"[""overlapping_speech""]",,pending_original_audio
+452,SEG_00452,948.25,949.77,eu preciso compartilhar com você.,5,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+453,SEG_00453,950.17,950.49,Porque,1,0,[],,pending_original_audio
+454,SEG_00454,950.49,953.67,"eu acho que ele vai vender um curso aqui, tá com muita edição de curso.",15,0,[],,pending_original_audio
+455,SEG_00455,953.83,956.4300000000001,Eu acho que ele dar um curso pra você.,9,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+456,SEG_00456,956.45,959.09,"É, porque ele tem o xaveco televisivo, né?",8,0,"[""overlapping_speech""]",,pending_original_audio
+457,SEG_00457,959.09,960.74,"Então ele sabe falar, ele sabe falar também.",8,3,"[""asr_confidence"", ""overlapping_speech"", ""timestamps""]",,pending_original_audio
+458,SEG_00458,960.86,961.88,Ele tem uma desenvoltura.,4,0,[],,pending_original_audio
+459,SEG_00459,962.02,963.18,"Eu cresci com esse rapaz, mano.",6,0,[],,pending_original_audio
+460,SEG_00460,963.28,965.76,Foi outra pessoa que eu fiquei triste também quando eu vi que virou crente.,14,0,[],,pending_original_audio
+461,SEG_00461,965.78,966.82,"Pô, gostava tanto do Willian.",5,1,"[""asr_confidence""]",,pending_original_audio
+462,SEG_00462,966.88,966.98,Como,1,0,[],,pending_original_audio
+463,SEG_00463,966.98,969.18,"é que o nome daquele cara que queimou tudo, que ele era paquito?",13,1,"[""asr_confidence""]",,pending_original_audio
+464,SEG_00464,969.42,972.84,"Aí o cara fez uma fogueira com disco de ouro, com roupa, com disco, com tudo que",17,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+465,SEG_00465,972.84,973.06,tinha.,1,0,"[""overlapping_speech""]",,pending_original_audio
+466,SEG_00466,973.32,973.96,Era Rafael...,2,0,"[""overlapping_speech""]",,pending_original_audio
+467,SEG_00467,973.96,974.24,"Não,",1,0,"[""overlapping_speech""]",,pending_original_audio
+468,SEG_00468,974.26,975.06,"o Rafael Willian é outro, né?",6,0,"[""overlapping_speech""]",,pending_original_audio
+469,SEG_00469,975.1,975.36,"Não, o",2,0,"[""overlapping_speech""]",,pending_original_audio
+470,SEG_00470,975.36,975.46,Rafael,1,0,"[""overlapping_speech""]",,pending_original_audio
+471,SEG_00471,975.46,975.56,Willian.,1,0,"[""overlapping_speech""]",,pending_original_audio
+472,SEG_00472,975.56,976.28,O Willian é do...,4,0,"[""overlapping_speech""]",,pending_original_audio
+473,SEG_00473,976.28,977.52,"É outro boto rolê, né?",5,1,"[""asr_confidence""]",,pending_original_audio
+474,SEG_00474,977.52,978.56,Mas ele virou crente também.,5,0,"[""overlapping_speech""]",,pending_original_audio
+475,SEG_00475,978.66,981.18,"Ele também, mas óbvio que vai virar crente, pô.",9,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+476,SEG_00476,981.18,988.5,"Porque todo drogado que tu conhece, mano Todo drogado que você conhece hoje, que é muito doido Que tu fala assim, mano, esse cara é doidão Ele vai virar crente É porque ele já foi da Mas eu não",39,4,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+477,SEG_00477,988.5,991.0,"precisei virar crente, parei com tudo, cara Mas vou te explicar, tem",12,0,"[""overlapping_speech""]",,pending_original_audio
+478,SEG_00478,991.0,993.34,uma diferença Presta atenção O que é a crença na igreja agora?,12,1,"[""asr_confidence""]",,pending_original_audio
+479,SEG_00479,993.4,993.84,A aula de,3,0,"[""overlapping_speech""]",,pending_original_audio
+480,SEG_00480,993.84,995.22,como funciona o crente,4,0,"[""overlapping_speech""]",,pending_original_audio
+481,SEG_00481,995.76,1007.96,"De Tcham, Tcham, Tcham, Tcham Para o aluno João É tipo assim, ó Você é da igreja E aí você segue as regras Tu acredita em tudo Tu acredita em Deus Tu acredita no inferno Só que aí você não pode fazer um monte de coisa da hora Que é tipo, pô beber, fumar um",55,6,"[""asr_confidence"", ""hallucination_proxy""]",,pending_original_audio
+482,SEG_00482,1007.96,1012.32,"bagulho, pô, maconha, ir pra uma festa, ouvir música que não seja gospel, tá ligado?",15,0,[],,pending_original_audio
+483,SEG_00483,1012.4,1013.76,"Então, você sente aquilo, pô, queria.",6,0,[],,pending_original_audio
+484,SEG_00484,1013.94,1014.78,"Então, muita gente sai.",4,0,[],,pending_original_audio
+485,SEG_00485,1014.92,1016.44,Só sai pra fazer essas coisas.,6,0,[],,pending_original_audio
+486,SEG_00486,1016.64,1018.94,Elas não saem porque elas pensaram e estudaram.,8,0,[],,pending_original_audio
+487,SEG_00487,1019.02,1020.98,"Vieram, pô, minha religião aqui tá mentindo sobre isso.",9,0,[],,pending_original_audio
+488,SEG_00488,1021.0,1021.98,A Bíblia é contraditória.,4,0,[],,pending_original_audio
+489,SEG_00489,1022.1800000000001,1025.22,"Ai, estudei ciência e percebi que não foi Adão e Eva.",11,0,[],,pending_original_audio
+490,SEG_00490,1025.36,1026.5,Sai pelos pecados.,3,0,"[""overlapping_speech""]",,pending_original_audio
+491,SEG_00491,1026.5,1027.42,Só sai pelos pecados.,4,0,"[""overlapping_speech""]",,pending_original_audio
+492,SEG_00492,1027.42,1032.52,"Então, aí, essa pessoa que sai desse jeito, quando ela tá lá no mundo, ela não sabe regrar a vida dela.",21,0,"[""overlapping_speech""]",,pending_original_audio
+493,SEG_00493,1032.62,1034.32,"Porque, tipo assim, ela não sabe como fumar.",8,0,[],,pending_original_audio
+494,SEG_00494,1034.34,1035.02,Ela não sabe como beber.,5,0,[],,pending_original_audio
+495,SEG_00495,1035.02,1041.4,"Então quando ela vai, ela bebe tudo que vem pela frente, usa todas as drogas que vêm pela frente, sai comendo todo mundo que vem pela frente, o acontece de uma vida de excesso?",34,2,"[""asr_confidence""]",,pending_original_audio
+496,SEG_00496,1041.42,1042.32,A tua vida fica uma bosta.,6,1,"[""asr_confidence""]",,pending_original_audio
+497,SEG_00497,1042.48,1046.34,"E como essa pessoa não saiu da igreja pelo jeito certo, ela ainda tem aquela culpa.",16,0,[],,pending_original_audio
+498,SEG_00498,1046.5,1050.1,"Então quando a vida dela tá uma bosta, ela percebe assim, mano, minha vida é essa merda porque eu saí da igreja.",22,0,[],,pending_original_audio
+499,SEG_00499,1050.16,1053.4,"E ela volta, e aí viram aqueles crentes mais chatos que existem no planeta.",14,0,[],,pending_original_audio
+500,SEG_00500,1053.68,1058.96,"Os crentes mais chatos que tu conhece, são os que tiveram a vida mais louca de todas na adolescência de um Tipo a",23,0,"[""overlapping_speech""]",,pending_original_audio
+501,SEG_00501,1058.96,1059.32,feiticeira,1,0,"[""overlapping_speech""]",,pending_original_audio
+502,SEG_00502,1059.32,1061.5,"lá falando do carnaval, essas histórias todas, não foi, cara?",10,0,[],,pending_original_audio
+503,SEG_00503,1061.64,1062.32,"Sim, sim, sim.",3,0,[],,pending_original_audio
+504,SEG_00504,1062.4,1064.0,"Volta moralista ao triplo, cara.",5,0,[],,pending_original_audio
+505,SEG_00505,1065.02,1065.4,"Crente, mano.",2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+506,SEG_00506,1065.44,1066.3,A Gretchen já foi crente.,5,1,"[""asr_confidence""]",,pending_original_audio
+507,SEG_00507,1066.3,1066.72,Isso incrível.,2,0,"[""overlapping_speech""]",,pending_original_audio
+508,SEG_00508,1066.84,1066.94,Eu gosto,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+509,SEG_00509,1066.94,1067.14,demais,1,0,"[""overlapping_speech""]",,pending_original_audio
+510,SEG_00510,1067.14,1067.36,"disso,",1,0,"[""overlapping_speech""]",,pending_original_audio
+511,SEG_00511,1067.4,1067.46,mano.,1,0,"[""overlapping_speech""]",,pending_original_audio
+512,SEG_00512,1067.46,1067.66,Eu,1,0,"[""overlapping_speech""]",,pending_original_audio
+513,SEG_00513,1067.66,1068.06,já fui na casa,4,0,[],,pending_original_audio
+514,SEG_00514,1068.06,1068.54,da Gretchen.,2,0,[],,pending_original_audio
+515,SEG_00515,1068.6,1069.72,"Olha só, mano.",3,0,"[""overlapping_speech""]",,pending_original_audio
+516,SEG_00516,1070.18,1071.28,Isso é incrível.,3,0,"[""overlapping_speech""]",,pending_original_audio
+517,SEG_00517,1071.36,1071.68,Isso é incrível.,3,1,"[""asr_confidence""]",,pending_original_audio
+518,SEG_00518,1071.86,1073.5,"Crente, ele é uma ovelha.",5,0,[],,pending_original_audio
+519,SEG_00519,1073.82,1074.14,Sim.,1,0,[],,pending_original_audio
+520,SEG_00520,1074.34,1078.26,"Ele é uma ovelha dentro do quarto, em oração na presença do pai.",13,1,"[""asr_confidence""]",,pending_original_audio
+521,SEG_00521,1078.46,1080.2,"Mas quando ele sai daquele quarto,",6,0,"[""overlapping_speech""]",,pending_original_audio
+522,SEG_00522,1082.26,1082.58,ele,1,0,[],,pending_original_audio
+523,SEG_00523,1082.58,1083.24,vira um leão.,3,0,[],,pending_original_audio
+524,SEG_00524,1083.92,1085.2,"Não confunda as coisas, viu?",5,0,[],,pending_original_audio
+525,SEG_00525,1085.82,1086.7,"Cada coisa, viu?",3,0,[],,pending_original_audio
+526,SEG_00526,1087.63,1087.8899999999999,"Pô,",1,0,[],,pending_original_audio
+527,SEG_00527,1087.91,1089.83,tu vai ser uma ovelha no quarto e um leão fora.,11,0,[],,pending_original_audio
+528,SEG_00528,1089.97,1091.65,"Tu tem que ser um leão dentro do quarto, meu amigo.",11,0,"[""overlapping_speech""]",,pending_original_audio
+529,SEG_00529,1092.31,1092.63,Se,1,0,"[""overlapping_speech""]",,pending_original_audio
+530,SEG_00530,1092.63,1093.79,"não, tua mulher te larga um mês.",7,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+531,SEG_00531,1094.41,1094.73,Porque,1,1,"[""asr_confidence""]",,pending_original_audio
+532,SEG_00532,1094.73,1097.35,"tu gosta de marido, aí ele é uma ovelhinha dentro do quarto, porra.",13,5,"[""asr_confidence""]",,pending_original_audio
+533,SEG_00533,1097.37,1098.65,"Mas fora é um leão, viu?",6,0,[],,pending_original_audio
+534,SEG_00534,1098.69,1099.35,Fora é um leão.,4,0,[],,pending_original_audio
+535,SEG_00535,1099.47,1102.23,"Porra, agora, eu queria vir um negócio pra te mostrar agora.",11,2,"[""asr_confidence""]",,pending_original_audio
+536,SEG_00536,1102.31,1103.03,Quer ir pra gente terminar?,5,0,[],,pending_original_audio
+537,SEG_00537,1103.33,1104.75,Eu não sei se tu tá ligado.,7,0,[],,pending_original_audio
+538,SEG_00538,1105.3899999999999,1105.71,Vai,1,0,[],,pending_original_audio
+539,SEG_00539,1105.71,1106.1100000000001,fumando aí.,2,0,[],,pending_original_audio
+540,SEG_00540,1106.21,1108.6100000000001,"O Valdemiro Santiago tomou uma facada dentro da igreja, tá ligado?",11,0,[],,pending_original_audio
+541,SEG_00541,1108.67,1109.17,"É mesmo, cara?",3,0,[],,pending_original_audio
+542,SEG_00542,1109.31,1109.95,Tu não sabia disso?,4,0,[],,pending_original_audio
+543,SEG_00543,1110.17,1111.49,"Não, eu lembro, mas...",4,0,[],,pending_original_audio
+544,SEG_00544,1111.49,1111.65,"Ó,",1,1,"[""asr_confidence""]",,pending_original_audio
+545,SEG_00545,1111.71,1113.07,e olha o que aconteceu.,5,1,"[""asr_confidence""]",,pending_original_audio
+546,SEG_00546,1113.23,1114.25,"O bicho tava fazendo um culto, mano.",7,0,[],,pending_original_audio
+547,SEG_00547,1114.29,1115.87,"Chegou um doidinho lá, um Adélio, né?",7,0,[],,pending_original_audio
+548,SEG_00548,1115.93,1119.65,E deu-lhe uma facada no Valdemiro.,7,0,"[""overlapping_speech""]",,pending_original_audio
+549,SEG_00549,1119.71,1120.41,Aí sabe o que o bicho fez?,7,1,"[""asr_confidence""]",,pending_original_audio
+550,SEG_00550,1120.53,1122.53,"Depois que passou tudo, voltou do hospital e tal.",9,0,[],,pending_original_audio
+551,SEG_00551,1122.53,1125.79,"Mano, ele vendeu pedaço da camiseta dele com sangue pro",10,0,"[""overlapping_speech""]",,pending_original_audio
+552,SEG_00552,1125.79,1126.17,Fielho.,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+553,SEG_00553,1126.17,1127.07,"É santificado, cara.",3,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+554,SEG_00554,1127.07,1127.35,"É, mano.",2,0,[],,pending_original_audio
+555,SEG_00555,1127.47,1127.79,O,1,0,[],,pending_original_audio
+556,SEG_00556,1127.79,1128.03,cara,1,0,[],,pending_original_audio
+557,SEG_00557,1128.03,1128.57,"é brabo, mano.",3,0,[],,pending_original_audio
+558,SEG_00558,1128.59,1129.65,"É um gênio dos negócios, pô.",6,0,[],,pending_original_audio
+559,SEG_00559,1129.73,1130.49,É um gênio dos negócios.,5,0,"[""overlapping_speech""]",,pending_original_audio
+560,SEG_00560,1130.55,1131.17,Tudo é negócio.,3,0,[],,pending_original_audio
+561,SEG_00561,1131.85,1132.85,Pra plantar feijão.,3,0,[],,pending_original_audio
+562,SEG_00562,1132.85,1134.35,"Ah, ele vendeu feijão, feijão",5,0,"[""overlapping_speech""]",,pending_original_audio
+563,SEG_00563,1134.35,1134.67,procurado,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+564,SEG_00564,1134.67,1135.31,"por Covid, é verdade.",4,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+565,SEG_00565,1135.41,1137.21,"Cara, mas ele não tá fudido de grana?",8,0,[],,pending_original_audio
+566,SEG_00566,1137.21,1138.57,Não perdeu um monte de grana aí?,7,0,[],,pending_original_audio
+567,SEG_00567,1138.65,1139.83,Não tá pagando aluguel?,4,0,[],,pending_original_audio
+568,SEG_00568,1139.83,1140.93,Não tá falindo?,3,0,[],,pending_original_audio
+569,SEG_00569,1141.17,1142.59,"Tá, mas eu não sei se tá",7,0,"[""overlapping_speech""]",,pending_original_audio
+570,SEG_00570,1142.59,1142.8899999999999,mesmo.,1,0,"[""overlapping_speech""]",,pending_original_audio
+571,SEG_00571,1142.91,1143.59,"Não tá, meu.",3,0,"[""overlapping_speech""]",,pending_original_audio
+572,SEG_00572,1143.79,1144.35,Esses caras têm,3,0,[],,pending_original_audio
+573,SEG_00573,1144.35,1144.59,dinheiro,1,0,"[""overlapping_speech""]",,pending_original_audio
+574,SEG_00574,1144.59,1145.63,pra caralho.,2,0,"[""overlapping_speech""]",,pending_original_audio
+575,SEG_00575,1145.71,1148.05,"metem, se que tá falindo é pros Fielho ajudar mais ainda, pô.",12,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+576,SEG_00576,1148.09,1149.37,"Ele faz vídeo chorando lá, pedindo.",6,0,[],,pending_original_audio
+577,SEG_00577,1149.37,1153.33,"Nós estamos falindo aqui É, eu preciso de um milhão agora Tu tá cunhate, filha da",16,4,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+578,SEG_00578,1153.33,1153.57,puta,1,0,"[""overlapping_speech""]",,pending_original_audio
+579,SEG_00579,1153.57,1154.51,"Como assim, porra?",3,0,[],,pending_original_audio
+580,SEG_00580,1155.26,1155.58,"Cara,",1,0,[],,pending_original_audio
+581,SEG_00581,1155.62,1159.6,"eu cortei a tampa do dedo, velho Com faca, enfiadíssima assim Ah, tu tá cozinhando, né?",16,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+582,SEG_00582,1159.74,1162.7,"É, eu meio que com a fatia do dedo E o teu restaurante?",13,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+583,SEG_00583,1163.1,1163.58,Fica onde?,2,0,[],,pending_original_audio
+584,SEG_00584,1163.66,1168.2,"Não, restaurante, cara É um bagulho alternativo que a gente tem Que é uma cozinha solidária Pra ajudar os pobres, entendeu?",21,1,"[""asr_confidence""]",,pending_original_audio
+585,SEG_00585,1168.3,1178.78,"A gente abre como restaurante De quarta e sábado E de sábado tem show E vai ter um sábado O próximo sábado, não esse O outro vai ter show lá do Brutal Brega Que é a minha outra banda Que canta os bregas",43,6,"[""asr_confidence""]",,pending_original_audio
+586,SEG_00586,1179.08,1180.6399999999999,"Caralho, eu gosto de brega pra caralho.",7,0,[],,pending_original_audio
+587,SEG_00587,1180.6399999999999,1182.74,"Real, o Igor tá ligado, o Igor tá ligado.",9,3,"[""asr_confidence""]",,pending_original_audio
+588,SEG_00588,1182.74,1183.58,Eu gosto pra caralho de brega.,6,0,"[""overlapping_speech""]",,pending_original_audio
+589,SEG_00589,1183.58,1183.8,Já,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+590,SEG_00590,1183.8,1186.62,"tenho um disco de brega, tenho um disco de MPB e agora vou fazer um disco de samba.",18,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+591,SEG_00591,1186.74,1187.3600000000001,Fazendo de samba?,3,0,[],,pending_original_audio
+592,SEG_00592,1187.44,1188.88,"É, pegar as músicas e transformar em punk, tá ligado?",10,1,"[""asr_confidence""]",,pending_original_audio
+593,SEG_00593,1188.96,1189.44,"Pô, foda.",2,0,[],,pending_original_audio
+594,SEG_00594,1189.44,1191.6,"Tem cada coisa engraçada, tá saindo umas coisas aí, quer ver?",11,0,[],,pending_original_audio
+595,SEG_00595,1191.66,1194.1399999999999,"Eu vou gravar segunda-feira a minha voz, mas já tá os bagulhos...",13,1,"[""asr_confidence""]",,pending_original_audio
+596,SEG_00596,1197.59,1197.87,Caralho.,1,0,[],,pending_original_audio
+597,SEG_00597,1204.21,1204.53,Esse,1,1,"[""asr_confidence""]",,pending_original_audio
+598,SEG_00598,1204.53,1205.95,vocal já tá sampleado aí né?,6,3,"[""asr_confidence""]",,pending_original_audio
+599,SEG_00599,1206.13,1207.09,Vou pôr o vocal meu.,5,1,"[""asr_confidence""]",,pending_original_audio
+600,SEG_00600,1208.49,1208.81,E,1,1,"[""asr_confidence""]",,pending_original_audio
+601,SEG_00601,1208.81,1209.19,esse aqui ó.,3,1,"[""asr_confidence""]",,pending_original_audio
+602,SEG_00602,1219.76,1220.08,Nossa.,1,1,"[""asr_confidence""]",,pending_original_audio
+603,SEG_00603,1229.7,1230.34,"Caralho, foda.",2,0,[],,pending_original_audio
+604,SEG_00604,1230.44,1230.88,Foda demais.,2,0,[],,pending_original_audio
+605,SEG_00605,1233.84,1235.14,"Esse aqui não é Ratos, né?",6,1,"[""asr_confidence""]",,pending_original_audio
+606,SEG_00606,1235.14,1235.56,Esse aqui é eu.,4,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+607,SEG_00607,1235.72,1236.72,Minhas brincadeiras.,2,0,"[""overlapping_speech""]",,pending_original_audio
+608,SEG_00608,1236.84,1237.06,sozinho.,1,0,"[""overlapping_speech""]",,pending_original_audio
+609,SEG_00609,1237.18,1241.1,"É, eu com um amigo meu, meu amigo meu produz, eu canto os bagulho em cima.",16,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+610,SEG_00610,1241.2,1243.64,"Aí tem de tudo, tem Morais Moreira, Caetano Vergosso, um monte de coisa dele.",14,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+611,SEG_00611,1243.64,1243.82,Tem alguém,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+612,SEG_00612,1243.82,1251.44,"que tem muita vontade de fazer um feat junto na música e o Ega não conseguiu, só não foi pra frente de depois eu falo.",25,5,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+613,SEG_00613,1251.48,1253.32,"Mas tem alguém que tem muita vontade de fazer um Ah,",11,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+614,SEG_00614,1253.32,1254.84,"existe o cara mais clássico assim, né?",7,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+615,SEG_00615,1254.86,1255.26,"Luca, né?",2,1,"[""asr_confidence""]",,pending_original_audio
+616,SEG_00616,1255.46,1255.78,Capitão,1,0,[],,pending_original_audio
+617,SEG_00617,1255.78,1256.26,Zé.,1,0,[],,pending_original_audio
+618,SEG_00618,1256.3,1256.96,Capitão Zé é brabo,4,0,[],,pending_original_audio
+619,SEG_00619,1256.96,1257.08,demais.,1,0,[],,pending_original_audio
+620,SEG_00620,1257.22,1259.4,É uma pessoa muito foda.,5,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+621,SEG_00621,1259.5,1260.22,Tu vê ele antes,4,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+622,SEG_00622,1260.22,1260.34,da,1,0,"[""overlapping_speech""]",,pending_original_audio
+623,SEG_00623,1260.34,1260.48,"entrevista,",1,0,"[""overlapping_speech""]",,pending_original_audio
+624,SEG_00624,1260.56,1260.88,ele é muito,3,0,"[""overlapping_speech""]",,pending_original_audio
+625,SEG_00625,1260.88,1261.06,foda.,1,0,"[""overlapping_speech""]",,pending_original_audio
+626,SEG_00626,1261.12,1263.42,"O elemento Pascoal, uma vez eu tomei com ele no aeroporto.",11,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+627,SEG_00627,1263.42,1266.28,"Ele tava com uns apitinhos, sabe esses apitinhos de boneco de borracha?",12,0,[],,pending_original_audio
+628,SEG_00628,1266.38,1266.5,Ele,1,0,[],,pending_original_audio
+629,SEG_00629,1266.5,1267.48,tava,1,0,[],,pending_original_audio
+630,SEG_00630,1267.48,1268.5,"com um, fazendo um som.",5,0,[],,pending_original_audio
+631,SEG_00631,1268.68,1271.44,"Aí eu cheguei, caralho, ele me deu um, aí eu fiquei com ele fazendo um som, cara.",17,0,[],,pending_original_audio
+632,SEG_00632,1273.2,1274.9,No meio do aeroporto.,4,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+633,SEG_00633,1274.98,1277.6,"E nessa época não tinha celular de porra nenhuma, cara.",10,3,"[""asr_confidence""]",,pending_original_audio
+634,SEG_00634,1278.28,1278.64,Foi,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+635,SEG_00635,1278.64,1278.78,pro,1,0,[],,pending_original_audio
+636,SEG_00636,1278.78,1279.16,limbo.,1,0,"[""overlapping_speech""]",,pending_original_audio
+637,SEG_00637,1279.26,1279.46,Se,1,0,"[""overlapping_speech""]",,pending_original_audio
+638,SEG_00638,1279.46,1281.1,"você não conhece, bota aí no YouTube aí, tá?",9,0,"[""overlapping_speech""]",,pending_original_audio
+639,SEG_00639,1281.16,1281.64,Tá perdendo.,2,0,[],,pending_original_audio
+640,SEG_00640,1281.76,1285.26,"E quando eu comecei a estudar música, tipo, eu vi ele como meme, né?",14,2,"[""asr_confidence""]",,pending_original_audio
+641,SEG_00641,1285.3,1286.14,Fogar moleque assim.,3,1,"[""asr_confidence""]",,pending_original_audio
+642,SEG_00642,1286.62,1286.98,Filha,1,0,[],,pending_original_audio
+643,SEG_00643,1286.98,1287.38,da puta.,2,0,[],,pending_original_audio
+644,SEG_00644,1287.58,1288.42,"É aqui, ó.",3,0,[],,pending_original_audio
+645,SEG_00645,1288.48,1289.24,É isso aí mesmo?,4,0,[],,pending_original_audio
+646,SEG_00646,1289.4,1289.54,Aham.,1,0,[],,pending_original_audio
+647,SEG_00647,1289.92,1290.28,Então,1,0,"[""overlapping_speech""]",,pending_original_audio
+648,SEG_00648,1290.28,1290.44,vamos,1,0,"[""overlapping_speech""]",,pending_original_audio
+649,SEG_00649,1290.44,1294.82,"assistir o vídeo do Valdemiro Santiago tomando uma facada, que eu acho que é um jeito legal de terminar esse vídeo.",21,0,"[""overlapping_speech""]",,pending_original_audio
+650,SEG_00650,1294.94,1295.8,E depois vendo o vídeo,5,1,"[""asr_confidence""]",,pending_original_audio
+651,SEG_00651,1295.8,1296.12,dele,1,0,[],,pending_original_audio
+652,SEG_00652,1296.12,1296.64,vendendo,1,0,"[""overlapping_speech""]",,pending_original_audio
+653,SEG_00653,1296.64,1297.1,Mas qual,2,0,"[""overlapping_speech""]",,pending_original_audio
+654,SEG_00654,1297.1,1299.42,"a ligação do Adélio Crente aí, mano?",7,0,"[""overlapping_speech""]",,pending_original_audio
+655,SEG_00655,1299.48,1300.72,"Não, ele era só doidinho mesmo, mano.",7,0,[],,pending_original_audio
+656,SEG_00656,1300.72,1303.68,"Mesma coisa, só que eu não gosto desse cara Tuf, tomou minha facada Mas",14,4,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+657,SEG_00657,1303.68,1305.66,você acredita que teve facada no Bolsonaro mesmo?,8,0,"[""overlapping_speech""]",,pending_original_audio
+658,SEG_00658,1305.84,1306.56,"Cara, eu...",2,0,[],,pending_original_audio
+659,SEG_00659,1306.56,1306.98,Eu,1,0,"[""overlapping_speech""]",,pending_original_audio
+660,SEG_00660,1306.98,1307.24,acho que é,3,0,"[""overlapping_speech""]",,pending_original_audio
+661,SEG_00661,1307.24,1308.7,"mentira, a cacete da gente foi mentira Então, eu",9,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+662,SEG_00662,1308.7,1309.16,fico,1,0,"[""overlapping_speech""]",,pending_original_audio
+663,SEG_00663,1309.16,1316.08,"muito balançado de pensar Se não, acho que eles fizeram Mas aí eu penso assim, às vezes, também Tu acha que eles são inteligentes ao ponto de bolar?",28,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+664,SEG_00664,1316.22,1318.72,"Se bolar, só se teve a ajuda de americano, entendeu?",10,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+665,SEG_00665,1318.92,1320.9,"Não, não, cara Se de estadunidense, eles conseguem É",9,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+666,SEG_00666,1320.9,1321.14,muito...,1,0,"[""overlapping_speech""]",,pending_original_audio
+667,SEG_00667,1321.66,1322.12,Na mão,2,0,"[""overlapping_speech""]",,pending_original_audio
+668,SEG_00668,1322.12,1323.2,"deles, eu acho que eles não...",6,0,[],,pending_original_audio
+669,SEG_00669,1323.2,1331.54,"Mano, tem aquelas coincidências lá Daquela deputada nazi Com aquele bagulho de tiro dela Os dois se encontram Isso aí é um monte de coincidência",25,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+670,SEG_00670,1331.54,1331.7,muito...,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+671,SEG_00671,1331.7,1332.24,Isso,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+672,SEG_00672,1332.24,1333.62,aí aumentou um pouco...,4,0,"[""overlapping_speech""]",,pending_original_audio
+673,SEG_00673,1334.52,1335.98,Esse negócio aí aumentou um pouco...,6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+674,SEG_00674,1335.98,1339.4,"É, e aí não tinha sangue, e aí mó não sei o que, mó nhenhenhen, tá ligado?",17,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+675,SEG_00675,1339.46,1341.04,"E só o médico pode encostar,",6,0,[],,pending_original_audio
+676,SEG_00676,1341.04,1343.48,"meu, é um monte de nhenhenhen, tá ligado?",8,0,[],,pending_original_audio
+677,SEG_00677,1343.6399999999999,1344.26,Eu não,2,0,"[""overlapping_speech""]",,pending_original_audio
+678,SEG_00678,1344.26,1346.58,"acredito que teve facada, acho que foi um...",8,0,"[""overlapping_speech""]",,pending_original_audio
+679,SEG_00679,1346.58,1350.8600000000001,"E aí o cara tá lá, isolado, coitado do Adélio, lá num bagulho de doido...",15,0,"[""overlapping_speech""]",,pending_original_audio
+680,SEG_00680,1350.8600000000001,1352.9,"E ninguém pode chegar pra dentro, tá ligado?",8,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+681,SEG_00681,1353.04,1357.06,"Eu também, a minha desconfiança é porque, tipo assim, eles são muito burros, tá ligado?",15,1,"[""asr_confidence""]",,pending_original_audio
+682,SEG_00682,1357.06,1360.48,A minha parte de desconfiar é porque esses caras são burros demais pra eles acertarem um bagulho.,17,4,"[""asr_confidence""]",,pending_original_audio
+683,SEG_00683,1361.02,1361.66,É muito...,2,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+684,SEG_00684,1361.66,1362.42,"Pô, o golpe, mano.",4,0,[],,pending_original_audio
+685,SEG_00685,1362.5,1363.46,O golpe é o que eles tentaram.,7,1,"[""asr_confidence""]",,pending_original_audio
+686,SEG_00686,1363.6,1365.72,A minuta do golpe a polícia não precisou procurar.,9,1,"[""asr_confidence""]",,pending_original_audio
+687,SEG_00687,1365.84,1367.34,"Tava em cima da mesa, impresso, pô.",7,0,"[""overlapping_speech""]",,pending_original_audio
+688,SEG_00688,1367.52,1369.66,"É, porque os caras tinham certeza que iam ganhar, né, cara?",11,0,"[""overlapping_speech""]",,pending_original_audio
+689,SEG_00689,1369.7,1371.4,"Por isso que os caras fizeram tudo assim, abertamente,",9,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+690,SEG_00690,1371.42,1371.76,foda-se.,2,0,"[""overlapping_speech""]",,pending_original_audio
+691,SEG_00691,1371.84,1372.6399999999999,Os tinham certeza que iam,5,0,[],,pending_original_audio
+692,SEG_00692,1372.6399999999999,1372.8,"ganhar,",1,0,"[""overlapping_speech""]",,pending_original_audio
+693,SEG_00693,1372.8,1375.02,A vai fazer um react aqui de um documentário do Adélio.,11,0,"[""overlapping_speech""]",,pending_original_audio
+694,SEG_00694,1375.08,1376.3,Provavelmente tu viu o documentário.,5,0,[],,pending_original_audio
+695,SEG_00695,1376.74,1377.68,A gente vai fazer depois.,5,0,[],,pending_original_audio
+696,SEG_00696,1377.96,1378.62,Depois eu vou,3,0,"[""overlapping_speech""]",,pending_original_audio
+697,SEG_00697,1378.62,1379.3,fazer um sozinho aqui.,4,0,"[""overlapping_speech""]",,pending_original_audio
+698,SEG_00698,1379.3600000000001,1379.48,Vamos,1,0,[],,pending_original_audio
+699,SEG_00699,1379.48,1379.68,lá.,1,0,[],,pending_original_audio
+700,SEG_00700,1379.74,1384.6399999999999,"Agora, você que não sabia que o Valdemiro tomou uma facada, ele tomou uma facada já.",16,1,"[""asr_confidence""]",,pending_original_audio
+701,SEG_00701,1384.72,1385.8,Vamos ver o momento pra tu ver.,7,0,[],,pending_original_audio
+702,SEG_00702,1385.8,1389.9,"Qual nota é essa facada, vale Vai ver aqui O tamanho",11,5,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+703,SEG_00703,1389.9,1391.1399999999999,da lapiana,2,0,[],,pending_original_audio
+704,SEG_00704,1391.1399999999999,1391.8600000000001,Homem,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+705,SEG_00705,1391.8600000000001,1392.26,de Deus,2,0,[],,pending_original_audio
+706,SEG_00706,1392.26,1393.2,e com,2,1,"[""asr_confidence""]",,pending_original_audio
+707,SEG_00707,1393.2,1393.76,certeza,1,0,[],,pending_original_audio
+708,SEG_00708,1400.96,1401.52,Meu,1,0,[],,pending_original_audio
+709,SEG_00709,1401.52,1401.92,Deus,1,0,[],,pending_original_audio
+710,SEG_00710,1403.92,1404.48,Já,1,0,[],,pending_original_audio
+711,SEG_00711,1404.48,1405.8600000000001,rolou a facada Já rolou a facada,7,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+712,SEG_00712,1408.0,1409.38,Cadê seu poder de Deus,5,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+713,SEG_00713,1410.3600000000001,1410.92,Cadê,1,0,"[""overlapping_speech""]",,pending_original_audio
+714,SEG_00714,1410.92,1418.12,"o seu poder de Deus Eu chamar a banda aqui Pirinho, quem fez o milagre foi Jesus Não para não, meu amigo",22,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+715,SEG_00715,1418.12,1422.0,"Não para O show não pode parar Vai parar o trabalho,",11,0,"[""overlapping_speech""]",,pending_original_audio
+716,SEG_00716,1422.92,1424.38,"meu amigo Caralho, mano.",4,0,"[""overlapping_speech""]",,pending_original_audio
+717,SEG_00717,1425.04,1425.54,"Obrigado, Jesus.",2,0,[],,pending_original_audio
+718,SEG_00718,1425.94,1426.78,"Ó, mas eu vou falar um negócio pra você.",9,1,"[""asr_confidence""]",,pending_original_audio
+719,SEG_00719,1426.94,1428.88,"Eu trabalhei quatro anos na Record, velho.",7,0,[],,pending_original_audio
+720,SEG_00720,1428.9,1429.22,Obrigado.,1,0,[],,pending_original_audio
+721,SEG_00721,1429.26,1429.58,Foi,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+722,SEG_00722,1429.58,1431.5,"a época que eu fiquei mais satânico, mano.",8,0,"[""overlapping_speech""]",,pending_original_audio
+723,SEG_00723,1431.54,1431.78,É mesmo?,2,0,[],,pending_original_audio
+724,SEG_00724,1431.92,1432.5,Porque eu ia...,3,1,"[""asr_confidence""]",,pending_original_audio
+725,SEG_00725,1432.5,1434.88,"Eu comecei andar com camisa de black metal, eu comecei a andar com os",14,1,"[""asr_confidence""]",,pending_original_audio
+726,SEG_00726,1434.88,1435.26,bagulho,1,0,"[""overlapping_speech""]",,pending_original_audio
+727,SEG_00727,1435.26,1435.76,ali...,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+728,SEG_00728,1435.76,1436.02,o saco?,2,0,"[""overlapping_speech""]",,pending_original_audio
+729,SEG_00729,1436.46,1437.1,Nunca encheu...,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+730,SEG_00730,1437.1,1437.76,Como isso aconteceu?,3,0,[],,pending_original_audio
+731,SEG_00731,1438.28,1439.66,Nunca me encheram saco.,4,0,[],,pending_original_audio
+732,SEG_00732,1439.66,1439.9,"Quer dizer,",2,0,[],,pending_original_audio
+733,SEG_00733,1440.02,1441.96,"o cara me empurrava pro limbo, tá ligado?",8,0,[],,pending_original_audio
+734,SEG_00734,1442.12,1442.4,Mas,1,0,[],,pending_original_audio
+735,SEG_00735,1442.4,1443.38,não queria estar aparecendo ali.,5,0,"[""overlapping_speech""]",,pending_original_audio
+736,SEG_00736,1443.46,1447.24,"Porque é o seguinte, a proposta do Mion, quando ele me convenceu pra ir pra lá,",16,1,"[""asr_confidence""]",,pending_original_audio
+737,SEG_00737,1447.54,1447.82,era,1,0,"[""overlapping_speech""]",,pending_original_audio
+738,SEG_00738,1447.82,1450.16,"que o Legendários ia ser o programa mais foda do mundo, tá ligado?",13,0,"[""overlapping_speech""]",,pending_original_audio
+739,SEG_00739,1450.4,1450.96,Eu já ia,3,0,"[""overlapping_speech""]",,pending_original_audio
+740,SEG_00740,1450.96,1452.02,ganhar o dobro que eu ia ganhar na MTV.,9,0,"[""overlapping_speech""]",,pending_original_audio
+741,SEG_00741,1452.42,1452.52,Tá,1,0,[],,pending_original_audio
+742,SEG_00742,1452.52,1452.9,ligado?,1,0,"[""overlapping_speech""]",,pending_original_audio
+743,SEG_00743,1453.04,1455.26,"E aí ia ser o programa mais foda do mundo, cara.",11,1,"[""asr_confidence""]",,pending_original_audio
+744,SEG_00744,1455.32,1462.0,"Quando eu tava lá, que eu vi que não ia ser porra nenhuma, que o negócio ia virar um sabadão sertanejo gospel, eu falei, tô fudido, que eu vou fazer o quê?",32,2,"[""asr_confidence""]",,pending_original_audio
+745,SEG_00745,1462.12,1466.32,"Aí eu fiquei lá com cara de bunda, Jogando amendoim nas minas, tá ligado?",14,0,"[""overlapping_speech""]",,pending_original_audio
+746,SEG_00746,1466.48,1471.42,"Eu e o Filipinho, o Hermes e o Renato, nós ali Esperando não passar quatro anos, cara Caralho, tu esperou os quatro anos?",23,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+747,SEG_00747,1471.48,1473.4,"Quatro anos, cara Cara, eu inventava cada...",7,0,[],,pending_original_audio
+748,SEG_00748,1473.4,1475.06,"Meu, o Mion só me fudeu, cara, tá ligado?",9,1,"[""asr_confidence""]",,pending_original_audio
+749,SEG_00749,1475.16,1477.82,"Ele me arrumava umas tretas pra me fazer, cara, tá ligado?",11,0,[],,pending_original_audio
+750,SEG_00750,1478.46,1481.6,"Cantar a boquinha da garrafa com a Cláudia Leite, cara Ah Tem no",13,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+751,SEG_00751,1481.6,1484.52,"YouTube Caralho Tem no YouTube Tem YouTube, sim Tem no YouTube",11,0,"[""overlapping_speech""]",,pending_original_audio
+752,SEG_00752,1484.9,1487.54,"Põe, põe, faz um react um dia, cara E eu ali, meu amor, cara de...",15,2,"[""asr_confidence""]",,pending_original_audio
+753,SEG_00753,1487.54,1488.08,Quer não essa nova?,4,3,"[""asr_confidence""]",,pending_original_audio
+754,SEG_00754,1488.08,1492.84,"Não, não quero Meu amor, cara de pau fudida, velho sou uma de pau, eu sou uma cara de pau, tá ligado?",22,3,"[""asr_confidence""]",,pending_original_audio
+755,SEG_00755,1492.98,1496.02,"Eu não tava fazendo série achando que ia tratar, eu tava tirando sarro,",13,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+756,SEG_00756,1496.02,1496.22,tá,1,0,"[""overlapping_speech""]",,pending_original_audio
+757,SEG_00757,1496.22,1496.6,ligado?,1,0,"[""overlapping_speech""]",,pending_original_audio
+758,SEG_00758,1496.98,1499.18,"Boquinha da garrafa com a Cláudia Leite, cara.",8,1,"[""asr_confidence""]",,pending_original_audio
+759,SEG_00759,1499.52,1500.84,"Cláudia Leite, cara.",3,0,[],,pending_original_audio
+760,SEG_00760,1500.96,1501.04,Que,1,0,[],,pending_original_audio
+761,SEG_00761,1501.04,1501.2,onda.,1,0,[],,pending_original_audio
+762,SEG_00762,1501.38,1501.88,Eu não sei nem,4,0,[],,pending_original_audio
+763,SEG_00763,1501.88,1502.02,como,1,0,"[""overlapping_speech""]",,pending_original_audio
+764,SEG_00764,1502.02,1502.64,é que aconteceu.,3,0,"[""overlapping_speech""]",,pending_original_audio
+765,SEG_00765,1502.88,1505.28,"Quando eu falei, João Guto tá na recall, eu falei, bicho, como é?",13,3,"[""asr_confidence""]",,pending_original_audio
+766,SEG_00766,1505.88,1506.16,E,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+767,SEG_00767,1506.16,1511.44,"aí eu cantei com o Tiaguinho, cantei com a Ivete Sangada.",11,0,"[""overlapping_speech""]",,pending_original_audio
+768,SEG_00768,1511.5,1515.38,"A Ivete Sangada ensaiou um bagulho do Slayer, assim, pra me mostrar, pra me cantar.",15,0,[],,pending_original_audio
+769,SEG_00769,1515.4,1517.36,"Ela cantou, eu não reconhecia a música.",7,0,[],,pending_original_audio
+770,SEG_00770,1517.46,1519.9,"Ela falou, pô, eu vim treinando a música pra te mostrar o",12,1,"[""asr_confidence""]",,pending_original_audio
+771,SEG_00771,1519.9,1520.24,Slayer.,1,0,"[""overlapping_speech""]",,pending_original_audio
+772,SEG_00772,1520.24,1523.46,E qual a pior merda que rolou lá?,8,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+773,SEG_00773,1523.48,1523.92,A pior merda que,4,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+774,SEG_00774,1523.92,1528.98,"rolou Record foi quando eu fui fazer uma matéria sobre o Sarney, em São Luís do Maranhão.",17,0,"[""overlapping_speech""]",,pending_original_audio
+775,SEG_00775,1529.14,1533.98,"Essas matérias investigativas, zoando pra caralho, cara, e vetaram o bagulho, tá ligado?",13,1,"[""asr_confidence""]",,pending_original_audio
+776,SEG_00776,1534.06,1535.46,"Aí que eu vi onde eu tava e falei, fudeu.",10,0,[],,pending_original_audio
+777,SEG_00777,1535.8,1536.12,Obrigado.,1,0,[],,pending_original_audio
+778,SEG_00778,1536.28,1537.72,"É, aí, puta, mano.",4,1,"[""asr_confidence""]",,pending_original_audio
+779,SEG_00779,1537.78,1539.94,"Assim, a experiência foi muito louca.",6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+780,SEG_00780,1540.0,1540.84,A experiência foi muito louca.,5,0,[],,pending_original_audio
+781,SEG_00781,1540.86,1542.2,"Ninguém me encheu o saco, tá ligado?",7,0,[],,pending_original_audio
+782,SEG_00782,1542.74,1547.76,"Tinha um pastor lá, cara, que ele chamava, ele chamava o Jocelyte, Jocelyte.",13,0,[],,pending_original_audio
+783,SEG_00783,1547.76,1553.36,"Ele sempre queria, ele me adorava, ele vinha, me abraçava, não sei o quê, ele ficava doido, queria um pé de pau, assim, tá ligado?",25,3,"[""asr_confidence""]",,pending_original_audio
+784,SEG_00784,1553.48,1556.14,"Aí chegou no final da caneta, eu tava amigo dele já, tá ligado?",13,1,"[""asr_confidence""]",,pending_original_audio
+785,SEG_00785,1556.62,1556.88,Tu,1,0,"[""overlapping_speech""]",,pending_original_audio
+786,SEG_00786,1556.88,1557.24,ficou amigo,2,0,"[""overlapping_speech""]",,pending_original_audio
+787,SEG_00787,1557.24,1557.6,do...,1,0,[],,pending_original_audio
+788,SEG_00788,1557.6,1559.32,"Fiquei amigo do pastor Jocelito, cara.",6,0,[],,pending_original_audio
+789,SEG_00789,1559.38,1560.12,Pastor Jocelito.,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+790,SEG_00790,1560.46,1561.32,Gente boa pra caralho.,4,0,[],,pending_original_audio
+791,SEG_00791,1561.42,1561.56,Foda.,1,0,[],,pending_original_audio
+792,SEG_00792,1561.98,1563.36,Manda um abraço aí pro pastor,6,0,"[""overlapping_speech""]",,pending_original_audio
+793,SEG_00793,1563.36,1563.74,Jocelito.,1,0,"[""overlapping_speech""]",,pending_original_audio
+794,SEG_00794,1563.82,1565.84,"Aí, Jocelito, gente boa pra caralho, meu",7,0,"[""overlapping_speech""]",,pending_original_audio
+795,SEG_00795,1565.84,1566.22,irmão.,1,0,[],,pending_original_audio
+796,SEG_00796,1566.42,1567.22,"É nóis, já pode ser o",6,3,"[""asr_confidence""]",,pending_original_audio
+797,SEG_00797,1567.22,1567.42,irmão,1,0,[],,pending_original_audio
+798,SEG_00798,1567.42,1567.78,Jocelito.,1,0,"[""overlapping_speech""]",,pending_original_audio
+799,SEG_00799,1567.8600000000001,1567.88,"É,",1,0,"[""overlapping_speech""]",,pending_original_audio
+800,SEG_00800,1567.88,1567.98,"ó,",1,0,"[""overlapping_speech""]",,pending_original_audio
+801,SEG_00801,1567.98,1569.28,Satanás te cuida.,3,0,[],,pending_original_audio
+802,SEG_00802,1570.74,1572.78,"Bom, só ver a matéria aqui pra explicar.",8,0,[],,pending_original_audio
+803,SEG_00803,1573.06,1575.18,"Se eles dão alguma explicação, a gente já finaliza.",9,1,"[""asr_confidence""]",,pending_original_audio
+804,SEG_00804,1575.22,1576.38,"Cara, eu não lembro direito.",5,0,[],,pending_original_audio
+805,SEG_00805,1576.38,1583.44,Deus Valdemiro Santiago se recupera em casa das facadas que levou no pescoço durante um culto na manhã deste domingo em um,22,1,"[""asr_confidence""]",,pending_original_audio
+806,SEG_00806,1583.44,1583.92,templo,1,0,"[""overlapping_speech""]",,pending_original_audio
+807,SEG_00807,1583.92,1584.98,da igreja do bairro,4,0,"[""overlapping_speech""]",,pending_original_audio
+808,SEG_00808,1584.98,1585.62,do Braz,2,0,"[""overlapping_speech""]",,pending_original_audio
+809,SEG_00809,1585.62,1586.38,em São Paulo.,3,1,"[""asr_confidence""]",,pending_original_audio
+810,SEG_00810,1606.38,1606.9,"Não, acho que não.",4,0,[],,pending_original_audio
+811,SEG_00811,1607.3600000000001,1611.28,"Mas, mano, esse aqui não tem uma facada no pescoço, ele tá com a mãozinha orando, pô.",17,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+812,SEG_00812,1611.32,1611.98,"Ah, ele tá orando,",4,0,"[""overlapping_speech""]",,pending_original_audio
+813,SEG_00813,1611.98,1612.48,pô.,1,0,"[""overlapping_speech""]",,pending_original_audio
+814,SEG_00814,1612.48,1613.34,Ele tá fazendo sigai.,4,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+815,SEG_00815,1613.52,1614.5,O que aconteceu?,3,0,[],,pending_original_audio
+816,SEG_00816,1614.82,1616.6399999999999,E diz que perdoou sua A,6,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+817,SEG_00817,1616.6399999999999,1617.04,velha,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+818,SEG_00818,1617.04,1617.16,tá,1,0,"[""overlapping_speech""]",,pending_original_audio
+819,SEG_00819,1617.16,1617.56,fazendo sigai.,2,0,"[""overlapping_speech""]",,pending_original_audio
+820,SEG_00820,1617.7,1622.18,"Jonathan Gomes Regino, de 20 anos, foi preso em flagrante e disse aos policiais",14,0,[],,pending_original_audio
+821,SEG_00821,1622.18,1625.06,que esfaqueou Santiago por se sentir ameaçado.,7,0,[],,pending_original_audio
+822,SEG_00822,1625.52,1625.92,Ele,1,0,[],,pending_original_audio
+823,SEG_00823,1625.92,1630.48,disse ainda que algumas semanas ouviu o pastor dizer que ele seria crucificado.,13,0,[],,pending_original_audio
+824,SEG_00824,1630.82,1631.18,Esse,1,0,[],,pending_original_audio
+825,SEG_00825,1631.18,1632.16,aí,1,0,"[""overlapping_speech""]",,pending_original_audio
+826,SEG_00826,1632.16,1632.8600000000001,já doou louquinho,3,0,[],,pending_original_audio
+827,SEG_00827,1632.8600000000001,1633.04,demais.,1,0,"[""overlapping_speech""]",,pending_original_audio
+828,SEG_00828,1633.76,1634.76,Doou doidinho demais.,3,0,"[""overlapping_speech""]",,pending_original_audio
+829,SEG_00829,1634.84,1635.62,É isso,2,0,"[""overlapping_speech""]",,pending_original_audio
+830,SEG_00830,1635.62,1636.24,que tu traz mesmo.,4,0,[],,pending_original_audio
+831,SEG_00831,1636.38,1636.52,É,1,0,"[""overlapping_speech""]",,pending_original_audio
+832,SEG_00832,1636.52,1636.82,isso aí.,2,0,"[""overlapping_speech""]",,pending_original_audio
+833,SEG_00833,1636.92,1643.72,"Agora, só pra finalizar aqui, João Boa, queria te perguntar, você tá esperançoso ou não para 2026?",17,0,[],,pending_original_audio
+834,SEG_00834,1643.84,1644.74,"Eu tô cabeleiraço, cara.",4,0,[],,pending_original_audio
+835,SEG_00835,1644.76,1644.92,Vai,1,0,[],,pending_original_audio
+836,SEG_00836,1644.92,1646.26,"ter uma guerra química aí, mano.",6,0,[],,pending_original_audio
+837,SEG_00837,1646.3600000000001,1647.26,"É, boa fé.",3,1,"[""asr_confidence""]",,pending_original_audio
+838,SEG_00838,1647.42,1647.54,O,1,0,[],,pending_original_audio
+839,SEG_00839,1647.54,1649.62,"que me preocupa é o negócio da IAR, tá ligado?",10,0,[],,pending_original_audio
+840,SEG_00840,1649.74,1649.92,Sim.,1,0,[],,pending_original_audio
+841,SEG_00841,1650.38,1652.16,Na melhor outra eleição a gente não teve isso.,9,1,"[""asr_confidence""]",,pending_original_audio
+842,SEG_00842,1652.3,1654.18,"Agora vai ter um negócio muito, muito louco.",8,0,"[""overlapping_speech""]",,pending_original_audio
+843,SEG_00843,1654.42,1655.68,"Cara, é assim, cara.",4,0,[],,pending_original_audio
+844,SEG_00844,1655.96,1657.06,Os caras vão fazer de,5,0,"[""overlapping_speech""]",,pending_original_audio
+845,SEG_00845,1657.06,1662.1,"tudo pra ganhar com a ajuda de Elon Musk, com a ajuda de Trump, com ajuda do caralho que for, cara.",21,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+846,SEG_00846,1662.12,1665.26,"E aqui, a porra da esquerda retardada tem que se unir, meu irmão.",13,0,[],,pending_original_audio
+847,SEG_00847,1665.28,1670.66,"Tem que se unir E fazer que nem os caras fazem e bater de frente igual eles fazem, tá ligado?",20,2,"[""asr_confidence""]",,pending_original_audio
+848,SEG_00848,1670.7,1671.66,"Boa, boa, é isso.",4,0,[],,pending_original_audio
+849,SEG_00849,1671.78,1675.2,"O Lula tinha que ir todo dia fazer uma live, tá ligado?",12,0,[],,pending_original_audio
+850,SEG_00850,1675.2,1676.72,"É velho, cara, não entra aqui.",6,0,"[""overlapping_speech""]",,pending_original_audio
+851,SEG_00851,1676.72,1676.96,Ele,1,0,"[""overlapping_speech""]",,pending_original_audio
+852,SEG_00852,1676.96,1680.86,"tinha que arrumar um freio, um pastor, um padre ele também, tá ligado?",13,0,"[""overlapping_speech""]",,pending_original_audio
+853,SEG_00853,1681.7,1682.38,Freio do Lula.,3,0,[],,pending_original_audio
+854,SEG_00854,1682.46,1684.0,Quatro horas da manhã tem live do Freio do Lula.,10,0,"[""overlapping_speech""]",,pending_original_audio
+855,SEG_00855,1684.02,1685.98,"E o Lula lá, quatro da manhã, Padre Kelman.",9,0,"[""overlapping_speech""]",,pending_original_audio
+856,SEG_00856,1686.66,1687.3,"Mano, Padre",2,0,"[""overlapping_speech""]",,pending_original_audio
+857,SEG_00857,1687.3,1687.68,Kelman,1,0,"[""overlapping_speech""]",,pending_original_audio
+858,SEG_00858,1687.68,1687.82,é,1,0,"[""overlapping_speech""]",,pending_original_audio
+859,SEG_00859,1687.82,1689.42,outro personagem,2,1,"[""asr_confidence""]",,pending_original_audio
+860,SEG_00860,1689.42,1690.86,brasileiro.,1,0,"[""overlapping_speech""]",,pending_original_audio
+861,SEG_00861,1691.62,1692.26,Essas horas...,2,0,"[""overlapping_speech""]",,pending_original_audio
+862,SEG_00862,1692.26,1692.7,Tem,1,0,"[""overlapping_speech""]",,pending_original_audio
+863,SEG_00863,1692.7,1694.28,alguma teoria da conspiração que tu...,6,0,"[""overlapping_speech""]",,pending_original_audio
+864,SEG_00864,1694.96,1696.66,Que chamam de teoria da conspiração e tu acredita?,9,1,"[""asr_confidence""]",,pending_original_audio
+865,SEG_00865,1696.7,1697.0,Qual dela?,2,0,[],,pending_original_audio
+866,SEG_00866,1697.12,1697.6,Qualquer uma.,2,0,[],,pending_original_audio
+867,SEG_00867,1697.7,1698.66,Tem alguma que tu acredita?,5,0,[],,pending_original_audio
+868,SEG_00868,1698.76,1701.06,"Tem umas que tem fundamento, tem outras que não também, que é ridículo,",13,1,"[""asr_confidence""]",,pending_original_audio
+869,SEG_00869,1701.14,1701.6,tá ligado?,2,0,[],,pending_original_audio
+870,SEG_00870,1701.72,1703.42,"Sei lá, negócio de terra plana, isso aí é",9,1,"[""asr_confidence""]",,pending_original_audio
+871,SEG_00871,1703.42,1703.8,coisa,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+872,SEG_00872,1703.8,1704.3,de,1,0,"[""overlapping_speech""]",,pending_original_audio
+873,SEG_00873,1704.3,1704.74,retardado.,1,0,"[""overlapping_speech""]",,pending_original_audio
+874,SEG_00874,1704.74,1704.92,"É, é",2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+875,SEG_00875,1704.92,1705.46,burrice mesmo.,2,0,"[""overlapping_speech""]",,pending_original_audio
+876,SEG_00876,1705.62,1707.64,"É coisa de retardado, é coisa de...",7,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+877,SEG_00877,1708.18,1708.54,Saca?,1,0,[],,pending_original_audio
+878,SEG_00878,1708.62,1710.48,"De gente que quer ser do contra, cara.",8,0,[],,pending_original_audio
+879,SEG_00879,1710.56,1712.28,Mas tem muita trilha de conspiração muito louca,8,1,"[""asr_confidence""]",,pending_original_audio
+880,SEG_00880,1712.28,1712.48,Pra,1,0,"[""overlapping_speech""]",,pending_original_audio
+881,SEG_00881,1712.48,1712.58,mim,1,0,"[""overlapping_speech""]",,pending_original_audio
+882,SEG_00882,1712.58,1715.5,"é o da simulação, que a gente vive uma simulação e nada disso aqui é real.",16,0,[],,pending_original_audio
+883,SEG_00883,1715.64,1716.16,"Ah, é não.",3,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+884,SEG_00884,1716.42,1718.84,"Pra mim, pra mim, assim...",5,0,"[""overlapping_speech""]",,pending_original_audio
+885,SEG_00885,1718.84,1719.78,"O Matrix, cara.",3,0,"[""overlapping_speech""]",,pending_original_audio
+886,SEG_00886,1720.2,1720.56,Exatamente.,1,0,[],,pending_original_audio
+887,SEG_00887,1720.62,1724.08,"O Padre Kelman foi o momento que eu pensei, mano, essa porra não é verdade.",15,0,[],,pending_original_audio
+888,SEG_00888,1724.26,1726.36,E estão dando sinais pra gente ver que essa porra é mentira.,12,1,"[""asr_confidence""]",,pending_original_audio
+889,SEG_00889,1726.7,1730.18,"Tem o Padre de Boina concorrendo à presidência, pô, que porra é essa, pô?",14,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+890,SEG_00890,1730.18,1730.68,Tá maluco.,2,0,[],,pending_original_audio
+891,SEG_00891,1731.18,1732.1,"Pô, tá doido.",3,0,[],,pending_original_audio
+892,SEG_00892,1732.18,1737.84,"Deixa um recado aí pro jovem, adolescente aí, E aí a gente terminou o vídeo, João, deixa eu ver Ah, meu,",21,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+893,SEG_00893,1737.92,1738.28,é o,2,0,"[""overlapping_speech""]",,pending_original_audio
+894,SEG_00894,1738.28,1738.54,seguinte,1,0,"[""overlapping_speech""]",,pending_original_audio
+895,SEG_00895,1738.54,1738.8,Você,1,0,"[""overlapping_speech""]",,pending_original_audio
+896,SEG_00896,1738.8,1738.94,tá,1,0,"[""overlapping_speech""]",,pending_original_audio
+897,SEG_00897,1738.94,1740.32,"entrando no caminho da igreja Não,",6,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+898,SEG_00898,1741.38,1741.8,"faz isso não,",3,0,"[""overlapping_speech""]",,pending_original_audio
+899,SEG_00899,1741.96,1755.04,"cara Você consegue fazer aí da merda sozinho, cara É o seguinte, cara, o mais absurdo Que os caras abraçam, você é crente, cara Você pode fazer a merda que você for Você pode comer um nenê, decapitar ele, cara Se você abraçar Jesus, você é perdoado, velho Esse que o grande boi, tá ligado?",55,7,"[""asr_confidence""]",,pending_original_audio
+900,SEG_00900,1755.12,1762.08,"Por isso que você tá cercado De pilantra, de gente De gente malvada ali, que tá arrependida Mas será que esses caras tão arrependidos de verdade mesmo?",27,2,"[""asr_confidence""]",,pending_original_audio
+901,SEG_00901,1762.28,1766.14,"Esse monte de mentira, cara, e cobra falando, cara E navio que cabe todos os bichos?",16,1,"[""asr_confidence""]",,pending_original_audio
+902,SEG_00902,1766.2,1766.9,"Você acredita nisso, cara?",4,0,[],,pending_original_audio
+903,SEG_00903,1766.94,1767.58,"Vai se fuder, mano.",4,0,[],,pending_original_audio
+904,SEG_00904,1767.62,1768.5,É muita paia.,3,0,[],,pending_original_audio
+905,SEG_00905,1768.62,1772.82,"Tem que ser, né, tem que ter, né, tem que acreditar em coisa que é mais coerente, cara.",18,0,[],,pending_original_audio
+906,SEG_00906,1772.94,1776.04,"Disco voador é mais coerente que bíblia, cara, tá ligado?",10,0,[],,pending_original_audio
+907,SEG_00907,1776.12,1776.46,"Saca, meu?",2,0,[],,pending_original_audio
+908,SEG_00908,1776.52,1777.7,É muito mais coerente os bagulhos.,6,0,[],,pending_original_audio
+909,SEG_00909,1777.84,1780.1,"Não confie no que chega pra você no zap, viu, jovem?",11,0,"[""overlapping_speech""]",,pending_original_audio
+910,SEG_00910,1780.16,1780.96,"É, lógico.",2,0,"[""overlapping_speech""]",,pending_original_audio
+911,SEG_00911,1781.0,1783.6,"E quando chegar drogas na sua vida, use com responsabilidade.",10,0,[],,pending_original_audio
+912,SEG_00912,1783.66,1784.24,"Não, não use,",3,0,"[""overlapping_speech""]",,pending_original_audio
+913,SEG_00913,1784.28,1784.4,cara.,1,0,[],,pending_original_audio
+914,SEG_00914,1784.56,1784.72,Eu,1,0,[],,pending_original_audio
+915,SEG_00915,1784.72,1785.1,"parei,",1,0,[],,pending_original_audio
+916,SEG_00916,1785.1,1786.12,"usei a vida inteira, não levo...",6,0,[],,pending_original_audio
+917,SEG_00917,1786.12,1786.54,"Caralho,",1,0,"[""overlapping_speech""]",,pending_original_audio
+918,SEG_00918,1786.54,1787.6,eu não acredito,3,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+919,SEG_00919,1787.6,1788.56,que eu dê um conselho,5,0,"[""overlapping_speech""]",,pending_original_audio
+920,SEG_00920,1788.56,1788.96,pior,1,0,"[""overlapping_speech""]",,pending_original_audio
+921,SEG_00921,1788.96,1790.34,sobre drogas do que o João Gordo.,7,1,"[""asr_confidence""]",,pending_original_audio
+922,SEG_00922,1790.36,1791.4,Não acredito que eu cheguei nesse momento.,7,0,"[""overlapping_speech""]",,pending_original_audio
+923,SEG_00923,1791.52,1791.58,Se,1,0,"[""overlapping_speech""]",,pending_original_audio
+924,SEG_00924,1791.58,1792.28,droga tivesse me levado...,4,0,"[""overlapping_speech""]",,pending_original_audio
+925,SEG_00925,1792.28,1792.9,"Eu falei, eu uso com",5,3,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+926,SEG_00926,1792.9,1793.68,responsabilidade,1,0,"[""overlapping_speech""]",,pending_original_audio
+927,SEG_00927,1793.68,1794.12,de ouvir,2,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+928,SEG_00928,1794.12,1794.16,do,1,0,"[""overlapping_speech""]",,pending_original_audio
+929,SEG_00929,1794.16,1794.4,João,1,0,"[""overlapping_speech""]",,pending_original_audio
+930,SEG_00930,1794.4,1794.66,Gordo.,1,0,"[""overlapping_speech""]",,pending_original_audio
+931,SEG_00931,1795.1,1795.38,Se,1,0,"[""overlapping_speech""]",,pending_original_audio
+932,SEG_00932,1795.38,1799.14,"a droga tivesse me levado, se eu chegasse em algum lugar, eu tinha chegado.",14,2,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+933,SEG_00933,1799.22,1800.2,"Eu já não cheguei em lugar nenhum, cara.",8,0,[],,pending_original_audio
+934,SEG_00934,1800.32,1801.52,"Quer dizer, eu sobrevivi.",4,0,[],,pending_original_audio
+935,SEG_00935,1801.54,1802.34,Não me arrependo.,3,0,[],,pending_original_audio
+936,SEG_00936,1802.42,1803.74,Não falei tudo de novo porque não ia dar tempo.,10,0,[],,pending_original_audio
+937,SEG_00937,1803.84,1804.9,Bota a musiquinha do Proerde pra,6,0,[],,pending_original_audio
+938,SEG_00938,1804.9,1805.16,terminar,1,0,"[""overlapping_speech""]",,pending_original_audio
+939,SEG_00939,1805.16,1805.62,esse...,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+940,SEG_00940,1805.62,1806.58,"E foda-se, cara.",4,0,"[""overlapping_speech""]",,pending_original_audio
+941,SEG_00941,1806.68,1806.82,"Leão,",1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+942,SEG_00942,1806.82,1808.68,bota a cara do Leozinho Proerde na cara do João Gordo.,11,0,"[""overlapping_speech""]",,pending_original_audio
+943,SEG_00943,1808.72,1809.22,Não use drogas.,3,0,[],,pending_original_audio
+944,SEG_00944,1809.26,1810.32,Olha o que eu consegui fazer.,6,0,"[""overlapping_speech""]",,pending_original_audio
+945,SEG_00945,1810.32,1811.18,Não use drogas.,3,0,"[""overlapping_speech""]",,pending_original_audio
+946,SEG_00946,1811.18,1811.74,João Gordo não,3,0,"[""overlapping_speech""]",,pending_original_audio
+947,SEG_00947,1811.74,1811.94,quer,1,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+948,SEG_00948,1811.94,1812.3,usar drogas.,2,0,"[""overlapping_speech""]",,pending_original_audio
+949,SEG_00949,1812.52,1813.04,Não beba.,2,0,"[""overlapping_speech""]",,pending_original_audio
+950,SEG_00950,1813.1399999999999,1813.42,É,1,1,"[""asr_confidence""]",,pending_original_audio
+951,SEG_00951,1813.42,1814.02,isso,1,0,[],,pending_original_audio
+952,SEG_00952,1814.02,1814.22,aí.,1,0,[],,pending_original_audio
+953,SEG_00953,1814.46,1815.82,"Ô, mano, obrigado demais, mano.",5,0,[],,pending_original_audio
+954,SEG_00954,1815.98,1816.42,Obrigado demais.,2,0,[],,pending_original_audio
+955,SEG_00955,1816.46,1816.6,"Vê,",1,0,"[""overlapping_speech""]",,pending_original_audio
+956,SEG_00956,1816.6,1818.1,dá uma editada aí que tem um monte de absurdo.,10,1,"[""asr_confidence"", ""overlapping_speech""]",,pending_original_audio
+957,SEG_00957,1818.1,1818.76,Pra dizer,2,1,"[""asr_confidence""]",,pending_original_audio
+958,SEG_00958,1818.76,1819.8,não,1,0,"[""overlapping_speech""]",,pending_original_audio

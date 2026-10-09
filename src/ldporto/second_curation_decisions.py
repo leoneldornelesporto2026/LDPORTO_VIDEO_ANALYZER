@@ -1,4 +1,4 @@
-"""Portable V4.4 decision contract, shared verbatim with the standalone Curator."""
+"""Portable V4.4 decision contract; external Curator compatibility needs homologation."""
 from abc import ABC, abstractmethod
 from copy import deepcopy
 import math
@@ -38,8 +38,18 @@ def compile_decisions(document, catalog, metadata, segments=None):
     if document['source_sha256'] != metadata.get('sha256'):
         raise ValueError('Second curation source hash mismatch')
     candidates = {row['candidate_id']: row for row in catalog['candidates']}
+    if len(candidates) != len(catalog['candidates']):
+        raise ValueError('Duplicate candidate_id')
     approved, blocked, seen = {}, set(), set()
     duration = float(metadata['duration'])
+    if not math.isfinite(duration) or duration <= 0:
+        raise ValueError('Invalid source duration')
+    for row in candidates.values():
+        if not isinstance(row['candidate_id'], str) or not row['candidate_id'].strip():
+            raise ValueError('Invalid candidate_id')
+        start, end = row['start'], row['end']
+        if any(isinstance(t, bool) or not isinstance(t, (int, float)) or not math.isfinite(t) for t in (start, end)) or not 0 <= start < end <= duration:
+            raise ValueError('Invalid candidate interval')
     for action in document['actions']:
         if action['decision_id'] in seen:
             raise ValueError('Duplicate decision_id')
@@ -48,6 +58,15 @@ def compile_decisions(document, catalog, metadata, segments=None):
         if not set(ids) <= candidates.keys():
             raise ValueError('Unresolved candidate reference')
         rows = [candidates[cid] for cid in ids]
+        if 'title' in action and not action['title'].strip():
+            raise ValueError('Empty decision title')
+        # Validate even rejected/commercial actions before applying any semantics.
+        previous = -1.
+        for window in action.get('windows', []):
+            start, end = window['start'], window['end']
+            if any(isinstance(t, bool) or not math.isfinite(t) for t in (start, end)) or not 0 <= start < end <= duration or start < previous:
+                raise ValueError('Invalid or overlapping decision interval')
+            previous = end
         available = set(sid for row in rows for sid in row.get('segment_ids', []))
         available.update(s['segment_id'] for s in segments or [])
         if not set(action.get('evidence_segment_ids', [])) <= available:
@@ -93,7 +112,8 @@ def compile_decisions(document, catalog, metadata, segments=None):
             previous_end = end
             if name == 'shrink' and (start < min(r['start'] for r in rows) or end > max(r['end'] for r in rows)):
                 raise ValueError('Shrink extends original interval')
-            refs = [s['segment_id'] for s in segments or [] if s['end'] > start and s['start'] < end] or sorted(available)
+            refs = ([s['segment_id'] for s in segments if s['end'] > start and s['start'] < end]
+                    if segments is not None else sorted(available))
             key = action['decision_id'] + f'_{index + 1:02}'
             approved[key] = {'decision_id': key, 'candidate_ids': ids, 'start': start, 'end': end,
                 'rank': action.get('rank', len(approved) + 1), 'title': action.get('title') or rows[0].get('topic') or 'Trecho selecionado',

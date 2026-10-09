@@ -29,11 +29,17 @@ def build_person_motion(vision, cfg):
         prev_vx = prev_vy = 0.0
         samples = []
         for row in rows:
+            # Repeated frames must not smooth twice or become velocity evidence.
+            if prev and row['time'] <= prev['time']:
+                continue
             x, y = float(row["center"]["x"]), float(row["center"]["y"])
             area = row.get("face_area") or row.get("percent_frame")
             scale = math.sqrt(max(float(area), 1e-9)) if area is not None else None
+            reset_reason = 'first_observation' if prev is None else None
             if prev and (row.get("scene_id") != prev.get("scene_id") or
                          row.get("track_id") != prev.get("track_id") or row["time"]-prev["time"] > max_gap):
+                reset_reason = ('source_boundary' if row.get('scene_id') != prev.get('scene_id') else
+                                'track_change' if row.get('track_id') != prev.get('track_id') else 'observation_gap')
                 sx = sy = ss = prev = None
                 prev_vx = prev_vy = 0.0
             sx = x if sx is None else alpha*x + (1-alpha)*sx
@@ -56,8 +62,9 @@ def build_person_motion(vision, cfg):
                         vx = 0.0
                     if abs(vy) < deadzone:
                         vy = 0.0
-                    ax = (vx-prev_vx)/dt
-                    ay = (vy-prev_vy)/dt
+                    if prev.get('velocity_measured'):
+                        ax = (vx-prev_vx)/dt
+                        ay = (vy-prev_vy)/dt
                     if ss is not None and prev["ss"] is not None:
                         scale_v = (ss-prev["ss"])/dt
                         if abs(scale_v) < deadzone:
@@ -67,6 +74,13 @@ def build_person_motion(vision, cfg):
             samples.append({
                 "time": row["time"], "person_id": person_id,
                 "track_id": row.get("track_id"),
+                "scene_id": row.get("scene_id"),
+                "reset_reason": reset_reason,
+                "geometry_continuity": prev is not None,
+                "face_presence": 'observed' if row.get('face_visible') else 'unknown',
+                "camera_compensation_measured": camera_vx is not None and
+                    isinstance((row.get('source_camera_motion') or {}).get('dx'), (int, float)) and
+                    isinstance((row.get('source_camera_motion') or {}).get('dy'), (int, float)),
                 "center_x": sx, "center_y": sy,
                 "velocity_x": vx, "velocity_y": vy,
                 "residual_velocity_x": vx, "residual_velocity_y": vy,
@@ -82,6 +96,7 @@ def build_person_motion(vision, cfg):
                 "confidence": None,
             })
             prev = {"time": row["time"], "sx": sx, "sy": sy, "ss": ss,
+                    "velocity_measured": vx is not None,
                     "scene_id": row.get("scene_id"), "track_id": row.get("track_id")}
         values = [s["movement_intensity"] for s in samples if s["movement_intensity"] is not None]
         output.append({

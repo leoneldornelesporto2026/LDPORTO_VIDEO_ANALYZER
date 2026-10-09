@@ -30,7 +30,7 @@ class SmartZoomState:
         self.current_target = None
         self.current_zoom = self.target_zoom = 1.
         self.transition = None
-        self.hold_until = time
+        self.hold_until = max(self.hold_until, time)
         self.state_entered_at = time
 
     def curve(self, time):
@@ -48,6 +48,10 @@ class SmartZoomState:
         reasons = []
         while self.event_times and self.event_times[0] <= time - 60:
             self.event_times.popleft()
+        beat_key = (beat or {}).get('id'), target
+        zoom_attempted = bool(target and beat and not micro_interruption
+                              and beat_key not in self.used_beats
+                              and speech_seconds >= cfg['min_speaker_persistence'])
         if not target or not safe:
             reasons.append('CROP_UNSAFE' if target else 'INSUFFICIENT_CONFIDENCE')
             if self.current_target and self.current_zoom > 1.001:
@@ -56,13 +60,13 @@ class SmartZoomState:
             self.current_camera_mode = 'SOURCE_PRESERVE'
             return {'zoom': 1., 'requested_zoom': 1., 'mode': self.current_camera_mode,
                     'reason_codes': reasons, 'digital_motion_allowed': False,
-                    'zoom_attempted': False, 'new_zoom_request': False}
+                    'zoom_attempted': zoom_attempted, 'new_zoom_request': False}
         if target != self.current_target:
             self.current_target = target
             self.current_zoom = self.target_zoom = 1.
             self.transition = None
             self.state_entered_at = self.last_switch_at = time
-            self.hold_until = time
+            self.hold_until = max(self.hold_until, time)
         if not cfg['enabled']:
             reasons.append('SMART_ZOOM_DISABLED')
         if source_close or face_size >= cfg['max_face_size']:
@@ -77,11 +81,13 @@ class SmartZoomState:
         if micro_interruption:
             reasons.append('MICRO_INTERRUPTION_SUPPRESSED')
         goal = min(cfg['max_zoom_factor'], max(1., zoom_cap))
-        beat_key = (beat or {}).get('id'), target
         request = self.target_zoom
-        zoom_attempted = bool(beat and not micro_interruption and beat_key not in self.used_beats
-                              and speech_seconds >= cfg['min_speaker_persistence'])
         new_zoom_request = False
+        if beat and not blocked and not micro_interruption:
+            if beat_key in self.used_beats:
+                reasons.append('EDITORIAL_BEAT_ALREADY_USED')
+            elif speech_seconds < cfg['min_speaker_persistence']:
+                reasons.append('INSUFFICIENT_SPEAKER_PERSISTENCE')
         if beat and not blocked and not micro_interruption and beat_key not in self.used_beats and speech_seconds >= cfg['min_speaker_persistence']:
             if len(self.event_times) >= cfg['max_zoom_events_per_minute']:
                 reasons.append('ZOOM_RATE_LIMIT')
@@ -106,6 +112,8 @@ class SmartZoomState:
                         'zoom_end': goal, 'mode': 'SMART_ZOOM_IN', 'target_person_id': target,
                         'reason_codes': [(beat or {})['reason'], 'ACTIVE_SPEAKER_FOCUS'], 'beat_id': beat_key[0]})
                     reasons.append((beat or {})['reason'])
+                else:
+                    reasons.append('NO_SAFE_ZOOM_HEADROOM')
         if blocked:
             self.target_zoom, self.transition = 1., None
         elif not beat and not micro_interruption and self.target_zoom > 1.035 and time >= self.hold_until and len(self.event_times) < cfg['max_zoom_events_per_minute']:

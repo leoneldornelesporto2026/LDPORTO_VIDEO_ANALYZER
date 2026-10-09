@@ -108,6 +108,7 @@ def classify_content(text, evidence_segment_ids=None, visual_evidence=None):
         "health_claim": r"\bdesinflam\w*|\balivi\w*.{0,45}\bdor\b|\b(?:combate|elimina).{0,30}\b(?:dores?|inflamacao)\b",
         "benefit_claim": r"\b(melhor produto|resultado garantido|super valorizacao|qualidade superior)\b",
         "event": r"\b(ingressos?|bilheteria|shows?|eventos?|tickets?)\b",
+        "guest_invitation": r"\b(?:venha|venham|convido voces)\b.{0,60}\bmeu (?:show|evento)\b",
         "sponsor": r"\b(oferecimento|oferecido por|conteudo patrocinado|patrocinado por|nosso patrocinador|patrocinador deste programa)\b",
         "sponsorship_mention": r"\b(patrocinador|patrocinio|patrocinar)\b",
     }
@@ -115,7 +116,7 @@ def classify_content(text, evidence_segment_ids=None, visual_evidence=None):
     for signal, pattern in signals.items():
         for match in list(re.finditer(pattern, normalized))[:3]:
             prefix = normalized[max(0, match.start() - 24):match.start()]
-            if signal in {"sales_cta", "recommendation", "health_claim", "discount", "sponsor", "urgency"} and re.search(r"\b(?:nao|nunca|sem)\s+(?:\w+\s+){0,2}$", prefix):
+            if signal in {"sales_cta", "recommendation", "health_claim", "discount", "sponsor", "urgency", "guest_invitation"} and re.search(r"\b(?:nao|nunca|sem)\s+(?:\w+\s+){0,2}$", prefix):
                 continue
             start, end = offsets[match.start()], offsets[match.end() - 1] + 1
             while end < len(literal) and unicodedata.category(literal[end]) == "Mn":
@@ -136,6 +137,8 @@ def classify_content(text, evidence_segment_ids=None, visual_evidence=None):
     offer = {"installment", "urgency"} <= cues or {"price", "installment", "store"} <= cues
     health_promotion = {"recommendation", "product", "health_claim"} <= cues
     strong = offer or health_promotion or {"store", "discount", "payment"} <= cues or (sales and bool(cues & {"price", "discount", "domain", "store", "contact", "event"}))
+    guest_invitation = 'guest_invitation' in cues
+    strong = strong or guest_invitation
     if "sponsor" in cues:
         content_type, score = "sponsor_read", .85
     elif strong and "event" in cues:
@@ -159,10 +162,32 @@ def classify_content(text, evidence_segment_ids=None, visual_evidence=None):
     else:
         content_type, score = "editorial_content", 0.0
     eligibility = "excluded" if content_type in COMMERCIAL_TYPES else "review" if content_type == "uncertain" else "eligible"
+    reported_sales = bool(re.search(
+        r'\b(?:a propaganda dizia|o anuncio dizia|segundo o anuncio|na reportagem|'
+        r'discutimos a propaganda|criticamos a propaganda|a marca anunciava)\b', normalized))
+    if eligibility == 'excluded' and reported_sales:
+        # A quoted offer is not proof that this speaker is making an offer.
+        eligibility = 'review'
+    # Raw/uncertain OCR alone cannot establish an advertisement. Keep its
+    # lexical spans for audit and conservative review, without discarding ASR.
+    visual_spans = [span for span in spans if span.get('modality') == 'visual_text']
+    audio_signals = {span['signal'] for span in spans if span.get('modality') != 'visual_text'}
+    if eligibility == 'excluded' and visual_spans:
+        audio_only = classify_content(literal, evidence_segment_ids)
+        uncertain_visual = any(row.get('uncertain') is True for row in visual_evidence or []
+                               if isinstance(row, dict))
+        if audio_only['eligibility'] != 'excluded' and (uncertain_visual or not audio_signals):
+            eligibility = 'review'
     return {"content_type": content_type, "commercial_score": score, "reasons": reasons,
             "signals": reasons, "evidence_spans": spans, "eligibility": eligibility,
             "evidence_segment_ids": list(evidence_segment_ids or []),
             "classifier_method": "pt_br_grounded_commercial_gate_v3", "needs_review": eligibility != "eligible",
+            "reported_commercial_context": reported_sales,
+            "commercial_kind": ('reported_offer' if reported_sales and (strong or 'sponsor' in cues) else
+                'guest_promotional_invitation' if content_type in {'self_promotion', 'event_promotion'} else
+                'paid_ad_or_sales_offer' if content_type in COMMERCIAL_TYPES else
+                'ambiguous' if eligibility == 'review' else 'neutral_mention'),
+            "payment_confirmed": None,
             "confidence_is_calibrated": False}
 
 
@@ -206,6 +231,8 @@ def topic_hierarchy(topics, segments):
         shared_fraction = len(current_terms & previous_terms) / max(1, min(len(current_terms), len(previous_terms)))
         speaker_continuity = bool(set(topic.get('speakers', [])) & set(previous.get('speakers', []))) if previous else False
         equivalent = label_similarity >= .8 or (label_similarity >= .5 and shared_fraction >= .5 and speaker_continuity)
+        # Keep failure provenance local: do not merge healthy and degraded chunks.
+        equivalent = equivalent and (topic.get('degraded_reason') or []) == (previous.get('degraded_reason') or [] if previous else [])
         if previous:
             merge_decisions.append({'previous_topic_id': previous['topic_id'], 'topic_id': topic['topic_id'],
                                     'decision': 'merge' if equivalent and topic['start'] - previous['end'] <= 3 and previous['content_type'] == topic['content_type'] else 'keep_separate',
@@ -359,9 +386,94 @@ def ending_quality(segment):
             "method": "observed_sentence_ending_not_semantic_payoff_probability"}
 
 
-def optimize_boundaries(moment, segments, cfg=None, story=None, qa_pairs=None):
+def _discourse_boundary_review(moment, segments, first, last, cfg, qa_pairs, topic):
+    """Validate a proposal against literal context, rather than editorial scores."""
+    original = {"start": moment['start'], "end": moment['end']}
+    proposed = {"start": segments[first]['start'], "end": segments[last]['end']}
+    risks, evidence = [], []
+    if topic and (proposed['start'] < topic['start'] or proposed['end'] > topic['end']):
+        risks.append('topic_boundary_crossed')
+    change = re.compile(r'\b(?:mudando de assunto|outro assunto|agora vamos falar)\b')
+    for index in range(first, last + 1):
+        row = segments[index]
+        evidence.append({key: row.get(key) for key in ('segment_id', 'start', 'end', 'text')})
+        classification = classify_content(row.get('text'), [row['segment_id']])
+        if row.get('content_type') in COMMERCIAL_TYPES or classification['eligibility'] == 'excluded':
+            risks.append('commercial_boundary_crossed')
+        if index > first and change.search(fold_text(row.get('text', ''))):
+            risks.append('explicit_topic_transition_crossed')
+        if index > first and row['start'] - segments[index - 1]['end'] > 5:
+            risks.append('context_gap_requires_review')
+    hard_max = duration_contract(cfg)['hard_max_seconds']
+    if proposed['end'] - proposed['start'] > hard_max:
+        risks.append('duration_budget_exceeded')
+    if proposed['start'] > original['start'] or proposed['end'] < original['end']:
+        risks.append('source_ids_do_not_cover_original')
+    # Unsafe expansion stays a reviewable alternative; preserve the exact core.
+    start, end = (original['start'], original['end']) if risks else (proposed['start'], proposed['end'])
+    selected = [s for s in segments if s['start'] < end and start < s['end']]
+    opening = opening_quality(selected[0], next((s for s in reversed(segments)
+                              if s['end'] <= selected[0]['start']), None)) if selected else {'clean': None, 'reasons': ['missing_text']}
+    ending = ending_quality(selected[-1]) if selected else {'clean': None, 'reasons': ['missing_text']}
+    if selected and selected[0]['start'] < start:
+        opening = {'clean': False, 'reasons': ['source_segment_truncated']}
+    if selected and selected[-1]['end'] > end:
+        ending = {'clean': False, 'reasons': ['source_segment_truncated']}
+    if selected and not (selected[0].get('text') or '').strip():
+        opening = {'clean': None, 'reasons': ['missing_text']}
+    if selected and not (selected[-1].get('text') or '').strip():
+        ending = {'clean': None, 'reasons': ['missing_text']}
+    for row, assessment in ((selected[0], opening), (selected[-1], ending)) if selected else []:
+        if re.search(r'\b(?:inaudivel|ininteligivel)\b', fold_text(row.get('text', ''))):
+            assessment.update(clean=None, reasons=['asr_text_unresolved'])
+    unresolved = list(risks)
+    for pair in qa_pairs or []:
+        a = pair.get('question_start')
+        b = pair.get('answer_end') or pair.get('question_end')
+        if a is None or b is None or not (a < end and start < b):
+            continue
+        if a < start:
+            opening = {'clean': False, 'reasons': opening['reasons'] + ['question_before_clip']}
+        if b > end or not pair.get('question_answer_complete'):
+            ending = {'clean': False, 'reasons': ending['reasons'] + ['answer_or_payoff_unresolved']}
+        if a < start or b > end or not pair.get('question_answer_complete'):
+            unresolved.append('question_answer_unit_incomplete')
+    if opening['clean'] is not True:
+        unresolved.extend(opening['reasons'])
+    if ending['clean'] is not True:
+        unresolved.extend(ending['reasons'])
+    duration = end - start
+    if duration < duration_contract(cfg)['hard_min_seconds']:
+        unresolved.append('below_hard_min_without_complete_unit_proof')
+    context = normalize_context(moment)['context_requirement']
+    if context in {'required', 'unresolved'} and start >= original['start']:
+        unresolved.append('context_requirement_unresolved')
+    decision = 'pending' if unresolved else 'expand' if start < original['start'] or end > original['end'] else 'cut'
+    reason = sorted(set(unresolved)) or ['grounded_source_unit_candidate_requires_review']
+    return {"ideal_start": start, "ideal_end": end, "original_interval": original,
+            "boundary_decision": decision, "boundary_risks": sorted(set(risks)),
+            "boundary_decision_reasons": reason,
+            "alternate_start": {"time": proposed['start'], "evidence": evidence,
+                                "risks": sorted(set(risks)), "status": decision},
+            "alternate_end": {"time": proposed['end'], "evidence": evidence,
+                              "risks": sorted(set(risks)), "status": decision},
+            "boundary_duration_budget": {**duration_contract(cfg), "original_seconds": original['end'] - original['start'],
+                                         "proposed_seconds": proposed['end'] - proposed['start'],
+                                         "selected_seconds": duration, "remaining_hard_seconds": max(0., hard_max - duration)},
+            "standalone_assessment": 'context_required' if unresolved else 'standalone_candidate_requires_review',
+            "standalone_context_evidence": {"semantic_completeness_confirmed": None, "requires_review": True,
+                                            "reasons": reason, "segments": evidence},
+            "boundary_blockers": sorted(set(unresolved)),
+            "clean_start": opening['clean'], "clean_opening": opening['clean'], "opening_assessment": opening,
+            "clean_ending": ending['clean'], "ending_assessment": ending,
+            "boundary_segment_ids": [s['segment_id'] for s in selected]}
+
+
+def optimize_boundaries(moment, segments, cfg=None, story=None, qa_pairs=None, topic=None, shots=None):
     """Choose source sentence/story boundaries; never fabricate times to meet duration."""
     cfg = cfg or {}
+    segments = sorted(segments, key=lambda s: (s['start'], s['end']))
+    humor_hinted = bool(set(moment.get('categories') or []) & {'humor', 'punchline'})
     by_id = {segment["segment_id"]: index for index, segment in enumerate(segments)}
     indices = [by_id[segment_id] for segment_id in moment.get("evidence_segment_ids", []) if segment_id in by_id]
     if not indices:
@@ -370,8 +482,14 @@ def optimize_boundaries(moment, segments, cfg=None, story=None, qa_pairs=None):
     if not indices:
         return {"ideal_start": moment["start"], "ideal_end": moment["end"],
                 "alternate_starts": [], "alternate_ends": [], "boundary_reason": "unresolved_no_segment_evidence",
-                "context_added_before": 0.0, "context_added_after": 0.0, "duration_suitability_score": None}
+                "context_added_before": 0.0, "context_added_after": 0.0, "duration_suitability_score": None,
+                "original_interval": {"start": moment['start'], "end": moment['end']},
+                "boundary_decision": "pending", "boundary_decision_reasons": ["missing_segment_evidence"],
+                "boundary_blockers": ["missing_segment_evidence"], "standalone_assessment": "unresolved_requires_review",
+                "clean_start": None, "clean_opening": None, "clean_ending": None,
+                "alternate_start": None, "alternate_end": None}
     first, last = min(indices), max(indices)
+    core_first, core_last = first, last
     core_start, core_end = segments[first]["start"], segments[last]["end"]
     opening = fold_text(segments[first].get("text", "")).strip()
     context = normalize_context(moment)["context_requirement"]
@@ -392,42 +510,87 @@ def optimize_boundaries(moment, segments, cfg=None, story=None, qa_pairs=None):
             continue
         answer_start, answer_end = pair['answer_start'], pair['answer_end']
         relevant = max(0.0, min(core_end, answer_end) - max(core_start, answer_start)) / core_duration
-        if relevant < .25 or abs(pair['question_start'] - core_start) > 40:
+        question_overlap = pair['question_start'] < core_end and core_start < pair.get('question_end', pair['question_start'])
+        if (relevant < .25 and not question_overlap) or abs(pair['question_start'] - core_start) > 40:
             continue
         pair_ids = pair.get('evidence_segment_ids') or []
         if not pair_ids or any(sid not in by_id for sid in pair_ids):
             continue
         q_indices = [by_id[sid] for sid in pair_ids]
         a, b = min(first, min(q_indices)), max(last, max(q_indices))
-        if segments[b]['end'] - segments[a]['start'] > duration_contract(cfg)['hard_max_seconds']:
-            continue
         first, last = a, b
         qa_expansion.append(pair.get('question_id'))
     if last + 1 < len(segments) and not segments[last].get("text", "").rstrip().endswith((".", "?", "!")):
         if segments[last + 1]["end"] - core_end <= 30:
             last += 1
+    humor_proposal = None
+    if humor_hinted:
+        from .editorial_intelligence import propose_humor_boundaries
+        lower = topic['start'] if topic else 0.
+        upper = topic['end'] if topic else max(s['end'] for s in segments)
+        # The shot containing the core is the hard expansion envelope. A core
+        # crossing a known shot remains unresolved rather than being trimmed.
+        intersecting = [s for s in shots or [] if s['start'] < core_end and s['end'] > core_start]
+        if intersecting:
+            lower = max(lower, max(s['start'] for s in intersecting))
+            upper = min(upper, min(s['end'] for s in intersecting))
+        if (segments[first]['start'] < max(lower, core_start - 5)
+                or segments[last]['end'] > min(upper, core_end + 5)):
+            first, last = core_first, core_last
+            qa_expansion = []
+        humor_proposal = propose_humor_boundaries(
+            segments, segments[first]['start'], segments[last]['end'],
+            max(lower, core_start - 5), min(upper, core_end + 5))
+        proposed = [i for i, s in enumerate(segments)
+                    if s['start'] >= humor_proposal['start'] and s['end'] <= humor_proposal['end']]
+        if proposed:
+            first, last = min(proposed), max(proposed)
+        if core_start < lower or core_end > upper:
+            humor_proposal['expansion_unresolved'] = True
+        if segments[last]['end'] - segments[first]['start'] > duration_contract(cfg)['hard_max_seconds']:
+            first, last = core_first, core_last
+            qa_expansion = []
+            humor_proposal.update(start=core_start, end=core_end, expansion_unresolved=True)
     start, end = segments[first]["start"], segments[last]["end"]
     duration = end - start
     selected_ids = [segment["segment_id"] for segment in segments[first:last + 1]]
     opening_assessment = opening_quality(segments[first], segments[first - 1] if first else None)
     ending_assessment = ending_quality(segments[last])
+    review = _discourse_boundary_review(moment, segments, first, last, cfg, qa_pairs, topic)
+    start, end = review['ideal_start'], review['ideal_end']
+    selected_ids = review['boundary_segment_ids']
     assessment = assess_duration(start, end, cfg, story, selected_ids)
+    if review['boundary_risks']:
+        qa_expansion = []
     return {"ideal_start": start, "ideal_end": end,
             "alternate_starts": sorted({core_start, start}), "alternate_ends": sorted({core_end, end}),
             "boundary_reason": "grounded_sentence_reference_story_and_qa_completion",
             "qa_boundary_expansion_ids": qa_expansion,
+            "humor_boundary_proposal": humor_proposal,
             "context_added_before": max(0.0, core_start - start), "context_added_after": max(0.0, end - core_end),
             "clean_opening": opening_assessment["clean"], "opening_assessment": opening_assessment,
             "clean_ending": ending_assessment["clean"], "ending_assessment": ending_assessment,
-            **assessment, "boundary_segment_ids": selected_ids}
+            **assessment, **review,
+            "alternate_starts": sorted({moment['start'], core_start, start, review['alternate_start']['time']}),
+            "alternate_ends": sorted({moment['end'], core_end, end, review['alternate_end']['time']}),
+            "context_added_before": max(0., moment['start'] - start),
+            "context_added_after": max(0., end - moment['end'])}
 
 
 # Generated by GitHub Copilot - Oct-05-2026
 def rank_candidate(candidate, cfg=None):
     """Expose explicit weighted editorial utility and penalties, never viral probability."""
     cfg = cfg or {}
+    if candidate.get('boundary_blockers'):
+        candidate = {**candidate, 'editorial_blockers': sorted(set(
+            (candidate.get('editorial_blockers') or []) + candidate['boundary_blockers']))}
     literal = candidate.get("text") or (candidate.get("core_moment") or {}).get("text")
     classification = classify_content(literal, candidate.get("evidence_segment_ids", []), candidate.get('commercial_visual_evidence')) if literal is not None else candidate.get("commercial_classification")
+    prior = candidate.get('commercial_classification') or {}
+    if prior.get('eligibility') == 'excluded' or (prior.get('eligibility') == 'review' and
+            (classification or {}).get('eligibility') == 'eligible'):
+        classification = {**prior, 'upstream_gate_preserved': True,
+                          'upstream_exclusion_preserved': prior.get('eligibility') == 'excluded'}
     if classification:
         candidate = {**candidate, "commercial_classification": classification,
                      "content_type": classification["content_type"], "commercial_score": classification["commercial_score"]}
@@ -486,7 +649,7 @@ def rank_candidate(candidate, cfg=None):
             "score_weights": weights, "observed_weight": observed_weight,
             "editorial_score_final": round(final, 3) if final is not None else None, "editorial_score": round(final, 3) if final is not None else None, "ranking_version": "4.9.3",
             "score_method": "explicit_weighted_observed_utility_not_probability",
-            "default_shortlist_eligible": not commercial and (not classification or classification.get("eligibility") not in {"review", "excluded"}) and
+            "default_shortlist_eligible": not candidate.get('excluded_commercial_interval_ids') and not commercial and (not classification or classification.get("eligibility") not in {"review", "excluded"}) and
                 duration["duration_default_eligible"] and candidate.get("clean_opening") is True and candidate.get("clean_ending") is True and
                 not missing_required and not candidate.get("editorial_blockers")}
 
@@ -499,6 +662,21 @@ def _equivalent(left, right):
     intersection = max(0.0, min(left_end, right_end) - max(left_start, right_start))
     if not intersection:
         return False, False
+    left_core, right_core = left.get('core_moment') or {}, right.get('core_moment') or {}
+    core_times = [left_core.get('start'), left_core.get('end'),
+                  right_core.get('start'), right_core.get('end')]
+    if all(isinstance(value, (int, float)) and math.isfinite(value) for value in core_times):
+        a, b, c, d = core_times
+        if a < b and c < d and min(b, d) <= max(a, c):
+            return False, False
+    # Explicit discourse identities outweigh shared guest/topic/media context.
+    for key in ('story_arc_id', 'question_answer_linkage'):
+        def refs(row):
+            value = row.get(key)
+            return {value} if isinstance(value, str) else set(value or [])
+        a, b = refs(left), refs(right)
+        if a and b and a.isdisjoint(b):
+            return False, False
     exact = abs(left_start-right_start)<=1e-6 and abs(left_end-right_end)<=1e-6
     if exact:
         return True, True
@@ -510,43 +688,96 @@ def _equivalent(left, right):
     left_terms = terms(left.get("core_moment", {}).get("text") or left.get("text", ""))
     right_terms = terms(right.get("core_moment", {}).get("text") or right.get("text", ""))
     lexical_share = len(left_terms & right_terms) / max(1, len(left_terms | right_terms))
-    return (intersection / union >= .8 or overlap >= .8) and (evidence_share >= .8 or lexical_share >= .85), False
+    return (intersection / union >= .8 or overlap >= .8) and (evidence_share >= .8 or (min(len(left_terms), len(right_terms)) >= 6 and lexical_share >= .85)), False
 
 
-# Generated by GitHub Copilot - Oct-05-2026
+DEDUP_POLICY = {
+    "version": "15.1", "temporal_iou_or_shorter_overlap_min": .8,
+    "evidence_shorter_share_min": .8, "core_text_jaccard_min": .85,
+    "core_text_min_terms": 6, "exact_interval_tolerance_seconds": 1e-6,
+    "exact_interval_rule": "same_media_window_unless_explicit_discourse_ids_conflict",
+    "group_rule": "equivalent_to_every_member_no_transitive_bridge",
+    "primary_order": ["no_editorial_blockers", "confirmed_clean_boundaries",
+                      "editorial_score_final", "evidence_coverage", "editorial_quality_score"],
+    "tie_break": "earliest_start_then_end_then_existing_moment_id",
+}
+
+
+def _primary_key(row):
+    def observed(key):
+        value = row.get(key)
+        return value if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) else -1.0
+    return (not bool(row.get('editorial_blockers')),
+            sum(row.get(key) is True for key in ('clean_opening', 'clean_ending')),
+            observed('editorial_score_final'), observed('evidence_coverage'),
+            observed('editorial_quality_score'))
+
+
 def deduplicate_candidates(candidates):
-    """Sweep overlapping intervals, preserving stronger primaries and all alternates."""
-    active, expirations, primaries = {}, [], []
+    """Conservative temporal/discourse groups; preserve IDs and full alternatives.
+
+    Missing metrics stay null in records, sorting after observed metrics only.
+    Topic and person identity never qualify as discourse equivalence. Exact media
+    windows retain differing cores as navigable alternatives for compatibility.
+    """
+    flattened, seen = [], set()
+    def collect(row):
+        if row['moment_id'] not in seen:
+            seen.add(row['moment_id'])
+            flattened.append({key: value for key, value in row.items()
+                              if key not in {'alternates', 'deduplicated_moment_ids',
+                                             'duplicate_group_id', 'dedup_selection', 'alternate_of'}})
+        for alternate in row.get('alternates', []):
+            collect(alternate)
+    for candidate in candidates:
+        collect(candidate)
+    groups, active, expirations = [], {}, []
     exact_count = overlap_count = 0
-    for candidate in sorted(candidates, key=lambda row: (row["ideal_start"], row["ideal_end"], row["moment_id"])):
-        start = candidate["ideal_start"]
-        while expirations and expirations[0][0] <= start:
+    for candidate in sorted(flattened, key=lambda row: (row['ideal_start'], row['ideal_end'], row['moment_id'])):
+        while expirations and expirations[0][0] <= candidate['ideal_start']:
             end, handle = heapq.heappop(expirations)
-            if handle in active and active[handle]["ideal_end"] == end:
+            if handle in active and max(row['ideal_end'] for row in active[handle]) == end:
                 del active[handle]
         matches = []
-        for handle, previous in active.items():
-            equivalent, exact = _equivalent(candidate, previous)
-            if equivalent:
-                matches.append((handle, previous, exact))
-        if not matches:
-            handle = len(primaries)
-            row = {**candidate, "alternates": list(candidate.get("alternates", []))}
-            active[handle] = row
-            primaries.append(row)
-            heapq.heappush(expirations, (row["ideal_end"], handle))
-            continue
-        handle, previous, exact = max(matches, key=lambda match: (match[1].get("editorial_score_final") or 0, -match[0]))
-        stronger, alternate = (candidate, previous) if (candidate.get("editorial_score_final") or 0) > (previous.get("editorial_score_final") or 0) else (previous, candidate)
-        alternates = list(previous.get("alternates", [])) + [{key: value for key, value in alternate.items() if key != "alternates"}]
-        row = {**stronger, "alternates": alternates,
-               "deduplicated_moment_ids": list(dict.fromkeys(previous.get("deduplicated_moment_ids", [previous["moment_id"]]) + [candidate["moment_id"]]))}
-        primaries[handle] = active[handle] = row
-        heapq.heappush(expirations, (row["ideal_end"], handle))
-        exact_count += int(exact)
-        overlap_count += int(not exact)
-    primaries.sort(key=lambda row: (-(row.get("editorial_score_final") or 0), row["ideal_start"], row["moment_id"]))
-    return primaries, {"candidates_before_dedup": len(candidates), "candidates_after_dedup": len(primaries),
-                       "exact_duplicate_count": exact_count, "high_overlap_merge_count": overlap_count,
-                       "alternate_count": sum(len(row.get("alternates", [])) for row in primaries),
-                       "dedup_method": "overlap_sweep_temporal_and_editorial_nms"}
+        for handle, members in active.items():
+            relations = [_equivalent(candidate, member) for member in members]
+            if all(equivalent for equivalent, _ in relations):
+                matches.append((handle, any(exact for _, exact in relations)))
+        if matches:
+            handle, exact = max(matches, key=lambda match: (_primary_key(max(groups[match[0]], key=_primary_key)), -match[0]))
+            groups[handle].append(candidate)
+            exact_count += int(exact)
+            overlap_count += int(not exact)
+        else:
+            handle = len(groups)
+            groups.append([candidate])
+        active[handle] = groups[handle]
+        heapq.heappush(expirations, (max(row['ideal_end'] for row in groups[handle]), handle))
+    primaries = []
+    for members in groups:
+        primary = max(members, key=_primary_key)
+        alternates = [row for row in members if row['moment_id'] != primary['moment_id']]
+        selection = {
+            'primary_moment_id': primary['moment_id'], 'policy': dict(DEDUP_POLICY),
+            'reason': 'observed_completeness_then_quality_and_evidence_stable_tie_break',
+            'alternate_reasons': {
+                row['moment_id']: next((criterion for criterion, chosen, other in
+                                        zip(DEDUP_POLICY['primary_order'], _primary_key(primary), _primary_key(row))
+                                        if chosen != other), 'stable_existing_id_and_interval_tie_break')
+                for row in alternates},
+            'member_evidence': [{'moment_id': row['moment_id'],
+                                 **{key: row.get(key) for key in ('clean_opening', 'clean_ending',
+                                      'editorial_blockers', 'editorial_score_final', 'evidence_coverage',
+                                      'editorial_quality_score')}} for row in members],
+        }
+        primaries.append({**primary, 'alternates': alternates,
+                          'duplicate_group_id': primary['moment_id'] if alternates else None,
+                          'deduplicated_moment_ids': [row['moment_id'] for row in members],
+                          'dedup_selection': selection})
+    primaries.sort(key=lambda row: (-(row.get('editorial_score_final') or 0), row['ideal_start'], row['moment_id']))
+    return primaries, {'candidates_before_dedup': len(candidates), 'candidates_after_dedup': len(primaries),
+                       'exact_duplicate_count': exact_count, 'high_overlap_merge_count': overlap_count,
+                       'alternate_count': sum(len(row['alternates']) for row in primaries),
+                       'dedup_method': 'overlap_sweep_temporal_and_editorial_nms',
+                       'dedup_policy': dict(DEDUP_POLICY), 'id_migration_map': {},
+                       'input_member_count': len(flattened)}

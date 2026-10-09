@@ -1,0 +1,41 @@
+MICROETAPA 06/42 — Gate global e relatórios coerentes
+REFERÊNCIA: D01 D12 | LOTE: 01_BASE_E_CONTRATOS
+
+CONTEXTO: L.D.PORTO VIDEO ANALYZER — código acumulado S1–S11; benchmark João Gordo: export que reporta build R4.9-S4-TRACKING-FACIAL, 55 candidatos, 52 após dedup, shortlist 1; saída partial/P1_DEGRADED. Esses números são BASELINE observado, não metas nem prova da versão integrada.
+
+ANEXOS: (a) ZIP DO CÓDIGO MAIS RECENTE do último checkpoint (na primeira etapa: `LDPORTO_VIDEO_ANALYZER_R4_9_S9_S10_S11_INTEGRADO.zip`); (b) este prompt; (c) nos passos que dependem da execução, `SECOND_CURATION_READY_tpcF5ri6GS4_20261008_041938_332406_8ae5ce(2).zip` ou relatório de auditoria anterior. Se o pacote de análise já estiver nesta conversa, não solicite novo envio desnecessário.
+
+OBJETIVO ÚNICO:
+Garantir que summary, quality gate, final gate e handoff concordem com causas e exclusões.
+
+ARQUIVOS PROVÁVEIS PARA INSPEÇÃO (confirme nomes/uso no ZIP antes de editar):
+src/ldporto/analysis_quality.py; src/ldporto/reports.py; src/ldporto/integrity_contracts.py; src/ldporto/handoff.py
+
+TAREFAS EM ESCOPO:
+1. Reproduzir relatório P1_DEGRADED da execução.
+2. Definir fonte canônica por contador/flag, inclusive comerciais e revisão S7.
+3. Corrigir dupla contagem e inconsistências entre JSONs; relatar divergências por campo.
+
+CRITÉRIOS DE ACEITE E TESTES:
+- Valores de candidato / shortlist / commercials / review não podem contradizer documentos de uma mesma execução.
+- Rodar smoke end-to-end apenas com fixtures, sem reprocessar vídeo.
+
+ATENÇÃO ESPECÍFICA:
+Não transformar bloqueio em warning para passar teste.
+
+REGRAS PARA CHATGPT NORMAL (válidas nesta microetapa):
+- Use o ZIP MAIS RECENTE do projeto como única base de código. O SECOND_CURATION_READY é evidência de execução (build S4), não o código para atualizar. Nunca sobrescreva uma versão posterior por S8 ou S4.
+- Execute SOMENTE esta microetapa. Inspecione o mínimo necessário, implemente no código existente, acrescente testes focados e rode a regressão pertinente; não comece a próxima etapa.
+- Preserve compatibilidade de JSON/IDs/checkpoints e cache caro. Não rerode ASR, visão, CUDA ou Ollama para corrigir lógica downstream sem necessidade técnica comprovada.
+- Não fabrique transcrição, perguntas, payoff, falante ativo, pessoa, crop, qualidade editorial ou sucesso de teste. Estado inseguro = null / pendente + motivo.
+- Não considere `READY` como publish_ready; aprovação humana e hashes reais são indispensáveis. Qualquer alteração em decisão, fonte ou preview invalida a aprovação associada.
+- Se faltar vídeo, áudio, GPU, modelo ou aplicativo Curator independente, faça os testes offline/sintéticos possíveis e registre o que deve ser validado no Windows. Não afirme ter testado aquilo que não executou.
+- Não peça nova arquitetura, não crie projeto do zero. Evite chamadas externas, ferramentas pagas, downloads de modelos e reanálise integral.
+
+ENTREGA OBRIGATÓRIA NESTA CONVERSA:
+1. Implementação real no workspace, se viável, não apenas plano.
+2. ZIP COMPLETO atualizado do projeto, preservando tudo que já funciona, mais link verificável.
+3. `CHECKPOINT_ETAPA_NNN.md` com arquivos alterados, mudanças, comandos, resultados observados, limitações, cache invalidado e próximos passos.
+4. Resumo curto dos achados e evidência de testes. Quando não puder completar, detalhe exatamente qual insumo bloqueou e não alegue concluído.
+
+AO FINAL: pare nesta etapa. Eu enviarei a próxima depois de baixar seu ZIP.

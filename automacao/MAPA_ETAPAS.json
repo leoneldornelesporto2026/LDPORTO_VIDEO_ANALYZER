@@ -1,0 +1,548 @@
+[
+  {
+    "n": 1,
+    "did": "D01",
+    "group": "01_BASE_E_CONTRATOS",
+    "title": "Reconciliação de versões e baseline",
+    "objective": "Determinar exatamente qual build foi executado, qual é o código-base mais novo, qual a cobertura efetiva S1–S11 e criar um baseline reproduzível.",
+    "modules": "README.md; docs/S9_S11_REAL_TEST.md; .package/PROJECT_EXPORT_MANIFEST.json; docs/S11_TECHNICAL_VALIDATION_20261008.md",
+    "checks": [
+      "Gerar BASELINE_TECNICO.md e BASELINE.json com lista de evidências e riscos.",
+      "Rodar importações básicas e pequeno subconjunto de testes existentes, registrando comandos e exit codes."
+    ],
+    "file_path": "prompts/ETAPA_01.txt"
+  },
+  {
+    "n": 2,
+    "did": "D01",
+    "group": "01_BASE_E_CONTRATOS",
+    "title": "Verdade do build nos manifests",
+    "objective": "Corrigir incoerências entre versão reportada, etapas realmente executadas e manifests de saída.",
+    "modules": "src/ldporto/second_curation_export.py; src/ldporto/reports.py; src/ldporto/run_status.py; src/ldporto/second_curation.py",
+    "checks": [
+      "Fixture com build antigo + novos contratos não pode produzir afirmação de execução completa.",
+      "Testar export com campos opcionais ausentes e anteriores à migração."
+    ],
+    "file_path": "prompts/ETAPA_02.txt"
+  },
+  {
+    "n": 3,
+    "did": "D01",
+    "group": "01_BASE_E_CONTRATOS",
+    "title": "Referências Q&A e IDs quebrados",
+    "objective": "Eliminar references Q_xxxx não resolvidas no handoff mantendo a proveniência da pergunta.",
+    "modules": "src/ldporto/second_curation_export.py; src/ldporto/second_curation.py; src/ldporto/integrity_contracts.py",
+    "checks": [
+      "Nenhum vínculo órfão silencioso; referências desconhecidas explicitamente anotadas com reason.",
+      "Adicionar fixtures João Gordo contendo Q_0114/Q_0115 e regressão de IDs estáveis."
+    ],
+    "file_path": "prompts/ETAPA_03.txt"
+  },
+  {
+    "n": 4,
+    "did": "D01",
+    "group": "01_BASE_E_CONTRATOS",
+    "title": "Estados READY e capacidade por etapa",
+    "objective": "Separar pronto para revisão editorial, preview técnico, aprovação humana e pronto para publicação.",
+    "modules": "src/ldporto/integrity_contracts.py; src/ldporto/analysis_quality.py; src/ldporto/run_status.py; src/ldporto/second_curation_export.py",
+    "checks": [
+      "PARTIAL nunca será tratado como final aprovado.",
+      "Testar cenários de falha semântica, rosto ausente, preview não renderizado e aprovação inexistente."
+    ],
+    "file_path": "prompts/ETAPA_04.txt"
+  },
+  {
+    "n": 5,
+    "did": "D01 D11",
+    "group": "01_BASE_E_CONTRATOS",
+    "title": "Grafo de dependências para replay seletivo",
+    "objective": "Evitar reprocessar ASR, visão e Ollama ao corrigir contrato ou ranking downstream.",
+    "modules": "src/ldporto/replay.py; src/ldporto/pipeline.py; src/ldporto/model_cache.py; src/ldporto/vision_checkpoint.py",
+    "checks": [
+      "Alterar ranking não deve invalidar embedding facial nem ASR sem dependência comprovada.",
+      "Criar teste de cache hit e de invalidação seletiva."
+    ],
+    "file_path": "prompts/ETAPA_05.txt"
+  },
+  {
+    "n": 6,
+    "did": "D01 D12",
+    "group": "01_BASE_E_CONTRATOS",
+    "title": "Gate global e relatórios coerentes",
+    "objective": "Garantir que summary, quality gate, final gate e handoff concordem com causas e exclusões.",
+    "modules": "src/ldporto/analysis_quality.py; src/ldporto/reports.py; src/ldporto/integrity_contracts.py; src/ldporto/handoff.py",
+    "checks": [
+      "Valores de candidato / shortlist / commercials / review não podem contradizer documentos de uma mesma execução.",
+      "Rodar smoke end-to-end apenas com fixtures, sem reprocessar vídeo."
+    ],
+    "file_path": "prompts/ETAPA_06.txt"
+  },
+  {
+    "n": 7,
+    "did": "D06",
+    "group": "02_COMPREENSÃO_E_RECORTES",
+    "title": "Diagnóstico dos 128 Q&A candidatos",
+    "objective": "Explicar a diferença entre perguntas detectadas, pares associados, pares completos e referências exportadas.",
+    "modules": "src/ldporto/semantic.py; src/ldporto/editorial_intelligence.py; src/ldporto/understanding.py",
+    "checks": [
+      "Auditoria aponta taxas com denominadores explícitos e IDs rastreáveis.",
+      "Testes de perguntas curtas, sequência de perguntas e resposta em turno seguinte."
+    ],
+    "file_path": "prompts/ETAPA_07.txt"
+  },
+  {
+    "n": 8,
+    "did": "D06",
+    "group": "02_COMPREENSÃO_E_RECORTES",
+    "title": "Respostas retomadas após interrupção",
+    "objective": "Associar respostas em vários segmentos sem capturar uma resposta de assunto diferente.",
+    "modules": "src/ldporto/editorial_intelligence.py; src/ldporto/semantic.py; src/ldporto/story_recovery.py",
+    "checks": [
+      "Fixtures Q→interrupção→continuação, duas perguntas em sequência e reação do entrevistador.",
+      "Validar timestamps cobrindo a resposta inteira, com proveniência."
+    ],
+    "file_path": "prompts/ETAPA_08.txt"
+  },
+  {
+    "n": 9,
+    "did": "D06",
+    "group": "02_COMPREENSÃO_E_RECORTES",
+    "title": "Arcos completos: introdução até desfecho",
+    "objective": "Recuperar histórias completas quando segmentadas em chunks semânticos distintos.",
+    "modules": "src/ldporto/understanding.py; src/ldporto/story_recovery.py; src/ldporto/editorial_intelligence.py",
+    "checks": [
+      "Fixtures com história em dois chunks, desfecho posterior e história sem fechamento.",
+      "Score de história não pode transformar ausência de payoff em conclusão comprovada."
+    ],
+    "file_path": "prompts/ETAPA_09.txt"
+  },
+  {
+    "n": 10,
+    "did": "D06",
+    "group": "02_COMPREENSÃO_E_RECORTES",
+    "title": "Piadas, setup, punchline e reação",
+    "objective": "Melhorar autonomia de trechos humorísticos, preservando graça e reação sem depender apenas de risadas.",
+    "modules": "src/ldporto/editorial_intelligence.py; src/ldporto/story_recovery.py; src/ldporto/speaker_signals.py",
+    "checks": [
+      "Fixtures piada com risada posterior, interrupção antes da graça e risada de plateia sem fala.",
+      "Não aprovar corte que termine antes do desfecho evidenciado."
+    ],
+    "file_path": "prompts/ETAPA_10.txt"
+  },
+  {
+    "n": 11,
+    "did": "D07",
+    "group": "02_COMPREENSÃO_E_RECORTES",
+    "title": "Limites e completude dos cortes",
+    "objective": "Recortar por unidade discursiva completa e não só por duração/segmento.",
+    "modules": "src/ldporto/editorial.py; src/ldporto/editorial_intelligence.py; src/ldporto/temporal.py",
+    "checks": [
+      "Fixtures com pergunta parcialmente anterior ao corte, payoff posterior e transição de assunto.",
+      "Resultados incluem decisão cortar/expandir/pendente com motivo, sem apagar o original."
+    ],
+    "file_path": "prompts/ETAPA_11.txt"
+  },
+  {
+    "n": 12,
+    "did": "D07",
+    "group": "02_COMPREENSÃO_E_RECORTES",
+    "title": "Preservação de bons candidatos e recuperação",
+    "objective": "Recuperar evidência incompleta/pendente sem promover artificialmente os 51 rejeitados.",
+    "modules": "src/ldporto/story_recovery.py; src/ldporto/understanding.py; src/ldporto/editorial.py",
+    "checks": [
+      "Teste com candidato bom sem payoff, candidato comercial e candidato que só precisa estender limite.",
+      "Não forçar mínimo de shortlist nem marcar contexto ausente como presente."
+    ],
+    "file_path": "prompts/ETAPA_12.txt"
+  },
+  {
+    "n": 13,
+    "did": "D07",
+    "group": "03_RANKING_E_SHORTLIST",
+    "title": "Explicabilidade e motivos de exclusão",
+    "objective": "Explicar por que 52 candidatos resultaram em shortlist de 1.",
+    "modules": "src/ldporto/editorial.py; src/ldporto/editorial_intelligence.py; src/ldporto/analysis_quality.py",
+    "checks": [
+      "Todos os 52 recebem diagnóstico estável sem campos silenciosamente vazios.",
+      "Fixtures elegível/duvidoso/comercial/incompleto com justificativa."
+    ],
+    "file_path": "prompts/ETAPA_13.txt"
+  },
+  {
+    "n": 14,
+    "did": "D06 D07",
+    "group": "03_RANKING_E_SHORTLIST",
+    "title": "Fallback semântico sem perda de candidatos",
+    "objective": "Impedir que falha ou JSON parcial do Ollama destrua contexto editorial útil.",
+    "modules": "src/ldporto/semantic.py; src/ldporto/understanding.py; src/ldporto/editorial.py",
+    "checks": [
+      "Fixture com resposta Ollama inválida e outra válida; candidatos do chunk íntegro sobrevivem.",
+      "Testar que raw transcript e cache de visão permanecem intocados."
+    ],
+    "file_path": "prompts/ETAPA_14.txt"
+  },
+  {
+    "n": 15,
+    "did": "D07",
+    "group": "03_RANKING_E_SHORTLIST",
+    "title": "Deduplicação e versões alternativas",
+    "objective": "Evitar clones de corte preservando alternativas melhores de início e fim.",
+    "modules": "src/ldporto/editorial.py; src/ldporto/editorial_intelligence.py; src/ldporto/second_curation_export.py",
+    "checks": [
+      "Fixtures: mesmo episódio com limites alternativos versus assuntos próximos distintos.",
+      "Todos alternates continuam navegáveis na segunda curadoria."
+    ],
+    "file_path": "prompts/ETAPA_15.txt"
+  },
+  {
+    "n": 16,
+    "did": "D07 D09",
+    "group": "03_RANKING_E_SHORTLIST",
+    "title": "Diversidade de assuntos e shortlist sem cota",
+    "objective": "Selecionar melhores cortes distribuídos ao longo do programa sem encher vagas.",
+    "modules": "src/ldporto/editorial.py; src/ldporto/social_output.py; src/ldporto/second_curation.py",
+    "checks": [
+      "Benchmark controlado mostra ausência de duplicação redundante e nenhuma obrigação de 12.",
+      "Shortlist nunca contém comercial proibido ou corte editorialmente incompleto confirmado."
+    ],
+    "file_path": "prompts/ETAPA_16.txt"
+  },
+  {
+    "n": 17,
+    "did": "D07 D12",
+    "group": "03_RANKING_E_SHORTLIST",
+    "title": "Replay editorial dos 52 candidatos",
+    "objective": "Comparar antes/depois com o mesmo pacote João Gordo, sem reexecutar percepção.",
+    "modules": "scripts/dev/review_editorial_s3.py; scripts/dev/replay_understanding_snapshot.py; src/ldporto/editorial.py",
+    "checks": [
+      "Diff reproduzível com hashes dos insumos.",
+      "Nenhuma execução Ollama/Whisper/visão é exigida nesta microetapa."
+    ],
+    "file_path": "prompts/ETAPA_17.txt"
+  },
+  {
+    "n": 18,
+    "did": "D01 D06 D07",
+    "group": "03_RANKING_E_SHORTLIST",
+    "title": "Handoff editorial autocontido",
+    "objective": "Exportar candidatos, evidências, versões e contexto suficientes para um segundo curador discordar.",
+    "modules": "src/ldporto/second_curation_export.py; src/ldporto/second_curation.py; src/ldporto/handoff.py",
+    "checks": [
+      "Validar todos links e hashes do ZIP usando fixture real; contact sheets presentes quando referenciadas.",
+      "Critério editorial_ready depende do contrato, não do nome do ZIP."
+    ],
+    "file_path": "prompts/ETAPA_18.txt"
+  },
+  {
+    "n": 19,
+    "did": "D02",
+    "group": "04_ASR_E_SOCIAL",
+    "title": "Auditoria das palavras incertas",
+    "objective": "Decompor os 19,33% de palavras sinalizadas sem equiparar flag de revisão a erro de transcrição.",
+    "modules": "src/ldporto/transcription.py; src/ldporto/master_timeline.py; src/ldporto/diarization.py",
+    "checks": [
+      "Relatório por categoria e denominador consistente; exemplos e tempos reproduzíveis.",
+      "Testes segmentação overlap e não inferência de palavras inaudíveis."
+    ],
+    "file_path": "prompts/ETAPA_19.txt"
+  },
+  {
+    "n": 20,
+    "did": "D02 D09",
+    "group": "04_ASR_E_SOCIAL",
+    "title": "Targeted ASR segue shortlist final",
+    "objective": "Corrigir a divergência shortlist=1 e revisão S7 com zero candidatos.",
+    "modules": "src/ldporto/targeted_asr.py; src/ldporto/subtitle_review.py; scripts/dev/replay_targeted_asr_v44.py",
+    "checks": [
+      "Fixture com um selecionado: selected_candidate_count deve refletir seleção recebida, mesmo sem áudio.",
+      "Teste de orçamento e indisponibilidade da mídia preserva status pendente."
+    ],
+    "file_path": "prompts/ETAPA_20.txt"
+  },
+  {
+    "n": 21,
+    "did": "D02 D09",
+    "group": "04_ASR_E_SOCIAL",
+    "title": "Alinhamento e aprovação humana de SRT",
+    "objective": "Entregar SRT provisório sincronizado e uma revisão por corte rastreável.",
+    "modules": "src/ldporto/subtitle_review.py; src/ldporto/temporal.py; src/ldporto/preview_verifier.py",
+    "checks": [
+      "Fixtures timecode correto/deriva/palavra cortada/duas vozes.",
+      "Aprovação humana é vinculada ao hash da versão do arquivo corrigido."
+    ],
+    "file_path": "prompts/ETAPA_21.txt"
+  },
+  {
+    "n": 22,
+    "did": "D09",
+    "group": "04_ASR_E_SOCIAL",
+    "title": "Estilos, legibilidade e karaokê seguro",
+    "objective": "Evitar legendas e títulos ilegíveis ou karaoke fora de sincronia.",
+    "modules": "src/ldporto/social_output.py; src/ldporto/subtitle_review.py; src/ldporto/preview_renderer.py",
+    "checks": [
+      "Testes curtos em ASS/SRT e preview sintético em 1080×1920, se FFmpeg disponível.",
+      "Ausência de alinhamento nunca produz timing palavra-a-palavra inventado."
+    ],
+    "file_path": "prompts/ETAPA_22.txt"
+  },
+  {
+    "n": 23,
+    "did": "D09",
+    "group": "04_ASR_E_SOCIAL",
+    "title": "Títulos honestos e Stories diversos",
+    "objective": "Criar hooks fortes mas fiéis ao texto, e Stories temporalmente variados.",
+    "modules": "src/ldporto/social_output.py; src/ldporto/editorial_intelligence.py; src/ldporto/second_curation_export.py",
+    "checks": [
+      "Fixtures clickbait falso versus hook forte com suporte; conteúdo comercial proibido fica fora.",
+      "Cada título guarda trecho-evidência e status revisão."
+    ],
+    "file_path": "prompts/ETAPA_23.txt"
+  },
+  {
+    "n": 24,
+    "did": "D08",
+    "group": "04_ASR_E_SOCIAL",
+    "title": "Eventos sonoros e trilha autoral",
+    "objective": "Usar risadas, aplausos e efeitos em humor e aplicar instrumental opcional corretamente.",
+    "modules": "src/ldporto/audio.py; src/ldporto/speaker_signals.py; src/ldporto/curator_delivery.py",
+    "checks": [
+      "Fixtures cena musical versus entrevista; testes não sobrescrever áudio nem clipping; logs de mix.",
+      "Render sintético simples se FFmpeg acessível."
+    ],
+    "file_path": "prompts/ETAPA_24.txt"
+  },
+  {
+    "n": 25,
+    "did": "D03",
+    "group": "05_IDENTIDADE_AUDIOVISUAL",
+    "title": "YOLO, HOG e pessoas sentadas",
+    "objective": "Explicar fallback HOG no João Gordo e melhorar evidência em estúdio com convidados sentados.",
+    "modules": "src/ldporto/vision.py; src/ldporto/visual_sampling.py; src/ldporto/preflight.py",
+    "checks": [
+      "Sem YOLO, pipeline funciona com qualidade marcada degradada e não atribui identidades por localização.",
+      "Testes de import e fallback sem internet."
+    ],
+    "file_path": "prompts/ETAPA_25.txt"
+  },
+  {
+    "n": 26,
+    "did": "D03",
+    "group": "05_IDENTIDADE_AUDIOVISUAL",
+    "title": "Micro-tracklets e embeddings rejeitados",
+    "objective": "Instrumentar causas dos 817/916 tracklets sem embedding no benchmark.",
+    "modules": "src/ldporto/face_quality.py; src/ldporto/vision.py; src/ldporto/visual_sampling.py",
+    "checks": [
+      "Testes com face pequena, blur, perfil e rosto ausente.",
+      "Redução de sem-embedding só conta se qualidade facial e falsos merges não piorarem."
+    ],
+    "file_path": "prompts/ETAPA_26.txt"
+  },
+  {
+    "n": 27,
+    "did": "D03",
+    "group": "05_IDENTIDADE_AUDIOVISUAL",
+    "title": "Re-ID conservador entre cortes de TV",
+    "objective": "Reduzir identidades fragmentadas sem unir pessoas diferentes.",
+    "modules": "src/ldporto/person_reid.py; src/ldporto/identity_goldset.py; src/ldporto/visual_identity_audit.py",
+    "checks": [
+      "Fixtures duas pessoas parecidas e mesma pessoa em duas cenas.",
+      "Métrica de identidade só melhora se falsos merges permanecem aceitáveis."
+    ],
+    "file_path": "prompts/ETAPA_27.txt"
+  },
+  {
+    "n": 28,
+    "did": "D04",
+    "group": "05_IDENTIDADE_AUDIOVISUAL",
+    "title": "Associação voz ↔ pessoa por evidência",
+    "objective": "Investigar três dos quatro locutores não resolvidos sem inventar IDs visuais.",
+    "modules": "src/ldporto/diarization.py; src/ldporto/active_speaker.py; src/ldporto/speaker_roles.py",
+    "checks": [
+      "Teste speaker conhecido fora da tela permanece person_id=null no momento.",
+      "Métricas de associação usam janelas independentes e cobertura temporal real."
+    ],
+    "file_path": "prompts/ETAPA_28.txt"
+  },
+  {
+    "n": 29,
+    "did": "D04",
+    "group": "05_IDENTIDADE_AUDIOVISUAL",
+    "title": "Active Speaker local e consenso temporal",
+    "objective": "Investigar zero janelas confirmadas e distinguir falante, ouvinte e reação.",
+    "modules": "src/ldporto/active_speaker.py; src/ldporto/speaker_signals.py; src/ldporto/asd_backend.py",
+    "checks": [
+      "Fixtures pessoa escutando com boca mexendo, offscreen, dois locutores e fala simultânea.",
+      "Sem evidência suficiente retornar null e reason claro."
+    ],
+    "file_path": "prompts/ETAPA_29.txt"
+  },
+  {
+    "n": 30,
+    "did": "D05",
+    "group": "05_IDENTIDADE_AUDIOVISUAL",
+    "title": "Shots, planos e estabilidade de cena",
+    "objective": "Evitar perder continuidade de participante em troca de TV, plano aberto e reações.",
+    "modules": "src/ldporto/shots.py; src/ldporto/scenes.py; src/ldporto/camera_timeline.py; src/ldporto/person_motion.py",
+    "checks": [
+      "Fixtures corte rápido e reação do entrevistador; shot transition não gera teletransporte de crop.",
+      "Ausência de face continua desconhecida, não ocluída por suposição."
+    ],
+    "file_path": "prompts/ETAPA_30.txt"
+  },
+  {
+    "n": 31,
+    "did": "D05",
+    "group": "06_CAMERA_E_COMERCIAL",
+    "title": "Camera Director e 1,95% de foco",
+    "objective": "Distinguir bloqueios legítimos de integração quebrada no foco do João Gordo.",
+    "modules": "src/ldporto/camera_director.py; src/ldporto/global_camera_planner.py; src/ldporto/camera_evidence.py",
+    "checks": [
+      "Cada janela tem decisão + evidências + motivo e efeito na cobertura.",
+      "Nenhum caso de speaker global provável vira active_person automaticamente."
+    ],
+    "file_path": "prompts/ETAPA_31.txt"
+  },
+  {
+    "n": 32,
+    "did": "D05",
+    "group": "06_CAMERA_E_COMERCIAL",
+    "title": "Zoom, crop e split sem câmera nervosa",
+    "objective": "Explicar 183 oportunidades e zero zooms, renderizando apenas movimentos geometricamente seguros.",
+    "modules": "src/ldporto/camera_geometry.py; src/ldporto/camera_motion.py; src/ldporto/camera_preflight.py; src/ldporto/camera_director.py",
+    "checks": [
+      "Fixtures 2 rostos visíveis para split; rosto que sai da cena cancela crop; foco incerto não gera zoom.",
+      "Solicitações, entregas e bloqueios são contados separadamente."
+    ],
+    "file_path": "prompts/ETAPA_32.txt"
+  },
+  {
+    "n": 33,
+    "did": "D08",
+    "group": "06_CAMERA_E_COMERCIAL",
+    "title": "OCR, GC e comerciais visuais",
+    "objective": "Identificar marcas/preços/GC sem confundir mesa escura de estúdio com tarja.",
+    "modules": "src/ldporto/ocr.py; src/ldporto/broadcast_graphics.py; src/ldporto/visual_sampling.py",
+    "checks": [
+      "Fixtures fundo preto sem overlay, lower third real, preço em propaganda.",
+      "OCR ausente deixa estado not_measured, não no_commercial."
+    ],
+    "file_path": "prompts/ETAPA_33.txt"
+  },
+  {
+    "n": 34,
+    "did": "D08",
+    "group": "06_CAMERA_E_COMERCIAL",
+    "title": "Gate comercial entre produtores e Stories",
+    "objective": "Bloquear anúncios reais sem excluir discussão jornalística sobre marcas.",
+    "modules": "src/ldporto/commercial_gate.py; src/ldporto/editorial.py; src/ldporto/social_output.py; src/ldporto/second_curation_export.py",
+    "checks": [
+      "Fixtures oferta segmentada com preço e CTA em falas diferentes; menção neutra não bloqueada.",
+      "Sem publicidade acidental em seleção automática quando classificada excluded."
+    ],
+    "file_path": "prompts/ETAPA_34.txt"
+  },
+  {
+    "n": 35,
+    "did": "D09",
+    "group": "06_CAMERA_E_COMERCIAL",
+    "title": "Safe area: títulos, GC e legendas",
+    "objective": "Planejar posições de texto sem cobrir rosto nem GC em formato 9:16.",
+    "modules": "src/ldporto/social_output.py; src/ldporto/preview_renderer.py; src/ldporto/preview_verifier.py",
+    "checks": [
+      "Fixture rosto central + GC inferior move título e legenda para zonas alternativas quando possível.",
+      "Não afirmar safe_area_approved sem inspecionar render."
+    ],
+    "file_path": "prompts/ETAPA_35.txt"
+  },
+  {
+    "n": 36,
+    "did": "D05 D09",
+    "group": "06_CAMERA_E_COMERCIAL",
+    "title": "Previews canários e falso UNEXPECTED_BORDER",
+    "objective": "Eliminar falso alarme em fundo escuro sem deixar passar borda real de renderização.",
+    "modules": "src/ldporto/preview_verifier.py; src/ldporto/preview_renderer.py; src/ldporto/camera_geometry.py",
+    "checks": [
+      "Fixtures fundo de estúdio preto versus letterboxing artificial.",
+      "Em caso duvidoso, pedir revisão de preview sem aprovar automaticamente."
+    ],
+    "file_path": "prompts/ETAPA_36.txt"
+  },
+  {
+    "n": 37,
+    "did": "D10",
+    "group": "07_RENDER_PERF_HOMOLOG",
+    "title": "Importação de decisões e contratos Curator",
+    "objective": "Converter SECOND_CURATION_READY + decisões em plano determinístico rastreável.",
+    "modules": "src/ldporto/second_curation_decisions.py; src/ldporto/curator_bridge.py; src/ldporto/curator_delivery.py",
+    "checks": [
+      "Decisão inválida não altera plano anterior; mudança de tempo recalcula dependentes.",
+      "Fixtures título alternativo, tempo inválido, candidato comercial e fonte com hash errado."
+    ],
+    "file_path": "prompts/ETAPA_37.txt"
+  },
+  {
+    "n": 38,
+    "did": "D10",
+    "group": "07_RENDER_PERF_HOMOLOG",
+    "title": "Shorts e Stories MP4 independentes",
+    "objective": "Gerar arquivo real H.264/AAC 1080×1920 de um canário e depois lote controlado.",
+    "modules": "src/ldporto/curator_delivery.py; src/ldporto/preview_renderer.py; scripts/dev/curator_s9.py",
+    "checks": [
+      "FFmpeg sintético valida codec, áudio, duração, aspect ratio e integridade.",
+      "Para fonte real exigir o hash original; sem fonte real entregar smoke sintético e roteiro Windows."
+    ],
+    "file_path": "prompts/ETAPA_38.txt"
+  },
+  {
+    "n": 39,
+    "did": "D10",
+    "group": "07_RENDER_PERF_HOMOLOG",
+    "title": "Gate canário, hashes e aprovação humana",
+    "objective": "Impedir exportação final se áudio, sincronismo, legibilidade ou payoff críticos estão pendentes.",
+    "modules": "src/ldporto/preview_verifier.py; src/ldporto/curator_delivery.py; src/ldporto/homologation_s11.py",
+    "checks": [
+      "Aprovação antiga é invalidada quando título, janela, música ou quadro mudam.",
+      "Fixtures override após aprovação e pacote PARTIAL mantêm publicação bloqueada."
+    ],
+    "file_path": "prompts/ETAPA_39.txt"
+  },
+  {
+    "n": 40,
+    "did": "D11",
+    "group": "07_RENDER_PERF_HOMOLOG",
+    "title": "A/B com Ollama real e prompt compacto",
+    "objective": "Medir ganho sem perda de QA, histórias e ranking.",
+    "modules": "scripts/dev/benchmark_semantic_r3b.py; scripts/dev/performance_s10.py; src/ldporto/ollama_local.py",
+    "checks": [
+      "CSV por variação + relatório sintético, reprodutível com versão/modelo e seed quando disponível.",
+      "Teste de parser de métricas sem Ollama conectado."
+    ],
+    "file_path": "prompts/ETAPA_40.txt"
+  },
+  {
+    "n": 41,
+    "did": "D11",
+    "group": "07_RENDER_PERF_HOMOLOG",
+    "title": "Visão serial/paralelo, cache e recursos GUI",
+    "objective": "Evitar RAM/VRAM excessivas e reduzir custo de visão somente com medição comparável.",
+    "modules": "scripts/dev/benchmark_vision_r3b.py; src/ldporto/performance.py; src/ldporto/progress.py; src/ldporto/runtime_metrics.py",
+    "checks": [
+      "Smoke sem GPU passa, indicando indisponibilidade e nenhuma otimização ativada.",
+      "Reexecutar etapa com checkpoint preserva outputs anteriores válidos."
+    ],
+    "file_path": "prompts/ETAPA_41.txt"
+  },
+  {
+    "n": 42,
+    "did": "D12",
+    "group": "07_RENDER_PERF_HOMOLOG",
+    "title": "Homologação final e relatório real",
+    "objective": "Fechar ciclo com regressão, execução Windows documentada e revisão editorial humana.",
+    "modules": "scripts/dev/start_real_test_s11.py; scripts/dev/homologation_s11.py; src/ldporto/homologation_s11.py; docs/S9_S11_REAL_TEST.md",
+    "checks": [
+      "Relatório FINAL_HOMOLOGACAO.md com passed / pending / failed, comandos, hashes e exemplos revisados.",
+      "ZIP final inclui todo o projeto, checkpoints de 01–42, changelog e script do teste real."
+    ],
+    "file_path": "prompts/ETAPA_42.txt"
+  }
+]

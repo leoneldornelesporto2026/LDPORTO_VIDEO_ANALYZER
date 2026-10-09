@@ -59,12 +59,28 @@ def evaluate_semantic_ab(report, *, min_samples=3, min_speedup=1.10):
     speedup = median([p['speedup'] for p in pairs]) if pairs else None
     if not _valid(speedup) or speedup < min_speedup:
         reasons.append('runtime_speedup_not_proven')
-    # A single successful JSON response cannot measure semantic/editorial quality.
-    reasons.append('human_semantic_quality_goldset_not_attached')
+    from .semantic_benchmark import quality_approved
+    approved = quality_approved(report)
+    if not approved:
+        reasons.append('human_semantic_quality_goldset_not_attached_or_unacceptable')
+    if report.get('schema_version') != '40.1':
+        reasons.append('reproducible_benchmark_metadata_pending')
+    else:
+        provenance = report.get('provenance') or {}
+        if not all(provenance.get(k) for k in ('model', 'model_digest', 'ollama_version')):
+            reasons.append('model_provenance_pending')
+        if len({p['index'] for p in pairs}) < min_samples:
+            reasons.append('insufficient_distinct_subset_samples')
+        if len(pairs) != len(report.get('samples', [])):
+            reasons.append('failed_or_unmeasured_pairs')
+        if any((s.get('modes') or {}).get(m, {}).get('response_model') != provenance.get('model')
+               for s in report.get('samples', []) for m in ('legacy', 'compact')):
+            reasons.append('response_model_mismatch_or_pending')
     return {'experiment': 'ollama_compact_vs_legacy', 'paired_samples': pairs, 'median_speedup_x': speedup,
-            'semantic_quality_approved': False, 'safe_to_enable_automatically': False,
+            'semantic_quality_approved': approved, 'safe_to_enable_automatically': False,
+            'local_opt_in_recommended': not reasons,
             'min_required_speedup_x': min_speedup, 'blockers': reasons,
-            'outcome': 'await_windows_ollama_and_human_goldset'}
+            'outcome': 'local_opt_in_recommended' if not reasons else 'await_windows_ollama_and_human_goldset'}
 
 
 def physical_memory_available():

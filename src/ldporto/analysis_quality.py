@@ -164,7 +164,8 @@ def quality_gate(analysis, cfg=None):
     degraded=any(issue['severity'] in ('high','medium') for issue in issues)
     status='P0_FAIL' if required_missing else 'P1_DEGRADED' if degraded else 'PASS_WITH_WARNINGS' if issues else 'PASS'
     preview = analysis.get('preview_validation') or {}
-    technically_verified = preview.get('status') == 'ok' and preview.get('verifier_uses_rendered_frames') is True
+    from .integrity_contracts import preview_technical_readiness
+    technically_verified = preview_technical_readiness(preview)
     return {'schema_version':'1.0','status':status,'issues':issues,'required_missing_capabilities':required_missing,
             'preview_validated':technically_verified, 'preview_technical_verified':technically_verified,
             'preview_approved':False, 'publication_ready':False,

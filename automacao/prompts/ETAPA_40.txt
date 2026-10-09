@@ -1,0 +1,41 @@
+MICROETAPA 40/42 — A/B com Ollama real e prompt compacto
+REFERÊNCIA: D11 | LOTE: 07_RENDER_PERF_HOMOLOG
+
+CONTEXTO: L.D.PORTO VIDEO ANALYZER — código acumulado S1–S11; benchmark João Gordo: export que reporta build R4.9-S4-TRACKING-FACIAL, 55 candidatos, 52 após dedup, shortlist 1; saída partial/P1_DEGRADED. Esses números são BASELINE observado, não metas nem prova da versão integrada.
+
+ANEXOS: (a) ZIP DO CÓDIGO MAIS RECENTE do último checkpoint (na primeira etapa: `LDPORTO_VIDEO_ANALYZER_R4_9_S9_S10_S11_INTEGRADO.zip`); (b) este prompt; (c) nos passos que dependem da execução, `SECOND_CURATION_READY_tpcF5ri6GS4_20261008_041938_332406_8ae5ce(2).zip` ou relatório de auditoria anterior. Se o pacote de análise já estiver nesta conversa, não solicite novo envio desnecessário.
+
+OBJETIVO ÚNICO:
+Medir ganho sem perda de QA, histórias e ranking.
+
+ARQUIVOS PROVÁVEIS PARA INSPEÇÃO (confirme nomes/uso no ZIP antes de editar):
+scripts/dev/benchmark_semantic_r3b.py; scripts/dev/performance_s10.py; src/ldporto/ollama_local.py
+
+TAREFAS EM ESCOPO:
+1. Preparar benchmark com mesmo subset e prompts antigo/compacto, tokens/s, retries, duração e semântica.
+2. Permitir dry-run de configuração se Ollama indisponível.
+3. Gerar relatório que só recomende troca caso qualidade mensurada permaneça aceitável.
+
+CRITÉRIOS DE ACEITE E TESTES:
+- CSV por variação + relatório sintético, reprodutível com versão/modelo e seed quando disponível.
+- Teste de parser de métricas sem Ollama conectado.
+
+ATENÇÃO ESPECÍFICA:
+Não inventar resultado de desempenho na NVIDIA do usuário.
+
+REGRAS PARA CHATGPT NORMAL (válidas nesta microetapa):
+- Use o ZIP MAIS RECENTE do projeto como única base de código. O SECOND_CURATION_READY é evidência de execução (build S4), não o código para atualizar. Nunca sobrescreva uma versão posterior por S8 ou S4.
+- Execute SOMENTE esta microetapa. Inspecione o mínimo necessário, implemente no código existente, acrescente testes focados e rode a regressão pertinente; não comece a próxima etapa.
+- Preserve compatibilidade de JSON/IDs/checkpoints e cache caro. Não rerode ASR, visão, CUDA ou Ollama para corrigir lógica downstream sem necessidade técnica comprovada.
+- Não fabrique transcrição, perguntas, payoff, falante ativo, pessoa, crop, qualidade editorial ou sucesso de teste. Estado inseguro = null / pendente + motivo.
+- Não considere `READY` como publish_ready; aprovação humana e hashes reais são indispensáveis. Qualquer alteração em decisão, fonte ou preview invalida a aprovação associada.
+- Se faltar vídeo, áudio, GPU, modelo ou aplicativo Curator independente, faça os testes offline/sintéticos possíveis e registre o que deve ser validado no Windows. Não afirme ter testado aquilo que não executou.
+- Não peça nova arquitetura, não crie projeto do zero. Evite chamadas externas, ferramentas pagas, downloads de modelos e reanálise integral.
+
+ENTREGA OBRIGATÓRIA NESTA CONVERSA:
+1. Implementação real no workspace, se viável, não apenas plano.
+2. ZIP COMPLETO atualizado do projeto, preservando tudo que já funciona, mais link verificável.
+3. `CHECKPOINT_ETAPA_NNN.md` com arquivos alterados, mudanças, comandos, resultados observados, limitações, cache invalidado e próximos passos.
+4. Resumo curto dos achados e evidência de testes. Quando não puder completar, detalhe exatamente qual insumo bloqueou e não alegue concluído.
+
+AO FINAL: pare nesta etapa. Eu enviarei a próxima depois de baixar seu ZIP.

@@ -29,10 +29,10 @@ def classify_shot(frames, observations):
     if max_people == 2:
         return "two_shot"
     if max_people == 1:
-        heights = [o.get("face_height") for o in observations if o.get("face_height") is not None]
+        heights = [o.get("face_height") for o in observations if o.get('face_visible') and o.get("face_height") is not None]
         h = _median(heights)
         if h is None:
-            return "medium"
+            return "unknown"
         if h >= 0.42:
             return "close_up"
         if h >= 0.28:
@@ -57,9 +57,33 @@ def build_shots(scenes, vision, metadata, cfg):
                     if isinstance(f.get("blur_laplacian_variance"), (int, float))]
     sharp_ref = statistics.median(sharp_values) if sharp_values else 100.0
     shots = []
+    last_seen = {}
     for index, scene in enumerate(scenes):
-        frames = frames_by_scene.get(scene.get("scene_id"), [])
-        obs = obs_by_scene.get(scene.get("scene_id"), [])
+        # A scene ID alone must not admit stale samples or a frame on the next cut.
+        frames = sorted((f for f in frames_by_scene.get(scene.get("scene_id"), [])
+                         if scene['start'] <= f['time'] < scene['end']), key=lambda f: f['time'])
+        frame_times = {f['time'] for f in frames}
+        obs = [o for o in obs_by_scene.get(scene.get("scene_id"), [])
+               if o.get('time') in frame_times]
+        visible = sorted({p for f in frames for p in f.get('visible_people', []) if p})
+        sole = {tuple(sorted(f.get('visible_people') or [])) for f in frames}
+        primary = visible[0] if len(visible) == 1 and sole == {(visible[0],)} else None
+        reactions = sorted({o['person_id'] for o in obs if o.get('person_id') in visible
+                            and o.get('reaction_detected') is True
+                            and o.get('reaction_type') in {'laugh', 'laughing', 'smile', 'smiling',
+                                'surprise', 'surprised', 'applause', 'clapping', 'nod', 'nodding'}})
+        tv_cut = scene.get('tv_cut_verified') is True
+        role = 'tv_cut' if tv_cut else 'reaction' if reactions else 'main_person' if primary else 'unknown'
+        inset = min(.15, (scene['end']-scene['start'])/4)
+        sampling = {'first_sample_at': frames[0]['time'] if frames else None,
+                    'last_sample_at': frames[-1]['time'] if frames else None,
+                    'start_observed': bool(frames and frames[0]['time'] <= scene['start']+inset),
+                    'end_observed': bool(frames and frames[-1]['time'] >= scene['end']-inset),
+                    'method': 'existing_samples_only'}
+        shot_id = f"SHOT_{index:05}"
+        links = [{'person_id': p, 'previous_observed_shot_id': last_seen.get(p),
+                  'track_ids': sorted({o['track_id'] for o in obs if o.get('person_id') == p and o.get('track_id')}),
+                  'method': 'upstream_person_id', 'geometry_continuity': False} for p in visible]
         first_frame = frames[0] if frames else None
         boundary_diff = first_frame.get("boundary_difference") if first_frame else None
         hard_threshold = float(cfg.get("hard_cut_difference", 0.18))
@@ -69,7 +93,7 @@ def build_shots(scenes, vision, metadata, cfg):
             transition_conf = min(1.0, max(0.0, (boundary_diff-hard_threshold)/max(1e-9, 0.6-hard_threshold)))
 
         face_obs = [o for o in obs if o.get("face_visible")]
-        face_visibility = len(face_obs)/len(obs) if obs else 0.0
+        face_visibility = len(face_obs)/len(obs) if obs else None
         face_sizes = [o.get("face_height") for o in face_obs if o.get("face_height") is not None]
         subject_size = min(1.0, (_median(face_sizes) or 0.0)/0.45) if face_sizes else None
         raw_sharp = _median([f.get("blur_laplacian_variance") for f in frames])
@@ -89,7 +113,7 @@ def build_shots(scenes, vision, metadata, cfg):
         thumbnail_score = _combine(sharpness, face_visibility, subject_size, composition)
         camera_score = _combine(sharpness, face_visibility, subject_size, headroom, composition, crop)
         shots.append({
-            "shot_id": f"SHOT_{index:05}",
+            "shot_id": shot_id,
             "scene_id": scene.get("scene_id"),
             "start": float(scene["start"]), "end": float(scene["end"]),
             "duration": float(scene["end"]-scene["start"]),
@@ -99,6 +123,10 @@ def build_shots(scenes, vision, metadata, cfg):
             "transition_method": "scenedetect_boundary_plus_sampled_frame_difference",
             "shot_type": classify_shot(frames, obs),
             "shot_type_confidence": None,
+            "shot_role": role, "primary_visual_person": None if tv_cut else primary,
+            "reaction_people": reactions, "tv_cut_verified": True if tv_cut else None,
+            "sampling_coverage": sampling, "participant_links": links,
+            "crop_continuity": "reset_at_source_boundary",
             "visible_people": sorted({o.get("person_id") for o in obs if o.get("person_id")}),
             "face_visibility_score": face_visibility,
             "subject_size_score": subject_size,
@@ -113,6 +141,8 @@ def build_shots(scenes, vision, metadata, cfg):
             "method": "visual_boundary_with_sampled_geometry",
             "inference": True,
         })
+        for person in visible:
+            last_seen[person] = shot_id
     for i in range(len(shots)-1):
         shots[i]["transition_out"] = shots[i+1]["transition_in"]
     notes = [

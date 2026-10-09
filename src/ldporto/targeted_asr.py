@@ -1,11 +1,22 @@
 """Budgeted ASR alternatives prioritized by editorial evidence, with immutable raw words."""
-from .core import digest, file_hash, read_json, write_json, ok
+from pathlib import Path
+import math
+from .core import digest, file_hash, read_json, write_json
 from .audio import ffmpeg_audio
 from .transcription import TranscriptionEngine, alternative_evidence, word_text
 
 
+def _candidate_range(candidate):
+    start = candidate.get('ideal_start', candidate.get('start'))
+    end = candidate.get('ideal_end', candidate.get('end'))
+    if all(isinstance(t, (int, float)) and not isinstance(t, bool) and math.isfinite(t)
+           for t in (start, end)) and 0 <= start < end:
+        return start, end
+    return float('inf'), float('-inf')
+
+
 def select_repair_windows(words, candidates, arcs, questions, duration, max_regions=4, max_audio_seconds=60,
-                          shortlist_ids=None, speech_overlaps=(), events=()):
+                          shortlist_ids=None, speech_overlaps=(), events=(), diagnostics=None):
     options = []
     selected_ids = set(shortlist_ids) if shortlist_ids is not None else None
     if selected_ids == set():
@@ -13,7 +24,7 @@ def select_repair_windows(words, candidates, arcs, questions, duration, max_regi
     for word in words:
         if selected_ids is not None and not any(
             (c.get('moment_id') or c.get('candidate_id')) in selected_ids and
-            c.get('start', float('inf')) <= word.get('start', -1) < c.get('end', float('-inf'))
+            _candidate_range(c)[0] <= word.get('start', -1) < _candidate_range(c)[1]
             for c in candidates):
             continue
         if not (word.get('needs_review') or word.get('timestamp_repaired') or
@@ -26,14 +37,14 @@ def select_repair_windows(words, candidates, arcs, questions, duration, max_regi
             if arc.get('kind', 'complete_story') == 'complete_story' and payoff.get('start') is not None and payoff['start'] - 2 <= time <= payoff['end'] + 2:
                 priority, reason, refs = 5., 'STORY_PAYOFF', payoff.get('segment_ids', [])
         for row in candidates:
-            start = row.get('ideal_start', row.get('start', 0))
-            end = row.get('ideal_end', row.get('end', 0))
-            if row.get('default_shortlist_eligible') is False or not start <= time < end:
+            start, end = _candidate_range(row)
+            ident = row.get('moment_id') or row.get('candidate_id')
+            if (selected_ids is not None and ident not in selected_ids) or (selected_ids is None and row.get('default_shortlist_eligible') is False) or not start <= time < end:
                 continue
             score = float(row.get('editorial_score_final') or row.get('editorial_score') or 0)
             value = (4. if time < start + 8 else 2.) + score * .5
             if value > priority:
-                priority, reason, refs = value, 'CANDIDATE_HOOK' if time < start + 8 else 'HIGH_VALUE_CANDIDATE', [row['moment_id']]
+                priority, reason, refs = value, 'CANDIDATE_HOOK' if time < start + 8 else 'HIGH_VALUE_CANDIDATE', [ident]
         for row in questions:
             if row.get('answer_start') is not None and row['answer_start'] <= time <= (row.get('answer_end') or row['answer_start']) and priority < 3:
                 priority, reason, refs = 3., 'QUESTION_ANSWER', [row.get('question_id')]
@@ -45,17 +56,27 @@ def select_repair_windows(words, candidates, arcs, questions, duration, max_regi
         # hypotheses, NOT word corrections. Budget constrains GPU usage.
         for candidate in candidates:
             ident = candidate.get('moment_id') or candidate.get('candidate_id')
-            if ident not in selected_ids or candidate.get('default_shortlist_eligible') is False:
+            if ident not in selected_ids:
                 continue
             start = candidate.get('ideal_start', candidate.get('start'))
             end = candidate.get('ideal_end', candidate.get('end'))
-            if not isinstance(start, (int, float)) or not isinstance(end, (int, float)) or not 0 <= start < end <= duration + 1:
+            if not all(isinstance(t, (int, float)) and not isinstance(t, bool) and math.isfinite(t) for t in (start, end)) or not 0 <= start < end <= duration:
+                if diagnostics is not None:
+                    diagnostics.append({'candidate_id': ident, 'reason': 'invalid_candidate_range', 'status': 'pending'})
                 continue
             for location, why, priority in ((start, 'SHORTLIST_HOOK', 6.8), (end, 'SHORTLIST_PAYOFF', 7.0)):
                 a, b = max(0., location-2), min(duration, location+2)
                 if a < b:
                     options.append({'start': a, 'end': b, 'priority': priority,
                                     'priority_reason': why, 'evidence_refs': [ident], 'word_ids': []})
+            for question in questions:
+                a, b = question.get('question_start', question.get('start')), question.get('question_end', question.get('end'))
+                if not all(isinstance(t, (int, float)) and not isinstance(t, bool) and math.isfinite(t) for t in (a, b)) or not a < b:
+                    continue
+                if start < b and a < end:
+                    options.append({'start': max(start, a - 1), 'end': min(end, b + 1),
+                                    'priority': 6.9, 'priority_reason': 'SHORTLIST_QUESTION',
+                                    'evidence_refs': [ident, question.get('question_id')], 'word_ids': []})
         # Diarization overlap is worth reviewing where the selected cut lives;
         # absence of a usable overlap model does not mean no cross-talk.
         for region in speech_overlaps:
@@ -64,17 +85,24 @@ def select_repair_windows(words, candidates, arcs, questions, duration, max_regi
                 continue
             refs = [c.get('moment_id') or c.get('candidate_id') for c in candidates
                     if (c.get('moment_id') or c.get('candidate_id')) in selected_ids
-                    and c.get('start', float('inf')) < b and a < c.get('end', float('-inf'))]
+                    and _candidate_range(c)[0] < b and a < _candidate_range(c)[1]]
             if refs:
                 options.append({'start': max(0., a-1), 'end': min(duration, b+1),
                                 'priority': 6.0, 'priority_reason': 'OVERLAPPING_SPEECH',
                                 'evidence_refs': refs, 'word_ids': []})
     selected, audio_seconds = [], 0.
     for row in sorted(options, key=lambda r: (-r['priority'], r['start'])):
-        if row['end'] <= row['start'] or any(r['end'] > row['start'] and r['start'] < row['end'] for r in selected):
+        if row['end'] <= row['start']:
+            continue
+        # Editorial regions retain their own evidence even when they overlap.
+        if not row['priority_reason'].startswith('SHORTLIST_') and any(r['end'] > row['start'] and r['start'] < row['end'] for r in selected):
+            if diagnostics is not None:
+                diagnostics.append({**row, 'reason': 'overlap_with_planned_region', 'status': 'pending'})
             continue
         cost = row['end'] - row['start']
         if len(selected) >= max_regions or audio_seconds + cost > max_audio_seconds:
+            if diagnostics is not None:
+                diagnostics.append({**row, 'reason': 'region_budget' if len(selected) >= max_regions else 'audio_seconds_budget', 'status': 'pending'})
             continue
         selected.append(row)
         audio_seconds += cost
@@ -84,17 +112,41 @@ def select_repair_windows(words, candidates, arcs, questions, duration, max_regi
 def run_targeted_repair(ctx, audio, transcript, candidates, arcs, questions, duration, recognize=None,
                         shortlist_ids=None, speech_overlaps=(), events=()):
     cfg = ctx.config['transcription']
-    if not cfg.get('targeted_repair_enabled', True) or cfg.get('import_file'):
-        return {'status': 'skipped', 'alternatives': [], 'cache_hits': 0, 'scope': 'candidate_windows'}
+    selected_ids = list(dict.fromkeys(shortlist_ids or []))
+    deferred = []
     windows = select_repair_windows(transcript.get('words', []), candidates, arcs, questions, duration,
                                    cfg.get('targeted_max_regions', 4), cfg.get('targeted_max_audio_seconds', 60),
-                                   shortlist_ids=shortlist_ids, speech_overlaps=speech_overlaps, events=events)
+                                   shortlist_ids=shortlist_ids, speech_overlaps=speech_overlaps, events=events,
+                                   diagnostics=deferred)
+    known = {c.get('moment_id') or c.get('candidate_id') for c in candidates}
+    deferred.extend({'candidate_id': ident, 'reason': 'selected_candidate_missing', 'status': 'pending'}
+                    for ident in selected_ids if ident not in known)
+    base = {'selected_candidate_count': len(selected_ids), 'selected_candidate_ids': selected_ids,
+            'selection_source': 'final_editorial_shortlist' if shortlist_ids is not None else 'legacy_uncertain_words',
+            'windows': windows, 'unprocessed_regions': deferred,
+            'original_audio_verified': False, 'raw_replacement_count': 0,
+            'publication_ready': False, 'scope': 'candidate_windows'}
+    def pending(reason):
+        return {**base, 'status': 'pending', 'pending_reason': reason, 'alternatives': [], 'cache_hits': 0,
+                'audio_seconds': 0, 'candidate_coverage': dict.fromkeys(selected_ids, 0),
+                'unreviewed_selected_candidates': selected_ids,
+                'unprocessed_regions': deferred + [{**w, 'reason': reason, 'status': 'pending'} for w in windows]}
+    if not cfg.get('targeted_repair_enabled', True) or cfg.get('import_file'):
+        return pending('targeted_repair_disabled_or_imported') if selected_ids else {**base, 'status': 'skipped', 'alternatives': [], 'cache_hits': 0}
     if not windows:
-        return {'status': 'no_repair_needed', 'alternatives': [], 'cache_hits': 0, 'scope': 'candidate_windows',
-                'candidate_coverage': {ident: 0 for ident in (shortlist_ids or [])}}
+        if selected_ids or deferred:
+            return pending('no_regions_processed')
+        return {**base, 'status': 'no_repair_needed', 'alternatives': [], 'cache_hits': 0,
+                'candidate_coverage': {}}
     engine = None
     results, hits = [], 0
-    audio_hash = file_hash(audio['mono'])
+    try:
+        source = (audio or {}).get('mono')
+        if not source or not Path(source).is_file():
+            return pending('original_audio_unavailable')
+        audio_hash = file_hash(source)
+    except OSError:
+        return pending('original_audio_unreadable')
     try:
         for row in windows:
             key = digest({'contract': 'targeted_asr_v1', 'audio': audio_hash, 'window': row,
@@ -112,7 +164,13 @@ def run_targeted_repair(ctx, audio, transcript, candidates, arcs, questions, dur
                     pass  # Invalid cache must not silently become a verified hypothesis.
 
             wav = record.with_suffix('.wav')
-            ffmpeg_audio(audio['mono'], wav, start=row['start'], duration=row['end'] - row['start'])
+            try:
+                ffmpeg_audio(audio['mono'], wav, start=row['start'], duration=row['end'] - row['start'])
+            except (OSError, RuntimeError) as exc:
+                wav.unlink(missing_ok=True)
+                deferred.append({**row, 'reason': 'audio_extraction_unavailable',
+                                 'error_type': type(exc).__name__, 'status': 'pending'})
+                continue
             try:
                 if recognize is None:
                     if engine is None:
@@ -131,7 +189,9 @@ def run_targeted_repair(ctx, audio, transcript, candidates, arcs, questions, dur
                     hypothesis = recognize(wav, row['start'])
             finally:
                 wav.unlink(missing_ok=True)
-            result = {**row, 'audio_source': 'original_mono', 'selected_source': 'canonical_raw_preserved',
+            result = {**row, 'provenance': {'audio_sha256': audio_hash, 'cache_key': key,
+                      'selection_source': base['selection_source'], 'independent_audio_verification': False},
+                      'audio_source': 'original_mono', 'selected_source': 'canonical_raw_preserved',
                       'selected_text': word_text([w for w in transcript.get('words', []) if row['start'] <= w['start'] < row['end']]),
                       'alternatives': [{'source': 'original_targeted', 'words': hypothesis['words'],
                                         'text': word_text(hypothesis['words']), 'comparison': alternative_evidence(hypothesis, row['start'], row['end'])}],
@@ -142,12 +202,11 @@ def run_targeted_repair(ctx, audio, transcript, candidates, arcs, questions, dur
         if engine:
             engine.model = None
     coverage = {ident: sum(1 for r in results if any(
-        r['start'] < c.get('ideal_end', c.get('end', 0)) and
-        r['end'] > c.get('ideal_start', c.get('start', 0))
+        r['start'] < _candidate_range(c)[1] and
+        r['end'] > _candidate_range(c)[0]
         for c in candidates if (c.get('moment_id') or c.get('candidate_id')) == ident))
         for ident in (shortlist_ids or [])}
-    return {'status': 'alternatives_for_review', 'alternatives': results, 'cache_hits': hits, 'windows': windows,
-            'audio_seconds': sum(r['end'] - r['start'] for r in windows), 'scope': 'candidate_windows',
+    return {**base, 'status': ('partial_pending' if results else 'pending') if deferred else 'alternatives_for_review', 'alternatives': results, 'cache_hits': hits, 'windows': windows,
+            'audio_seconds': sum(r['end'] - r['start'] for r in results), 'scope': 'candidate_windows',
             'candidate_coverage': coverage, 'unreviewed_selected_candidates': [k for k, v in coverage.items() if not v],
             'original_audio_verified': False, 'raw_replacement_count': 0}
-

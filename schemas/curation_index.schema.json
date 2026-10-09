@@ -48,7 +48,7 @@
         "preview_ready"
       ],
       "additionalProperties": {
-        "type": "boolean"
+        "type": ["boolean", "null"]
       }
     },
     "second_curation_readiness_reasons": {

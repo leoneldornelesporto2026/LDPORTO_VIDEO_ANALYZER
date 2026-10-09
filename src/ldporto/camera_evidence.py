@@ -2,6 +2,59 @@
 import math
 
 
+def local_speaker_supported(row):
+    """Accept legacy local rows, but never promote an explicit uncertain state."""
+    person = row.get('person_id')
+    return bool(person and row.get('active_speaker_state') in (None, 'CONFIRMED')
+                and ('active_person' not in row or row['active_person'] == person)
+                and row.get('contemporary_visual_presence') is not False
+                and row.get('offscreen_state') is not True)
+
+
+def target_contradiction(voices):
+    return any(row.get('active_person') is not None and row.get('person_id') is not None
+               and row['active_person'] != row['person_id'] for row in voices)
+
+
+def focus_window_evidence(item, focus, layout, role, reasons, selected):
+    """Retain one diagnostic per evaluation window independently of compaction."""
+    faces = sorted(p for p, obs in item['obs'].items() if obs.get('face_visible') and obs.get('face_bbox'))
+    confirmed = sorted(row['person_id'] for row in item['confident'])
+    contradiction = target_contradiction(item['voices']) or len(confirmed) > 1
+    if not item['shot'] or item['frame'] is None:
+        cause = 'NO_CONTEMPORARY_VISUAL_SAMPLE'
+    elif not faces:
+        cause = 'NO_VISIBLE_FACE'
+    elif contradiction:
+        cause = 'CONTRADICTORY_TARGET_EVIDENCE'
+    elif item['overlap']:
+        cause = 'AUDIO_OVERLAP'
+    elif focus and role == 'DOMINANT_FACE':
+        cause = 'VISUAL_ONLY_FALLBACK'
+    elif focus and role == 'REACTION':
+        cause = 'LOCAL_VISUAL_REACTION'
+    elif focus:
+        cause = 'LOCAL_SPEAKER_FOCUS'
+    elif item['shot'].get('shot_type') in {'close_up', 'medium_close_up'} and item['safe']:
+        cause = 'SAFE_ORIGINAL_CLOSEUP_PRESERVED'
+    elif not confirmed:
+        cause = 'NO_CONFIRMED_ACTIVE_SPEAKER'
+    elif confirmed[0] not in item['safe']:
+        cause = 'CONFIRMED_TARGET_UNSAFE_CROP'
+    else:
+        cause = 'DIRECTOR_SAFETY_OR_CONTINUITY_GATE'
+    resolved = bool(focus or layout == 'split_candidate')
+    return {'start': item['start'], 'end': item['end'], 'shot_id': item['shot'].get('shot_id'),
+            'decision': selected, 'layout': layout, 'focus_person': focus,
+            'camera_evidence_role': role, 'reason_code': cause, 'director_reasons': list(reasons),
+            'evidence': {'visual_observed_at': item['frame']['time'] if item['frame'] else None,
+                         'visible_faces': faces, 'confirmed_local_people': confirmed,
+                         'safe_crop_people': sorted(item['safe']), 'contradiction': contradiction},
+            'visual_target_evidence': item.get('visual_target_evidence'),
+            'coverage_effect': {'resolved_focus_seconds': item['end']-item['start'] if resolved else 0.,
+                                'source_preserve_seconds': item['end']-item['start'] if layout == 'full_frame' else 0.}}
+
+
 class VisualTargetEvidence:
     def __init__(self):
         self.tracks = {}

@@ -1,0 +1,19 @@
+Implemente esta etapa no projeto atual do L.D.PORTO VIDEO ANALYZER, usando o ZIP atual do código e o relatório/plano de auditoria correspondente. O SECOND_CURATION_READY é evidência de saída, não o projeto executável. Se o código não tiver sido fornecido, não invente uma aplicação substituta: conclua o que for possível e registre exatamente os arquivos necessários para a correção.
+
+Retome o último workspace/checkpoint válido. Localize os produtores, consumidores e contratos afetados no código real; preserve recursos, arquivos legados, outputs e alterações que já funcionam. Não recomece do zero nem reescreva a arquitetura sem necessidade demonstrada.
+
+Diferencie achado confirmado e hipótese: reproduza ou inspecione a hipótese antes de mudar lógica. Faça correção completa dentro do escopo desta etapa, incluindo dependências necessárias, migração compatível e testes pertinentes. Não avance para upgrades opcionais sem evidência de benefício.
+
+ETAPA D02 — Transcrição diarização e alinhamento temporal
+
+Leia RELATORIO_D02.md, ACHADOS_D02.json, PLANO_NORMAL_D02.md e os checkpoints anteriores que estiverem disponíveis. Use os achados atualizados; os exemplos do export inicial não substituem a reprodução do problema no projeto atual.
+
+Escopo concreto:
+Implemente alinhamento e preservação do texto canônico, revisão dirigida com orçamento explícito e proveniência, tratamento consistente de UNKNOWN e sobreposição e mapas de tempo para render. Conecte a revisão aos candidatos finais, mantendo ASR original. Qualquer nova inferência ou correção de nome depende de áudio real e configuração disponível. Não declare WER/DER apenas por usar probabilities ou cobertura.
+
+Verificação e entrega:
+- Execute testes relevantes de contrato/lógica e os casos reais indicados no plano. Informe ambiente e resultados. Não faça certificado Windows/Python 3.11 se executou em outro ambiente.
+- Preserve cache caro; invalide e reexecute somente os consumidores afetados. Atualize hashes, versão/build e documentação quando o conteúdo/contrato realmente mudar.
+- Texto de ASR continua rastreável e incerteza não vira fato. Aprovação editorial e preview final têm escopos separados.
+- Entregue ZIP atualizado do projeto completo, changelog curto, testes realizados, pendências reais e CHECKPOINT_IMPLEMENTACAO da etapa. Uma especificação escrita não conta como implementação.
+- Se faltar áudio/vídeo/modelo/hardware, conclua as correções independentes e forneça o procedimento exato de validação pendente; não declare a validação executada.

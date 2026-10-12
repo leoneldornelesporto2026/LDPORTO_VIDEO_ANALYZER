@@ -6,6 +6,38 @@ from pathlib import Path
 from .core import digest
 
 
+def output_contract(data, group, cfg, index):
+    """Validate the actual API contract before grounding; never infer quality."""
+    import jsonschema
+    from .semantic import range_schema, ollama_schema, ground_model_output
+    schema = range_schema(group) if cfg.get('structured_ranges', True) else ollama_schema()
+    result = {'json_complete': False, 'references_valid': None, 'grounded_output': None,
+              'output_sha256': digest(data), 'ranking': None, 'quality': None}
+    try:
+        jsonschema.validate(data, schema)
+        result['json_complete'] = True
+        grounded = ground_model_output(data, group, index)
+        result.update(references_valid=True, grounded_output=grounded,
+                      output_sha256=digest(grounded),
+                      ranking=[row['evidence_segment_ids'] for row in grounded['moments']])
+    except (ValueError, KeyError, TypeError, jsonschema.ValidationError) as exc:
+        result.update(error_type=type(exc).__name__)
+        if result['json_complete']:
+            result['references_valid'] = False
+    return result
+
+
+def compare_outputs(modes):
+    a, b = modes['legacy'], modes['compact']
+    valid = all(row.get('references_valid') is True for row in (a, b))
+    return {'json_complete': {mode: row.get('json_complete') for mode, row in modes.items()},
+            'references_valid': {mode: row.get('references_valid') for mode, row in modes.items()},
+            'same_grounded_output': a['output_sha256'] == b['output_sha256'] if valid else None,
+            'same_moment_order': a.get('ranking') == b.get('ranking') if valid else None,
+            'ranking_basis': 'returned_moment_reference_order_not_editorial_quality',
+            'quality': None, 'monetary_cost': None}
+
+
 def number(value, *, positive=False):
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         return None

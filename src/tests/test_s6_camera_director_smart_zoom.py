@@ -66,7 +66,8 @@ def test_grounded_understanding_typed_reveal_triggers_opportunity():
     assert result['metrics']['editorial_beat_raw_windows'] > 0
     assert result['metrics']['zoom_opportunity_window_count'] > 0
     assert result['metrics']['zoom_accepted_event_count'] > 0
-    assert result['metrics']['zoom_delivered_event_count'] > 0
+    assert result['metrics']['zoom_timeline_event_count'] > 0
+    assert result['metrics']['zoom_delivered_event_count'] == 0
 
 
 def test_qa_zoom_requires_completed_answer_and_verified_refs():

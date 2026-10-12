@@ -67,3 +67,69 @@ PySceneDetect 0.7.1, SoundFile 0.13.1, FFmpeg/FFprobe disponíveis.
 
 Para a primeira entrevista real, ouça trechos do início/meio/fim, confirme as
 palavras marcadas e compare as miniaturas com os locutores antes de planejar crops.
+
+## Etapa 52 — homologação final auditável (2026-10-09)
+
+O histórico acima registra verificações anteriores; os resultados desta etapa estão
+em `automacao/execucao/etapa52/` e no checkpoint 52. Homologação automática não
+substitui parecer humano. READY_FOR_REVIEW, PREVIEW_APPROVED e PUBLISH_READY são
+gates separados. Esta auditoria sempre mantém `publication_ready=false`.
+
+### offline_verified
+
+- Auditoria somente leitura, sem extração: `python scripts/dev/audit_homologation52.py
+  --package <pacote.zip> --output <novo_relatorio.json>`.
+- O comando verifica orçamento/tamanho, caminhos, symlinks e membros duplicados;
+  hashes e bytes do manifesto; contratos atuais de IDs, Q&A, fila, estados e gates.
+  Pacotes antigos conservam sua versão e seus problemas, sem migração implícita.
+- `--feedback <feedback.json>` importa para validação local o contrato 4.4.0 com
+  provider `manual_json`, source_sha256 e input_package_sha256 correspondentes.
+  Um `approve` nesse JSON é proposta editorial; não é aprovação por hash de preview.
+  Não ocorre upload remoto, renderização ou geração de ZIP. A integração de upload
+  humano na interface requer homologação manual; a saída ZIP do exportador é
+  verificada pelos testes sintéticos e pelo mesmo validador de pacote.
+- `--baseline <analysis.json> --current <analysis.json>` só calcula deltas se
+  metadata.sha256 e configuração completa coincidirem. A configuração deve estar
+  em `config` ou ter `configuration_sha256` registrado. Nome, URL e hash de apenas
+  uma etapa não provam equivalência. Diretórios contendo analysis.json são aceitos.
+- As cifras 217/193/0/0, 4.080 flags, 7,05%, 0,058%, 4,31%, 6/0 zooms e dois clips
+  de cabeça são alegações históricas fornecidas para comparação, não medições novas.
+  Sem outputs comparáveis: pós e delta são null, status `not_measured`.
+- A regressão usa fixtures controladas para export, replays, previews, hash de
+  aprovação e entradas ZIP maliciosas. ZIPs temporários de fixtures não são
+  snapshots do projeto. O teste que exporta o projeto completo é reservado ao
+  orquestrador por proibição de snapshots nesta etapa; registrar sua exclusão.
+
+### requires_real_media — checklist Windows / Python 3.11
+
+- [ ] Registrar build, SHA256 da fonte e configuração antes/depois; usar a mesma
+  fonte sem modificar os artefatos antigos. Não repetir a entrevista inteira por padrão.
+- [ ] Conferir Tesseract instalado e idioma português; executar OCR em amostras
+  autorizadas de tarja/QR, Openbox e Copa. Registrar texto, timestamps e status real.
+  Contact sheets não provam OCR executado; skipped/ausente permanece desconhecido.
+- [ ] Selecionar 10–20 goldsets anotados por pessoa, com pergunta/resposta, payoff,
+  propaganda, fala ambígua, corte inicial/final e mudanças de câmera; guardar IDs e
+  razões. Medir erros e cobertura; não promover heurísticas a probabilidades.
+- [ ] Ouvir começo/meio/fim e trechos editados: literalidade, nomes, negações,
+  hesitações, risadas comprovadas, sobreposição, sincronismo e legenda.
+- [ ] Conferir QR/GC/tarjas e safe areas no quadro renderizado; evitar crops que
+  transformem propaganda em conteúdo aprovado ou atribuam identidade sem prova.
+- [ ] Renderizar canários curtos autorizados (vertical 1080x1920 e source_preserve),
+  verificar frames, áudio, duração, SHA, recibos e origem. Não publicar MP4.
+- [ ] Validar interface Windows, importação/upload local de feedback e ZIP de saída
+  autorizado, Ollama/CUDA apenas em sessão manual própria; registrar falhas/skips.
+
+### human_review_pending
+
+- [ ] Revisar cada item da fila humana com transcrição, contexto e referências;
+  manter publicidade excluída ou em revisão, nunca auto-aprovada.
+- [ ] Conferir independência da avaliação de Q&A, payoff, legenda, crop e propaganda.
+- [ ] Vincular decisão humana identificada ao SHA256 do pacote, fonte e preview
+  exatos; alterar qualquer artefato exige nova aprovação. Testar hash divergente.
+- [ ] Emitir parecer assinado/identificado e registrar bugs abertos antes de avaliar
+  o gate de publicação. Relatório offline e testes verdes não aprovam publicação.
+
+Os arquivos `AUDITORIA_CLOVIS_20261009.md` e
+`SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip` não estavam disponíveis nos caminhos
+informados nesta execução. A obtenção desses arquivos e de outputs pós comparáveis
+permanece pendente; não há alegação de homologação real do vídeo Clóvis.

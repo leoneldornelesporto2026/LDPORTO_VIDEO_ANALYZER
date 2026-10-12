@@ -175,11 +175,15 @@ def build_second_curation_package(analysis):
                               'title_idea':copy.get('title_idea'),'source_moment_id':cid if copy else None},
             'commercial_classification':m.get('commercial_classification'),
             'commercial_visual_evidence': m.get('commercial_visual_evidence', []),
+            'commercial_observations': m.get('commercial_observations', []),
+            'commercial_risk': m.get('commercial_risk'),
+            'commercial_coverage': m.get('commercial_coverage'),
             'commercial_gate_reason': m.get('commercial_gate_reason'),
             'commercial_block_refs': m.get('commercial_block_refs', []),
             'excluded_commercial_interval_ids': m.get('excluded_commercial_interval_ids', []),
             'editorial_score_raw':m.get('editorial_score_raw'),
             'score_components':m.get('score_components',{}),'penalties':m.get('penalties',{}),
+            'score_evidence': m.get('score_evidence', {}),
             'score_weights':m.get('score_weights',{}),'editorial_score_final':m.get('editorial_score_final',score),
             'ranking_version':m.get('ranking_version'),
             'editorial_quality_score': m.get('editorial_quality_score'),
@@ -266,11 +270,12 @@ def build_second_curation_package(analysis):
             candidate['commercial_classification'] = require_commercial_review(classification, state)
             candidate['default_shortlist_eligible'] = False
             candidate['publication_eligible'] = False
-        candidate['eligible_for_human_review'] = bool(integrity_ready and candidate['transcript_literal'] and
-            package['reference_validation']['status'] == 'resolved' and
-            not candidate.get('excluded_commercial_interval_ids') and
-            (candidate.get('commercial_classification') or {}).get('eligibility') != 'excluded')
-        candidate['publication_ready'] = False
+        from .integrity_contracts import candidate_review_invariants
+        candidate.update(candidate_review_invariants(analysis, candidate,
+            package['reference_validation']['status'] == 'resolved', integrity_ready))
+    from .story_recovery import editorial_recovery_report
+    package['editorial_recovery_report'] = editorial_recovery_report(
+        package['question_reference_table'], arcs, candidates, analysis)
     return package
 
 

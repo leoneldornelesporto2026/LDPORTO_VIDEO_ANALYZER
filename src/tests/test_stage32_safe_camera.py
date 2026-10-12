@@ -110,7 +110,8 @@ def test_requests_acceptances_and_deliveries_are_separate_and_speed_limited():
                                 {'output_width': 540, 'output_height': 960}, main_moments=[hook()])['data']
     metrics = data['metrics']
     assert metrics['zoom_request_window_count'] >= metrics['zoom_accepted_window_count'] > 0
-    assert metrics['zoom_delivered_event_count'] > 0
+    assert metrics['zoom_timeline_event_count'] > 0
+    assert metrics['zoom_delivered_event_count'] == 0  # No rendered preview here.
     assert sum(metrics['zoom_opportunity_outcome_counts'].values()) == metrics['zoom_raw_opportunity_window_count']
     assert metrics['zoom_accepted_event_count'] == (metrics['zoom_accepted_push_in_event_count'] +
                                                   metrics['zoom_accepted_pull_out_event_count'])

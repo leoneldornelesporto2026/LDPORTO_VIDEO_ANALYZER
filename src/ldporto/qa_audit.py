@@ -146,6 +146,7 @@ def audit_qa(analysis, *, exported_rows=None, candidates=None, sample_limit=10):
             if _number(qend) and _number(astart) and astart < qend:
                 reasons.append('answer_precedes_question_end')
         cases.append({'question_id': qid, 'question': text, 'answer': record.get('answer'),
+                      'stable_question_id': record.get('stable_question_id'),
                       'source_paths': [f'{name}[{index}]' for name, index, _ in origins],
                       'conflicting_fields': conflicts, 'categories': categories,
                       'answer_expected': expected, 'associated_candidate': associated,
@@ -180,6 +181,8 @@ def audit_qa(analysis, *, exported_rows=None, candidates=None, sample_limit=10):
                        'non_answer_diagnostic_ids': len(detected - expected_ids),
                        'associated_pair_ids': len(associated_ids), 'heuristic_complete_pair_ids': len(complete_ids),
                        'unresolved_candidate_ids': len(unresolved_ids),
+                       'partial_associated_pair_ids': len(associated_ids - complete_ids),
+                       'ambiguous_pair_ids': len(suspect),
                        'distinct_associated_answer_spans': len(groups),
                        'exported_reference_ids': len(exports) if exported_rows is not None else None,
                        'exported_reference_rows': len(exported_rows) if exported_rows is not None else None,

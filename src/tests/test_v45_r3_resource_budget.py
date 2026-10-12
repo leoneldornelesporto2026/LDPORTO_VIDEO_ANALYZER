@@ -27,4 +27,5 @@ def test_measured_stage_breakdown_is_explicitly_not_speedup_claim():
     assert report['stage_bottlenecks'][0]['stage']=='semantic'
     assert sum(row['share_of_measured_runtime'] for row in report['stage_bottlenecks']) == 1
     assert 'automatic_parallelization' in report['not_implemented']
-    assert report['camera_readiness']['zoom_delivered']==0
+    assert report['camera_readiness']['zoom_delivered'] is None
+    assert report['camera_readiness']['zoom_timeline']==0

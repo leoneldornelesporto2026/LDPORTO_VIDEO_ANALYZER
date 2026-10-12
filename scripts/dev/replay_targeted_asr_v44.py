@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
 from ldporto.core import Context
 from ldporto.config import load_config, configure_local_mode
-from ldporto.targeted_asr import run_targeted_repair
+from ldporto.targeted_asr import run_on_demand_review
 
 
 def main():
@@ -23,12 +23,11 @@ def main():
     # Consume the final exported selection from this same analysis, never an
     # intermediate commercial replay with an unrelated/stale candidate list.
     candidates = read(folder / 'main_moments.json')
-    shortlist = read(folder / 'analysis.json')['editorial_shortlist']
     arcs = read(folder / 'story_arcs.json')
     ctx = Context(folder / metadata['filename'], output, cfg, metadata['sha256'], logging.getLogger('v44-targeted'))
-    result = run_targeted_repair(ctx, {'mono': str(folder / 'audio/original_mono_16k.wav')}, transcript,
-                                candidates, arcs, read(folder / 'questions_answers.json'), metadata['duration'],
-                                shortlist_ids=shortlist)
+    # Explicit human queue, opt-in and expected audio SHA come from config.
+    result = run_on_demand_review(ctx, {'mono': str(folder / 'audio/original_mono_16k.wav')}, transcript,
+                                candidates, arcs, read(folder / 'questions_answers.json'), metadata['duration'])
     output.mkdir(parents=True, exist_ok=True)
     (output / 'targeted_asr_repair.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps({k: v for k, v in result.items() if k != 'alternatives'}, ensure_ascii=False))

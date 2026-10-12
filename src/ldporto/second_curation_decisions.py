@@ -121,6 +121,8 @@ def compile_decisions(document, catalog, metadata, segments=None):
                 'curation_source': 'SECOND_CURATOR' if document['provider'] == 'manual_json' else 'AI_SECOND_CURATOR',
                 'original_ranks': [row.get('original_rank', row.get('rank')) for row in rows],
                 'action': name, 'commercial_override': bool(manual_override), 'needs_review': True,
+                'human_approved': False, 'publication_ready': False,
+                'approval_reason': 'editorial_proposal_only_use_human_preview_hash_gate',
                 'duplicate_group_id': rows[0].get('duplicate_group_id')}
     return sorted(approved.values(), key=lambda r: (r['rank'], r['decision_id']))
 

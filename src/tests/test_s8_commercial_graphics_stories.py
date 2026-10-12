@@ -87,6 +87,8 @@ def test_ocr_observation_outside_candidate_does_not_contaminate_other_clip():
 
 
 def test_targeted_ocr_reports_observed_bbox_and_never_infers_duration(monkeypatch):
+    from ocr_test_support import mock_ocr_runtime
+    mock_ocr_runtime(monkeypatch)
     import cv2
     class Capture:
         def __init__(self, *_): self.pos = 0

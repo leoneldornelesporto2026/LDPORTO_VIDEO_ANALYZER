@@ -1,4 +1,0 @@
-
-# LDPORTO AUTOPILOT: preserva backups e artefatos de leitura somente local
-/automacao/execucao/
-/automacao/evidencias/

@@ -1,6 +1,7 @@
 """Conservative crop geometry. Safe is geometric, never a claim about model accuracy."""
 from .camera_motion import clamp
 from .temporal import number
+import math
 
 
 def base_size(metadata, cfg):
@@ -17,10 +18,14 @@ def subject_box(obs, cfg):
     face = obs.get('face_bbox') or {}
     if not face or not obs.get('face_visible') or obs.get('safe_crop_possible') is not True:
         return None
+    if any(not isinstance(face.get(k), (int, float)) or isinstance(face.get(k), bool)
+           or not math.isfinite(face[k]) for k in ('x', 'y', 'width', 'height')):
+        return None
     x, y, w, h = (number(face.get(k), -1.) for k in ('x', 'y', 'width', 'height'))
     if min(x, y) < 0 or min(w, h) <= 0 or x+w > 1.000001 or y+h > 1.000001:
         return None
-    if h < cfg['min_face_height'] or y < .005:
+    if (h < cfg['min_face_height'] or y < max(.005, cfg['headroom'])
+            or x <= .005 or x+w >= .995 or y+h >= .995):
         return None
     # Full head with breathing room; upper torso only when an actual body box exists.
     bottom = y+h+min(.08, h*.25)

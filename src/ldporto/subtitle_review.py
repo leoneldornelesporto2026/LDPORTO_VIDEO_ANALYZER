@@ -262,6 +262,8 @@ def review_selected_clips(words, candidates, selected_ids=None, *, alternatives=
             'word_alignment_verified': karaoke,
             'effective_caption_mode': 'word_karaoke' if karaoke and all(w.get('audio_verified') is True for w in inside) else 'phrase_subtitles',
             'approval_state': 'HUMAN_AUDIO_REVIEW_REQUIRED',
+            'needs_review': True, 'verified_by_audio': None,
+            'correction_approved': False, 'subtitle_publish_ready': False,
             'audio_verified': False, 'publication_ready': False,
         }
         global_reasons.update(reasons)
@@ -294,6 +296,10 @@ def write_review_kit(directory, report):
     (root / 'subtitle_review_s7.json').write_text(json.dumps(report, ensure_ascii=False, indent=2,
                                                    allow_nan=False), encoding='utf-8')
     report_hash = _sha256(root / 'subtitle_review_s7.json')
+    manual = deepcopy(report.get('targeted_asr', {}).get('manual_review', {}))
+    manual.update({'source_report_sha256': report_hash, 'publication_ready': False})
+    (root / 'targeted_manual_review.json').write_text(json.dumps(manual, ensure_ascii=False,
+        indent=2, allow_nan=False), encoding='utf-8')
     names = [_safe_id(cid) for cid in report.get('candidates', {})]
     if len(names) != len(set(names)):
         raise ValueError('Candidate filename collision')
@@ -425,6 +431,9 @@ def apply_human_subtitle_review(report_dir, review_csv, output_dir):
         'schema_version': 's7.1', 'status': 'HUMAN_REVIEW_FIELDS_COMPLETE',
         'content_source': 'reviewer_supplied_csv_not_autonomous_ASR',
         'audio_listening': 'reviewer_self_attested_NOT_independently_verified',
+        'needs_review': False, 'verified_by_audio': True,
+        'verification_basis': 'reviewer_self_attestation', 'correction_approved': False,
+        'subtitle_publish_ready': False,
         'word_karaoke_approved': False, 'video_render_checked': False,
         'source_report_sha256': report_hash, 'review_csv_sha256': _sha256(review_csv),
         'source_report_path': str((folder / 'subtitle_review_s7.json').resolve()),
@@ -468,6 +477,9 @@ def approve_reviewed_subtitles(directory, candidate_id, *, expected_sha256, revi
     approval = {'candidate_id': candidate_id, 'srt_sha256': digest,
                 'provenance_sha256': provenance_hash, 'reviewer': reviewer.strip(),
                 'audio_listened': True, 'status': 'HUMAN_SUBTITLE_APPROVED',
+                'needs_review': False, 'verified_by_audio': True,
+                'verification_basis': 'reviewer_self_attestation',
+                'correction_approved': True, 'subtitle_publish_ready': False,
                 'independent_audio_verification': False, 'publication_ready': False}
     path = Path(directory) / f'{_safe_id(candidate_id)}.approval.json'
     path.write_text(json.dumps(approval, ensure_ascii=False, indent=2), encoding='utf-8')
@@ -491,5 +503,7 @@ def subtitle_finalization_gate(directory, candidate_id):
     except (OSError, ValueError, KeyError, TypeError) as exc:
         valid, reason = False, str(exc)
     return {'candidate_id': candidate_id, 'subtitles_final_allowed': valid,
+            'needs_review': not valid, 'verified_by_audio': True if valid else None,
+            'correction_approved': valid, 'subtitle_publish_ready': False,
             'status': 'HUMAN_SUBTITLE_APPROVED' if valid else 'HUMAN_AUDIO_REVIEW_REQUIRED',
             'reason': reason, 'publication_ready': False}

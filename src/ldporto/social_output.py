@@ -457,6 +457,8 @@ def build_social_output(analysis, cfg, package=None):
         ocr_run = analysis.get('commercial_visual_s8') or {}
         graphics_run = analysis.get('broadcast_graphics') or {}
         visual_plan = {'preset': style_by_category.get(candidate['story_category'], 'source_preserve'),
+            'commercial_risk': candidate.get('commercial_risk'),
+            'commercial_coverage': candidate.get('commercial_coverage'),
             'commercial_ocr_scope': ('sampled' if candidate['candidate_id'] in (ocr_run.get('inspected_candidate_ids') or [])
                                      and ocr_run.get('status') == 'measured' else
                                      'uninspected_or_backend_unavailable'),

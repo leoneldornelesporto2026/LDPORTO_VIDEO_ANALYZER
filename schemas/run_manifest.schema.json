@@ -1,5 +1,118 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema","title":"L.D.PORTO Run Manifest v1","type":"object",
-  "required":["schema_version","run_id","analysis_status","stage_status","modules_still_valid"],
-  "properties":{"schema_version":{"const":"1.0"},"run_id":{"type":"string"},"analysis_status":{"enum":["complete","partial"]},"root_cause_stage":{"type":["string","null"]},"descendants_affected":{"type":"array"},"modules_still_valid":{"type":"array"},"stage_status":{"type":"object"}}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "L.D.PORTO Run Manifest v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "analysis_status",
+    "stage_status",
+    "modules_still_valid"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "analysis_status": {
+      "enum": [
+        "complete",
+        "partial"
+      ]
+    },
+    "root_cause_stage": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "descendants_affected": {
+      "type": "array"
+    },
+    "modules_still_valid": {
+      "type": "array"
+    },
+    "stage_status": {
+      "type": "object"
+    },
+    "execution_evidence": {
+      "enum": [
+        "proof",
+        "unknown",
+        "mismatch"
+      ]
+    },
+    "execution_attestation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "producer": {
+          "const": "ldporto.pipeline"
+        },
+        "scope": {
+          "const": "full_analysis_stages"
+        },
+        "execution_returncode": {
+          "const": 0
+        },
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "attestation_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "required_stages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "optional_policy": {
+          "type": "object"
+        },
+        "checkpoints": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "schema_version",
+        "producer",
+        "scope",
+        "execution_returncode",
+        "source_sha256",
+        "attestation_sha256",
+        "required_stages",
+        "optional_policy",
+        "checkpoints"
+      ]
+    },
+    "stage_status_summary": {
+      "enum": [
+        "complete",
+        "partial"
+      ]
+    },
+    "editorial_readiness": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "preview_approved": {
+      "type": "boolean"
+    },
+    "publication_ready": {
+      "type": "boolean"
+    }
+  }
 }

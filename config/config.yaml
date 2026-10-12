@@ -89,9 +89,9 @@ scenes:
   min_seconds: 0.6
 
 ocr:
-  enabled: false
+  enabled: true
   languages: por+eng
-  tesseract_cmd: null
+  tesseract_cmd: "C:/Program Files/Tesseract-OCR/tesseract.exe"
 
 audio_events:
   enabled: false

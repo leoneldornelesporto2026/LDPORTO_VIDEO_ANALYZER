@@ -879,6 +879,9 @@ def questions_answers(segments):
                   key=lambda s: (s.get('start', 0), s.get('end', 0)))
     pairs = []
     for i, s in enumerate(rows):
+        if any(e['segment_id'] == s['segment_id'] and e.get('response_cue') == 'causal_response_cue'
+               for pair in pairs for e in pair.get('association_evidence', [])):
+            continue
         classification = classify_question(s.get('text', ''))
         if classification['question_type'] == 'statement':
             continue
@@ -908,6 +911,8 @@ def questions_answers(segments):
             duration = max(0, next_s.get('end', 0)-next_s.get('start', 0))
             question_kind = classify_question(text)
             question_text = ' '.join(q.get('text', '') for q in question_rows)
+            if ('?' not in text and _qa_continuity(question_text, text)[1] == 'causal_response_cue'):
+                question_kind = {**question_kind, 'answer_expected': False, 'question_type': 'statement'}
             anchor = question_text + ' ' + ' '.join(a.get('text', '') for a in answers)
             intervention = _qa_intervention(text, anchor)
             topic_change = bool(re.search(r'\b(?:mudando de assunto|outro assunto|agora sobre|vamos falar de)\b', normalized(text)))
@@ -996,7 +1001,22 @@ def questions_answers(segments):
                 pending_interventions.clear()
                 last_end = next_s.get('end', last_end)
                 continue
-            if intervention and next_s['speaker'] == s['speaker'] and duration <= 12 and len(text.split()) <= 30:
+            # A new responder needs an explicit handoff AND independent lexical
+            # continuity. Mere turn adjacency never authorizes shared ownership.
+            shared, marker = _qa_continuity(question_text, text, answers[-1].get('text', ''))
+            handoff = bool(re.match(r'^(?:retomando|continuando|como .{1,40} dizia)\b', normalized(text)))
+            if next_s['speaker'] != s['speaker'] and handoff and shared and not question_kind['answer_expected']:
+                answers.append(next_s)
+                association_evidence.append({'segment_id': next_s['segment_id'], 'start': next_s['start'],
+                    'end': next_s['end'], 'speaker': next_s['speaker'], 'speaker_matches_responder': False,
+                    'shared_terms': shared, 'response_cue': 'explicit_speaker_handoff', 'pause_seconds': gap,
+                    'intervening_segment_ids': list(pending_interventions)})
+                responder = next_s['speaker']
+                pending_interventions.clear()
+                last_end = next_s['end']
+                continue
+            grounded_clarification = intervention == 'clarification_cue' and bool(_qa_terms(text) & _qa_terms(anchor))
+            if intervention and (next_s['speaker'] == s['speaker'] or grounded_clarification) and duration <= 12 and len(text.split()) <= 30:
                 interruptions.append(next_s['segment_id'])
                 pending_interventions.append(next_s['segment_id'])
                 intervention_evidence.append({'segment_id': next_s['segment_id'], 'kind': intervention,
@@ -1031,6 +1051,7 @@ def questions_answers(segments):
         closes = bool(answer_text and not unresolved_reason and answer_text.rstrip().endswith(('.', '?', '!')) and
                       not answer_text.rstrip().endswith(('...', '…')))
         pairs.append({'question_id': f'Q_{len(pairs):04}', **classification,
+            'stable_question_id': 'QA_' + digest({'segment_id': s['segment_id'], 'start': s['start'], 'end': s['end']})[:20],
             'question': question_text, 'question_start': s['start'],
             'question_end': question_rows[-1]['end'], 'question_speaker': s.get('speaker'),
             'question_segment_id': s['segment_id'],
@@ -1038,6 +1059,7 @@ def questions_answers(segments):
             'answer_start': answers[0]['start'] if answers else None,
             'answer_end': answers[-1]['end'] if answers else None,
             'answer_speaker': responder if answers else None, 'answer': answer_text,
+            'answer_speakers': list(dict.fromkeys(a['speaker'] for a in answers)),
             'answer_segment_ids': [a['segment_id'] for a in answers],
             'answer_closes_itself': closes,
             'answer_status': 'linked_candidate' if answers else 'not_expected' if not expected else 'unresolved',
@@ -1072,6 +1094,9 @@ def qa_contract(records):
                            'non_answer_question_count': len(diagnostics),
                            "unresolved_question_count": len(records) - len(answered),
                            "complete_qa_count": sum(bool(record.get("question_answer_complete")) for record in answered),
+                           "partial_linked_qa_count": sum(not bool(record.get("question_answer_complete")) for record in answered),
+                           "requires_review_qa_count": sum(bool(record.get('needs_review')) for record in records),
+                           "verified_complete_qa_count": None,
                            "qa_coverage": len(answered) / len(records) if records else None,
                            "median_answer_duration": median(durations) if durations else None}}
 
@@ -1212,6 +1237,9 @@ class SemanticEngine:
         generated_tokens = sum(record.get('eval_count') or 0 for record in inference_records)
         generation_seconds = sum((record.get('eval_duration_ns') or 0) / 1e9 for record in inference_records)
         metrics.update(chunk_cache_hits=sum(bool(entry["cache_hit"]) for entry in call_meta),
+                       chunk_cache_misses=sum(not entry['cache_hit'] for entry in call_meta) if requested_backend == 'ollama' else None,
+                       fallback_cost_seconds=sum(entry['duration_seconds'] for entry in call_meta if entry['fallback_used']),
+                       fallback_cost_scope='entire_failed_chunk_including_inference_repair_and_recovery',
                        chunk_cache_rewrites_avoided=sum(bool(entry["cache_hit"] and not entry["repair_attempted"]) for entry in call_meta),
                        prompt_mode="compact_schema_api_only" if cfg.get("compact_prompt", False) else "legacy_embedded_schema")
         metrics.update(global_review_cache_hit=bool((review_meta or {}).get('cache_hit')),

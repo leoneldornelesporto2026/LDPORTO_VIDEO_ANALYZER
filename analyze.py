@@ -60,6 +60,11 @@ def main():
     parser.add_argument("--offline", action="store_true")
     parser.add_argument("--force", action="store_true", help="Reexecutar etapas e invalidar cache")
     parser.add_argument("--doctor", action="store_true", help="Diagnosticar ambiente")
+    parser.add_argument('--inference-smoke', action='store_true', help='Canarios sinteticos locais opt-in; com source bloqueia pipeline se falhar')
+    parser.add_argument('--smoke-test-seconds', type=float, default=None)
+    parser.add_argument('--smoke-total-seconds', type=float, default=None)
+    parser.add_argument('--smoke-output', help='Novo artefato JSON exclusivo do canario')
+    parser.add_argument('--smoke-replay', help='Ler recibo anterior sem executar inferencia ou autorizar pipeline')
     parser.add_argument("--strict", action="store_true", help="Falhar se uma etapa opcional nao puder executar")
     parser.add_argument("--import-transcript", help="JSON com words/segments e tempos absolutos")
     parser.add_argument("--no-vision", action="store_true")
@@ -85,10 +90,11 @@ def main():
     parser.add_argument('--caption-color')
     parser.add_argument('--highlight-color')
     from ldporto.replay import REPLAY_STAGES
-    parser.add_argument('--from-stage', choices=REPLAY_STAGES)
+    parser.add_argument('--from-stage', choices=REPLAY_STAGES, help='commercial_visual/17c_commercial_visual (alias commercial): OCR real exige source local com SHA-256 do snapshot e OCR habilitado no --config')
     parser.add_argument('--replay-analysis', metavar='PASTA', help='Artifacts compatíveis para replay downstream, sem reprocessar percepcao')
     parser.add_argument('--allow-legacy-snapshot', action='store_true', help='Aceitar snapshot V4.2 explicitamente, sem chamar isso de cache de prompt atual')
     parser.add_argument('--source-hash', help='Hash SHA256 esperado para validar a fonte do replay')
+    parser.add_argument('--dry-run', action='store_true', help='Inspecionar DAG do replay comercial sem abrir frames nem escrever saidas')
     args = parser.parse_args()
     try:
         from ldporto.config import load_config, configure_local_mode, validate
@@ -145,6 +151,39 @@ def main():
             cfg['social_output']['caption_highlight_color'] = args.highlight_color
         validate(cfg)
         configure_local_mode(cfg)
+        if args.inference_smoke or args.smoke_replay:
+            if args.doctor or args.from_stage or args.director_only or args.dry_run:
+                parser.error('Smoke e replay possuem rota separada de doctor/reprocessamento.')
+            from ldporto.inference_smoke import run_inference_smoke, save_smoke, replay_smoke
+            if args.smoke_replay:
+                if args.source or args.inference_smoke:
+                    parser.error('Replay de smoke nao autoriza source nem nova inferencia.')
+                print(json.dumps(replay_smoke(args.smoke_replay), ensure_ascii=False, indent=2))
+                return 0
+            cfg['preflight']['inference_smoke'] = True
+            cfg['offline'] = True
+            cfg['preflight']['allow_self_repair'] = False
+            if args.smoke_test_seconds is not None:
+                cfg['preflight']['smoke_test_seconds'] = args.smoke_test_seconds
+            if args.smoke_total_seconds is not None:
+                cfg['preflight']['smoke_total_seconds'] = args.smoke_total_seconds
+            if not args.source:
+                report = run_inference_smoke(cfg)
+                from datetime import datetime, timezone
+                stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+                save_smoke(report, args.smoke_output or ROOT / 'diagnostics' / ('inference_smoke_' + stamp + '.json'))
+                print(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
+                return 0 if report['base_ready'] else 2
+            if args.smoke_output:
+                parser.error('--smoke-output somente sem source; pipeline grava recibo na pasta de saida.')
+        if args.dry_run:
+            if not args.replay_analysis or args.from_stage not in ('commercial', 'commercial_visual', '17c_commercial_visual'):
+                parser.error('--dry-run exige --replay-analysis e --from-stage commercial.')
+            from ldporto.replay import commercial_dry_run
+            plan = commercial_dry_run(args.replay_analysis, cfg, args.source, args.source_hash,
+                                      args.allow_legacy_snapshot, args.from_stage)
+            print(json.dumps(plan, ensure_ascii=False, indent=2))
+            return 1 if plan['status'] == 'BLOCKED' else 0
         if args.from_stage:
             if not args.replay_analysis:
                 parser.error('--from-stage exige --replay-analysis.')
@@ -154,7 +193,14 @@ def main():
             from ldporto.progress import emit_event
             emit_event({'event':'run_completed', 'analysis_status':analysis['analysis_status'],
                         'package':analysis.get('second_curation_export'), 'package_path':(analysis.get('second_curation_export') or {}).get('path')})
+            if analysis['analysis_status'] == 'blocked':
+                print('Replay bloqueado:', (analysis.get('commercial_visual_s8') or {}).get('reason'))
+                print(analysis.get('instruction', 'Confira replay_blocked.json.'))
+                return 1
             print('Replay:', folder)
+            if not cfg['export'].get('second_curation_auto', True) and (folder / 'analysis_summary.json').is_file():
+                print('Relatorios JSON reexportados; pacote automatico desabilitado no config.')
+                return 0
             print('Pacote:', (analysis.get('second_curation_export') or {}).get('path') or 'FAILED')
             return 0 if (analysis.get('second_curation_export') or {}).get('path') else 1
         if args.director_only:

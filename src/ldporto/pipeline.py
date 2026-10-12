@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import re
 from . import __version__, __build__
 from .config import ROOT, configure_local_mode
-from .core import Context, file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok, digest
+from .core import file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok, digest
 from .media import resolve_input, inspect
 from .audio import extract_audio, audio_metrics, sound_events
 from .transcription import TranscriptionEngine
@@ -19,6 +19,7 @@ from .active_speaker import build_active_speaker
 from .shots import build_shots
 from .camera_timeline import build_camera_timeline
 from .ocr import OcrEngine
+from .ocr_execution import execution_summary
 from .semantic import SemanticEngine
 from .timeline import build_timeline, captions, enrich_editorial
 from .understanding import run_understanding
@@ -27,6 +28,7 @@ from .analysis_quality import build_analysis_quality
 from .reports import ReportEngine
 from .director_integration import run_planner_stage, run_director_stage, attach_director
 from .preview_integration import run_preview_stage
+from .build_provenance import ProvenanceContext as Context
 from .preflight import require_preflight
 
 
@@ -171,7 +173,7 @@ def analyze(source, cfg, output=None, force=False):
         camera_timeline = camera_data.get("timeline", [])
 
         ocr = ctx.step("13_ocr", cfg["ocr"], lambda: OcrEngine().run(ctx, vision),
-                       code_files=["ocr.py", "core.py"])
+                       code_files=["ocr.py", "ocr_execution.py", "ocr_runtime.py", "ocr_diagnostics.py", "core.py"])
         events = ctx.step("14_audio_events", {"config": cfg["audio_events"], "external": external['14_audio_events']},
                           lambda: sound_events(ctx, audio, transcript),
                           code_files=["audio.py", "core.py"])
@@ -208,25 +210,27 @@ def analyze(source, cfg, output=None, force=False):
                        cfg['export']['second_curation_visual_candidate_limit'])),
             code_files=['broadcast_graphics.py', 'pipeline.py'], requires=['16_understanding'])
         vision['broadcast_graphics'] = graphics
-        from .commercial_gate import targeted_ocr, apply_commercial_refinement
+        from .commercial_gate import targeted_ocr, apply_commercial_refinement, commercial_visual_params, ocr_runtime_fingerprint
         commercial_visual = ctx.step('17c_commercial_visual',
-            {'ranges': digest(graphics_candidates), 'ocr': cfg['ocr'], 'limit': cfg['export']['second_curation_visual_candidate_limit']},
+            commercial_visual_params(ctx.signature, graphics_candidates, cfg['ocr'],
+                cfg['export']['second_curation_visual_candidate_limit'], ocr_runtime_fingerprint(cfg['ocr']),
+                {name: state.get('key') for name, state in ctx.states.items()}),
             lambda: _optional_visual_result(targeted_ocr(ctx.video, graphics_candidates, cfg['ocr'], cfg['export']['second_curation_visual_candidate_limit'])),
-            code_files=['commercial_gate.py', 'ocr.py', 'editorial.py', 'pipeline.py'], requires=['16_understanding'])
+            code_files=['commercial_gate.py', 'ocr.py', 'ocr_execution.py', 'ocr_runtime.py', 'ocr_diagnostics.py', 'editorial.py', 'pipeline.py'], requires=['16_understanding'])
         understanding = apply_commercial_refinement(understanding, transcript['segments'],
             [{**r, 'source': 'ocr'} for r in ocr.get('texts', [])] + commercial_visual.get('texts', []), cfg['understanding'],
-            commercial_visual=commercial_visual)
-        from .targeted_asr import run_targeted_repair
+            commercial_visual=commercial_visual, graphics=graphics)
+        from .targeted_asr import run_on_demand_review, on_demand_source_fingerprint
         targeted_asr = ctx.step('17d_targeted_asr',
-            {'config': {k: cfg['transcription'].get(k) for k in ('targeted_repair_enabled', 'targeted_max_regions', 'targeted_max_audio_seconds', 'model', 'beam_size', 'vad_filter', 'glossary', 'import_file')},
+            {'config': cfg['transcription'],
+             'queued_audio_sha256': on_demand_source_fingerprint(cfg, audio),
              'candidate_ranges': digest(understanding['main_moments']), 'arcs': digest(understanding.get('story_arcs', [])),
              'questions': digest(semantic.get('questions_answers', [])), 'selected': digest(understanding.get('editorial_shortlist', [])),
              'overlaps': digest(diarization.get('overlaps', []))},
-            lambda: ok(run_targeted_repair(ctx, audio, transcript, understanding['main_moments'],
+            lambda: ok(run_on_demand_review(ctx, audio, transcript, understanding['main_moments'],
                       understanding.get('story_arcs', []), semantic.get('questions_answers', []), metadata['duration'],
-                      shortlist_ids=understanding.get('editorial_shortlist', []),
                       speech_overlaps=diarization.get('overlaps', []), events=events.get('events', []))),
-            code_files=['targeted_asr.py', 'transcription.py'], requires=['04_transcription', '16_understanding'])
+            code_files=['targeted_asr.py', 'transcription.py', 'pipeline.py'], requires=['04_transcription', '16_understanding'])
         transcript.setdefault('transcription_alternatives', []).extend(targeted_asr.get('alternatives', []))
         from .subtitle_review import review_selected_clips
         subtitle_review = ctx.step('17e_subtitle_review_s7',
@@ -267,7 +271,13 @@ def analyze(source, cfg, output=None, force=False):
             delivered_zoom, _ = zoom_diagnostics(preview['repaired_timeline'], metadata['duration'], cfg['camera_director']['smart_zoom']['min_zoom_duration'])
             director = {**director, "timeline": preview["repaired_timeline"],
                         'metrics': {**director.get('metrics', {}), **delivered_zoom,
+                                    'zoom_timeline_event_count': delivered_zoom.get('zoom_event_count', 0),
                                     'proposed_zoom_event_count': len(director.get('zoom_events', []))}}
+
+        delivery = preview.get('zoom_delivery') or {}
+        director.setdefault('metrics', {}).update({key: delivery.get(key, 0 if key == 'zoom_delivered_event_count' else None)
+            for key in ('zoom_delivered_event_count', 'zoom_delivery_verified', 'zoom_delivery_fraction')})
+        director['metrics']['zoom_delivery_report'] = delivery
 
         analysis_status = "partial" if any(
             s["status"] in ("partial", "unavailable", "failed", "blocked", "cancelled") for s in ctx.states.values()) else "complete"
@@ -303,6 +313,7 @@ def analyze(source, cfg, output=None, force=False):
             "candidate_endings": semantic.get("candidate_endings", []),
             "silences": metrics.get("silences", []), "audio_events": events.get("events", []),
             "ocr_text": ocr.get("texts", []), "timeline": timeline,
+            "ocr_execution": execution_summary(ocr, commercial_visual),
             "broadcast_graphics": graphics,
             "commercial_visual_s8": commercial_visual,
             "commercial_blocks": understanding.get('commercial_blocks', []),
@@ -370,7 +381,11 @@ def analyze(source, cfg, output=None, force=False):
                     'external_fingerprints':external,'runtime_target':{'os':'Windows 10/11','python':'3.11.x'}}
         analysis['provenance']['model_fingerprints']=model_fingerprints
         from .run_status import build_run_manifest
-        analysis["run_manifest"] = build_run_manifest(metadata, analysis["stage_status"], analysis["issues"])
+        from .build_provenance import attest_execution, exporter_identity
+        identity = exporter_identity()
+        analysis["run_manifest"] = build_run_manifest(
+            metadata, analysis["stage_status"], analysis["issues"],
+            previous={**identity, 'execution_attestation': attest_execution(ctx)})
         analysis["analysis_status"] = analysis["run_manifest"]["analysis_status"]
 
         # Exports are cheap and rewritten even after cache reuse; never trust missing old reports.

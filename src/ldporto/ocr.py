@@ -1,6 +1,32 @@
 from collections import defaultdict
 import math
+import unicodedata
 from .core import ok
+import hashlib
+
+
+def normalize_commercial_observation(row):
+    """Recognized text stays literal; manual/legacy hints are not OCR receipts."""
+    if not isinstance(row, dict):
+        return None
+    try:
+        when = float(row.get('observed_at', row.get('start')))
+        if not math.isfinite(when) or when < 0:
+            return None
+    except (TypeError, ValueError):
+        return None
+    measured = (row.get('method') in {'tesseract_keyframe', 'tesseract_candidate_frame_s8'}
+                and row.get('measurement_state') != 'not_measured'
+                and not row.get('manually_inferred'))
+    literal = str(row.get('text') or '')
+    return {**row, 'source': 'ocr', 'start': when, 'end': when, 'observed_at': when,
+            'text': literal if measured else None,
+            'original_text': literal if measured else None,
+            'source_frame_hash': row.get('source_frame_hash', row.get('decoded_frame_sha256')) if measured else None,
+            'normalized_text': ' '.join(unicodedata.normalize('NFKC', literal).casefold().split()) if measured else None,
+            'measurement_state': 'measured' if measured else 'not_measured',
+            'duration_unknown': True, 'continuity_established': False,
+            'limitation': 'sampled_text_not_continuous_display' if measured else 'ocr_execution_unverified'}
 
 
 def validate_observations(texts, *, max_gap_seconds=10.):
@@ -50,24 +76,27 @@ def validate_observations(texts, *, max_gap_seconds=10.):
     return texts
 
 
+from .ocr_execution import receipt
+from .ocr_runtime import call as ocr_call
+from .ocr_diagnostics import diagnose_ocr
+
+
 class OcrEngine:
+    @receipt('general')
     def run(self, ctx, vision):
         cfg = ctx.config["ocr"]
         if not cfg["enabled"]:
             return ok({"texts": [], "measurement_state": "not_measured", "commercial_present": None}, "skipped")
+        diagnostic = diagnose_ocr(cfg)
+        if not diagnostic['ok']:
+            return ok({"texts": [], "measurement_state": "not_measured", "commercial_present": None,
+                       "reason": diagnostic['reason'], "diagnostic": diagnostic}, "unavailable")
         try:
             import cv2
             import pytesseract
-        except ImportError:
+        except Exception as exc:
             return ok({"texts": [], "measurement_state": "not_measured", "commercial_present": None,
-                       "reason": "optional_ocr_dependency_missing"}, "unavailable")
-        if cfg["tesseract_cmd"]:
-            pytesseract.pytesseract.tesseract_cmd = cfg["tesseract_cmd"]
-        try:
-            pytesseract.get_tesseract_version()
-        except (OSError, RuntimeError) as exc:
-            return ok({"texts": [], "measurement_state": "not_measured", "commercial_present": None,
-                       "reason": "optional_tesseract_missing", "detail": type(exc).__name__}, "unavailable")
+                       "reason": "dependency_missing", "detail": type(exc).__name__}, "unavailable")
         texts = []
         measured, failed = 0, 0
         thumbnails = vision.get("thumbnails", [])
@@ -81,9 +110,9 @@ class OcrEngine:
                 continue
             h, w = image.shape[:2]
             try:
-                data = pytesseract.image_to_data(image, lang=cfg["languages"],
+                data = ocr_call(cfg, 'image_to_data', image,
                                                 output_type=pytesseract.Output.DICT, timeout=5)
-            except (RuntimeError, pytesseract.TesseractError):
+            except (OSError, RuntimeError, pytesseract.TesseractError):
                 failed += 1
                 continue
             measured += 1
@@ -106,6 +135,9 @@ class OcrEngine:
                               "bbox": {"x": x/w, "y": y/h, "width": (x2-x)/w, "height": (y2-y)/h},
                               "confidence": sum(float(data["conf"][i]) for i in ids)/len(ids)/100,
                               "method": "tesseract_keyframe", "inference": True})
+                texts[-1]['source_frame_hash'] = hashlib.sha256(image.tobytes()).hexdigest()
+                texts[-1]['decoded_frame_sha256'] = texts[-1]['source_frame_hash']
+                texts[-1]['original_text'] = texts[-1]['text']
         return ok({"texts": validate_observations(texts), "measurement_state": "measured" if measured else "not_measured",
                    "commercial_present": None, "measured_frames": measured, "failed_frames_or_ocr": failed},
                   "partial" if failed or not measured else "ok", notes=["OCR amostrado em keyframes. Tempo de permanência "

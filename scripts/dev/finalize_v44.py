@@ -59,7 +59,8 @@ def main():
         'semantic_fallback': changes.get('semantic_fallback_ratio'),
         'camera_focus': changes.get('resolved_focus_coverage'),
         'zoom_proposed': changes.get('proposed_zoom_event_count'),
-        'zoom_delivered': changes.get('zoom_event_count'),
+        'zoom_delivered': changes.get('zoom_delivered_event_count'),
+        'zoom_timeline': changes.get('zoom_timeline_event_count', changes.get('zoom_event_count')),
         'story_payoff': changes.get('story_payoff_coverage'),
         'shortlist': changes.get('actual_package_shortlist_count') or changes.get('final_shortlist_count'),
     }

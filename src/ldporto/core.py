@@ -296,6 +296,10 @@ class Context:
                           "input": self.signature, "blocked_by": blockers, "params": params})
             result.update(key=key, input_hash=self.signature, config_hash=digest(params),
                           output_version=output_version, elapsed_seconds=0.0, blocked_by=blockers)
+            result['data_checksum'] = digest(result['data'])
+            finalizer = getattr(self, '_finalize_execution_receipt', None)
+            if finalizer:
+                finalizer(name, result)
             checkpoint = self.cache / (name + ".json")
             write_json(checkpoint, result)
             self.states[name] = {"key": key, "status": "blocked", "blocked_by": blockers}
@@ -321,6 +325,9 @@ class Context:
         from .run_status import DEPENDENCIES, STAGE_PACKAGES
         dependencies = {dependency: self.states[dependency] for dependency in DEPENDENCIES.get(name, requires)
                 if dependency in self.states}
+        dependency_identity = getattr(self, '_cache_dependency_identity', None)
+        if dependency_identity:
+            dependencies = dependency_identity(name, dependencies)
         package_versions = versions()
         scoped_versions = {package: version for package, version in package_versions.items()
                    if package in STAGE_PACKAGES.get(name, set())}
@@ -328,22 +335,41 @@ class Context:
                   "code": code, "input": self.signature,
                   "dependencies": dependencies, "versions": scoped_versions, "params": params})
         checkpoint = self.cache / (name + ".json")
+        cache_manifest = {'input': self.signature, 'params': config_hash, 'code': digest(code),
+                          'dependencies': digest(dependencies), 'versions': digest(scoped_versions),
+                          'output_version': output_version}
+        cache_metrics = {'cache_hits': 0, 'cache_misses': 1, 'cache_key': key,
+                         'dependency_keys': dependencies, 'invalidators': [],
+                         'cache_lookup_reason': 'forced' if self.force else 'absent',
+                         'cache_manifest': cache_manifest}
         if checkpoint.exists() and not self.force:
             try:
                 cached = read_json(checkpoint)
+                validator = getattr(self, '_validate_cached_receipt', None)
+                if validator:
+                    validator(name, cached)
+                previous_manifest = cached.get('cache_manifest') or {}
+                cache_metrics['invalidators'] = [field for field, value in cache_manifest.items()
+                                                if field in previous_manifest and previous_manifest[field] != value]
+                cache_metrics['cache_lookup_reason'] = 'key_changed' if cached.get('key') != key else 'invalid_record_or_artifact'
                 if cached["key"] == key and cached["status"] in ("ok", "partial", "skipped") and cached.get("data_checksum") == digest(cached["data"]) and all(
                     Path(p).is_file() for p in cached.get("artifacts", [])
                 ) and all(Path(path).is_file() and file_hash(path) == checksum for path, checksum in cached.get('artifact_checksums', {}).items()):
                     self.logger.info("%s: retomado do cache", name)
                     self.states[name] = {"key": key, "status": cached["status"]}
                     self.stage_metrics[name] = {"cache_hit": True, "elapsed_seconds": 0.0,
-                                                "original_elapsed_seconds": cached.get("elapsed_seconds")}
+                                                "original_elapsed_seconds": cached.get("elapsed_seconds"),
+                                                **cache_metrics, 'cache_hits': 1, 'cache_misses': 0,
+                                                'cache_lookup_reason': 'valid', 'invalidators': [],
+                                                'process_cpu_seconds_delta': None, 'working_set_bytes': None,
+                                                'gpu_vram_used_bytes': None}
                     self._notes(name, cached)
                     self.progress(name, status=cached['status'], cache_hit=True)
                     return cached["data"]
-            except (ValueError, KeyError, OSError):
-                pass
+            except (ValueError, KeyError, OSError, TypeError):
+                cache_metrics['cache_lookup_reason'] = 'corrupt_record'
         started = time.monotonic()
+        cpu_started = time.process_time()
         self.logger.info("%s: iniciando", name)
         try:
             result = call()
@@ -371,18 +397,25 @@ class Context:
             result["error"] = {k: diagnostic[k] for k in ("exception_type", "message", "config_hash", "last_checkpoint")}
         result.update(
             key=key, input_hash=self.signature, config_hash=config_hash, output_version=output_version,
+            cache_manifest=cache_manifest,
             data_checksum=digest(result['data']), elapsed_seconds=round(time.monotonic() - started, 3),
         )
         result['artifact_checksums'] = {
             path: file_hash(path) for path in result.get('artifacts', [])
             if Path(path).is_file() and Path(path).suffix.lower() in {'.zip', '.json', '.jsonl', '.jpg', '.png'}
         }
+        finalizer = getattr(self, '_finalize_execution_receipt', None)
+        if finalizer:
+            finalizer(name, result)
         from .runtime_metrics import resource_snapshot
         resources = resource_snapshot()
         write_json(checkpoint, result)
         self.states[name] = {"key": key, "status": result["status"]}
         self.stage_metrics[name] = {"cache_hit": False, "elapsed_seconds": result["elapsed_seconds"]}
         self.stage_metrics[name].update(resources)
+        self.stage_metrics[name].update(cache_metrics,
+                                       process_cpu_seconds_delta=time.process_time() - cpu_started,
+                                       gpu_vram_used_bytes=None)
         self._notes(name, result)
         self.logger.info("%s: %s (%.1fs)", name, result["status"], result["elapsed_seconds"])
         progress_details = {}
@@ -529,7 +562,9 @@ def external_fingerprints(cfg, stage=None):
         '02_audio':[cfg['audio']['isolated_file']],
         '04_transcription':[cfg['transcription']['import_file'],cfg['audio']['isolated_file']],
         '05_diarization':[cfg['diarization']['import_file']],
-        '07_people_tracking':[cfg['vision']['yunet_model'],cfg['vision']['sface_model'],cfg['vision']['landmarker_model']],
+        '07_people_tracking':[cfg['vision']['yunet_model'],cfg['vision']['sface_model'],cfg['vision']['landmarker_model'],
+                              cfg['vision']['yolo_model']] if cfg['vision'].get('body_detection') and cfg['vision'].get('body_backend') != 'hog'
+                             else [cfg['vision']['yunet_model'],cfg['vision']['sface_model'],cfg['vision']['landmarker_model']],
         '10_active_speaker':[cfg['vision']['manual_mapping_file']],
         '14_audio_events':[cfg['audio_events']['checkpoint']],
     }

@@ -4,7 +4,7 @@ import json
 import math
 import shutil
 import subprocess
-from .core import ok, finite_or_none
+from .core import ok, finite_or_none, file_hash
 from .media_runtime import find_media_tool
 
 
@@ -42,7 +42,7 @@ def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
                'zoom_pumping_score': reversals / max(1, len(directions)),
                'zoom_jitter_score': sum(abs(second - first) for first, second in zip(slopes, slopes[1:])) / max(1, len(slopes) - 1),
                'zoom_target_loss_count': target_loss, 'upscale_limit_violation_count': upscale_violations,
-               'zoom_metrics_method': 'delivered_keyframe_temporal_diagnostics_not_perceptual_accuracy'}
+               'zoom_metrics_method': 'timeline_keyframe_diagnostics_not_render_delivery_or_perceptual_accuracy'}
     issues = []
     for count, kind in ((short, 'SHORT_ZOOM'), (reversals, 'ZOOM_PUMPING'), (target_loss, 'ZOOM_TARGET_LOST'), (upscale_violations, 'UPSCALE_LIMIT_VIOLATION')):
         if count:
@@ -317,6 +317,7 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     issues = list(unique.values())
     status = 'partial' if issues else 'ok'
     return ok({'schema_version':'1.0','preview':str(path.resolve()),'sampled_frames':sampled,
+               'preview_sha256': file_hash(path),
                **zoom_metrics,
                'face_visible_fraction': face_frames / sampled if sampled else None,
                'target_visible_fraction': None,
@@ -328,7 +329,9 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
                'border_detector_method': 'contrast_and_temporal_bar_geometry_v2',
                # Legacy identifier retained for existing consumers; precise method follows.
                'border_geometry_method': 'four_side_width_crop_temporal_v3',
-               'border_report': border_report, 'preview_approved': None, 'publish_ready': False,
+               'border_report': border_report,
+               'preview_approved': False if 'FACE_OR_HEAD_CLIPPED' in unique else None,
+               'publish_ready': False,
                'unconfirmed_border_candidates': sum(bool(s['rails']) for s in border_candidates),
                'output_dimensions':[width,height],'duration':finite_or_none(duration),
                'av_duration_delta':finite_or_none(av_delta),'estimated_pan_flow_peak_px_per_second':finite_or_none(flow_peak),

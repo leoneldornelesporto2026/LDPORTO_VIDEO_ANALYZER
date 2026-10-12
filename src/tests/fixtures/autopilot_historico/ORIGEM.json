@@ -1,0 +1,273 @@
+{
+  "source": "git blobs; historical plan reference, not execution or approval evidence",
+  "source_commit": "34797e164377f05e64ae628daf499cda2fb8bf55",
+  "prompt_count": 52,
+  "legacy_map_entries": 42,
+  "files": {
+    "MAPA_ETAPAS.json": {
+      "source_path": "automacao/MAPA_ETAPAS.json",
+      "sha256": "d642dac96a1c96f6c480c6f20e3bee47e810ec7aae68b31e2f2655141c42aa21",
+      "git_blob": "528d096e2b15995eec2e6afc829aa269503d489a"
+    },
+    "prompts/ETAPA_01.txt": {
+      "source_path": "automacao/prompts/ETAPA_01.txt",
+      "sha256": "885c28f10730618973138c110140e17f9b81291de18acd254db9bd13bafdfbe1",
+      "git_blob": "7d0fb576c8a2fd9d719cabe027cd0a9312b5e994"
+    },
+    "prompts/ETAPA_02.txt": {
+      "source_path": "automacao/prompts/ETAPA_02.txt",
+      "sha256": "7371d3770c430760808d891379b487d16bea9ca60dbe22a60b54645af5cdf24e",
+      "git_blob": "340e0d14cd87eb9c63c96674a00ff24a0c23080b"
+    },
+    "prompts/ETAPA_03.txt": {
+      "source_path": "automacao/prompts/ETAPA_03.txt",
+      "sha256": "75a1575eb07675a05741dbd96482522a1361630981911cee2a5ef522d5caad62",
+      "git_blob": "745a4018e582c03112d9ed7a0af218e1dd97cf44"
+    },
+    "prompts/ETAPA_04.txt": {
+      "source_path": "automacao/prompts/ETAPA_04.txt",
+      "sha256": "4146fdb97023a754ebba10792b999473c4d5d13f443bf9a7a66ade63f7d21a66",
+      "git_blob": "5ce4a041d59567b822e59289f626a2e7ecaa6ec6"
+    },
+    "prompts/ETAPA_05.txt": {
+      "source_path": "automacao/prompts/ETAPA_05.txt",
+      "sha256": "0638697c8664a90db628224869f3a72c170c9a6ecf64403a11f5d6b191f52c64",
+      "git_blob": "13125875b47956133144d493f1e36b425944c0e1"
+    },
+    "prompts/ETAPA_06.txt": {
+      "source_path": "automacao/prompts/ETAPA_06.txt",
+      "sha256": "dc60a89571367bdb4df002939c27c47bac038df60dfd19725f213ffff22eef53",
+      "git_blob": "d7834da2f4a1018cb7381a3b494e61545d7bc3f1"
+    },
+    "prompts/ETAPA_07.txt": {
+      "source_path": "automacao/prompts/ETAPA_07.txt",
+      "sha256": "0032da85b9dbdddb3c472b0bc84df028fb2a32c9aabff77aea56104285168d6b",
+      "git_blob": "0f93a0cf003a7b0b4b62e5846c577ea1ee45807a"
+    },
+    "prompts/ETAPA_08.txt": {
+      "source_path": "automacao/prompts/ETAPA_08.txt",
+      "sha256": "2060eef7f9591c6a45606cf932393c4f5189f231cef2fe147f691b253373caa3",
+      "git_blob": "42694b78eb6da4df850652a56d6f66f330d4ae33"
+    },
+    "prompts/ETAPA_09.txt": {
+      "source_path": "automacao/prompts/ETAPA_09.txt",
+      "sha256": "6429f7ea9c7d7dcc6c4eebde4003399e15ef4421a231cd45ff9721f355c5f63d",
+      "git_blob": "1efbe89bf3e896e3e90d214db08bd4e398dc147b"
+    },
+    "prompts/ETAPA_10.txt": {
+      "source_path": "automacao/prompts/ETAPA_10.txt",
+      "sha256": "5dd91191541abc5b95f4c7f81be717c51d9653ccdb9904d8d6f2e9e246b1e20f",
+      "git_blob": "0ae169a8ec6dfc4f2d44c800776ca35c2889da1a"
+    },
+    "prompts/ETAPA_11.txt": {
+      "source_path": "automacao/prompts/ETAPA_11.txt",
+      "sha256": "ef2d05cd8bd13f3f65284be50b0bc8294e2ad7894a0d3d1d9c52ac1e2a39b4c8",
+      "git_blob": "0df9dfba64127f1f112d53efa36f3cd075f2ea66"
+    },
+    "prompts/ETAPA_12.txt": {
+      "source_path": "automacao/prompts/ETAPA_12.txt",
+      "sha256": "175f0733a8824b6e54b3ff5d1d5aa6494fa94477ce4245bdf7e791e7541aa241",
+      "git_blob": "1896a150a8203f1ff1e7a95d3b8b7239d8cf8384"
+    },
+    "prompts/ETAPA_13.txt": {
+      "source_path": "automacao/prompts/ETAPA_13.txt",
+      "sha256": "926d5c337c050b3796a0d1c5e822ed05df7d2bc1d46eabebcc6ffa0fe321215e",
+      "git_blob": "8dcaceab27f04ee141b8bc66f05a2f5ea7b83afb"
+    },
+    "prompts/ETAPA_14.txt": {
+      "source_path": "automacao/prompts/ETAPA_14.txt",
+      "sha256": "2f01168973b27687f4bb9567361c74e233c04ce77e4ca954b66b235c3da95009",
+      "git_blob": "de583c2873bb7186885b887bd9af793999bcfdaf"
+    },
+    "prompts/ETAPA_15.txt": {
+      "source_path": "automacao/prompts/ETAPA_15.txt",
+      "sha256": "421212a43c335a391a0339d7779499a8e9b145a1a7ceb16f760898b8db593d81",
+      "git_blob": "dcd83852100a2927449f923da1b40dca9ecf946b"
+    },
+    "prompts/ETAPA_16.txt": {
+      "source_path": "automacao/prompts/ETAPA_16.txt",
+      "sha256": "25e8a32de9ff27087c785e2a628c858a24ef3f09df8de3b544b1b11bb889085b",
+      "git_blob": "5092dcb766291deac0ae863c0369a5b89b60e041"
+    },
+    "prompts/ETAPA_17.txt": {
+      "source_path": "automacao/prompts/ETAPA_17.txt",
+      "sha256": "caefd0cdf5d9a5c69854e43cba0392a597fd43716df50fb02cc1a06b48dd7421",
+      "git_blob": "a8c2e7ce793e213ec21c024782124ad8c3023f2d"
+    },
+    "prompts/ETAPA_18.txt": {
+      "source_path": "automacao/prompts/ETAPA_18.txt",
+      "sha256": "67861a7a5acaf6faa09c62cc1d16cded7884b87bd135572ddb2b755cad0cbc9b",
+      "git_blob": "bafafa9252e031ba4a479719fc062c346db53fea"
+    },
+    "prompts/ETAPA_19.txt": {
+      "source_path": "automacao/prompts/ETAPA_19.txt",
+      "sha256": "066e69097b7e4d86be09ab27f729bb761900e6ef23051ed2319747fca10e5001",
+      "git_blob": "d2838eab968fe0767c75fec8ec3e2272f6f64d75"
+    },
+    "prompts/ETAPA_20.txt": {
+      "source_path": "automacao/prompts/ETAPA_20.txt",
+      "sha256": "2c83d93995602121976be106aff691e77e372806f88d3d0b16c76138c4873684",
+      "git_blob": "bba35524dbe51e074774aea04e7750c240a9e507"
+    },
+    "prompts/ETAPA_21.txt": {
+      "source_path": "automacao/prompts/ETAPA_21.txt",
+      "sha256": "2e139bffac3a7bfa71f34f3f490beda954eef3f6e22ce4310a1e1aed5025701b",
+      "git_blob": "776fcd01c94005e3ae63219a0838b0f180e14781"
+    },
+    "prompts/ETAPA_22.txt": {
+      "source_path": "automacao/prompts/ETAPA_22.txt",
+      "sha256": "55c74206a284eeb8fd1a80b1595822207071bb4fa3dc3dd13830218351441004",
+      "git_blob": "605a8f435c5cc4861e5b699c10bc2ccf592dc134"
+    },
+    "prompts/ETAPA_23.txt": {
+      "source_path": "automacao/prompts/ETAPA_23.txt",
+      "sha256": "f5a707b66fd567bb4340d72e26d38dce04939eb857834a9236634db11d390799",
+      "git_blob": "0f3ef45a03372268073e42d5b6cfed9b2d3f669a"
+    },
+    "prompts/ETAPA_24.txt": {
+      "source_path": "automacao/prompts/ETAPA_24.txt",
+      "sha256": "a6d63dfad1e972886255a804484f39cc941966d463eb0306c5b9fdd34787b015",
+      "git_blob": "530cff12d334408f99ba92733fddc45b7be338f9"
+    },
+    "prompts/ETAPA_25.txt": {
+      "source_path": "automacao/prompts/ETAPA_25.txt",
+      "sha256": "fd02443b7aa45d13b2cce6a3f0ecdfee58d611f766221ee1c5d1493331cfbd22",
+      "git_blob": "323868b228e026c775e7356b7873e2686500bf3d"
+    },
+    "prompts/ETAPA_26.txt": {
+      "source_path": "automacao/prompts/ETAPA_26.txt",
+      "sha256": "00c77bf2b4aaa96140069267c36d7b0e0ae00e0e69d5b84b9b09ef9183ea7e2d",
+      "git_blob": "662750b60a0c39a9ecd1667029265d68e79db7ee"
+    },
+    "prompts/ETAPA_27.txt": {
+      "source_path": "automacao/prompts/ETAPA_27.txt",
+      "sha256": "29ba7870ce29af8bc66f6a4d99aae4b8b4e2f06f664ea43d14072642b47e4ed0",
+      "git_blob": "004ca2198a3513e7ea9cdda0cec426480d4a30c9"
+    },
+    "prompts/ETAPA_28.txt": {
+      "source_path": "automacao/prompts/ETAPA_28.txt",
+      "sha256": "0ce104c73882f0f1a2ae9b8ece6d38dcf5d10c18a4b1c281ef9f7bb945529ab3",
+      "git_blob": "fb8d156ee09bc120a4fae185b0137eca1e5412f7"
+    },
+    "prompts/ETAPA_29.txt": {
+      "source_path": "automacao/prompts/ETAPA_29.txt",
+      "sha256": "f9e07bd218a145abd137d240c369bd08ad62f5d4927053ca8e42d67725b4246d",
+      "git_blob": "795cc26419fef770ce8e697c05765ad4697b8dbf"
+    },
+    "prompts/ETAPA_30.txt": {
+      "source_path": "automacao/prompts/ETAPA_30.txt",
+      "sha256": "0379170e9e23c74b13bf5d50cb5bf191d0b55e8bf2b8fa86ee5adf197d47b8a7",
+      "git_blob": "e22d11062b2da9c3b89d9729798a33e49f87923d"
+    },
+    "prompts/ETAPA_31.txt": {
+      "source_path": "automacao/prompts/ETAPA_31.txt",
+      "sha256": "37d580990f0f206b4eed6739ebeb2245c1532f30ed33f2512d5707ed8a21261a",
+      "git_blob": "8c24ef3619dbbc57c6dd410085f5088e71ca2f84"
+    },
+    "prompts/ETAPA_32.txt": {
+      "source_path": "automacao/prompts/ETAPA_32.txt",
+      "sha256": "1f324d7c1faa5b0d6a99ebdcbe7372589ef1b570c7c53301924b08cd7bea6474",
+      "git_blob": "f54554e559b4f82375ae41c4aa46936a80639174"
+    },
+    "prompts/ETAPA_33.txt": {
+      "source_path": "automacao/prompts/ETAPA_33.txt",
+      "sha256": "36c4db01310eabdd9147db169453b35a074810647f7dde2426c249237c509564",
+      "git_blob": "167f8718637eeab1c61d9c81a42ab58a2eccdfe7"
+    },
+    "prompts/ETAPA_34.txt": {
+      "source_path": "automacao/prompts/ETAPA_34.txt",
+      "sha256": "f38f00688416c2974b01000c1af5106b71fee716cef60ca81e41a2bdc1a8ef7e",
+      "git_blob": "5442a9ddd68b05649fb1faf4ec047f1e73c0454f"
+    },
+    "prompts/ETAPA_35.txt": {
+      "source_path": "automacao/prompts/ETAPA_35.txt",
+      "sha256": "c56b79d9e9a5d5cf24c49c1357aaf69c0b2d0996e32989e53f38f1c66f12e6a0",
+      "git_blob": "5d1733551f3951ca648430afbd7971994daa836a"
+    },
+    "prompts/ETAPA_36.txt": {
+      "source_path": "automacao/prompts/ETAPA_36.txt",
+      "sha256": "988819c4eafeaa151b4a30349f6b00e138451e46b57e5be5ba8270ef92b53910",
+      "git_blob": "91a2c35e583542a52e6c02f2d94cc7b181cb98b3"
+    },
+    "prompts/ETAPA_37.txt": {
+      "source_path": "automacao/prompts/ETAPA_37.txt",
+      "sha256": "ab1e9156972744c01d7abed103792f590a475bc79511ca37616875d8bb8c9289",
+      "git_blob": "876f505ffc54603f959ab4b827bd2588e7a68b0f"
+    },
+    "prompts/ETAPA_38.txt": {
+      "source_path": "automacao/prompts/ETAPA_38.txt",
+      "sha256": "19c003040e92a334ee9feb41f3da416b5ef56df0662ce7d853932c00721d6396",
+      "git_blob": "b2ecc7a9d95c109481743d2fcdbf60e5c7dd5615"
+    },
+    "prompts/ETAPA_39.txt": {
+      "source_path": "automacao/prompts/ETAPA_39.txt",
+      "sha256": "a4ef4fed459b709e8a155f97b6a525fc1312c18ab5219030caec8f51fd4f2e3c",
+      "git_blob": "c1a9f22645dc8f88c6a371439aae22770e84006f"
+    },
+    "prompts/ETAPA_40.txt": {
+      "source_path": "automacao/prompts/ETAPA_40.txt",
+      "sha256": "a416d24a422a2d8cf83fcd3743ef846c8400823703f26909fbf37b43a734edb7",
+      "git_blob": "614f83649c8a3ee85bc4b5adf0a2ebb3efa77d7e"
+    },
+    "prompts/ETAPA_41.txt": {
+      "source_path": "automacao/prompts/ETAPA_41.txt",
+      "sha256": "b422e41fe4612b26633d0d3d2e9bf2165e79add92f028b358be4c9e960e2369f",
+      "git_blob": "2715f4ee7be8cc98096cc66da5dcfad2b32361a4"
+    },
+    "prompts/ETAPA_42.txt": {
+      "source_path": "automacao/prompts/ETAPA_42.txt",
+      "sha256": "917c141ee5e821245088401450c64d57a512ce5c0d3eece54cb7494c26ae7785",
+      "git_blob": "5b41c2e6f811faf33181fc0eacf26fee19bc8210"
+    },
+    "prompts/ETAPA_43.txt": {
+      "source_path": "automacao/prompts/ETAPA_43.txt",
+      "sha256": "bbfdc0d86ded7e17cf2c0610dd4f71420e324fb86e539ca4eeb525ac5ef9d35b",
+      "git_blob": "2fd1abdd69804e1a9191284a50a19178cf0e010b"
+    },
+    "prompts/ETAPA_44.txt": {
+      "source_path": "automacao/prompts/ETAPA_44.txt",
+      "sha256": "8f49b84af7506c431e21c7cbf1676947a8facbecb2c2e567126351175e2111b2",
+      "git_blob": "c3e14daf93ac75212429327a1a20e922f8991a3d"
+    },
+    "prompts/ETAPA_45.txt": {
+      "source_path": "automacao/prompts/ETAPA_45.txt",
+      "sha256": "a9988818f627c7548130777e72654a07455cc4839cfea2dda8efa2f8c9835f74",
+      "git_blob": "075ed23ab16a582e24529628fbc3ede1a501c966"
+    },
+    "prompts/ETAPA_46.txt": {
+      "source_path": "automacao/prompts/ETAPA_46.txt",
+      "sha256": "77e975099b7a1ca165f5fa218b507229414642666529dff2e79b4c6b0dadcdac",
+      "git_blob": "af949110adcb0889a69a1d7c583c80cccabec557"
+    },
+    "prompts/ETAPA_47.txt": {
+      "source_path": "automacao/prompts/ETAPA_47.txt",
+      "sha256": "8a83fe0490a54d7e30ddd1db45d15b30cb552fa3513053990c10f3512db89e1a",
+      "git_blob": "28c5a2895b2de0e57764fb59172aab653ae90ee6"
+    },
+    "prompts/ETAPA_48.txt": {
+      "source_path": "automacao/prompts/ETAPA_48.txt",
+      "sha256": "2f86909d30e34a92c46f51595a71aa5ef432ff9d852ee644c2d170f8db6ad97f",
+      "git_blob": "4695045dacbe7fe9a154db5975dc65de02075830"
+    },
+    "prompts/ETAPA_49.txt": {
+      "source_path": "automacao/prompts/ETAPA_49.txt",
+      "sha256": "3b13786246a1fddeb7f793b8ad7ad0ad9a5d27a9a2db618d44c88dfd0f15c62e",
+      "git_blob": "22d1611148f4bbc1d1366aa0bbf609807121cddc"
+    },
+    "prompts/ETAPA_50.txt": {
+      "source_path": "automacao/prompts/ETAPA_50.txt",
+      "sha256": "fe7b626c42238051eb6fb91ab57d3c15a00a5638498ae88242e692744cc6ec8d",
+      "git_blob": "6abd7ce32dc07b4ef4e54a47e8c4b969dfff52c0"
+    },
+    "prompts/ETAPA_51.txt": {
+      "source_path": "automacao/prompts/ETAPA_51.txt",
+      "sha256": "3401d261d91ac338a72d3bfcf7689076c93876a55bf48efbe875de1f131eb8cd",
+      "git_blob": "b9faf7cb229e7ecdfa5767b42ee425c21182d6f9"
+    },
+    "prompts/ETAPA_52.txt": {
+      "source_path": "automacao/prompts/ETAPA_52.txt",
+      "sha256": "9577327dcf02b2c0bd13a54f879d735972699722d00a1adb47265c134c88e1fa",
+      "git_blob": "02673eca6afc58c056232b18805c48752fe77665"
+    }
+  }
+}

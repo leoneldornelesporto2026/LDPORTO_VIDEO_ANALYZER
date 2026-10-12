@@ -21,7 +21,9 @@ def test_split_offer_voice_ocr_and_ids_reach_curator_and_ranking():
     result = apply_commercial_refinement({'main_moments': [_moment('PRICE_ONLY', 0, 10)]}, segments, visual, {})
     block = result['commercial_blocks'][0]
     assert block['voice_evidence'] == {'speaker_ids': ['SP1'], 'continuity': 'same_observed_voice'}
-    assert block['visual_corroboration'] == visual
+    # A source label without an OCR execution method is not measured text.
+    assert block['visual_corroboration'] == []
+    assert result['main_moments'][0]['commercial_observations'][-2]['text'] is None
     assert block['segment_ids'] == ['PRICE', 'CTA']
     moment = result['main_moments'][0]
     assert moment['excluded_commercial_interval_ids'] == [block['block_id']]

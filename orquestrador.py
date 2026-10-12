@@ -5,7 +5,7 @@ Requisitos: Python >=3.11, Codex CLI autenticado e pytest do próprio projeto.
 Não usa OpenAI API key, não publica vídeos, não contorna limites de uso.
 
 Uso: python orquestrador.py --doctor | --init | --once | --batch 6 | --auto
-     python orquestrador.py --status | --retry | --prepare | --self-test
+     python orquestrador.py --status | --retry | --prepare | --defer-stage 64 --confirm-defer --defer-reason "..."
 """
 from __future__ import annotations
 
@@ -225,6 +225,28 @@ def read_state() -> dict | None:
     return load_json(STATE) if STATE.is_file() else None
 
 
+def stage_cursor(state: dict) -> int:
+    """Last sequentially handled stage, including stages explicitly deferred.
+
+    Legacy states have only `completed`; for them cursor == approved count.
+    """
+    return int(state.get('stage_cursor', state['completed']))
+
+
+def deferred_count(state: dict) -> int:
+    return len(state.get('deferred_stages', []))
+
+
+def next_stage(state: dict) -> int:
+    return stage_cursor(state) + 1
+
+
+def final_status(state: dict, total: int) -> str:
+    if stage_cursor(state) != total:
+        return 'READY'
+    return 'FINISHED_WITH_DEFERRED' if deferred_count(state) else 'FINISHED'
+
+
 def require_state() -> dict:
     state = read_state()
     if state is None:
@@ -370,6 +392,24 @@ def prompt_for(item: dict, state: dict, retry: bool) -> str:
     step_text = (AUTO / item['file_path']).read_text(encoding='utf-8')
     previous = REPORTS / f'CHECKPOINT_ETAPA_{number-1:02d}.md'
     refs = sorted(p.name for p in EVIDENCE.glob('*.zip'))
+    deferred_ids = {int(row['n']) for row in state.get('deferred_stages', [])
+                    if row.get('result') == 'DEFERRED_NOT_APPROVED'}
+    if number > 64 and 64 in deferred_ids:
+        # The future prompts were drafted before stage 64 was formally deferred.
+        # This explicit orchestration directive only supersedes their obsolete
+        # "all earlier stages approved" scheduling precondition, not quality gates.
+        deferral_note = (
+            'CONTROLE DE FILA (prevalece somente sobre a regra de sequência de prompts antigos):\n'
+            'ETAPA 64 = DEFERRED_NOT_APPROVED, formalmente autorizada e auditada.\n'
+            'A frase nos prompts 65-77 que condiciona a execução a TODAS as etapas anteriores\n'
+            'aprovadas era anterior a esse adiamento e NÃO bloqueia a execução desta etapa.\n'
+            'Não marcar 64 como DONE/ALREADY_OK, não falsificar evidência, não ignorar\n'
+            'os gates de integridade/privacidade dos próprios prompts; manter 64 pendente\n'
+            'para revisão posterior. Registrar no checkpoint desta etapa a dependência\n'
+            'histórica ainda aberta.\n'
+        )
+    else:
+        deferral_note = ''
     return f'''L.D.PORTO VIDEO ANALYZER — EXECUÇÃO REAL LOCAL | ETAPA {number:02d}/{total_steps()}
 
 TRABALHE NA RAIZ ATUAL: {ROOT}.
@@ -398,6 +438,7 @@ Checkpoint anterior: {previous.relative_to(ROOT).as_posix() if previous.is_file(
 {step_text}
 ========== FIM DA TAREFA ==========
 
+{deferral_note}
 Ao terminar responda SOMENTE com JSON do esquema de saída.
 DONE: implementado e testes focalizados aprovados. ALREADY_OK: já estava correto e evidência comprova.
 BLOCKED/FAILED: descreva bloqueio, sem avançar indevidamente.
@@ -565,7 +606,7 @@ def synchronize_prompts(state: dict, entries: list[dict], *, adopt_upgrade=False
     else:
         state['last_manifest'] = current
         state['last_manifest_sha256'] = current_hash
-        if state['status'] == 'FINISHED' and state['completed'] < len(entries):
+        if state['status'] in ('FINISHED', 'FINISHED_WITH_DEFERRED') and stage_cursor(state) < len(entries):
             state['status'] = 'READY'
     persist(state)
     note(f'Fila sincronizada: {len(entries)} prompts; +{sum(name.startswith("automacao/prompts/") for name in added)} novos, histórico mantido.')
@@ -591,15 +632,15 @@ def execute(limit: int, *, retry: bool, timeout: int, pytest_timeout: int, accep
     with exclusive_lock():
         state = require_state()
         synchronize_prompts(state, entries)
-        if state['status'] == 'FINISHED':
-            note(f'As {len(entries)} etapas já estão concluídas tecnicamente. Homologação humana continua necessária.')
+        if state['status'] in ('FINISHED', 'FINISHED_WITH_DEFERRED'):
+            note(f'Fila encerrada no estágio {stage_cursor(state)}; {state["completed"]} aprovadas e {deferred_count(state)} adiadas. Homologação humana continua necessária.')
             return 0
         if retry and state['status'] not in ('PAUSED', 'RUNNING'):
             raise RuntimeError('--retry é reservado à etapa interrompida/pausada.')
         if state['status'] in ('PAUSED', 'RUNNING') and not retry:
             raise RuntimeError('Etapa pendente; não avance. Confira --status e use --retry.')
         for _ in range(limit):
-            n = int(state['completed']) + 1
+            n = next_stage(state)
             entries = load_plan()
             if n > len(entries):
                 break
@@ -671,7 +712,8 @@ def execute(limit: int, *, retry: bool, timeout: int, pytest_timeout: int, accep
                     'checkpoint': checkpoint.relative_to(ROOT).as_posix(),
                     'before_snapshot': pre, 'snapshot': verified, 'risks': result['risks'],
                 })
-                state['completed'] = n
+                state['completed'] = int(state['completed']) + 1
+                state['stage_cursor'] = n
                 state['active'] = None
                 state['last_snapshot'] = verified
                 state['last_manifest'] = post_manifest
@@ -679,7 +721,7 @@ def execute(limit: int, *, retry: bool, timeout: int, pytest_timeout: int, accep
                 state.pop('paused_manifest_sha256', None)
                 state.pop('error', None)
                 state.pop('partial_snapshot', None)
-                state['status'] = 'FINISHED' if n == len(entries) else 'READY'
+                state['status'] = final_status(state, len(entries))
                 persist(state)
                 note(f'ETAPA {n:02d} APROVADA; {len(changed)} alterações, pytest OK, ZIP SHA-256 {verified["sha256"][:16]}.')
                 retry = False
@@ -702,9 +744,83 @@ def execute(limit: int, *, retry: bool, timeout: int, pytest_timeout: int, accep
                 note('Não avancei. Alterações parciais ' + ('protegidas: ' + partial['file'] if partial else 'permanecem no disco; snapshot falhou.'))
                 note('Para retomar preservando os arquivos: python orquestrador.py --retry')
                 return 1
-        note(f'Fim desta execução: {state["completed"]}/{len(load_plan())} etapas aprovadas.')
-        if state['completed'] == len(load_plan()):
-            note('Homologação técnica NÃO equivale à aprovação humana dos vídeos.')
+        note(f'Fim desta execução: {state["completed"]}/{len(load_plan())} etapas aprovadas; {deferred_count(state)} adiadas.')
+        if stage_cursor(state) == len(load_plan()):
+            note('Homologação técnica NÃO equivale à aprovação humana dos vídeos; etapas adiadas não estão aprovadas.')
+    return 0
+
+
+
+def defer_stage(number: int, reason: str, confirmation: bool) -> int:
+    """Explicitly postpone one PAUSED stage while retaining all its evidence.
+
+    `completed` remains count of approved stages; `stage_cursor` determines the
+    next sequential stage. Never records DEFERRED as DONE/ALREADY_OK.
+    """
+    if not confirmation:
+        raise RuntimeError('Confirme o adiamento com --confirm-defer. Isto NÃO aprova a etapa.')
+    reason = (reason or '').strip()
+    if len(reason) < 16 or len(reason) > 800:
+        raise RuntimeError('--defer-reason precisa descrever a pendência (16 a 800 caracteres).')
+    if number != 64:
+        raise RuntimeError('Esta migração só autoriza adiar a etapa 64. Outras etapas exigem novo processo auditado.')
+    entries = load_plan()
+    with exclusive_lock():
+        state = require_state()
+        if state.get('status') != 'PAUSED' or state.get('active') != number:
+            raise RuntimeError(f'Somente a etapa ativa e PAUSED pode ser adiada: {number}.')
+        if next_stage(state) != number or int(state['completed']) + deferred_count(state) != stage_cursor(state):
+            raise RuntimeError('Cursor/contadores inconsistentes; revisão manual necessária.')
+        synchronize_prompts(state, entries)
+        verify_guard(state['guard_hashes'])
+        validate_evidence(state)
+        current = manifest()
+        current_hash = manifest_hash(current)
+        if current_hash != state.get('paused_manifest_sha256'):
+            raise RuntimeError('Workspace mudou após a pausa; não aceitar drift implicitamente.')
+        if not state.get('partial_snapshot'):
+            raise RuntimeError('Snapshot da etapa pausada ausente; não adiável sem backup.')
+        # Fail closed if any historical snapshot has been removed or tampered with.
+        _snapshot_source_hashes(state['partial_snapshot'])
+        _snapshot_source_hashes(state['last_snapshot'])
+
+        mark = dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+        audit_dir = RUN / 'adiamentos'
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        backup = audit_dir / f'estado_antes_etapa_{number:02d}_{mark}.json'
+        audit = audit_dir / f'etapa_{number:02d}_{mark}.json'
+        if backup.exists() or audit.exists():
+            raise RuntimeError('Identificador de auditoria duplicado; tente novamente.')
+        write_json(backup, state)
+        pre_defer_snapshot = snapshot(f'ANTES_ADIAMENTO_ETAPA_{number:02d}_{mark}')
+        record = {
+            'n': number,
+            'result': 'DEFERRED_NOT_APPROVED',
+            'when': timestamp(), 'reason': reason,
+            'original_error': state.get('error'),
+            'partial_snapshot': state['partial_snapshot'],
+            'last_approved_snapshot': state['last_snapshot'],
+            'pre_defer_snapshot': pre_defer_snapshot,
+            'previous_state_backup': backup.relative_to(ROOT).as_posix(),
+            'source_manifest_sha256': current_hash,
+            'prompt_sha256': state['guard_hashes'].get(f'automacao/prompts/ETAPA_{number:02d}.txt'),
+            'follow_up_required': True,
+        }
+        write_json(audit, record)
+        state.setdefault('deferred_stages', []).append(record)
+        state['stage_cursor'] = number
+        state['active'] = None
+        state['status'] = 'READY'
+        state['last_manifest'] = current
+        state['last_manifest_sha256'] = current_hash
+        state.pop('paused_manifest_sha256', None)
+        state.pop('partial_snapshot', None)
+        state.pop('error', None)
+        state.pop('partial_backup_error', None)
+        persist(state)
+        note(f'ETAPA {number:02d} DEFERRED (NÃO APROVADA). Aprovadas: {state["completed"]}; próximo estágio: {next_stage(state)}.')
+        note('Auditoria: ' + audit.relative_to(ROOT).as_posix())
+        note('Checkpoint e snapshot da etapa pausada preservados para revisão posterior.')
     return 0
 
 
@@ -713,19 +829,26 @@ def status() -> None:
     if not state:
         note('Ainda não iniciado. Primeiro execute --doctor e --init.')
         return
+    last = stage_cursor(state)
+    total = total_steps()
+    deferred = [{'n': record['n'], 'reason': record['reason'], 'when': record['when']}
+                for record in state.get('deferred_stages', [])]
+    displayed_status = ('READY' if state['status'] in ('FINISHED', 'FINISHED_WITH_DEFERRED')
+                        and last < total else state['status'])
     print(json.dumps({
-        'completed': state['completed'], 'total': total_steps(),
-        'remaining': max(0, total_steps() - state['completed']),
-        'status': ('READY' if state['status'] == 'FINISHED' and state['completed'] < total_steps()
-                   else state['status']), 'active': state.get('active'),
-        'last_snapshot': state.get('last_snapshot'),
+        'completed': state['completed'], 'approved_count': state['completed'],
+        'total': total, 'remaining': max(0, total - state['completed']),
+        'queue_remaining': max(0, total - last), 'stage_cursor': last,
+        'next_stage': (last + 1 if last < total else None),
+        'deferred_stages': deferred, 'status': displayed_status,
+        'active': state.get('active'), 'last_snapshot': state.get('last_snapshot'),
         'error': state.get('error'), 'last_updated': state['updated_at'],
     }, ensure_ascii=False, indent=2))
 
 
 def prepare() -> int:
     state = require_state()
-    n = int(state['completed']) + 1
+    n = next_stage(state)
     if n > total_steps():
         note('Todas as etapas encerradas.')
         return 0
@@ -761,12 +884,15 @@ def main(argv=None) -> int:
     ]:
         group.add_argument('--' + flag, action='store_true', help=helptext)
     group.add_argument('--batch', type=int, metavar='N', help='Executar até N etapas em sequência')
+    group.add_argument('--defer-stage', type=int, metavar='N', help='Adiar uma etapa PAUSED (não aprovada)')
     parser.add_argument('--retry', action='store_true', help='Retomar etapa pausada preservando alterações')
     parser.add_argument('--dry-run', action='store_true', help='Mostrar próximo estágio sem Codex')
     parser.add_argument('--accept-drift', action='store_true', help='Aceitar alteração externa deliberada após snapshot extra (cautela)')
     parser.add_argument('--timeout', type=int, default=3600, help='Limite de segundos por etapa Codex (padrão 3600)')
     parser.add_argument('--pytest-timeout', type=int, default=1200, help='Limite da regressão por etapa (padrão 1200)')
     parser.add_argument('--confirm-unlock', action='store_true', help='Confirmar que nenhum outro processo está executando')
+    parser.add_argument('--confirm-defer', action='store_true', help='Confirmar adiamento sem aprovação')
+    parser.add_argument('--defer-reason', type=str, help='Justificativa de adiamento auditável')
     args = parser.parse_args(argv)
     try:
         if args.doctor:
@@ -783,13 +909,15 @@ def main(argv=None) -> int:
             return prepare()
         if args.adopt_prompts:
             return adopt_prompts()
+        if args.defer_stage is not None:
+            return defer_stage(args.defer_stage, args.defer_reason, args.confirm_defer)
         if args.batch is not None and not (1 <= args.batch <= total_steps()):
             parser.error(f'--batch exige valor entre 1 e {total_steps()}')
         if not (60 <= args.timeout <= 86400) or not (30 <= args.pytest_timeout <= 86400):
             parser.error('Timeouts fora do intervalo seguro.')
         state = require_state()
         if args.dry_run:
-            n = int(state['completed']) + 1
+            n = next_stage(state)
             note(f'DRY RUN: {n:02d}/{total_steps()} — {load_plan()[n-1]["title"] if n<=total_steps() else "fim"}.')
             return 0
         return execute(

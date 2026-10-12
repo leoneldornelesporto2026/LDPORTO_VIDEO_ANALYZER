@@ -725,7 +725,10 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                    zoom_request_window_count=counts['smart_zoom_requested_windows'],
                    zoom_accepted_event_count=len(smart_state.events),
                    zoom_accepted_window_count=counts['smart_zoom_accepted_windows'],
-                   zoom_delivered_event_count=delivered_zoom.get('zoom_event_count', 0),
+                   zoom_timeline_event_count=delivered_zoom.get('zoom_event_count', 0),
+                   zoom_event_count_scope='timeline_keyframes_only_use_zoom_delivered_event_count_for_render',
+                   zoom_delivered_event_count=0,
+                   zoom_delivery_verified=None,
                    zoom_aborted_window_count=counts['zoom_aborted_evaluation_windows'],
                    zoom_raw_opportunity_window_count=counts['editorial_beat_raw_windows'],
                    zoom_opportunity_outcome_counts={k.removeprefix('zoom_opportunity_outcome_'): v
@@ -733,9 +736,8 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
                    zoom_accepted_push_in_event_count=sum(e['mode'] == 'SMART_ZOOM_IN' for e in smart_state.events),
                    zoom_accepted_pull_out_event_count=sum(e['mode'] == 'SMART_ZOOM_OUT' for e in smart_state.events),
                    zoom_block_reason_counts=dict(zoom_block_reasons),
-                   zoom_delivery_fraction=(delivered_zoom.get('zoom_event_count', 0) / len(smart_state.events)
-                                           if smart_state.events else None),
-                   zoom_diagnostics_contract='opportunity_request_accepted_delivered_aborted_v1',
+                   zoom_delivery_fraction=None,
+                   zoom_diagnostics_contract='proposal_timeline_render_preview_v2',
                    focus_evidence_funnel=predecision_evidence,
                    crop_preflight_blocked_windows=counts['crop_preflight_blocked_windows'],
                    zoom_temporal_preflight_rejected_windows=counts['zoom_temporal_preflight_rejected_windows'],

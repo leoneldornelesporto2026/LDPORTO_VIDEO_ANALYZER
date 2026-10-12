@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 from .curator_bridge import audit_second_curation_package
 from .curator_delivery import file_sha256, verify_mp4, probe, load_json, finalize_batch
 from .performance_acceptance import resource_diagnostic
+from .homologation_audit import compare_outputs
 
 BENCHMARK_KEYS = ('micro_track_ratio', 'speaker_person_mapping_coverage', 'active_speaker_coverage',
                   'resolved_focus_coverage', 'zoom_event_count', 'zoom_delivered_event_count',
@@ -163,7 +164,9 @@ def homologate(*, package=None, source=None, preview=None, batch_manifest=None,
         r['current_benchmark'] = current
     if previous is not None:
         r['baseline_benchmark'] = previous
-    r['comparable_metric_deltas'] = metric_delta(previous, current)
+    r['audit_comparison'] = compare_outputs(baseline, analysis)
+    r['comparable_metric_deltas'] = (metric_delta(previous, current)
+        if r['audit_comparison']['status'] == 'measured' else {})
     if not r['comparable_metric_deltas']:
         r['warnings'].append('BASELINE_AND_CURRENT_BENCHMARK_COMPARISON_NOT_AVAILABLE')
     if human_reviews:

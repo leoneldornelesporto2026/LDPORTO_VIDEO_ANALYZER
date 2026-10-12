@@ -4,7 +4,7 @@ from ldporto.replay import replay_analysis
 from test_v43_runtime import replay_fixture
 
 
-def test_commercial_replay_uses_canonical_context_without_asr_or_llm(tmp_path):
+def test_understanding_replay_classifies_commercial_asr_without_asr_or_llm(tmp_path):
     folder=replay_fixture(tmp_path)
     segments=read_json(folder/'transcript_segments.json')
     segments[0]['text']='Venha para a Havan, compre hoje por 69,99 reais no Pix e aproveite a promoção com desconto!'
@@ -18,7 +18,7 @@ def test_commercial_replay_uses_canonical_context_without_asr_or_llm(tmp_path):
     cfg['vision']['enabled']=False
     cfg['diarization']['enabled']=False
     cfg['export']['second_curation_output_dir']=str(tmp_path/'packages')
-    _,analysis=replay_analysis(folder,cfg,'commercial',tmp_path/'output')
+    _,analysis=replay_analysis(folder,cfg,'understanding',tmp_path/'output')
     assert analysis['main_moments'][0]['commercial_classification']['eligibility']=='excluded'
     assert analysis['editorial_shortlist']==[]
     assert analysis['candidate_metrics']['final_shortlist_count']==0

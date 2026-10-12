@@ -1,41 +1,360 @@
-MICROETAPA 01/42 — Reconciliação de versões e baseline
-REFERÊNCIA: D01 | LOTE: 01_BASE_E_CONTRATOS
+# PROMPT 01 — AUDITORIA GERAL E ESTABILIZAÇÃO DO PROJETO
 
-CONTEXTO: L.D.PORTO VIDEO ANALYZER — código acumulado S1–S11; benchmark João Gordo: export que reporta build R4.9-S4-TRACKING-FACIAL, 55 candidatos, 52 após dedup, shortlist 1; saída partial/P1_DEGRADED. Esses números são BASELINE observado, não metas nem prova da versão integrada.
+**Projeto:** L.D.PORTO VIDEO ANALYZER  
+**Ciclo:** 01 — Consolidação e Qualidade  
+**Etapa:** 01  
+**Missão:** Validar a integridade técnica, funcional e operacional do projeto, corrigir os bloqueios comprovados e preparar a base para a próxima etapa.
 
-ANEXOS: (a) ZIP DO CÓDIGO MAIS RECENTE do último checkpoint (na primeira etapa: `LDPORTO_VIDEO_ANALYZER_R4_9_S9_S10_S11_INTEGRADO.zip`); (b) este prompt; (c) nos passos que dependem da execução, `SECOND_CURATION_READY_tpcF5ri6GS4_20261008_041938_332406_8ae5ce(2).zip` ou relatório de auditoria anterior. Se o pacote de análise já estiver nesta conversa, não solicite novo envio desnecessário.
+## 1. OBJETIVO PRINCIPAL
 
-OBJETIVO ÚNICO:
-Determinar exatamente qual build foi executado, qual é o código-base mais novo, qual a cobertura efetiva S1–S11 e criar um baseline reproduzível.
+Atue como engenheiro de software sênior, arquiteto Python, especialista em processamento audiovisual e auditor técnico independente.
 
-ARQUIVOS PROVÁVEIS PARA INSPEÇÃO (confirme nomes/uso no ZIP antes de editar):
-README.md; docs/S9_S11_REAL_TEST.md; .package/PROJECT_EXPORT_MANIFEST.json; docs/S11_TECHNICAL_VALIDATION_20261008.md
+Analise o projeto real, seus arquivos, dependências, testes, logs, documentação, configurações, módulos e integrações.
 
-TAREFAS EM ESCOPO:
-1. Inspecionar o ZIP integrado S9–S11 e o SECOND_CURATION_READY do João Gordo sem confundi-los.
-2. Montar tabela funcionalidade / arquivo implementador / evidência no export / estado (implementada, não executada, inconclusiva).
-3. Registrar versões, hashes, parâmetros disponíveis, provas e lacunas. Não alterar o pipeline só para alterar versões.
+O objetivo não é reescrever a aplicação, mas garantir que aquilo que já existe funcione corretamente, com segurança, consistência e rastreabilidade.
 
-CRITÉRIOS DE ACEITE E TESTES:
-- Gerar BASELINE_TECNICO.md e BASELINE.json com lista de evidências e riscos.
-- Rodar importações básicas e pequeno subconjunto de testes existentes, registrando comandos e exit codes.
+**Regra central: identificar → reproduzir → corrigir → testar → validar → documentar.**
 
-ATENÇÃO ESPECÍFICA:
-Não assumir que o S9–S11 foi usado no export S4; não chamar o pacote de aprovado só por seu nome.
+Não declare sucesso sem evidências reais.
 
-REGRAS PARA CHATGPT NORMAL (válidas nesta microetapa):
-- Use o ZIP MAIS RECENTE do projeto como única base de código. O SECOND_CURATION_READY é evidência de execução (build S4), não o código para atualizar. Nunca sobrescreva uma versão posterior por S8 ou S4.
-- Execute SOMENTE esta microetapa. Inspecione o mínimo necessário, implemente no código existente, acrescente testes focados e rode a regressão pertinente; não comece a próxima etapa.
-- Preserve compatibilidade de JSON/IDs/checkpoints e cache caro. Não rerode ASR, visão, CUDA ou Ollama para corrigir lógica downstream sem necessidade técnica comprovada.
-- Não fabrique transcrição, perguntas, payoff, falante ativo, pessoa, crop, qualidade editorial ou sucesso de teste. Estado inseguro = null / pendente + motivo.
-- Não considere `READY` como publish_ready; aprovação humana e hashes reais são indispensáveis. Qualquer alteração em decisão, fonte ou preview invalida a aprovação associada.
-- Se faltar vídeo, áudio, GPU, modelo ou aplicativo Curator independente, faça os testes offline/sintéticos possíveis e registre o que deve ser validado no Windows. Não afirme ter testado aquilo que não executou.
-- Não peça nova arquitetura, não crie projeto do zero. Evite chamadas externas, ferramentas pagas, downloads de modelos e reanálise integral.
+## 2. PROTEÇÃO OBRIGATÓRIA DO PROJETO
 
-ENTREGA OBRIGATÓRIA NESTA CONVERSA:
-1. Implementação real no workspace, se viável, não apenas plano.
-2. ZIP COMPLETO atualizado do projeto, preservando tudo que já funciona, mais link verificável.
-3. `CHECKPOINT_ETAPA_NNN.md` com arquivos alterados, mudanças, comandos, resultados observados, limitações, cache invalidado e próximos passos.
-4. Resumo curto dos achados e evidência de testes. Quando não puder completar, detalhe exatamente qual insumo bloqueou e não alegue concluído.
+Antes de qualquer modificação:
 
-AO FINAL: pare nesta etapa. Eu enviarei a próxima depois de baixar seu ZIP.
+1. Identifique a raiz verdadeira do projeto.
+2. Consulte o estado atual do Git.
+3. Execute o comando somente-leitura `orquestrador.py --status`.
+4. Verifique se há Codex, processamento de vídeo, pytest ou outro worker ativo.
+5. Identifique snapshots, checkpoints, manifestos e alterações não commitadas.
+6. Registre hashes SHA-256 dos arquivos relevantes.
+7. Preserve integralmente arquivos de análise, vídeos, modelos, pesos, caches e resultados anteriores.
+8. Antes de modificar arquivos permitidos, crie um backup verificável fora das áreas protegidas pelo manifesto.
+
+**Restrições absolutas:**
+
+- Não apagar funcionalidades existentes.
+- Não executar reset do orquestrador.
+- Não manipular manualmente `estado.json`, aprovações ou hashes para liberar etapas.
+- Não alterar prompts históricos `ETAPA_01.txt` até `ETAPA_77.txt`.
+- Não sobrescrever `orquestrador.py`, `AGENTS.md` ou guardas protegidas.
+- Não executar `--accept-drift` nem ignorar falhas.
+- Não limpar caches, modelos ou evidências históricas.
+- Não executar processamento integral de vídeos reais sem autorização.
+- Não realizar atualizações indiscriminadas de dependências.
+- Não alterar o código-fonte durante estado `RUNNING` ou `PAUSED` fora do fluxo autorizado pelo orquestrador.
+
+Se o estado impedir modificações seguras, realizar a auditoria somente-leitura, preparar correções isoladas com seus testes e informar o procedimento oficial de aplicação.
+
+## 3. AUDITORIA ESTRUTURAL
+
+Inspecione toda a estrutura relevante:
+
+- Arquivos de inicialização e configuração.
+- Código-fonte Python.
+- Dependências e ambientes virtuais.
+- Testes automatizados.
+- Scripts de instalação e diagnóstico.
+- Arquitetura de processamento audiovisual.
+- GUI e comunicação com o backend.
+- Workers e orquestrador.
+- Cache, snapshots e mecanismos de recuperação.
+- Documentação e exportadores.
+- Contratos JSON, schemas e artefatos de curadoria.
+
+Identifique:
+
+1. Imports quebrados ou circulares.
+2. Funções duplicadas ou inacessíveis.
+3. Dependências incompatíveis.
+4. Problemas de caminhos no Windows.
+5. Falhas de codificação UTF-8.
+6. Tratamento inadequado de exceções.
+7. Erros de concorrência e escrita de arquivos.
+8. Configurações inconsistentes.
+9. Vazamento de recursos.
+10. Código obsoleto comprovadamente sem uso.
+
+Não remova código apenas por parecer desnecessário. Toda proposta de remoção exige comprovação de ausência de dependências.
+
+## 4. AUDITORIA DO PIPELINE AUDIOVISUAL
+
+Valide os contratos, dados e integrações entre os componentes existentes.
+
+**Áudio e transcrição:**
+- Extração de áudio.
+- Faster-Whisper e transcrição.
+- Timestamps e sincronização.
+- Diarização com Pyannote.
+- Identificação persistente de speakers.
+- Separação entre voz e música.
+- Tratamento de áudio parcial ou indisponível.
+
+**Visão computacional:**
+- Detecção e rastreamento de rostos.
+- Associação entre pessoas e speakers.
+- Active speaker detection.
+- Shot detection.
+- Reconhecimento de cenas.
+- Movimentação e enquadramento.
+
+**Inteligência editorial:**
+- Análise semântica.
+- Story arcs.
+- Identificação de momentos relevantes.
+- Seleção de candidatos para cortes.
+- Camera Director.
+- Planejamento de zoom, pan e reenquadramento.
+- Preservação de identidade dos participantes.
+
+**Curadoria e exportação:**
+- Handoff da segunda curadoria.
+- Integridade das coleções de evidências.
+- Preservação dos contratos existentes.
+- Separação entre READY técnico, aprovação editorial e autorização de publicação.
+- Tratamento de trilha sonora original e instrumental autoral.
+- Controle de privacidade e exportação.
+
+Não introduza mudanças comportamentais amplas nesta etapa. Registre deficiências editoriais como tarefas futuras quando não forem bloqueios de funcionamento.
+
+## 5. AUDITORIA DE CACHE, RECIBOS E RECUPERAÇÃO
+
+Inspecione especialmente:
+
+- `core.py`
+- `build_provenance.py`
+- `execution_receipts.py`
+- `curation_recovery.py`
+- `reports.py`
+- `compact_artifacts.py`
+- `director_integration.py`
+
+Verifique:
+
+1. SHA-256 e integridade dos arquivos.
+2. Recibos e identidade dos produtores.
+3. Dependências entre etapas.
+4. Invalidação seletiva de cache.
+5. Detecção de corrupção.
+6. Compatibilidade com caches legados.
+7. Recuperação após interrupção.
+8. Gravação atômica.
+9. Integridade de relatórios finais.
+10. Ausência de aprovações ou evidências fabricadas.
+
+Não recrie recibos históricos artificialmente.
+
+Não transforme evidência desconhecida em evidência verificada.
+
+## 6. INVESTIGAÇÃO DA ETAPA 65
+
+Esta é uma prioridade operacional.
+
+Consulte o estado atual, sem pressupor que a etapa continue pausada.
+
+Caso ainda exista a falha anterior:
+
+`Testes automatizados falharam (1)`
+
+Analise:
+
+`automacao/execucao/logs/ETAPA_65_pytest.log`
+
+Identifique os testes realmente falhos e seus tracebacks completos.
+
+Determine se a causa é:
+
+- Defeito na implementação.
+- Fixture incompatível.
+- Dependência ausente.
+- Problema de ambiente.
+- Contrato inconsistente.
+- Problema de exportação.
+- Erro de estado ou integridade.
+
+Não trate um teste falho como sucesso.
+
+Prepare a menor correção segura possível, preferindo preservar as implementações válidas. Se o orquestrador estiver PAUSED, não modifique os arquivos manifestados diretamente; use o fluxo oficial de recuperação e retry.
+
+A etapa 65 só pode ser considerada concluída se o próprio orquestrador registrar a aprovação.
+
+A etapa 64 deve conservar seu estado histórico sem aprovação indevida.
+
+## 7. TESTES OBRIGATÓRIOS
+
+Execute progressivamente, respeitando os requisitos do ambiente.
+
+**Fase A — Inspeção estática**
+
+- Compilação e sintaxe Python.
+- Imports dos módulos principais.
+- Validação de configurações.
+- Verificação de arquivos de dependências.
+- Integridade dos schemas e JSONs relevantes.
+
+**Fase B — Testes direcionados**
+
+- Proveniência e recibos.
+- Cache e recuperação.
+- Relatórios e curadoria.
+- Camera Director.
+- Contratos e integração dos componentes alterados.
+
+**Fase C — Regressão integral**
+
+Execute a suíte oficial de pytest do projeto, sem excluir testes.
+
+Registre:
+
+- Quantidade aprovada.
+- Quantidade falha.
+- Quantidade ignorada.
+- Tempo de execução.
+- Exit code.
+- Causa de cada falha.
+- Evidência de correção e novo teste.
+
+Diferencie defeitos de código de limitações do ambiente ou ausência de evidências na exportação.
+
+Não considere testes sintéticos equivalentes a homologação com vídeos reais.
+
+## 8. CORREÇÕES PERMITIDAS
+
+Corrija apenas defeitos comprovados e reproduzíveis que estejam dentro do escopo seguro da execução.
+
+Prioridade:
+
+**P0 — Bloqueadores**
+- Erros que impedem a execução.
+- Integridade comprometida.
+- Testes obrigatórios falhando.
+- Contratos fundamentais quebrados.
+
+**P1 — Estabilidade**
+- Falhas de tratamento de exceções.
+- Recuperação inconsistente.
+- Problemas de compatibilidade.
+- Regressões introduzidas recentemente.
+
+**P2 — Melhorias futuras**
+- Performance.
+- Qualidade editorial.
+- Otimizações de IA.
+- Refatorações extensas.
+- Melhorias de interface.
+- Organização documental não essencial.
+
+Nesta primeira etapa, executar somente correções P0/P1 comprovadas e seguras.
+
+Não implementar itens P2. Registrar esses itens para os próximos prompts.
+
+Para cada correção, documentar:
+
+- Problema.
+- Causa raiz.
+- Arquivos afetados.
+- Alteração mínima.
+- Teste de regressão.
+- Evidência do resultado.
+- Possibilidade de rollback.
+
+## 9. VALIDAÇÃO FINAL
+
+Ao finalizar, confirme separadamente:
+
+**Integridade**
+- Arquivos protegidos preservados.
+- Nenhuma evidência histórica descartada.
+- Estado do orquestrador consistente.
+- Snapshots e backups verificáveis.
+
+**Qualidade**
+- Sintaxe válida.
+- Testes direcionados aprovados.
+- Regressão integral aprovada.
+- Nenhum erro crítico conhecido sem tratamento.
+
+**Operação**
+- Inicialização funcional, quando testável.
+- Contratos de pipeline consistentes.
+- Ambiente Python e dependências documentados.
+- Código apto à próxima alteração segura.
+
+**Aprovação**
+- Estado real da etapa 65 confirmado.
+- Etapa 66 não iniciada.
+- Nenhuma aprovação inserida manualmente.
+
+## 10. ENTREGÁVEIS
+
+Entregue:
+
+**A. AUDITORIA_GERAL_01.md**
+
+Resultado técnico geral, componentes inspecionados, defeitos encontrados e respectivas evidências.
+
+**B. CORRECOES_01.md**
+
+Alterações implementadas, justificativas, caminhos e testes.
+
+**C. TESTES_01.json**
+
+Comandos, resultados, exit codes, passed, failed, skipped e limitações.
+
+**D. PENDENCIAS_02.md**
+
+Lista priorizada do que deverá ser tratado no próximo prompt, com uma única tarefa principal recomendada.
+
+**E. STATUS_FINAL_01.json**
+
+Incluindo:
+
+- `status`: READY_FOR_NEXT_PROMPT ou BLOCKED
+- `full_pytest_passed`
+- `critical_errors`
+- `orchestrator_status`
+- `stage65_approved`
+- `stage64_deferred`
+- `next_stage`
+- `workspace_integrity`
+- `backup_verified`
+- `recommended_next_action`
+
+Os relatórios devem ficar fora da árvore manifestada quando necessário para preservar o estado PAUSED.
+
+## 11. CRITÉRIO DE CONCLUSÃO
+
+Retorne **READY_FOR_NEXT_PROMPT** somente se:
+
+1. A integridade do projeto estiver confirmada.
+2. Os testes obrigatórios passarem.
+3. Os problemas P0/P1 conhecidos estiverem corrigidos ou demonstravelmente não bloquearem a próxima etapa.
+4. Não existirem alterações externas não reconciliadas.
+5. O estado do orquestrador estiver consistente.
+6. As correções tiverem sido aplicadas pelo mecanismo permitido e verificadas.
+
+Se qualquer condição não for atendida, retorne **BLOCKED** e indique exatamente o próximo comando ou correção necessária.
+
+Não escreva READY apenas porque uma parte dos testes passou.
+
+## 12. FORMATO DA RESPOSTA FINAL
+
+Apresente exatamente estas seções:
+
+1. ESTADO INICIAL DO PROJETO
+2. COMPONENTES AUDITADOS
+3. PROBLEMAS COMPROVADOS
+4. CORREÇÕES APLICADAS
+5. TESTES EXECUTADOS
+6. INTEGRIDADE E SEGURANÇA
+7. ESTADO DO ORQUESTRADOR
+8. BLOQUEIOS RESTANTES
+9. RESULTADO: READY_FOR_NEXT_PROMPT / BLOCKED
+10. PRÓXIMA TAREFA RECOMENDADA
+
+**INSTRUÇÃO FINAL**
+
+Concentre-se exclusivamente em estabilizar o que já existe.
+
+Não implemente funcionalidades novas, não reorganize o projeto inteiro, não processe novos vídeos reais e não inicie o Prompt 02.
+
+O resultado esperado é uma base técnica confiável, testada e preparada para avançarmos uma melhoria de cada vez.

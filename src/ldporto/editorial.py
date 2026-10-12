@@ -608,6 +608,7 @@ def rank_candidate(candidate, cfg=None):
                  "duration_exception_proof_rejected": bool(candidate.get("duration_exception") and
                                                            not duration["duration_exception"])}
     components = {"hook": finite_score(candidate.get("hook_score")),
+                  "punchline": finite_score(candidate.get("punchline_score")),
                   "standalone_clarity": finite_score(candidate.get("standalone_score")),
                   "clean_opening": float(candidate["clean_opening"]) if isinstance(candidate.get("clean_opening"), bool) else None,
                   "clean_ending": float(candidate["clean_ending"]) if isinstance(candidate.get("clean_ending"), bool) else None,
@@ -638,7 +639,19 @@ def rank_candidate(candidate, cfg=None):
                  "duplicate": 0.0,
                  "editorial_incomplete": .25 if candidate.get("editorial_blockers") else 0.0}
     final = max(0.0, min(1.0, raw - sum(penalties.values()))) if raw is not None else None
+    score_evidence = {
+        key: {'value': components[key], 'status': 'recorded_requires_review' if components[key] is not None else 'unmeasured',
+              'criterion': criterion, 'source_segment_ids': list(candidate.get('evidence_segment_ids') or []),
+              'semantic_quality_verified': None}
+        for key, criterion in {
+            'hook': 'literal_opening_hook_classification; lexical heuristic, not retention',
+            'standalone_clarity': 'recorded_standalone_class_with_boundary_and_context_blockers; not comprehension measurement',
+            'punchline': 'explicit_recorded_punchline_score_only; laughter_and_punctuation_do_not_measure_payoff',
+            'story_completeness': 'grounded_setup_development_payoff_ids_and_recorded_arc_rating',
+            'qa_completeness': 'linked_literal_answer_span_and_observed_sentence_closure; not_audio_verified',
+        }.items()}
     return {**candidate, "editorial_score_raw": raw, "score_components": components, "penalties": penalties,
+            "score_evidence": score_evidence,
             "editorial_quality_score": round(raw, 3) if raw is not None else None,
             "evidence_coverage": round(evidence_coverage, 3) if evidence_coverage is not None else None,
             "ranking_confidence": 'low' if missing_required or (evidence_coverage or 0) < .55 else 'medium' if evidence_coverage < .85 else 'high',

@@ -29,15 +29,21 @@ def _run_manifest(analysis, ctx, issues=None):
             continue
         metrics = getattr(ctx, 'stage_metrics', {}).get(name) or {}
         origin = deepcopy(state.get('execution_provenance') or {})
+        origin.pop('checkpoint_sha256', None)
         if 'cache_hit' in metrics:
             origin['origin'] = 'cache' if metrics['cache_hit'] else 'executed'
         # Stage names are internal, but reject paths in imported analyses.
         if Path(name).name == name and '/' not in name and '\\' not in name:
             checkpoint = Path(ctx.output) / 'cache' / ctx.signature[:16] / (name + '.json')
             try:
-                record = read_json(checkpoint)
+                from .execution_receipts import snapshot_json, verify_receipt
+                record, checksum = snapshot_json(checkpoint)
                 if state.get('key') and record.get('key') == state['key']:
-                    origin['checkpoint_sha256'] = file_hash(checkpoint)
+                    origin['checkpoint_sha256'] = checksum
+                    receipt = record.get('execution_receipt') or {}
+                    origin['effective_module_fingerprint'] = receipt.get('module_fingerprint')
+                    origin['receipt_evidence'] = verify_receipt(name, record)
+                    origin['cache_compatible_verified'] = metrics.get('cache_hit') is True
             except (OSError, ValueError, TypeError):
                 pass
         if name == '20_handoff':
@@ -45,10 +51,13 @@ def _run_manifest(analysis, ctx, issues=None):
             origin.update(origin='executed', analyzer_build=identity['analyzer_build'],
                           code_fingerprint=identity['code_fingerprint'])
         state['execution_provenance'] = origin
-    return build_run_manifest(analysis.get('metadata') or {}, stages,
+    manifest = build_run_manifest(analysis.get('metadata') or {}, stages,
                               analysis.get('issues', []) if issues is None else issues,
                               analysis.get('analysis_quality'), analysis.get('run_manifest'),
                               analysis.get('provenance'))
+    manifest['export_receipt_ref'] = {'path': 'report_execution_receipt.json', 'schema_version': '2.0',
+                                    'scope': 'final_serialized_report_bytes', 'hash_location': 'external_only'}
+    return manifest
 
 
 
@@ -151,6 +160,7 @@ def llm_insights(analysis):
         "candidate_hooks": analysis["candidate_hooks"], "candidate_endings": analysis["candidate_endings"],
         "silences": analysis["silences"], "audio_events": analysis["audio_events"],
         "ocr_text": analysis["ocr_text"], "low_confidence_words": analysis["low_confidence_words"],
+        "ocr_execution": analysis.get('ocr_execution', {}),
         "transcription_alternatives": analysis["transcription_alternatives"],
         "person_identities": analysis.get("person_identities", []),
         "speaker_person_summary": analysis.get("speaker_person_summary", []),
@@ -358,6 +368,8 @@ class ReportEngine:
         analysis.setdefault("stage_status", {})["20_handoff"] = {"status": "ok", "method": "uncached_export"}
         analysis["run_manifest"] = _run_manifest(analysis, ctx)
         analysis["analysis_status"] = analysis["run_manifest"]["analysis_status"]
+        if analysis.get('reprocess_manifest'):
+            analysis['reprocess_manifest']['report_analysis_status'] = analysis['analysis_status']
         analysis["summary"] = summary(analysis)
         analysis["second_curation_package"] = build_second_curation_package(analysis)
         analysis["social_output"] = build_social_output(analysis, getattr(ctx, "config", {}), analysis["second_curation_package"])
@@ -400,6 +412,7 @@ class ReportEngine:
             "speaker_person_mapping.json": analysis["speaker_person_mapping"],
             "transcription_alternatives.json": analysis["transcription_alternatives"],
             "targeted_asr_repair.json": analysis.get('targeted_asr_repair', {}),
+            "targeted_manual_review.json": analysis.get('targeted_asr_repair', {}).get('manual_review', {}),
             "subtitle_review_s7.json": analysis.get('subtitle_review_s7', {}),
             "low_confidence_words.json": analysis["low_confidence_words"],
             "ocr_text.json": analysis["ocr_text"], "audio_analysis.json": analysis["audio_analysis"],
@@ -417,6 +430,7 @@ class ReportEngine:
             "broadcast_graphics.json": analysis.get("broadcast_graphics", {}),
             "commercial_blocks_s8.json": analysis.get('commercial_blocks', []),
             "commercial_visual_s8.json": analysis.get('commercial_visual_s8', {}),
+            "ocr_execution.json": analysis.get('ocr_execution', {}),
             "participants.json": analysis.get("participants", []),
             "participant_catalog.json": analysis.get("participant_catalog", []),
             "participant_metrics.json": analysis.get("participant_metrics", {}),
@@ -450,6 +464,8 @@ class ReportEngine:
             "quality_gate.json":analysis['quality_gate'],
             "CHATGPT_ANALYSIS_HANDOFF.json": chatgpt_handoff,
         }
+        if analysis.get('reprocess_manifest'):
+            exports['reprocess_manifest.json'] = analysis['reprocess_manifest']
         if analysis.get("camera_director_debug") is not None:
             exports["camera_director_debug.json"] = analysis["camera_director_debug"]
         else:
@@ -470,6 +486,9 @@ class ReportEngine:
             analyzer_build=analysis['run_manifest']['analyzer_build'],
             code_fingerprint=analysis['run_manifest']['code_fingerprint'],
             build_provenance=analysis['run_manifest']['build_provenance'])
+        for field in ('execution_attestation', 'execution_evidence', 'stage_status_summary',
+                      'editorial_readiness', 'preview_approved', 'publication_ready'):
+            exports['manifest.json'][field] = analysis['run_manifest'][field]
         exports['manifest.json']['second_curation_schema_version'] = analysis['second_curation_package'].get('schema_version')
         exports['manifest.json']['run_manifest_schema_version'] = analysis['run_manifest'].get('schema_version')
         for filename, data in exports.items():
@@ -540,6 +559,32 @@ class ReportEngine:
         final_manifest={**exports['manifest.json'],'files':list(dict.fromkeys(path.relative_to(ctx.output).as_posix() for path in outputs))}
         write_json(ctx.output/'manifest.json',final_manifest)
         ctx.states.update(analysis['stage_status'])
+        # Keep the exact stage-21 input in an isolated, immutable producer snapshot.
+        # The final report is rewritten after stage 21, so it cannot be this input.
+        from copy import deepcopy
+        from .execution_receipts import create_receipt, module_hashes, dependency_snapshots
+        from .run_status import DEPENDENCIES
+        package_input = deepcopy(analysis)
+        input_path = ctx.output / 'execution_inputs' / '20_handoff' / (digest(package_input) + '.json')
+        write_json(input_path, package_input)
+        from .core import file_hash
+        dependencies = {dep: {'key': ctx.states[dep].get('key'), 'status': ctx.states[dep].get('status')}
+                        for dep in DEPENDENCIES['20_handoff'] if dep in ctx.states}
+        handoff = {'status': 'ok', 'data': {'input_snapshot_sha256': file_hash(input_path)},
+                   'input_hash': ctx.signature, 'config_hash': digest(export_cfg),
+                   'output_version': '2.0', 'key': digest({'input': digest(package_input), 'export': export_cfg}),
+                   'cache_manifest': {'input': ctx.signature, 'params': digest(export_cfg),
+                       'code': digest(module_hashes(['reports.py', 'execution_receipts.py'])),
+                       'dependencies': digest(dependencies), 'versions': digest({}), 'output_version': '2.0'},
+                   'artifact_checksums': {str(input_path.resolve()): file_hash(input_path)}}
+        handoff['data_checksum'] = digest(handoff['data'])
+        handoff['execution_receipt'] = create_receipt('20_handoff', handoff,
+            module_hashes(['reports.py', 'execution_receipts.py']),
+            dependency_snapshots(ctx, DEPENDENCIES['20_handoff']), producer='ReportEngine.run',
+            input_fingerprint=digest(package_input))
+        write_json(ctx.cache / '20_handoff.json', handoff)
+        ctx.states['20_handoff'] = {'key': handoff['key'], 'status': 'ok'}
+        analysis['stage_status']['20_handoff'].update(key=handoff['key'])
         ctx.stage_metrics['20_handoff'] = {'cache_hit':False, 'elapsed_seconds':storage['serialization_seconds']}
         ctx.progress('20_handoff', status='ok')
         package_result = None
@@ -549,17 +594,31 @@ class ReportEngine:
             from .config import asset_path
             package_dir = asset_path(export_cfg['second_curation_output_dir']) if export_cfg.get('second_curation_output_dir') else PACKAGE_OUTPUT_DIR
             def create_package():
-                result = build_core_package(analysis, ctx.video, package_dir, export_cfg, ctx.progress, analysis['second_curation_package'])
+                from .execution_receipts import snapshot_json
+                isolated, _ = snapshot_json(input_path, handoff['data']['input_snapshot_sha256'])
+                if digest(isolated) != handoff['execution_receipt']['input_fingerprint']:
+                    raise ValueError('handoff_input_fingerprint_mismatch')
+                result = build_core_package(isolated, ctx.video, package_dir, export_cfg, ctx.progress, isolated['second_curation_package'])
                 return ok(result, 'ok' if result['state'] == 'READY' else 'partial',
                           [] if result['state'] == 'READY' else ['Second curation package is partial; inspect capability readiness.'],
-                          [result['path']] + ([result['media_path']] if result.get('media_path') else []))
-            package_result = ctx.step('21_second_curation_handoff', {'schema':'1.0', 'config':export_cfg,
+                          ([result['path']] if result.get('path') else []) + ([result['media_path']] if result.get('media_path') else []))
+            from .build_provenance import ProvenanceContext
+            producer = ctx
+            if not isinstance(ctx, ProvenanceContext):
+                producer = ProvenanceContext(ctx.video, ctx.output, ctx.config, ctx.signature, ctx.logger, ctx.force)
+                producer.states.update(ctx.states)
+                producer.progress = ctx.progress
+            package_result = producer.step('21_second_curation_handoff', {'schema':'1.0', 'config':export_cfg,
                 'evidence':digest(analysis['second_curation_package']), 'preview':digest(analysis.get('preview_validation', {}))},
-                create_package, code_files=['second_curation.py', 'second_curation_export.py', 'second_curation_decisions.py',
+                create_package, code_files=['second_curation.py', 'second_curation_export.py', 'export_privacy.py', 'second_curation_decisions.py',
                                             'integrity_contracts.py', 'commercial_gate.py', 'social_output.py',
                                             'analysis_quality.py', '../../schemas/second_curation_decisions.schema.json',
                                             'preview_renderer.py'],
                 output_version='1.2-stage06-report-contract', requires=['20_handoff'])
+            ctx.states.update(producer.states)
+            ctx.stage_metrics.update(producer.stage_metrics)
+            if producer is not ctx:
+                ctx.issues.extend(producer.issues)
             if package_result.get('path'):
                 from .second_curation_export import validate_core_package
                 if validate_core_package(package_result['path'])['status'] != 'valid':
@@ -646,6 +705,7 @@ class ReportEngine:
             from .core import read_json
             compact_summary = read_json(summary_path)
             compact_summary.update(stage_runtime=analysis['stage_runtime'], stage_status=analysis['stage_status'],
+                                   ocr_execution=analysis.get('ocr_execution', {}),
                                    analysis_status=analysis['analysis_status'], analysis_quality=metrics, second_curation_export=package_result,
                                    candidate_metrics=analysis.get('candidate_metrics', {}), quality_gate=analysis.get('quality_gate', {}),
                                    editorial_shortlist=analysis.get('editorial_shortlist', []))
@@ -673,15 +733,37 @@ class ReportEngine:
                                   build_provenance=analysis['run_manifest']['build_provenance'],
                                   second_curation_export=package_result, files=[name for name in dict.fromkeys(final_manifest['files'] + ['second_curation_export.json'])
                                                                             if (ctx.output / name).is_file()])
+            for field in ('execution_attestation', 'execution_evidence', 'stage_status_summary',
+                          'editorial_readiness', 'preview_approved', 'publication_ready'):
+                final_manifest[field] = analysis['run_manifest'][field]
             write_json(ctx.output / 'manifest.json', final_manifest)
             (ctx.output / 'PARA_ENVIAR_AO_CHATGPT.txt').write_text('Pacote core: ' + str(package_result.get('path') or 'FAILED') + '\nReadiness: ' + json.dumps(package_result.get('readiness', {})) + '\n', encoding='utf-8')
         reference_hashes = {reference['path']:reference['sha256'] for reference in document.get('collection_refs', {}).values()} if isinstance(document, dict) else {}
-        replay_files = ('analysis_quality.json', 'analysis_summary.json', 'camera_timeline.compact.json', 'people_summary.json',
+        if analysis.get('reprocess_manifest'):
+            analysis['reprocess_manifest']['report_analysis_status'] = analysis['analysis_status']
+            write_json(ctx.output / 'reprocess_manifest.json', analysis['reprocess_manifest'])
+        replay_files = ('reprocess_manifest.json', 'analysis_quality.json', 'analysis_summary.json', 'camera_timeline.compact.json', 'people_summary.json',
                         'CHATGPT_ANALYSIS_HANDOFF.compact.json', 'transcription_alternatives.json', 'active_speaker_evidence.json')
         reference_hashes.update({name: __import__('ldporto.core', fromlist=['file_hash']).file_hash(ctx.output / name)
                                  for name in replay_files if (ctx.output / name).is_file()})
+        # Reconcile the no-auto-export path too; all final hashes live outside analysis.json.
+        if not export_cfg.get('second_curation_auto', True):
+            analysis['run_manifest'] = _run_manifest(analysis, ctx)
+            write_json(ctx.output / 'run_manifest.json', analysis['run_manifest'])
+            create_compact_artifacts(analysis, ctx.output, export_cfg)
+            document = analysis if export_cfg.get('legacy_full_analysis', False) else compact_analysis_document(analysis, ctx.output)
+            write_json(ctx.output / 'analysis.json', document)
+            final_manifest.update(stage_status=analysis['stage_status'], build_provenance=analysis['run_manifest']['build_provenance'])
+        reference_hashes = {name: file_hash(ctx.output / name) for name in reference_hashes}
+        reference_hashes.update({name: file_hash(ctx.output / name) for name in ('analysis.json', 'run_manifest.json')})
         final_manifest['artifact_checksums'] = reference_hashes
+        final_manifest['export_receipt_ref'] = analysis['run_manifest']['export_receipt_ref']
         write_json(ctx.output / 'manifest.json', final_manifest)
+        from .execution_receipts import finalize_report_receipt
+        finalize_report_receipt(ctx, [ctx.output / name for name in reference_hashes] + [ctx.output / 'manifest.json'],
+            dependencies={'20_handoff': {'checkpoint_sha256': file_hash(ctx.cache / '20_handoff.json')},
+                          '21_second_curation_handoff': {'checkpoint_sha256': file_hash(ctx.cache / '21_second_curation_handoff.json')}
+                          if (ctx.cache / '21_second_curation_handoff.json').is_file() else {'evidence': 'not_applicable'}})
         if getattr(ctx, 'config', {}).get('export'):
             record_runtime_history(analysis.get('metadata', {}), ctx.config, ctx.stage_metrics)
         return ok({"insights": str((ctx.output/"CHATGPT_ANALYSIS_HANDOFF.json").resolve()),

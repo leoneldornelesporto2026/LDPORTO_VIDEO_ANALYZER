@@ -88,6 +88,8 @@ def test_missing_tesseract_is_not_measured(monkeypatch):
 
 @pytest.mark.parametrize('failure', [False, True])
 def test_targeted_export_with_mocked_price_and_ocr_failures(monkeypatch, failure):
+    from ocr_test_support import mock_ocr_runtime
+    mock_ocr_runtime(monkeypatch)
     image = np.zeros((100, 200, 3), dtype=np.uint8)
     cv2.putText(image, 'R$79', (20, 80), cv2.FONT_HERSHEY_SIMPLEX, .6, (255, 255, 255), 1)
     class Capture:

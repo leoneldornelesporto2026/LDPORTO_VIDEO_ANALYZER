@@ -26,13 +26,14 @@ def stage_capability(row):
         state = 'failed'
     elif status == 'skipped' and reason in {'ocr_disabled', 'disabled'}:
         state = 'not_measured_disabled'
-    elif status in {'ok', 'measured'}:
+    elif status in {'ok', 'measured'} and row.get('measurement_state') != 'not_measured':
         state = 'measured_ok'
     elif status in {'partial', 'degraded'} and row.get('measurement_state') != 'not_measured':
         state = 'measured_partial'
     else:
         state = 'unavailable_dependency'
     return {'state': state, 'legacy_status': status,
+            'loss_evidence': {key: row[key] for key in ('reason', 'message', 'notes', 'cause', 'upstream_cause') if key in row},
             'reason': reason or (None if state == 'measured_ok' else 'stage_evidence_incomplete')}
 
 
@@ -44,8 +45,12 @@ def capability_contract(analysis):
         # A stage wrapper saying ok cannot overwrite an unmeasured OCR payload.
         payload = stage_capability(visual)
         prior = stages.get('17c_commercial_visual')
-        if not prior or prior['state'] != 'failed':
+        if not prior or prior['state'] not in {'failed', 'unavailable_dependency'} or prior['legacy_status'] == 'skipped':
             stages['17c_commercial_visual'] = payload
+            if prior:
+                stages['17c_commercial_visual'] = {**payload, 'legacy_status': prior['legacy_status'],
+                    'measurement_status': payload['legacy_status'],
+                    'upstream_loss_evidence': prior['loss_evidence']}
     return {'schema_version': '1.0', 'stages': stages,
             'unmeasured_capabilities': [stage for stage, row in stages.items()
                 if row['state'] in {'not_measured_disabled', 'unavailable_dependency', 'failed'}]}
@@ -60,6 +65,9 @@ def canonical_report_metrics(analysis, candidates, shortlist, stories):
     metrics = dict(analysis.get('candidate_metrics') or {})
     metrics.update(final_candidate_count=len({r['candidate_id'] for r in candidates}),
                    final_shortlist_count=len(set(shortlist)),
+                   discovered=len({r["candidate_id"] for r in candidates}),
+                   review_queue=len(human_review_queue(candidates)["entries"]),
+                   shortlist=len(set(shortlist)), approved=0, rendered=None,
                    excluded_commercial_count=len({r['candidate_id'] for r in candidates
                        if (r.get('commercial_classification') or {}).get('eligibility') == 'excluded'}),
                    commercial_review_count=len({r['candidate_id'] for r in candidates
@@ -260,7 +268,8 @@ def derive_review_state(readiness):
     required = ('editorial_ready', 'transcript_ready', 'visual_ready')
     review_ready = all(readiness.get(key) is True for key in required)
     return {'review_ready': review_ready,
-            'provisional_review_ready': readiness.get('editorial_ready') is True and readiness.get('transcript_ready') is True,
+            **({'provisional_review_ready': readiness.get('editorial_ready') is True and readiness.get('transcript_ready') is True}
+               if 'commercial_ready' in readiness else {}),
             'review_state': 'READY_FOR_REVIEW' if review_ready else 'PARTIAL',
             'preview_technical_ready': readiness.get('preview_ready') is True,
             'preview_state': 'TECHNICALLY_VERIFIED' if readiness.get('preview_ready') is True else 'PENDING',
@@ -284,3 +293,72 @@ def preview_technical_readiness(validation):
             not isinstance(sampled, (int, float)) or isinstance(sampled, bool)):
         return None
     return sampled > 0
+
+
+def candidate_review_invariants(analysis, candidate, references_resolved, editorial_ready):
+    """Discovery/review are independent of release; never import approval from replay."""
+    commercial = (candidate.get('commercial_classification') or {}).get('eligibility')
+    state = candidate.get('commercial_evidence_state')
+    transcript_failed = (analysis.get('stage_status') or {}).get('04_transcription', {}).get('status') in BLOCKING_STATUSES
+    reasons = []
+    if not references_resolved:
+        reasons.append('unresolved_references')
+    if not candidate.get('transcript_literal', '').strip() or transcript_failed:
+        reasons.append('canonical_transcript_unavailable')
+    if commercial == 'excluded' or candidate.get('excluded_commercial_interval_ids'):
+        reasons.append('commercial_excluded')
+    eligible = not reasons
+    commercial_state = ('excluded' if commercial == 'excluded' else 'verified' if
+        commercial == 'eligible' and state == 'measured_ok' else 'requires_review')
+    return {'discovered': True, 'eligible_for_human_review': eligible,
+            'human_review_provisional': eligible and (not editorial_ready or commercial_state != 'verified'),
+            'editorial_verified': True if editorial_ready else None,
+            'commercial_review_state': commercial_state, 'preview_technical_ready': None,
+            'human_approved': False, 'publication_ready': False,
+            'invariant_reasons': {'eligible_for_human_review': reasons or None,
+                'editorial_verified': None if editorial_ready else 'editorial_integrity_unavailable',
+                'commercial_review_state': None if commercial_state == 'verified' else
+                    candidate.get('commercial_gate_reason') or state or 'commercial_evidence_missing',
+                'preview_technical_ready': 'preview_hash_and_validation_unavailable',
+                'human_approved': 'explicit_human_hash_review_required',
+                'publication_ready': 'separate_publication_gate_required'}}
+
+
+def editorial_review_units(candidates):
+    """Reuse editorial temporal/discourse equivalence and explicit parent clusters."""
+    from .editorial import _equivalent
+    groups = []
+    def adapted(row):
+        return {**row, 'ideal_start': row['start'], 'ideal_end': row['end'],
+                'evidence_segment_ids': row.get('segment_ids', []),
+                'text': row.get('transcript_literal', '')}
+    def explicit(row):
+        return {v for v in (row.get('duplicate_group_id'), row.get('alternate_of'),
+                           row.get('candidate_id')) if v}
+    for row in candidates:
+        group = next((g for g in groups if any(explicit(row) & explicit(r) for r in g)
+                      or all(_equivalent(adapted(row), adapted(r))[0] for r in g)), None)
+        if group is None:
+            groups.append([row])
+        else:
+            group.append(row)
+    return groups
+
+
+def human_review_queue(candidates):
+    entries = []
+    for group in editorial_review_units(candidates):
+        available = [r for r in group if r.get('eligible_for_human_review')]
+        if not available:
+            continue
+        row = min(available, key=lambda r: (r.get('rank', 999999), r['candidate_id']))
+        entries.append({**{key: row.get(key) for key in ('candidate_id', 'rank', 'start', 'end',
+            'editorial_score_final', 'score_components', 'commercial_review_state', 'human_review_provisional')},
+            'priority': 'commercial_review' if row.get('commercial_review_state') != 'verified' else 'editorial_review',
+            'reasons': row.get('invariant_reasons', {}),
+            'candidate_ref': 'candidates/' + row['candidate_id'] + '.json',
+            'transcript_ref': 'transcript/relevant_segments.jsonl', 'segment_ids': row.get('segment_ids', []),
+            'visual_refs': row.get('visual_refs', []),
+            'alternative_ids': [r['candidate_id'] for r in group if r is not row]})
+    return {'schema_version': '1.0', 'entries': entries,
+            'candidate_ids': [r['candidate_id'] for r in entries], 'publication_ready': False}

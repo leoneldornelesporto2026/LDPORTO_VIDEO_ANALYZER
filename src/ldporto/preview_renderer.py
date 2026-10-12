@@ -9,7 +9,7 @@ import math
 import shutil
 import subprocess
 import tempfile
-from .core import ok, run_command
+from .core import ok, run_command, digest, file_hash
 from .media_runtime import find_media_tool
 
 
@@ -205,6 +205,7 @@ def render_preview(source, timeline, metadata, output, interval=None, output_wid
             cap.release()
             return ok({}, 'unavailable', ['OpenCV não abriu VideoWriter para preview.'])
         frame_count = 0
+        rendered_motion = {}
         try:
             while True:
                 got, frame = cap.read()
@@ -238,6 +239,15 @@ def render_preview(source, timeline, metadata, output, interval=None, output_wid
                 else:
                     rect = _interpolate_keyframes(row, timestamp, sw, sh, output_width, output_height)
                     rendered = _crop(frame, rect, output_width, output_height, cv2)
+                    if rect and row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'}:
+                        rid = row.get('director_id')
+                        receipt = rendered_motion.setdefault(rid, {
+                            'director_id': rid, 'mode': row['camera_mode'],
+                            'target_person_id': row.get('focus_person'), 'frames': 0,
+                            'first_time': timestamp, 'last_time': timestamp, 'scale_samples': []})
+                        receipt['frames'] += 1
+                        receipt['last_time'] = timestamp
+                        receipt['scale_samples'].append([timestamp, 1. / rect['width']])
                 writer.write(rendered)
                 frame_count += 1
         finally:
@@ -259,6 +269,8 @@ def render_preview(source, timeline, metadata, output, interval=None, output_wid
     return ok({'path': str(output.resolve()), 'start': start, 'end': end, 'duration': end-start,
                'width': int(output_width), 'height': int(output_height), 'fps': fps,
                'frames': frame_count, 'audio_muxed': audio_muxed,
+               'timeline_sha256': digest(timeline), 'preview_sha256': file_hash(output),
+               'rendered_motion': list(rendered_motion.values()),
                'source_width': sw, 'source_height': sh,
                'timing_mode': 'source_seek_with_cfr_technical_preview',
                'keyframes_consumed': True, 'final_social_render': False},

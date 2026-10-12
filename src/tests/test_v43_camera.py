@@ -81,8 +81,9 @@ def test_camera_director_delivers_real_gradual_hook_zoom_with_grounded_target():
     assert result['metrics']['zoom_event_count'] > 0
     assert result['metrics']['zoom_opportunity_window_count'] > 0
     assert result['metrics']['zoom_accepted_event_count'] > 0
-    assert result['metrics']['zoom_delivered_event_count'] == result['metrics']['zoom_event_count']
-    assert result['metrics']['zoom_diagnostics_contract'] == 'opportunity_request_accepted_delivered_aborted_v1'
+    assert result['metrics']['zoom_timeline_event_count'] == result['metrics']['zoom_event_count']
+    assert result['metrics']['zoom_delivered_event_count'] == 0
+    assert result['metrics']['zoom_diagnostics_contract'] == 'proposal_timeline_render_preview_v2'
     assert result['metrics']['max_zoom_factor'] > 1
     assert any(row['camera_mode'] == 'SMART_ZOOM_IN' for row in result['timeline'])
     assert all(row['crop']['upscale_ratio'] <= row['crop']['max_upscale_ratio'] + 1e-6 for row in result['timeline'] if row['crop']['safe'])

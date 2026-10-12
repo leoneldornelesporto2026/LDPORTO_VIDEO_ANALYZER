@@ -218,31 +218,107 @@ class Tracker:
         return result
 
 
+def yolo_device_preflight(cfg):
+    """Read current free VRAM only for explicit CUDA; never reserve shared VRAM."""
+    requested = cfg.get("yolo_device", "cpu")
+    result = {"requested": requested, "selected": "cpu", "free_vram_mb": None,
+              "minimum_free_vram_mb": cfg.get("yolo_min_free_vram_mb", 2048), "reason": None}
+    result.update(stage='07_people_tracking', measured_at_utc=None,
+                  reserve_vram_mb=cfg.get('yolo_reserve_vram_mb', 1024),
+                  policy=cfg.get('yolo_resource_policy', 'cpu_fallback'),
+                  gpu_parallelism=False, peak_vram_mb=None)
+    if requested == "cpu":
+        return result
+    if requested != "cuda":
+        result["reason"] = "device_invalid"
+        return result
+    try:
+        import torch
+        if not torch.cuda.is_available():
+            result["reason"] = "cuda_unavailable"
+        else:
+            from .performance import measured_vram
+            result.update(measured_vram(torch.cuda))
+            budgets = (result['minimum_free_vram_mb'], result['reserve_vram_mb'])
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool)
+                       and math.isfinite(v) and v >= 0 for v in budgets):
+                result['reason'] = 'vram_budget_invalid'
+            elif result["free_vram_mb"] < sum(budgets):
+                result["reason"] = "insufficient_vram"
+            else:
+                result["selected"] = "cuda:0"
+    except Exception as exc:
+        result.update(reason="cuda_preflight_failed", exception_type=type(exc).__name__)
+    return result
+
+
 def load_local_yolo(cfg):
     """Select optional YOLO using an existing local asset, never a download name."""
     report = {"requested": cfg["body_backend"], "initialized": None,
-              "fallback_reason": None, "exception_type": None, "device": "cpu"}
+              "fallback_reason": None, "exception_type": None, "device": "cpu",
+              "diagnostic_reason": None, "model_path": None, "model_sha256": None,
+              "device_requested": cfg.get("yolo_device", "cpu"), "device_actually_used": None,
+              "benchmark_frame_seconds": None, "readiness": "NOT_READY"}
     if not cfg["body_detection"]:
         report["fallback_reason"] = "body_detection_disabled"
         return None, report
     if cfg["body_backend"] == "hog":
         report.update(initialized="hog", fallback_reason="hog_configured")
         return None, report
-    model = asset_path(cfg["yolo_model"])
-    if not model.is_file():
-        report.update(initialized="hog", fallback_reason="yolo_local_model_missing")
-        return None, report
     try:
+        model = asset_path(cfg["yolo_model"])
+        if not model.is_file():
+            report.update(initialized="hog", fallback_reason="yolo_local_model_missing",
+                          diagnostic_reason="model_file_missing")
+            return None, report
+        # Restrict to explicitly trusted, local PyTorch detection checkpoints.
+        # Reject links/reparse points, empty files and formats with sidecar downloads.
+        if (model.suffix.lower() != ".pt" or model.stat().st_size == 0 or
+                any(p.is_symlink() or getattr(p.lstat(), "st_file_attributes", 0) & 1024
+                    for p in (model, *model.parents))):
+            raise ValueError("unsafe local model file")
+        import hashlib
+        digest = hashlib.sha256()
+        with model.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1048576), b""):
+                digest.update(chunk)
+        report.update(model_path=str(model.resolve()), model_sha256=digest.hexdigest())
+    except Exception as exc:
+        report.update(initialized="hog", fallback_reason="yolo_local_model_invalid",
+                      diagnostic_reason="model_file_invalid", exception_type=type(exc).__name__)
+        return None, report
+    device = yolo_device_preflight(cfg)
+    report["device_preflight"] = device
+    if device["reason"]:
+        if cfg.get('yolo_resource_policy') == 'blocked':
+            raise Unavailable('YOLO resource policy blocked: ' + device['reason'])
+        report.update(initialized="hog", fallback_reason="yolo_" + device["reason"],
+                      diagnostic_reason=device["reason"])
+        return None, report
+    report["device"] = device["selected"]
+    try:
+        # Ultralytics uses this flag to auto-install missing checkpoint modules.
+        # Disable it even when callers configured online ASR separately.
+        import os
+        os.environ["YOLO_AUTOINSTALL"] = "false"
         from ultralytics import YOLO
+        import sys
+        checks = sys.modules.get("ultralytics.utils.checks")
+        if checks is not None:
+            checks.AUTOINSTALL = False
     except Exception as exc:
         report.update(initialized="hog", fallback_reason="yolo_import_failed",
-                      exception_type=type(exc).__name__)
+                      diagnostic_reason="dependency_missing", device="cpu", exception_type=type(exc).__name__)
         return None, report
     try:
         body = YOLO(str(model.resolve()))
+        names = getattr(body, "names", None)
+        if getattr(body, "task", "detect") != "detect" or (names is not None and
+                (names.get(0) if isinstance(names, dict) else names[0]) != "person"):
+            raise ValueError("local model must detect class 0 person")
     except Exception as exc:
         report.update(initialized="hog", fallback_reason="yolo_model_load_failed",
-                      exception_type=type(exc).__name__)
+                      diagnostic_reason="model_load_error", device="cpu", exception_type=type(exc).__name__)
         return None, report
     report["initialized"] = "yolo"
     return body, report
@@ -253,6 +329,7 @@ class PersonDetectionEngine:
         import cv2
         self.cv2, self.cfg, self.notes = cv2, cfg, notes
         self.phase_seconds=defaultdict(float)
+        self.body_inference_seconds = 0.0
         self.calls = defaultdict(int)
         self.face_history = []
         self.last_rescue_time = -math.inf
@@ -260,8 +337,8 @@ class PersonDetectionEngine:
         self.last_shot = None
         self.face = self.sface = self.hog = self.yolo = None
         self._hog_pool = None
-        from .performance import cpu_overlap_budget
-        self.overlap_budget = cpu_overlap_budget(requested=cfg.get("parallel_hog_with_face", False))
+        from .performance import vision_resource_plan
+        self.overlap_budget = vision_resource_plan(requested=cfg.get("parallel_hog_with_face", False))
         yunet, sface = asset_path(cfg["yunet_model"]), asset_path(cfg["sface_model"])
         if yunet.is_file():
             self.face = cv2.FaceDetectorYN.create(str(yunet), "", (320, 320),
@@ -275,11 +352,22 @@ class PersonDetectionEngine:
             notes.append("SFace ausente: IDs persistem apenas por continuidade; uma pessoa "
                          "pode receber novo ID após trocar câmera. Contagem é de tracks.")
         self.yolo, self.body_backend_report = load_local_yolo(cfg)
+        self.vram_sample_count = 0
+        self.vram_free_min_mb = self.vram_free_max_mb = None
+        self._record_vram(self.body_backend_report.get('device_preflight', {}))
         if cfg["body_detection"]:
             if self.yolo is None:
                 self._activate_hog()
 
+    def _record_vram(self, sample):
+        free = sample.get('free_vram_mb')
+        if isinstance(free, (int, float)) and math.isfinite(free):
+            self.vram_sample_count += 1
+            self.vram_free_min_mb = free if self.vram_free_min_mb is None else min(free, self.vram_free_min_mb)
+            self.vram_free_max_mb = free if self.vram_free_max_mb is None else max(free, self.vram_free_max_mb)
+
     def _activate_hog(self):
+        self.body_backend_report['device'] = 'cpu'
         self.hog = self.cv2.HOGDescriptor()
         self.hog.setSVMDetector(self.cv2.HOGDescriptor_getDefaultPeopleDetector())
         if self.overlap_budget["enabled"]:
@@ -293,29 +381,80 @@ class PersonDetectionEngine:
     def backend_execution(self):
         counts = {name: self.calls.get(name + "_inference_calls", 0) for name in ("yolo", "hog")}
         executed = [name for name in counts if counts[name]]
+        successful = [name for name in counts if self.calls.get(name + "_successful_calls", 0)]
+        peak = None
+        if self.calls.get('yolo_successful_calls', 0) and self.body_backend_report.get('device_actually_used') == 'cuda:0':
+            try:
+                import torch
+                peak = torch.cuda.max_memory_allocated(0) / 1048576
+            except (ImportError, AttributeError, RuntimeError):
+                pass
         return {**self.body_backend_report, "executed_backends": executed,
+                'peak_vram_mb': peak, 'peak_vram_scope': 'torch_allocator_process_lifetime_not_system_peak',
+                'vram_snapshot_count': self.vram_sample_count,
+                'vram_free_min_mb': self.vram_free_min_mb, 'vram_free_max_mb': self.vram_free_max_mb,
+                "actually_executed_backend": successful[0] if len(successful) == 1 else "mixed" if successful else None,
+                "successful_backends": successful,
+                "devices_used": {n: "cpu" if n == "hog" else self.body_backend_report.get("device_actually_used")
+                                 for n in successful},
+                "readiness": "EXECUTED_NOT_VALIDATED" if self.calls.get("yolo_successful_calls", 0)
+                    and self.yolo is not None else "NOT_READY",
+                "body_limit_reason": getattr(self, "body_limit_reason", None),
+                "body_inference_seconds": getattr(self, "body_inference_seconds", 0.0),
+                "confidence_semantics": {"yolo": "detector_score_not_empirically_calibrated",
+                                         "hog": "raw_svm_score_not_probability"},
+                "identity_evidence": False, "active_speaker_evidence": False,
                 "counts_scope": "current_process_only",
                 "inference_calls": counts,
                 "successful_calls": {name: self.calls.get(name + "_successful_calls", 0) for name in counts},
-                "quality": "degraded" if self.hog is not None else "not_validated" if self.yolo is not None else "disabled",
+                "quality": "degraded" if self.hog is not None or getattr(self, "body_limit_reason", None)
+                    else "not_validated" if self.yolo is not None else "disabled",
                 "seated_recall_validated": None, "nvidia_validated": None}
 
     def close(self):
         if getattr(self, "_hog_pool", None) is not None:
-            self._hog_pool.shutdown(wait=True, cancel_futures=False)
+            self._hog_pool.shutdown(wait=True, cancel_futures=True)
             self._hog_pool = None
 
     def _hog_boxes(self, frame, width, height):
         self.calls["hog_inference_calls"] += 1
-        values, scores = self.hog.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.08)
+        started = perf_counter()
+        try:
+            values, scores = self.hog.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.08)
+        except Exception as exc:
+            self.body_limit_reason = "hog_inference_failed"
+            self.body_backend_report.update(diagnostic_reason="hog_inference_error",
+                                            exception_type=type(exc).__name__)
+            self.notes.append("HOG falhou: " + type(exc).__name__ + "; nenhuma caixa corporal fabricada.")
+            return []
+        finally:
+            elapsed = perf_counter() - started
+            self.body_inference_seconds = getattr(self, "body_inference_seconds", 0.0) + elapsed
+        if elapsed > self.cfg.get("body_frame_timeout_seconds", 30):
+            self.body_limit_reason = "hog_frame_timeout"
+            self.body_backend_report.update(diagnostic_reason="inference_timeout")
+            return []
         self.calls["hog_successful_calls"] += 1
         bodies = []
         for coords, score in sorted(zip(values, scores), key=lambda pair: float(pair[1]), reverse=True):
             box = bbox(coords, width, height)
+            if not all(math.isfinite(float(v)) for v in coords) or box['width'] <= 0 or box['height'] <= 0:
+                continue
             if all(iou(box, b["bbox"]) < .5 for b in bodies):
-                bodies.append({"bbox": box, "confidence": None, "hog_score": float(score),
+                bodies.append({"bbox": box, "confidence": None, "hog_score": finite_or_none(float(score)),
                                "source": "hog"})
         return bodies
+
+    def _body_budget_available(self):
+        if getattr(self, "body_limit_reason", None) in ("hog_frame_timeout", "hog_inference_failed"):
+            return False
+        if self.calls.get("body_detection_calls", 0) >= self.cfg.get("body_max_frames", 100000):
+            self.body_limit_reason = "body_frame_cap"
+            return False
+        if max(self.phase_seconds.get("body_detection", 0), getattr(self, "body_inference_seconds", 0)) >= self.cfg.get("body_total_timeout_seconds", 3600):
+            self.body_limit_reason = "body_time_budget"
+            return False
+        return True
 
     def set_frame_context(self, time, shot_id, shot_duration=None):
         self.frame_context = (time, shot_id, shot_duration)
@@ -341,6 +480,7 @@ class PersonDetectionEngine:
         # Scheduled refresh is independent of face results. Overlap exactly the
         # same HOG call with face work (no speculative extra detection calls).
         scheduled_hog = bool(getattr(self, "_hog_pool", None) is not None and self.hog is not None and
+            self._body_budget_available() and
             width >= 64 and height >= 128 and
             (not cascade or time - self.last_body_time >= self.cfg.get("body_refresh_seconds", .5)))
         hog_future = self._hog_pool.submit(self._hog_boxes, frame, width, height) if scheduled_hog else None
@@ -482,6 +622,7 @@ class PersonDetectionEngine:
         body_started=perf_counter()
         run_body = (not cascade or not faces or any((face.get("confidence") or 0) < .9 for face in faces) or
                     time - self.last_body_time >= self.cfg.get("body_refresh_seconds", .5))
+        run_body = run_body and self._body_budget_available()
         if run_body and (self.yolo or self.hog):
             self.calls["body_detection_calls"] += 1
             self.last_body_time = time if time is not None else -math.inf
@@ -489,21 +630,65 @@ class PersonDetectionEngine:
             self.calls["body_detection_calls_avoided"] += 1
         if self.yolo and run_body:
             self.calls["yolo_inference_calls"] += 1
+            attempt_started = perf_counter()
+            attempt_budget_before = getattr(self, "body_inference_seconds", 0.0)
             try:
-                out = self.yolo.predict(frame, classes=[0], verbose=False, conf=0.5, device="cpu")[0]
+                # Recheck shared VRAM immediately before every CUDA frame.
+                if self.body_backend_report["device_requested"] == "cuda":
+                    device_check = yolo_device_preflight(self.cfg)
+                    self.body_backend_report["device_preflight"] = device_check
+                    self._record_vram(device_check)
+                    if device_check["reason"]:
+                        raise RuntimeError(device_check["reason"])
+                predict_started = perf_counter()
+                out = self.yolo.predict(frame, classes=[0], verbose=False,
+                    conf=self.cfg.get("yolo_confidence", .5), device=self.body_backend_report["device"])[0]
+                actual = getattr(getattr(self.yolo, "predictor", None), "device", None)
+                actual = str(actual) if actual is not None else (
+                    "cpu" if self.body_backend_report["device"] == "cpu" else None)
+                self.body_backend_report["device_actually_used"] = actual
+                elapsed = perf_counter() - predict_started
+                if self.body_backend_report["benchmark_frame_seconds"] is None:
+                    self.body_backend_report["benchmark_frame_seconds"] = elapsed
+                if elapsed > self.cfg.get("body_frame_timeout_seconds", 30):
+                    raise TimeoutError("body frame soft deadline exceeded")
+                if actual != self.body_backend_report["device"]:
+                    raise RuntimeError("device_execution_mismatch")
                 for row in out.boxes:
+                    if hasattr(row, "cls") and int(row.cls[0]) != 0:
+                        continue
                     x1, y1, x2, y2 = row.xyxy[0].cpu().numpy()
-                    bodies.append({"bbox": bbox([x1, y1, x2-x1, y2-y1], width, height),
-                                   "confidence": finite_or_none(float(row.conf[0])), "source": "yolo"})
+                    confidence = finite_or_none(float(row.conf[0]))
+                    if (not all(math.isfinite(float(v)) for v in (x1,y1,x2,y2)) or
+                            x2 <= x1 or y2 <= y1 or confidence is None or
+                            not self.cfg.get("yolo_confidence", .5) <= confidence <= 1):
+                        continue
+                    box = bbox([x1, y1, x2-x1, y2-y1], width, height)
+                    if box['width'] <= 0 or box['height'] <= 0:
+                        continue
+                    bodies.append({"bbox": box,
+                                   "confidence": confidence, "source": "yolo"})
+                elapsed = perf_counter() - predict_started
+                if self.calls['yolo_inference_calls'] == 1:
+                    self.body_backend_report['benchmark_frame_seconds'] = elapsed
+                if elapsed > self.cfg.get("body_frame_timeout_seconds", 30):
+                    raise TimeoutError("body frame soft deadline exceeded during result conversion")
                 self.calls["yolo_successful_calls"] += 1
             except Exception as exc:
+                if self.cfg.get('yolo_resource_policy') == 'blocked':
+                    raise Unavailable('YOLO resource policy blocked: ' + str(exc)) from exc
                 self.body_backend_report.update(fallback_reason="yolo_inference_failed",
+                                                diagnostic_reason="inference_timeout" if isinstance(exc, TimeoutError)
+                                                    else "inference_error", device="cpu",
                                                 exception_type=type(exc).__name__)
                 self.yolo = None
                 bodies = []
                 self._activate_hog()
                 if width >= 64 and height >= 128:
                     bodies.extend(self._hog_boxes(frame, width, height))
+            finally:
+                # Includes fallback HOG exactly once, even though HOG also times itself.
+                self.body_inference_seconds = attempt_budget_before + perf_counter() - attempt_started
         elif self.hog and run_body and width >= 64 and height >= 128:
             bodies.extend(hog_future.result() if hog_future else self._hog_boxes(frame, width, height))
         self.phase_seconds['body_detection']+=perf_counter()-body_started
@@ -605,6 +790,10 @@ class VisionEngine:
                 notes.append(f"Active speaker: {exc}. Relação voz/rosto sem evidência fica null.")
         cap = cv2.VideoCapture(str(ctx.video))
         if not cap.isOpened():
+            cap.release()
+            detector.close()
+            if lips:
+                lips.close()
             raise RuntimeError("OpenCV não conseguiu abrir o vídeo.")
         fps = cap.get(cv2.CAP_PROP_FPS) or metadata["fps"] or 25
         checkpoint_store = VisionCheckpointStore(ctx, cfg)
@@ -612,6 +801,8 @@ class VisionEngine:
         # Generated by GitHub Copilot - Oct-05-2026
         timings=defaultdict(float)
         stage_started=perf_counter()
+        from .performance import FrameTelemetry
+        telemetry = FrameTelemetry()
         observations, frames, thumbnails, people = [], [], [], {}
         scene_starts = [s["start"] for s in scenes]
         next_sample, frame_index, last_gray = 0.0, 0, None
@@ -632,6 +823,7 @@ class VisionEngine:
             obs_mark, frame_mark, thumb_mark = len(observations), len(frames), len(thumbnails)
             if not cap.set(cv2.CAP_PROP_POS_FRAMES,frame_index):
                 cap.release()
+                detector.close()
                 if lips:
                     lips.close()
                 raise RuntimeError('Decoder nao permite retomar no frame salvo; use --force para uma passada limpa.')
@@ -663,7 +855,10 @@ class VisionEngine:
                               "body": "yolo" if detector.yolo is not None else "hog" if detector.hog is not None else None,
                               "lip": type(lips).__name__ if lips is not None else None}
         try:
+            previous_cv_threads = cv2.getNumThreads()
+            cv2.setNumThreads(cfg.get('opencv_threads', 1))
             while True:
+                ctx.check_cancel('07_people_tracking')
                 phase_started=perf_counter()
                 grabbed=cap.grab()
                 timings['video_decode']+=perf_counter()-phase_started
@@ -682,6 +877,7 @@ class VisionEngine:
                 if time+1/fps < next_sample and not short_shot_due and not boundary_due:
                     continue
                 phase_started=perf_counter()
+                frame_attempt_started = telemetry.attempt()
                 got, frame = cap.retrieve()
                 timings['video_decode']+=perf_counter()-phase_started
                 if not got:
@@ -834,8 +1030,9 @@ class VisionEngine:
                     obs_mark, frame_mark, thumb_mark = len(observations), len(frames), len(thumbnails)
                     next_checkpoint = chunk_start + checkpoint_seconds
                     ctx.check_cancel('07_people_tracking')
+                telemetry.success(frame_attempt_started)
                 if time - last_progress >= 3:
-                    ctx.progress('07_people_tracking', current=time, total=metadata['duration'], unit='video_seconds', substage='visual_detection_and_tracking')
+                    ctx.progress('07_people_tracking', current=time, total=metadata['duration'], unit='video_seconds', substage='visual_detection_and_tracking', performance={**telemetry.report(), 'body_backend': detector.backend_execution() if hasattr(detector, 'backend_execution') else None})
                     last_progress = time
                 if time-last_log >= 60:
                     ctx.logger.info("Visão: %.1f / %.1fs; %s raw_person_hypotheses; %s raw_tracklets",
@@ -843,10 +1040,14 @@ class VisionEngine:
                     last_log = time
         finally:
             cap.release()
-            if hasattr(detector, "close"):
-                detector.close()
-            if lips:
-                lips.close()
+            try:
+                if hasattr(detector, "close"):
+                    detector.close()
+                if lips:
+                    lips.close()
+            finally:
+                if 'previous_cv_threads' in locals():
+                    cv2.setNumThreads(previous_cv_threads)
         if checkpoint_seconds > 0 and (len(frames) > frame_mark or len(observations) > obs_mark):
             final_end = min(float(metadata.get("duration") or chunk_start),
                             max([f.get("time", chunk_start) for f in frames[frame_mark:]] or [chunk_start]))
@@ -891,6 +1092,10 @@ class VisionEngine:
                    "scene_intervals": [{k: s[k] for k in ("start", "end", "scene_id")} for s in scenes],
                    "sample_fps": cfg["sample_fps"], "speech_sample_fps": cfg["speech_sample_fps"],
                    "performance": {'elapsed_seconds':perf_counter()-stage_started,'phase_seconds':{**dict(timings),**dict(getattr(detector,'phase_seconds',{}))},
+                                   'frame_telemetry': telemetry.report(),
+                                   'opencv_threads': cfg.get('opencv_threads', 1),
+                                   'observations_without_identity_evidence_percent': 100 * sum(not r.get('face_embedding_available') for r in observations) / len(observations) if observations else None,
+                                   'identity_metric_scope': 'missing_available_embedding;_embedding_does_not_confirm_identity',
                                    'decoded_frames':frame_index,'sampled_frames':len(frames),
                                    'boundary_scheduled_frames':sum(bool(frame.get('boundary_scheduled')) for frame in frames),
                                    'boundary_scheduled_frames_with_face':sum(bool(frame.get('boundary_face_observed')) for frame in frames),
@@ -909,7 +1114,8 @@ class VisionEngine:
                                    'association_count':tracker.association_count,
                                    'embedding_success_ratio':detector_calls['successful_embeddings']/detector_calls['embedding_calls'] if detector_calls['embedding_calls'] else None,
                                    'useful_detection_ratio':sum(bool(frame['visible_people']) for frame in frames)/len(frames),
-                                   'frames_per_second':len(frames)/max(perf_counter()-stage_started,1e-9),
+                                   'frames_per_second':telemetry.report()['fps'],
+                                   'frames_per_second_scope':'current_execution_only_excludes_resumed_frames',
                                    'call_rates':{name:{'calls_per_second':count/max(perf_counter()-stage_started,1e-9),
                                        'ms_per_call':({**dict(timings),**dict(getattr(detector,'phase_seconds',{}))}).get(
                                            {'embedding_calls':'face_embedding','landmark_calls':'landmark_inference'}.get(name,name.removesuffix('_calls')),0)*1000/count if count else None}

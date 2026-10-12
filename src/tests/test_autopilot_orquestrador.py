@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import zipfile
@@ -9,6 +10,7 @@ import zipfile
 import pytest
 
 PROJECT = Path(__file__).resolve().parents[2]
+HISTORICAL_AUTO = PROJECT / 'src' / 'tests' / 'fixtures' / 'autopilot_historico'
 SPEC = importlib.util.spec_from_file_location('ldporto_autopilot', PROJECT / 'orquestrador.py')
 autopilot = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(autopilot)
@@ -48,15 +50,48 @@ def setup_temporary_project(tmp_path, monkeypatch):
     return root
 
 
-def test_plan_detects_all_prompts_and_keeps_42_legacy_map_entries():
-    actual = PROJECT / 'automacao' / 'prompts'
+def test_plan_detects_all_prompts_and_keeps_42_legacy_map_entries(monkeypatch):
+    # Authentic historical Git blobs live outside the active cycle. This fixture
+    # records the old plan contract, never execution state or stage approvals.
+    origin = json.loads((HISTORICAL_AUTO / 'ORIGEM.json').read_text(encoding='utf-8'))
+    assert origin['source_commit'] == '34797e164377f05e64ae628daf499cda2fb8bf55'
+    actual = HISTORICAL_AUTO / 'prompts'
     prompts = list(actual.glob('ETAPA_*.txt'))
     assert len(prompts) >= 42
-    assert len(autopilot.load_plan()) == len(prompts)
-    assert [int(row['n']) for row in autopilot.load_plan()] == list(range(1, len(prompts) + 1))
-    parsed = json.loads((PROJECT / 'automacao' / 'MAPA_ETAPAS.json').read_text(encoding='utf-8'))
+    assert len(prompts) == origin['prompt_count'] == 52
+    historical_files = {'MAPA_ETAPAS.json'} | {
+        prompt.relative_to(HISTORICAL_AUTO).as_posix() for prompt in prompts
+    }
+    assert set(origin['files']) == historical_files
+    for relative in historical_files:
+        path = HISTORICAL_AUTO / relative
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == origin['files'][relative]['sha256']
+
+    monkeypatch.setattr(autopilot, 'AUTO', HISTORICAL_AUTO)
+    monkeypatch.setattr(autopilot, 'PROMPTS', actual)
+    monkeypatch.setattr(autopilot, 'PLAN', HISTORICAL_AUTO / 'MAPA_ETAPAS.json')
+    entries = autopilot.load_plan()
+    assert len(entries) == len(prompts)
+    assert [int(row['n']) for row in entries] == list(range(1, len(prompts) + 1))
+    parsed = json.loads(autopilot.PLAN.read_text(encoding='utf-8'))
+    assert len(parsed) == origin['legacy_map_entries'] == 42
     assert [int(x['n']) for x in parsed] == list(range(1, 43))
-    assert all((PROJECT / 'automacao' / i['file_path']).is_file() for i in parsed)
+    assert all((HISTORICAL_AUTO / i['file_path']).is_file() for i in parsed)
+    assert [row['title'] for row in entries[:42]] == [row['title'] for row in parsed]
+
+
+def test_active_cycle_detects_only_its_own_prompts():
+    actual = PROJECT / 'automacao' / 'prompts'
+    prompts = sorted(actual.glob('ETAPA_*.txt'), key=lambda path: int(path.stem.split('_')[1]))
+    assert prompts
+    assert autopilot.AUTO == PROJECT / 'automacao'
+    assert autopilot.PROMPTS == actual
+    entries = autopilot.load_plan()
+    assert len(entries) == len(prompts)
+    assert [int(row['n']) for row in entries] == list(range(1, len(prompts) + 1))
+    assert [(autopilot.AUTO / row['file_path']).resolve() for row in entries] == [
+        prompt.resolve() for prompt in prompts
+    ]
 
 
 def test_init_snapshot_excludes_media_secrets_and_does_not_overwrite(tmp_path, monkeypatch):

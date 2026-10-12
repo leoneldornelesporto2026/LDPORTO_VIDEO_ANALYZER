@@ -3,23 +3,26 @@ from pathlib import Path
 from .core import ok, digest
 from .preview_renderer import render_preview, select_canary_intervals
 from .preview_verifier import verify_preview, conservative_repair, border_temporal_report
+from .zoom_delivery import delivery_report
 
-PREVIEW_CODE = ['preview_renderer.py','preview_verifier.py','preview_integration.py','core.py']
+PREVIEW_CODE = ['preview_renderer.py','preview_verifier.py','preview_integration.py','zoom_delivery.py','core.py']
 
 
 def build_preview_package(ctx, metadata, director, cfg):
+    pending_delivery = delivery_report(director.get('zoom_events', []), director.get('timeline', []))
     if not cfg.get('enabled'):
         return ok({'canaries': [], 'validation': {'schema_version':'1.0','issues':[], 'status':'skipped', 'verifier_uses_rendered_frames':False},
-                   'closed_loop': {'attempted': False}}, 'skipped')
+                   'zoom_delivery': pending_delivery, 'closed_loop': {'attempted': False}}, 'skipped')
     timeline = director.get('timeline', [])
     if not timeline:
         return ok({'canaries': [], 'validation': {'schema_version':'1.0','issues':[]},
-                   'closed_loop': {'attempted': False}}, 'unavailable', ['Camera Director sem timeline para preview.'])
+                   'zoom_delivery': pending_delivery, 'closed_loop': {'attempted': False}}, 'unavailable', ['Camera Director sem timeline para preview.'])
     if not Path(ctx.video).is_file():
         return ok({'canaries': [], 'validation': {'schema_version':'1.0', 'issues':[], 'status':'unavailable',
                    'verifier_uses_rendered_frames':False, 'unresolved_reason':'source_media_unavailable'},
                    'closed_loop': {'attempted': False, 'iterations':0, 'repair_accepted':False,
                                    'repaired_director_ids':[], 'second_validation':None},
+                   'zoom_delivery': pending_delivery,
                    'repaired_timeline':None}, 'unavailable', ['Source media unavailable; no rendered-frame verification was performed.'])
     intervals = select_canary_intervals(timeline, metadata.get('duration') or 0,
                                         int(cfg.get('max_canaries', 4)), float(cfg.get('canary_seconds', 4.0)))
@@ -87,6 +90,7 @@ def build_preview_package(ctx, metadata, director, cfg):
                     second_issues.extend(recheck.get('data',{}).get('issues',[]))
                     successful_rechecks += int(recheck.get('status') == 'ok' and recheck.get('data',{}).get('sampled_frames',0) > 0)
                     canaries[i]['repaired_validation'] = recheck.get('data', {})
+                    canaries[i]['repaired_render'] = rerender.get('data', {})
                     canaries[i]['accepted_preview_path'] = str(target) if recheck.get('status') == 'ok' and recheck.get('data',{}).get('sampled_frames',0) > 0 else None
                 else:
                     second_issues.append({'severity':'error','issue_type':'PREVIEW_REPAIR_RENDER_FAILED',
@@ -100,7 +104,12 @@ def build_preview_package(ctx, metadata, director, cfg):
     if repair_accepted:
         status = 'ok'
     final_validation = {**second_validation, 'status':'ok', 'canary_count':len(canaries), 'source_preserving_repair_used':True} if repair_accepted else validation
+    final_timeline = repaired_timeline if repair_accepted else timeline
+    evidence_canaries = canaries if repair_accepted else [{k: v for k, v in c.items()
+                         if k not in ('repaired_render', 'repaired_validation')} for c in canaries]
+    zoom_delivery = delivery_report(director.get('zoom_events', []), final_timeline, evidence_canaries)
     return ok({'canaries':canaries,'validation':final_validation, 'initial_validation':validation,
+               'zoom_delivery': zoom_delivery,
                'closed_loop':{'attempted':attempted,'iterations':1 if attempted else 0, 'repair_accepted':repair_accepted,
                               'repaired_director_ids':repaired_ids,
                               'second_validation':second_validation},

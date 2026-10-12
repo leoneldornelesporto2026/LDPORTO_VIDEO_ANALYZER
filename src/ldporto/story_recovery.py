@@ -82,6 +82,37 @@ def candidate_recovery_queue(candidates):
                                -(row['recovery'].get('post_context_editorial_score') or 0), row['moment_id']))
     return queue
 
+
+def editorial_recovery_report(questions, arcs, candidates, analysis=None):
+    """Report supplied evidence and alternatives, without inventing complete arcs."""
+    expected = [q for q in questions if q.get('answer_expected') is not False]
+    linked = [q for q in expected if q.get('answer') and q.get('answer_segment_ids')]
+    complete = [q for q in linked if q.get('question_answer_complete') is True and not q.get('unresolved_reason')]
+    from .qa_audit import audit_qa
+    audit = audit_qa(analysis if analysis is not None else {'questions_answers': questions})
+    conflicts = {case['question_id'] for case in audit['cases'] if case['conflicting_fields']}
+    complete = [q for q in complete if q.get('question_id') not in conflicts]
+    groups = [{'story_arc_id': a.get('story_arc_id'), 'kind': a.get('kind'),
+               'start': a.get('start'), 'end': a.get('end'),
+               'source_segment_ids': list(a.get('evidence_segment_ids') or []),
+               'candidate_ids': [c.get('candidate_id', c.get('moment_id')) for c in candidates
+                                 if c.get('story_arc', c.get('story_arc_id')) == a.get('story_arc_id')],
+               'requires_review': True} for a in arcs if a.get('story_arc_id')]
+    return {'schema_version': '1.0-stage48', 'method': 'supplied_literal_evidence_only',
+            'qa': {'expected': len(expected), 'linked': len(linked),
+                   'textually_complete_requires_review': len(complete),
+                   'partial_linked': len(linked) - len(complete),
+                   'unresolved': len(expected) - len(complete),
+                   'conflicting_record_ids': len(conflicts),
+                   'verified_complete': None},
+            'qa_audit': audit,
+            'arc_kind_counts': dict(sorted(Counter(a.get('kind', 'unknown') for a in arcs).items())),
+            'narrative_groups': groups,
+            'candidate_count': len(candidates),
+            'missing_required_score_count': sum(bool((c.get('ranking_uncertainty') or {}).get('missing_required_components')) for c in candidates),
+            'shortlist_eligible_count': sum(c.get('default_shortlist_eligible') is True for c in candidates),
+            'requires_review': True, 'publish_ready': False}
+
 ACTION = re.compile(r'\b(?:eu (?:subi|fui|recebi|tentei|lembrei|falei|pensei|continuei|comecei|estava|tava)|me chamaram|me encontrava|na epoca|um dia|certa vez|quando eu|quando comecei|teve uma vez|aconteceu comigo|lembro que)\b')
 CONFLICT = re.compile(r'\b(?:mas|so que|problema|dificuldade|nao tenho saida|alternativas|saio correndo|sair correndo|humilhado|coracao vazio|mente perturbada|acovardado)\b')
 OUTCOME = re.compile(r'\b(?:aplaudindo|aplaudiram|consegui|deu certo|ganhou o campeonato|mente se apazigou|coracao.{0,30}cheio|agora.{0,50}confianca|sabe do que voce e capaz)\b')
@@ -105,6 +136,28 @@ def literal_outcome(text):
 def _terms(text):
     return {w for w in re.findall(r'\w+', fold_text(text))
             if len(w) > 3 and w not in _GENERIC}
+
+
+def outcome_continuity(text, preceding):
+    """Record lexical or explicit event-closing evidence; never a quality score."""
+    shared = sorted(_terms(text) & _terms(' '.join(s['text'] for s in preceding)))
+    closing = bool(re.match(r'^(?:quando terminou|quando acabou|ao terminar)\b', fold_text(text))
+                   and re.search(r'\b(?:aplaudindo|aplaudiram)\b', fold_text(text)))
+    resolution = bool(re.fullmatch(r'(?:no final|no fim) (?:eu )?consegui resolver(?: tudo| e deu certo)?[.!]*', fold_text(text).strip())
+                      and any(CONFLICT.search(fold_text(s['text'])) for s in preceding))
+    # Explicit recording-role nouns can differ between setup and resolution.
+    # Require two earlier literal anchors, plus a stated successful resolution;
+    # a topic title or a single generic music word supplies no such evidence.
+    music = {'banda', 'gravadora', 'disco', 'album', 'musicos', 'estudio'}
+    earlier_music = sorted(_terms(' '.join(s['text'] for s in preceding)) & music)
+    payoff_music = sorted(_terms(text) & music)
+    recording_resolution = bool(len(earlier_music) >= 2 and payoff_music
+                                and re.match(r'^(?:no final|no fim) deu certo\b', fold_text(text))
+                                and any(CONFLICT.search(fold_text(s['text'])) for s in preceding))
+    return {'shared_terms': shared, 'event_closing_cue': closing,
+            'resolution_reference_cue': resolution,
+            'recording_resolution_anchors': {'preceding': earlier_music, 'payoff': payoff_music} if recording_resolution else None,
+            'supported': bool(shared or closing or resolution or recording_resolution), 'inference': True}
 
 
 def _topic_ids(segment, topics):
@@ -177,6 +230,10 @@ def recover_story_arcs(segments, topics, max_seconds=360, max_gap=15):
             if s['start'] > initial[-1]['start'] and not conflict and CONFLICT.search(text):
                 conflict = s
             if conflict and s['start'] > conflict['start'] and literal_outcome(text) and action_count >= 1:
+                continuity = outcome_continuity(s['text'], [w for w in window[:-1] if w.get('speaker') == speaker])
+                if not continuity['supported']:
+                    stop_reason = 'outcome_continuity_unresolved'
+                    break
                 payoff = s
                 break
         if not conflict or not window or window[-1]['end'] - setup['start'] < 8:
@@ -205,6 +262,7 @@ def recover_story_arcs(segments, topics, max_seconds=360, max_gap=15):
             'development': _part(development),
             'climax': _part([conflict]),
             'payoff': _part([payoff]) if payoff else None,
+            'payoff_continuity': outcome_continuity(payoff['text'], [s for s in window if s is not payoff and s.get('speaker') == speaker]) if payoff else None,
             'ending': _part([payoff]) if payoff else None,
             'narrative_structure': {'introduction': setup_ids,
                                     'development': [s['segment_id'] for s in development],

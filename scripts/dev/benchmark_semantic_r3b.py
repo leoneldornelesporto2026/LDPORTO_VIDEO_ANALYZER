@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / 'src'))
 from ldporto.config import load_config
 from ldporto.core import digest
 from ldporto.ollama_local import service_info, resolve_model, profile_options, validate_url
-from ldporto.semantic_benchmark import parse_metrics, benchmark_hash, write_csv
+from ldporto.semantic_benchmark import parse_metrics, benchmark_hash, write_csv, output_contract, compare_outputs
 from ldporto.performance_acceptance import evaluate_semantic_ab
 from ldporto.semantic import (PROMPT, call_ollama, chunks, ground_model_output,
                              ollama_schema, range_schema)
@@ -31,7 +31,9 @@ def build_prompt(cfg, group):
     return PROMPT + note + '\nSchema obrigatório: ' + json.dumps(schema, ensure_ascii=False, separators=(',', ':')), schema
 
 
-def make_report(transcription, cfg, *, sample_indices, run_model=False, repeats=1):
+def make_report(transcription, cfg, *, sample_indices, run_model=False, repeats=1, fixture_outputs=None):
+    if run_model and fixture_outputs is not None:
+        raise ValueError('Fixture responses and real inference are mutually exclusive')
     if repeats < 1 or not sample_indices or len(set(sample_indices)) != len(sample_indices):
         raise ValueError('Use repeats >= 1 e indices unicos nao vazios')
     cfg = dict(cfg)
@@ -57,11 +59,21 @@ def make_report(transcription, cfg, *, sample_indices, run_model=False, repeats=
             conf = dict(cfg, compact_prompt=(mode=='compact'))
             prompt, schema = build_prompt(conf, group)
             metrics = {'system_prompt_chars': len(prompt),
+                       'prompt_sha256': digest(prompt), 'prompt_schema_sha256': digest(schema),
+                       'json_complete': None, 'references_valid': None, 'ranking': None,
+                       'quality': None, 'monetary_cost': None,
+                       'cache_hit': False, 'cache_policy': 'isolated_no_read_no_write',
                        'schema_format_chars': len(json.dumps(schema, ensure_ascii=False, separators=(',', ':'))),
                        'status': 'offline_size_only', 'attempts': 0, 'retries': 0,
                        'elapsed_seconds': None, 'grounded_output': None, 'output_sha256': None,
                        'ollama_eval_count': None, 'output_token_count': None,
                        **parse_metrics({})}
+            if fixture_outputs is not None:
+                contract = output_contract(fixture_outputs[str(i)][mode], group, conf, i)
+                metrics.update(contract, status='fixture_valid' if contract['references_valid'] else 'fixture_invalid')
+                if contract['grounded_output'] is not None:
+                    metrics.update(topic_count=len(contract['grounded_output']['topics']),
+                                   moment_count=len(contract['grounded_output']['moments']))
             if run_model:
                 started = perf_counter()
                 meta = {}
@@ -70,7 +82,11 @@ def make_report(transcription, cfg, *, sample_indices, run_model=False, repeats=
                         raise ConnectionError('Ollama indisponivel; use dry-run offline')
                     metrics['attempts'] = 1
                     data, meta = call_ollama(conf, group)
-                    grounded = ground_model_output(data, group, i)
+                    contract = output_contract(data, group, conf, i)
+                    metrics.update(contract)
+                    if contract['references_valid'] is not True:
+                        raise ValueError('Invalid API output contract or references')
+                    grounded = contract['grounded_output']
                     metrics.update(status='valid_first_pass', topic_count=len(grounded['topics']),
                                    moment_count=len(grounded['moments']),
                                    grounded_output=grounded, output_sha256=digest(grounded),
@@ -86,15 +102,17 @@ def make_report(transcription, cfg, *, sample_indices, run_model=False, repeats=
                 metrics['ollama_eval_count'] = metrics['eval_count']
                 metrics['output_token_count'] = metrics['eval_count']
             row['modes'][mode] = metrics
+        row['comparison'] = compare_outputs(row['modes'])
         row['prompt_char_reduction_pct'] = round(100*(1-row['modes']['compact']['system_prompt_chars'] /
                                                            row['modes']['legacy']['system_prompt_chars']), 2)
         results.append(row)
     report = {'schema_version': '40.1',
-            'scope': 'non_destructive_model_AB_test' if run_model else 'offline_prompt_size_only',
+            'scope': 'non_destructive_model_AB_test' if run_model else 'offline_fixture_contract_AB' if fixture_outputs is not None else 'offline_prompt_size_only',
             'provenance': {'model': model, 'ollama_version': info['version'],
                            'model_digest': next((m.get('digest') for m in info['models'] if m.get('name') == model), None),
                            'options': profile_options(cfg), 'python': platform.python_version(),
                            'configuration_sha256': digest(cfg), 'transcription_sha256': digest(transcription),
+                           'fixture_outputs_sha256': digest(fixture_outputs) if fixture_outputs is not None else None,
                            'benchmark_script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                            'semantic_code_sha256': hashlib.sha256((ROOT/'src/ldporto/semantic.py').read_bytes()).hexdigest()},
             'configuration': cfg, 'repeats': repeats,
@@ -112,13 +130,20 @@ def main():
     parser.add_argument('--transcription', type=Path, required=True, help='04_transcription.json, does not upload any data')
     parser.add_argument('--sample-indices', nargs='+', type=int, default=[0, 8, 30])
     parser.add_argument('--run-model', action='store_true', help='Explicitly invoke local Ollama (2 calls per sampled chunk)')
+    parser.add_argument('--confirm-local-inference', action='store_true', help='Confirm resource use for --run-model')
+    parser.add_argument('--fixture-outputs', type=Path, help='Offline JSON mapping chunk index to legacy/compact responses')
     parser.add_argument('--repeats', type=int, default=1)
     parser.add_argument('--csv-dir', type=Path, help='Default: <output-stem>_csv, legacy.csv and compact.csv')
     parser.add_argument('--output', type=Path, default=Path('r3b_semantic_ab.json'))
     args=parser.parse_args()
+    if args.run_model and (not args.confirm_local_inference or args.fixture_outputs):
+        parser.error('--run-model requires --confirm-local-inference and no fixture outputs')
+    if args.output.exists() or (args.csv_dir or args.output.with_name(args.output.stem + '_csv')).exists():
+        parser.error('Use new isolated output and CSV paths; existing evidence cannot be overwritten')
     transcript=json.loads(args.transcription.read_text(encoding='utf-8-sig'))
     cfg=load_config(ROOT/'config'/'config.yaml')['semantic_analysis']
-    report=make_report(transcript,cfg,sample_indices=args.sample_indices,run_model=args.run_model,repeats=args.repeats)
+    fixtures = json.loads(args.fixture_outputs.read_text(encoding='utf-8-sig')) if args.fixture_outputs else None
+    report=make_report(transcript,cfg,sample_indices=args.sample_indices,run_model=args.run_model,repeats=args.repeats,fixture_outputs=fixtures)
     write_csv(report, args.csv_dir or args.output.with_name(args.output.stem + '_csv'))
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')

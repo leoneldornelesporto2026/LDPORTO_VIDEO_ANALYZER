@@ -1,6 +1,7 @@
 import json
 import logging
 import zipfile
+from pathlib import Path
 from copy import deepcopy
 
 import pytest
@@ -145,7 +146,7 @@ def test_real_offline_replay_preserves_original_identity_and_reports_mixed_origi
     cfg['vision']['enabled'] = False
     cfg['diarization']['enabled'] = False
     cfg['export']['second_curation_output_dir'] = str(tmp_path / 'packages')
-    output, analysis = replay_analysis(folder, cfg, 'commercial', tmp_path / 'output')
+    output, analysis = replay_analysis(folder, cfg, 'understanding', tmp_path / 'output')
     manifest = read_json(output / 'manifest.json')
     run = read_json(output / 'run_manifest.json')
     assert run['run_id'] == manifest['run_id'] == 'original-run'
@@ -159,3 +160,172 @@ def test_real_offline_replay_preserves_original_identity_and_reports_mixed_origi
     assert origins['20_handoff']['code_fingerprint']
     assert not analysis['replay_provenance']['asr_rerun']
     assert not analysis['replay_provenance']['vision_rerun']
+
+
+@pytest.fixture
+def full_execution(tmp_path, monkeypatch):
+    from ldporto.build_provenance import attest_execution, execution_stages, ProvenanceContext
+    from ldporto.config import load_config
+    import ldporto.core as core
+    monkeypatch.setattr(core, 'versions', lambda: {})
+    monkeypatch.setattr('ldporto.runtime_metrics.resource_snapshot', lambda: {})
+    source = tmp_path / 'synthetic-source.bin'
+    source.write_bytes(b'offline synthetic source, not video')
+    cfg = load_config()
+    cfg['preview']['enabled'] = False
+    ctx = ProvenanceContext(source, tmp_path / 'run', cfg, file_hash(source), logging.getLogger(__name__))
+    monkeypatch.setattr(ctx, 'progress', lambda *a, **k: None)
+    from ldporto.run_status import DEPENDENCIES
+    pending = set(execution_stages())
+    while pending:
+        ready = sorted(name for name in pending if set(DEPENDENCIES[name]) <= set(ctx.states))
+        assert ready, 'synthetic fixture must respect the real dependency order'
+        for name in ready:
+            ctx.step(name, {}, lambda: ok({'synthetic': True}), code_files=['__init__.py'])
+            pending.remove(name)
+    proof = attest_execution(ctx)
+    assert proof is not None
+    return ctx, proof
+
+
+def test_full_synthetic_execution_requires_independently_verified_attestation(full_execution):
+    ctx, proof = full_execution
+    metadata = {'sha256': ctx.signature}
+    unproved = build_run_manifest(metadata, ctx.states, [])
+    assert unproved['stage_status_summary'] == 'complete'
+    assert unproved['analysis_status'] == 'partial'
+    assert unproved['execution_evidence'] == 'unknown'
+    manifest = build_run_manifest(metadata, ctx.states, [], previous={'execution_attestation': proof})
+    assert manifest['execution_evidence'] == 'proof'
+    assert manifest['analysis_status'] == 'complete'
+    assert manifest['build_provenance']['execution_complete'] is True
+    assert manifest['build_provenance']['unverified_stages'] == []
+    assert manifest['preview_approved'] is False
+    assert manifest['publication_ready'] is False
+    assert manifest['editorial_readiness'] is None
+    # JSON round trip revalidates files rather than trusting cached status fields.
+    restored = json.loads(json.dumps(manifest))
+    import jsonschema
+    schema = json.loads((Path(__file__).parents[2] / 'schemas/run_manifest.schema.json').read_text())
+    jsonschema.validate(restored, schema)
+    again = build_run_manifest(metadata, ctx.states, [], previous=restored)
+    assert again['execution_evidence'] == 'proof'
+    assert again['execution_attestation'] == proof
+    assert analysis_provenance({'metadata': metadata, 'run_manifest': restored})['execution_complete'] is True
+
+
+@pytest.mark.parametrize('mutation', ['source', 'checkpoint', 'stage_key', 'policy', 'replay', 'receipt', 'proof_hash', 'missing_file'])
+def test_attestation_rejects_divergence_and_keeps_missing_files_unknown(full_execution, mutation):
+    from ldporto.build_provenance import attestation_digest
+    ctx, proof = full_execution
+    metadata, states = {'sha256': ctx.signature}, deepcopy(ctx.states)
+    name = '04_transcription'
+    if mutation == 'source':
+        metadata['sha256'] = 'another-source'
+    elif mutation == 'checkpoint':
+        path = Path(proof['checkpoints'][name]['path'])
+        record = read_json(path)
+        record['data']['synthetic'] = False
+        write_json(path, record)
+    elif mutation == 'stage_key':
+        states[name]['key'] = 'different-key'
+    elif mutation == 'policy':
+        proof['required_stages'].remove(name)
+        proof['attestation_sha256'] = attestation_digest(proof)
+    elif mutation == 'replay':
+        metadata['execution_scope'] = 'downstream_replay'
+        states[name]['artifact_snapshot_reused'] = True
+    elif mutation == 'receipt':
+        path = Path(proof['checkpoints'][name]['path'])
+        record = read_json(path)
+        record.pop('execution_receipt')
+        write_json(path, record)
+    elif mutation == 'proof_hash':
+        proof['execution_returncode'] = 1
+    else:
+        Path(proof['checkpoints'][name]['path']).unlink()
+    manifest = build_run_manifest(metadata, states, [], previous={'execution_attestation': proof})
+    assert manifest['analysis_status'] == 'partial'
+    assert manifest['execution_evidence'] == ('unknown' if mutation == 'missing_file' else 'mismatch')
+    assert manifest['build_provenance']['execution_complete'] is (None if mutation == 'missing_file' else False)
+
+
+def test_compatible_cache_is_verified_without_global_exporter_equality(full_execution):
+    from ldporto.build_provenance import attest_execution
+    ctx, proof = full_execution
+    checkpoint = ctx.cache / '04_transcription.json'
+    before = file_hash(checkpoint)
+    ctx.step('04_transcription', {}, lambda: pytest.fail('cache must not execute'), code_files=['__init__.py'])
+    assert ctx.stage_metrics['04_transcription']['cache_hit'] is True
+    assert file_hash(checkpoint) == before
+    cached_proof = attest_execution(ctx)
+    assert cached_proof is not None
+    manifest = build_run_manifest({'sha256': ctx.signature}, ctx.states, [], previous={
+        'analyzer_build': 'historical-compatible-producer', 'code_fingerprint': 'historical-global-fingerprint',
+        'execution_attestation': cached_proof})
+    assert manifest['execution_evidence'] == 'proof'
+    assert manifest['build_provenance']['build_mismatch'] is False
+    assert manifest['analysis_status'] == 'complete'
+
+
+def test_optional_skip_requires_explicit_policy_and_receipt(full_execution):
+    from ldporto.build_provenance import attest_execution
+    ctx, _ = full_execution
+    ctx.force = True
+    ctx.step('13_ocr', {}, lambda: ok({}, 'skipped'), code_files=['__init__.py'])
+    proof = attest_execution(ctx)
+    assert proof is not None  # OCR is explicitly disabled in installed default config.
+    ctx.config['ocr']['enabled'] = True
+    assert attest_execution(ctx) is None
+
+
+def test_verified_export_round_trip_does_not_approve_publication(full_execution, tmp_path):
+    ctx, proof = full_execution
+    analysis = analysis_fixture()
+    analysis['metadata']['sha256'] = ctx.signature
+    analysis['stage_status'] = deepcopy(ctx.states)
+    analysis['run_manifest'] = build_run_manifest(analysis['metadata'], ctx.states, [], previous={'execution_attestation': proof})
+    analysis['analysis_status'] = analysis['run_manifest']['analysis_status']
+    result = build_core_package(analysis, output_dir=tmp_path / 'package')
+    assert validate_core_package(result['path'])['status'] == 'valid'
+    with zipfile.ZipFile(result['path']) as archive:
+        manifest = json.loads(archive.read('SECOND_CURATION_MANIFEST.json'))
+    assert manifest['analysis_status'] == 'complete'
+    assert manifest['execution_evidence'] == 'proof'
+    assert manifest['execution_attestation']['attestation_sha256'] == proof['attestation_sha256']
+    from ldporto.build_provenance import attestation_digest, verify_execution
+    assert attestation_digest(manifest['execution_attestation']) == proof['attestation_sha256']
+    assert verify_execution(manifest['execution_attestation'], analysis['metadata'], ctx.states)[0] == 'unknown'
+    assert manifest['stage_status_summary'] == 'complete'
+    assert manifest['preview_approved'] is False
+    assert manifest['publication_ready'] is False
+
+
+
+def test_legacy_compatible_cache_is_unknown_rather_than_exporter_mismatch(tmp_path):
+    ctx = Context(tmp_path / 'unused.bin', tmp_path, {'strict': False}, 'source', logging.getLogger(__name__))
+    ctx.step('01_metadata', {}, lambda: ok({'synthetic': True}), code_files=['__init__.py'])
+    analysis = {'metadata': {'sha256': 'source'}, 'stage_status': deepcopy(ctx.states),
+                'run_manifest': {'analyzer_build': 'historical-build', 'code_fingerprint': 'historical-global'}}
+    ctx.step('01_metadata', {}, lambda: pytest.fail('cache must not execute'), code_files=['__init__.py'])
+    manifest = _run_manifest(analysis, ctx)
+    assert manifest['execution_evidence'] == 'unknown'
+    assert manifest['build_provenance']['execution_complete'] is None
+    assert manifest['analysis_status'] == 'partial'
+    assert manifest['analyzer_build'] == 'historical-build'
+
+
+
+def test_producer_wrapper_preserves_legacy_heavy_cache_key_and_unknown_receipt(tmp_path):
+    from ldporto.build_provenance import ProvenanceContext
+    common = (tmp_path / 'unused.bin', tmp_path, {'strict': False}, 'source', logging.getLogger(__name__))
+    legacy = Context(*common)
+    legacy.step('04_transcription', {}, lambda: ok({'synthetic': True}), code_files=['transcription.py', 'core.py'])
+    checkpoint = legacy.cache / '04_transcription.json'
+    checksum = file_hash(checkpoint)
+    producer = ProvenanceContext(*common)
+    producer.step('04_transcription', {}, lambda: pytest.fail('legacy cache must not execute'), code_files=['transcription.py', 'core.py'])
+    assert producer.stage_metrics['04_transcription']['cache_hit'] is True
+    assert producer.states == legacy.states
+    assert file_hash(checkpoint) == checksum
+    assert read_json(checkpoint).get('execution_receipt') is None

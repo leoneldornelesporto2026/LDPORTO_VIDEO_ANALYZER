@@ -27,7 +27,7 @@ COLLECTION_FILES = {
     'second_curation_package':'second_curation_package.json', 'thumbnail_candidates':'thumbnail_candidates.json',
     'moment_frames':'moment_frames.json',
     'transcription_alternatives':'transcription_alternatives.json', 'low_confidence_words':'low_confidence_words.json',
-    'ocr_text':'ocr_text.json', 'reid_merge_decisions':'reid_merge_decisions.json',
+    'ocr_text':'ocr_text.json', 'commercial_visual_s8':'commercial_visual_s8.json', 'reid_merge_decisions':'reid_merge_decisions.json',
 }
 OBSERVATION_KEYS = ('time','frame','track_id','tracklet_id','raw_person_id','person_id','scene_id',
                     'bbox','face_bbox','face_visible','body_visible','center','sharpness',
@@ -100,7 +100,15 @@ def compact_analysis_document(analysis, folder):
 def load_analysis_artifacts(folder, collections=None):
     """Hydrate trusted local artifact references; reject traversal, links and corruption."""
     folder = Path(folder).resolve()
-    analysis = read_json(folder / 'analysis.json')
+    from .execution_receipts import verify_report_receipt, snapshot_json
+    snapshots = {}
+    if (folder / 'report_execution_receipt.json').is_file():
+        receipt, snapshots = verify_report_receipt(folder)
+        analysis = json.loads(snapshots['analysis.json'].decode('utf-8-sig'))
+        if (analysis.get('metadata') or {}).get('sha256') != receipt['input_hash']:
+            raise ValueError('Report source identity mismatch.')
+    else:
+        analysis = read_json(folder / 'analysis.json')
     if analysis.get('collection_storage') != 'references':
         return analysis
     allowed = set(collections) if collections is not None else set(COLLECTION_FILES)
@@ -112,9 +120,18 @@ def load_analysis_artifacts(folder, collections=None):
         path = folder / ref['path']
         if path.is_symlink() or path.resolve().parent != folder or not path.is_file():
             raise ValueError('Referencia de artefato fora da pasta ou ausente.')
-        if ref.get('sha256') != file_hash(path):
+        try:
+            if ref['path'] in snapshots:
+                import hashlib
+                raw = snapshots[ref['path']]
+                if hashlib.sha256(raw).hexdigest() != ref.get('sha256'):
+                    raise ValueError('snapshot_checksum_mismatch')
+                value = json.loads(raw.decode('utf-8-sig'))
+            else:
+                value, _ = snapshot_json(path, ref.get('sha256'))
+        except ValueError:
             raise ValueError('Checksum de artefato divergente; nao reutilizar evidencia corrompida.')
-        analysis[key] = read_json(path)
+        analysis[key] = value
     return analysis
 
 

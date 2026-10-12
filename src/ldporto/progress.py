@@ -142,4 +142,5 @@ class WeightedProgress:
                 'eta_basis': 'rolling_unit_median_and_empirical_range' if stage_eta is not None else 'calculating',
                 'next_stage': next_stage, 'next_stage_label': STAGE_LABELS.get(next_stage),
                 'status': state.get('status', 'waiting'), 'substage': state.get('substage'),
+                'performance': state.get('performance'),
                 'stage_states': self.states, 'finished': self.finished, 'completion': self.completion}

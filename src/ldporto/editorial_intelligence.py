@@ -234,6 +234,8 @@ def selection_disposition(row, reasons, selected=False):
         return 'pending'
     if absolute_selection_blockers(row):
         return 'excluded'
+    if (row.get('ranking_uncertainty') or {}).get('missing_required_components'):
+        return 'pending'
     from .editorial import finite_score
     return 'pending' if finite_score(row.get('editorial_score_final', row.get('editorial_quality_score'))) is None else 'excluded'
 
@@ -284,6 +286,7 @@ def explain_shortlist(candidates, selected, rejected):
                           'penalties': dict(row.get('penalties') or {}),
                           'penalty_status': 'recorded' if row.get('penalties') else 'not_recorded',
                           'score_is_probability': False},
+            'score_evidence': dict(row.get('score_evidence') or {}),
             'evidence': {'segment_ids': ids, 'status': 'referenced_not_revalidated' if ids else 'missing_source_references',
                          'coverage': finite_score(row.get('evidence_coverage')),
                          'coverage_status': 'recorded' if finite_score(row.get('evidence_coverage')) is not None else 'missing_or_invalid',

@@ -285,3 +285,15 @@ O projeto inclui uma ponte local FFmpeg para renderizar previews verticais reais
 **Teste inicial (Windows):** `scripts\windows\TESTAR_FLUXO_REAL_WINDOWS.bat "SECOND_CURATION_READY.zip" "video_original.mp4" "C:\teste_s11"`
 
 **Passo a passo, gates de segurança, revisão manual, homologação e A/B:** `docs/S9_S11_REAL_TEST.md`. Nenhum resultado sintético é prova de qualidade editorial humana.
+
+
+Recuperação segura da segunda curadoria (etapa 64): [contrato, dry-run e limitações](docs/ETAPA64_RECUPERACAO.md). Contrato histórico uncached_export comprovado; replay local bloqueado por inputs inline sem checksum original e dois caches sem recibo de execução. Apply não executado; publicação continua bloqueada.
+
+### Análises legadas — Etapa 64
+
+Quando `analysis.json` não tiver checksum histórico e os caches 18b/19 não
+incluírem `execution_receipt`, **não** forçar a recuperação estrita: utilize o
+planejador offline `scripts/dev/legacy_review64.py` para avaliar a consistência
+local e, mediante autorização explícita, criar uma **entrada derivada apenas para
+revisão**, sem reprocessar vídeo ou aprovar publicação. Comandos, testes e
+limitações: `docs/ETAPA64_RECUPERACAO.md`.

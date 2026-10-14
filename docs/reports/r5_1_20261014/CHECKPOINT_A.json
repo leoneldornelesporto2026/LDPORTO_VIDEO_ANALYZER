@@ -1,0 +1,14 @@
+{
+  "checkpoint": "A",
+  "status": "VALIDATED",
+  "baseline_ref": "baseline.json",
+  "privacy_test_ref": "privacy_focus_junit.xml",
+  "provenance_test_ref": "provenance_focus_01.junit.xml",
+  "embedded_schema_test_ref": "checkpoint_a_embedded.xml",
+  "original_621_hashes_preserved": true,
+  "checkpoint_count": 27,
+  "reference_zip_sha256": "a84ede22de5fe91b8a5e1abe7044229534fe55943777d769364ff58842ab9807",
+  "new_results_incorporated_before_p0": false,
+  "master_sha256": "feb1345e7a0bb702ae804608598b1b3b35acb2932eee602fdcff3c8115b42355",
+  "corrected_reference_from": "provenance_focus_01.xml"
+}

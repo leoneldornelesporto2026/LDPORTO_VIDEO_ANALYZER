@@ -1,0 +1,27 @@
+{
+  "key": "dea5e2d53cdc8836f009ee33a7b7d9e3c1a9f0816e22491bd3fcc315f8f9e0bc",
+  "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+  "payload": {
+    "primary_title": null,
+    "alternative_titles": [],
+    "opening_hook_text": null,
+    "hook_supporting_quotes": [],
+    "social_caption": null,
+    "caption_supporting_quotes": [],
+    "engagement_question": null,
+    "cta": null,
+    "keywords": [],
+    "abstention_reason": "Falta de suporte para produzir títulos, hooks, perguntas ou CTA com base nos dados fornecidos, conforme as restrições impostas."
+  },
+  "response_sha256": "6228d2b18286ada086ef1578f19f0197d4fe217c7546cd33d91659ac8132934f",
+  "provenance": {
+    "call_id": "37749cdee44a450684539eb257e9bfa9:1",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "12a295b26d3a660f0946ed2b559c45e0011a5da638f2353ff7a51410614cccab",
+    "response_sha256": "6228d2b18286ada086ef1578f19f0197d4fe217c7546cd33d91659ac8132934f",
+    "duration_seconds": 4.608999999938533,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "classification": "explained",
+  "original_build_mismatch": true,
+  "original_mismatch_reasons": [
+    "analysis_code_differs_from_exporter",
+    "stage_code_differs_from_exporter:20_handoff"
+  ],
+  "reason_classifications": [
+    {
+      "reason": "analysis_code_differs_from_exporter",
+      "classification": "explained",
+      "scope": "original_source_vs_current_exporter"
+    },
+    {
+      "reason": "stage_code_differs_from_exporter:20_handoff",
+      "classification": "explained",
+      "scope": "historical_20_handoff"
+    }
+  ],
+  "conflicts": [],
+  "pending_verification": [],
+  "stage20": {
+    "original": {
+      "status": "ok",
+      "checkpoint_key": "656802a209f6ba7c078862f9274f65f7eabad6f3f01d8750e1aa726ff8500a9f",
+      "origin": "executed",
+      "analyzer_build": "R4.9-S4-TRACKING-FACIAL",
+      "code_fingerprint": "f7d078b94aec8a458bcf96be3bff87ff41cc2abe14b6b8c339c0bc7026970cd6",
+      "checkpoint_sha256": "5c00252f8d25342a9a51abf1379ca3ea5880d66399a71dedabc7816c1b4ef775",
+      "effective_module_fingerprint": "0807ac6d7eda89bdacef4c79bd90afae775d18a58f986aac28698cbfe9ef4230"
+    },
+    "reused_sha256": [
+      "5c00252f8d25342a9a51abf1379ca3ea5880d66399a71dedabc7816c1b4ef775"
+    ],
+    "verified_sha256": [
+      "5c00252f8d25342a9a51abf1379ca3ea5880d66399a71dedabc7816c1b4ef775"
+    ]
+  },
+  "original_execution_complete": false,
+  "original_unverified_stages": [
+    "04_transcription",
+    "10_active_speaker",
+    "18_analysis_quality",
+    "19_camera_director",
+    "21_second_curation_handoff"
+  ],
+  "changes_original_flags": false,
+  "full_pipeline_execution_attested": false,
+  "scope": "compatibility_explanation_only; not_source_inference_proof",
+  "independent_verification_record": {
+    "method": "Root checkpointA verified all621 original files; reuse preserved baseline hashes without rereading them",
+    "baseline_path": "docs/reports/r5_20261014/initial_state.json",
+    "baseline_sha256": "3db0ef608fde4ae0108e8990b129b7c1dd0154d374ab5586f323f0643c410aa7",
+    "checkpoint_keys": [
+      "cache/b2958122415980a8/01_metadata.json",
+      "cache/b2958122415980a8/02_audio.json",
+      "cache/b2958122415980a8/03_audio_quality.json",
+      "cache/b2958122415980a8/04_transcription.json",
+      "cache/b2958122415980a8/05_diarization.json",
+      "cache/b2958122415980a8/06_scenes.json",
+      "cache/b2958122415980a8/07_people_tracking.json",
+      "cache/b2958122415980a8/08_person_reid.json",
+      "cache/b2958122415980a8/09_person_motion.json",
+      "cache/b2958122415980a8/10_active_speaker.json",
+      "cache/b2958122415980a8/11_shots.json",
+      "cache/b2958122415980a8/12_camera_timeline.json",
+      "cache/b2958122415980a8/13_ocr.json",
+      "cache/b2958122415980a8/14_audio_events.json",
+      "cache/b2958122415980a8/15_semantic.json",
+      "cache/b2958122415980a8/16_understanding.json",
+      "cache/b2958122415980a8/17_master_timeline.json",
+      "cache/b2958122415980a8/17b_broadcast_graphics.json",
+      "cache/b2958122415980a8/17c_commercial_visual.json",
+      "cache/b2958122415980a8/17d_targeted_asr.json",
+      "cache/b2958122415980a8/17e_subtitle_review_s7.json",
+      "cache/b2958122415980a8/18_analysis_quality.json",
+      "cache/b2958122415980a8/18b_global_camera_planner.json",
+      "cache/b2958122415980a8/19_camera_director.json",
+      "cache/b2958122415980a8/19b_preview_verifier.json",
+      "cache/b2958122415980a8/20_handoff.json",
+      "cache/b2958122415980a8/21_second_curation_handoff.json"
+    ],
+    "verified_checkpoint_count": 27,
+    "zip_path": "docs/reports/r5_20261014/release_replay/package/SECOND_CURATION_PARTIAL_zd_wjssZ7mc_20261014_140253_762578_0b9a68.zip",
+    "zip_sha256": "a84ede22de5fe91b8a5e1abe7044229534fe55943777d769364ff58842ab9807"
+  }
+}

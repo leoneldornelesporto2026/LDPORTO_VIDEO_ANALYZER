@@ -1,0 +1,57 @@
+{
+  "key": "4efc6e7f4ff748c1b893cd6a793f8c51b98f0e70c52d2be0925eb863109b7e9d",
+  "task_id": "semantic.qa.Q_0015",
+  "payload": {
+    "proposals": [
+      {
+        "question_id": "Q_0015",
+        "status": "ANSWER_SUPPORTED",
+        "answers": [
+          {
+            "answer_segment_ids": [
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131"
+            ],
+            "summary": "O aeroporto lá de Marabá não tinha radar.",
+            "answer_relation": "DIRECT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00129",
+                "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+              },
+              {
+                "segment_id": "SEG_00130",
+                "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              }
+            ]
+          }
+        ],
+        "reasoning_summary": "O aeroporto lá de Marabá não tinha radar.",
+        "uncertainty_reasons": [],
+        "contradictions": []
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "3b65e3509a819e770535404a7590fa1c8282a873c552ac7dfeee978a57147b26",
+  "provenance": {
+    "call_id": "4787406a74e8438789c1e1a93f16d7ff:2",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "e1b5c3e97fd57ad29743415df6e98321e03a896bd0a75b7c5e14be2ff9808441",
+    "response_sha256": "3b65e3509a819e770535404a7590fa1c8282a873c552ac7dfeee978a57147b26",
+    "duration_seconds": 15.875,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

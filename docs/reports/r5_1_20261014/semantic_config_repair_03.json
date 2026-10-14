@@ -1,0 +1,55 @@
+{
+  "verified_checkpoint_sha256": {
+    "cache/b2958122415980a8/01_metadata.json": "81064e1eb439adb6e7a6046cbda7c667ce1710cc8047a30eb63a2034e3387a04",
+    "cache/b2958122415980a8/02_audio.json": "f41401e940cc280013f15e9477cebe0fe041e514db0f786dc2d76684e8cf2e00",
+    "cache/b2958122415980a8/03_audio_quality.json": "5830abd5f28dc10c2032b099668e3c1c58ac49939a7925b1e5c9e710c18a2362",
+    "cache/b2958122415980a8/04_transcription.json": "36763b39adc3f1afaaad483fc6251ea654fe4fd5fd17a4c6b2dd285920ca9c91",
+    "cache/b2958122415980a8/05_diarization.json": "d04faf4878534f24f150559b84d46f51eaff0cab73253063cddd1144bf03a8aa",
+    "cache/b2958122415980a8/06_scenes.json": "03385bed6cf8e14cf5ba8ebe4b7ef364342745340383dc833c039d3f5c3e65de",
+    "cache/b2958122415980a8/07_people_tracking.json": "a974226cd94e3c7dcd395333cdc5ef27ebeadfaab3371aa5a09d93dce84bdf6b",
+    "cache/b2958122415980a8/08_person_reid.json": "0f5065d645594c956945a980afdd35b75f7276fd0b7c467b984990fc4acff188",
+    "cache/b2958122415980a8/09_person_motion.json": "5ae83da95d81db67b9ce0a135def53556fd9e1d9de2d444cedf28642699b8baf",
+    "cache/b2958122415980a8/10_active_speaker.json": "d336de83281c468dc063466ca8280db34b8763383b5a55b507261584c84ba03f",
+    "cache/b2958122415980a8/11_shots.json": "34801c2ce24c5d87dedd6ac2e44d2a5e87fd1ff61d9521ece35399da50f09f05",
+    "cache/b2958122415980a8/12_camera_timeline.json": "61aef432a587b56afcad4a9b34706f6eebb9f62606b8d262ade1fc3217a26e7f",
+    "cache/b2958122415980a8/13_ocr.json": "c13f0dd904b8d4fc88a328a4d80a8ed0462c509895d8108cc2ff906162135727",
+    "cache/b2958122415980a8/14_audio_events.json": "ee1c9a97b0a97f4e4eda1f517a31eef937b565d9480e7c15ee24e9c600e8e723",
+    "cache/b2958122415980a8/15_semantic.json": "7213a87fbc7b33eae38169ff900d18e40606fbb6ae87a0226c358f73d7f63e48",
+    "cache/b2958122415980a8/16_understanding.json": "d9d233d26006693aeb94311941a3e18221236003084fbda3982e806a7b10f56d",
+    "cache/b2958122415980a8/17b_broadcast_graphics.json": "dae435190b1803a14406a7ac02377c38d96c796812923fac941e5cf71fff3971",
+    "cache/b2958122415980a8/17c_commercial_visual.json": "f03349d496d7391219a24a946c09c3e674b4b8c5160f796d54a0497e83553725",
+    "cache/b2958122415980a8/17d_targeted_asr.json": "4c1853db1afa14d42e226c32bd57f13d3fc0cc5ac40a2972ff814062f62e54d2",
+    "cache/b2958122415980a8/17e_subtitle_review_s7.json": "246d66fcb46bef6732977f3ae964588613ef4e7c8c483406349129bbf0e53f94",
+    "cache/b2958122415980a8/17_master_timeline.json": "683551c242078b9fc7c7acd285ed70ee578d89ec64fd5fc794f6cf28e27fde7b",
+    "cache/b2958122415980a8/18b_global_camera_planner.json": "11f8803e41796a3d13b0fc85205f3e1752751d456c28bf8409a100ba57a4eef7",
+    "cache/b2958122415980a8/18_analysis_quality.json": "10ae986e90bde340dd6190031107ca82b983111eec5911ef20764a20fea6bd71",
+    "cache/b2958122415980a8/19b_preview_verifier.json": "5a9cc7991b4edd8d97cbada29fa8da29082ea7d25b0b230398f78aa830501fa0",
+    "cache/b2958122415980a8/19_camera_director.json": "bbc8450ac6f059073d49bfd6b28be6b95a252e242fd939a7be3105f9357816c9",
+    "cache/b2958122415980a8/20_handoff.json": "5c00252f8d25342a9a51abf1379ca3ea5880d66399a71dedabc7816c1b4ef775",
+    "cache/b2958122415980a8/21_second_curation_handoff.json": "33b98dd8bf19d39e3c304f84e71ac16240c27c9150cb4f75cfc270bb3a810474"
+  },
+  "resolver": {
+    "max_topics": 2,
+    "qa_question_ids": [
+      "Q_0015"
+    ],
+    "max_context_chars": 22000,
+    "max_story_source_seconds": 90
+  },
+  "inference": {
+    "model": "qwen3:14b",
+    "num_predict": 4096,
+    "num_ctx": 16384,
+    "timeout_seconds": 180,
+    "think": false,
+    "max_new_calls": 18
+  },
+  "compact_canonical_question": true,
+  "task_prompt_overrides": {
+    "semantic.qa.Q_0015": "Uma pergunta introdut?ria ou ret?rica tamb?m pode receber uma explica??o subsequente. Avalie TODOS os segmentos recuperados, distinguindo aus?ncia de resposta de aus?ncia de confirma??o humana. N?o exija a repeti??o literal da pergunta nem a f?rmula a resposta ?. Se houver mecanismo que responda, cite seus componentes e limita??es; se n?o houver, abstenha-se. Use resumo conservador e curto: n?o expanda siglas e n?o acrescente conhecimento externo. Todo nome pr?prio, marco temporal ou sigla mencionado no resumo precisa aparecer literalmente nas falas citadas. N?o transforme correla??o, aus?ncia de radar ou hip?tese em causa factual. Escolha trechos do assunto; descarte introdu??es gen?ricas sem desenvolvimento.",
+    "semantic.series.SEM_TOPIC_c08a787114d057e6": "Mantenha TODOS os epis?dios no assunto indicado em data.topic. Uma introdu??o gen?rica ao programa n?o constitui desenvolvimento desse assunto. Avalie se a pr?pria explica??o t?cnica forma uma pe?a menor e coerente. N?o force quantidade nem invente fechamento; cite o mecanismo, o contexto e o resultado quando realmente presentes. Use resumo conservador e curto: n?o expanda siglas e n?o acrescente conhecimento externo. Todo nome pr?prio, marco temporal ou sigla mencionado no resumo precisa aparecer literalmente nas falas citadas. N?o transforme correla??o, aus?ncia de radar ou hip?tese em causa factual. Escolha trechos do assunto; descarte introdu??es gen?ricas sem desenvolvimento.",
+    "semantic.completion.SEM_TOPIC_c08a787114d057e6": "Em uma explica??o t?cnica, RESULT ? o resultado compreens?vel do mecanismo explicado, n?o exige consequ?ncia dram?tica nem resolu??o hist?rica do acidente. Confira se a fala descreve esse resultado, sustentando-o com cita??o; se n?o, mantenha a lacuna. N?o converta hip?tese contrafactual em resultado observado. Use resumo conservador e curto: n?o expanda siglas e n?o acrescente conhecimento externo. Todo nome pr?prio, marco temporal ou sigla mencionado no resumo precisa aparecer literalmente nas falas citadas. N?o transforme correla??o, aus?ncia de radar ou hip?tese em causa factual. Escolha trechos do assunto; descarte introdu??es gen?ricas sem desenvolvimento.",
+    "semantic.relations.SEM_TOPIC_c08a787114d057e6": "Restrinja as rela??es ao assunto do t?pico. Todo nome, sigla, n?mero e marco temporal no reasoning_summary precisa constar literalmente nos segmentos citados, sem expandir siglas. Se for necess?rio acrescentar fonte para justificar um fato, cite essa fonte dispon?vel; caso contr?rio, omita o fato ou abstenha-se."
+  },
+  "focus_topic_context": true
+}

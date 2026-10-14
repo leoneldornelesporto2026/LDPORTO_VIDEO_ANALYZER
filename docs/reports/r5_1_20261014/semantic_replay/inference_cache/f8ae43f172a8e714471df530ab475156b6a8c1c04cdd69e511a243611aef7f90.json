@@ -1,0 +1,124 @@
+{
+  "key": "f8ae43f172a8e714471df530ab475156b6a8c1c04cdd69e511a243611aef7f90",
+  "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "proposals": [
+      {
+        "source_arc_ids": [
+          "STORY_0017"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "QUESTION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00126",
+                "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+              }
+            ]
+          },
+          {
+            "component": "EXPLANATION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00127",
+                "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+              },
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00129",
+                "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+              },
+              {
+                "segment_id": "SEG_00130",
+                "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              },
+              {
+                "segment_id": "SEG_00132",
+                "quote": "Grosseiramente é isso."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "RESULT"
+        ],
+        "summary": "Explicação sobre como pilotos usavam radionavegação antes do GPS, incluindo o uso de antenas que emitem sinais de rádio e o instrumento ADF para determinar a direção do voo. Faltam informações sobre o resultado prático dessa explicação.",
+        "contradictions": [],
+        "narrative_dependencies": []
+      },
+      {
+        "source_arc_ids": [
+          "STORY_0018"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "DEVELOPMENT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00133",
+                "quote": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá."
+              },
+              {
+                "segment_id": "SEG_00134",
+                "quote": "A indicação das agulhas dos RMI, que é esse instrumento aí que você está vendo, estavam apontadas para trás."
+              },
+              {
+                "segment_id": "SEG_00135",
+                "quote": "Com 15 minutos de voo, por volta das 17h50, o Zilli sintonizou os instrumentos dele na frequência de Belém."
+              },
+              {
+                "segment_id": "SEG_00136",
+                "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+              },
+              {
+                "segment_id": "SEG_00137",
+                "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+              },
+              {
+                "segment_id": "SEG_00138",
+                "quote": "E aí, nem se preocuparam com isso."
+              },
+              {
+                "segment_id": "SEG_00139",
+                "quote": "Só que eles não se tocaram de um detalhe."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "RESULT"
+        ],
+        "summary": "Descrição do uso de instrumentos de navegação durante o voo, incluindo a sintonização em frequências de VOR e ADF, e a reação dos pilotos ao sinal não encontrado. Faltam informações sobre o resultado prático dessa situação.",
+        "contradictions": [],
+        "narrative_dependencies": []
+      }
+    ],
+    "abstentions": [
+      "STORY_0031",
+      "STORY_0032"
+    ]
+  },
+  "response_sha256": "b55c2bc5dcc8e101cd1cd5989dd5d0b13faf744fdbd6866de4ba1139baad0e29",
+  "provenance": {
+    "call_id": "eb9e062d6b2644ab9d6f164f31786d16:3",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "a1e2de1200c272e0913837ab7c7d24d12f00fbb867a615865a4ec0d0f29a3f72",
+    "response_sha256": "b55c2bc5dcc8e101cd1cd5989dd5d0b13faf744fdbd6866de4ba1139baad0e29",
+    "duration_seconds": 41.85999999998603,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

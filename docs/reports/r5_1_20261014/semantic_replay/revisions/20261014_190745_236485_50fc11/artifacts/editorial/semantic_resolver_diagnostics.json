@@ -1,0 +1,856 @@
+{
+  "schema_version": "1.0",
+  "publication_ready": false,
+  "human_review_completed": false,
+  "canonical_data_modified": false,
+  "tasks": [
+    {
+      "task_id": "semantic.global_topic_map",
+      "status": "OUTPUT_SCHEMA_VALIDATED",
+      "model_provenance": {
+        "call_id": "f0928eef4de74047a10e1950f5c406d5:1",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "29b9db96163a5c7444558b4b907045cacc5665c23efbc95253d5abecf76c4e02",
+        "response_sha256": "459518acdeb67fb804eeafdf32561229645f70dc87c7b4a57d32c89b4a219df8",
+        "duration_seconds": 43.48499999998603,
+        "cache_hit": true,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "context_segment_ids": [
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00206"
+      ]
+    },
+    {
+      "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+      "status": "OUTPUT_SCHEMA_VALIDATED",
+      "model_provenance": {
+        "call_id": "eb9e062d6b2644ab9d6f164f31786d16:1",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "52ea73c2f92b8821b692c7c2f46507405f87f51aab717e798253f6b3b1a89858",
+        "response_sha256": "afba3bf5c9cff5b0ec42b0c0c713e2ef41d49cbea7ecc903d502bb8d6964280d",
+        "duration_seconds": 74.64100000006147,
+        "cache_hit": true,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation",
+        "source_verification_transform": {
+          "rules": [
+            {
+              "proposal_index": 0,
+              "rule": "causal_basis_without_literal_cause_rejected"
+            },
+            {
+              "proposal_index": 1,
+              "rule": "literal_evidence_replaces_model_abstraction",
+              "relation_type_unchanged": true
+            },
+            {
+              "proposal_index": 2,
+              "rule": "literal_evidence_replaces_model_abstraction",
+              "relation_type_unchanged": true
+            },
+            {
+              "proposal_index": 4,
+              "rule": "literal_evidence_replaces_model_abstraction",
+              "relation_type_unchanged": true
+            },
+            {
+              "proposal_index": 5,
+              "rule": "causal_basis_without_literal_cause_rejected"
+            }
+          ],
+          "raw_payload_sha256": "afba3bf5c9cff5b0ec42b0c0c713e2ef41d49cbea7ecc903d502bb8d6964280d",
+          "verified_payload_sha256": "6d50952d6ed33823c186d1745e018791c34a06eabe855ff2344c203f1e3b71cc",
+          "verification_code_sha256": "c1e747dad7a3c355d6e9d7c8ab59aef0327f6c2beefdddeb03162c73cec14644",
+          "summary_scope": "literal_source_excerpts_not_abstractive_explanation",
+          "raw_model_output_preserved": true,
+          "human_semantic_verification": false
+        }
+      },
+      "context_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00174",
+        "SEG_00175",
+        "SEG_00176",
+        "SEG_00187",
+        "SEG_00188",
+        "SEG_00189",
+        "SEG_00191",
+        "SEG_00192",
+        "SEG_00193",
+        "SEG_00244",
+        "SEG_00245",
+        "SEG_00246",
+        "SEG_00247",
+        "SEG_00248",
+        "SEG_00249",
+        "SEG_00250",
+        "SEG_00251",
+        "SEG_00252",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00299",
+        "SEG_00300",
+        "SEG_00301",
+        "SEG_00363",
+        "SEG_00364",
+        "SEG_00365",
+        "SEG_00366",
+        "SEG_00367"
+      ]
+    },
+    {
+      "task_id": "semantic.qa.Q_0015",
+      "status": "OUTPUT_SCHEMA_VALIDATED",
+      "model_provenance": {
+        "call_id": "eb9e062d6b2644ab9d6f164f31786d16:2",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "93394b89d9631ebc711fc1f3b60b4a9e427312ca01bb107a3ce852b64ae44784",
+        "response_sha256": "2629cc69de62395c575804535d7c1d10969457e647b80638719c0db3fdea4db3",
+        "duration_seconds": 35.10999999998603,
+        "cache_hit": true,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation",
+        "source_verification_transform": {
+          "rules": [
+            {
+              "proposal_index": 0,
+              "rule": "canonical_answer_excerpt_replaces_model_abstraction",
+              "association_promoted": false
+            }
+          ],
+          "raw_payload_sha256": "2629cc69de62395c575804535d7c1d10969457e647b80638719c0db3fdea4db3",
+          "verified_payload_sha256": "cdeebf576a4a85068384571ae71459b6b0f35f4940a6267a4fbbdfad268a5324",
+          "verification_code_sha256": "c1e747dad7a3c355d6e9d7c8ab59aef0327f6c2beefdddeb03162c73cec14644",
+          "summary_scope": "literal_source_excerpts_not_abstractive_explanation",
+          "raw_model_output_preserved": true,
+          "human_semantic_verification": false
+        }
+      },
+      "context_segment_ids": [
+        "SEG_00011",
+        "SEG_00012",
+        "SEG_00013",
+        "SEG_00036",
+        "SEG_00037",
+        "SEG_00038",
+        "SEG_00097",
+        "SEG_00098",
+        "SEG_00099",
+        "SEG_00122",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00152",
+        "SEG_00156",
+        "SEG_00157",
+        "SEG_00158",
+        "SEG_00159",
+        "SEG_00160",
+        "SEG_00161",
+        "SEG_00178",
+        "SEG_00179",
+        "SEG_00180",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00255"
+      ]
+    },
+    {
+      "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+      "status": "OUTPUT_SCHEMA_VALIDATED",
+      "model_provenance": {
+        "call_id": "7c44100c662b435f8c7aff2261865379:1",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "17e7bb133a807c135829b723522640e58cd9325009b43737efdb51d65296de68",
+        "response_sha256": "326a5d14f97e74a5569f6ccadaf52d51237ec66a4eed2bd4fd0083e936881e2c",
+        "duration_seconds": 41.73399999993853,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "context_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00174",
+        "SEG_00175",
+        "SEG_00176",
+        "SEG_00187",
+        "SEG_00188",
+        "SEG_00189",
+        "SEG_00191",
+        "SEG_00192",
+        "SEG_00193",
+        "SEG_00244",
+        "SEG_00245",
+        "SEG_00246",
+        "SEG_00247",
+        "SEG_00248",
+        "SEG_00249",
+        "SEG_00250",
+        "SEG_00251",
+        "SEG_00252",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00299",
+        "SEG_00300",
+        "SEG_00301",
+        "SEG_00363",
+        "SEG_00364",
+        "SEG_00365",
+        "SEG_00366",
+        "SEG_00367"
+      ]
+    },
+    {
+      "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+      "status": "OUTPUT_SCHEMA_VALIDATED",
+      "model_provenance": {
+        "call_id": "7c44100c662b435f8c7aff2261865379:2",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "10f5aaa0128916bf4ee58da3289c7280a331a34f8ce23a8a4e3f4d8496dd4e5f",
+        "response_sha256": "704b472e095678cc9081ff36ac6b1fa294a6c35d95252180ce91ff431ad3d1b4",
+        "duration_seconds": 30.655999999959022,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "context_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00174",
+        "SEG_00175",
+        "SEG_00176",
+        "SEG_00187",
+        "SEG_00188",
+        "SEG_00189",
+        "SEG_00191",
+        "SEG_00192",
+        "SEG_00193",
+        "SEG_00244",
+        "SEG_00245",
+        "SEG_00246",
+        "SEG_00247",
+        "SEG_00248",
+        "SEG_00249",
+        "SEG_00250",
+        "SEG_00251",
+        "SEG_00252",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00299",
+        "SEG_00300",
+        "SEG_00301",
+        "SEG_00363",
+        "SEG_00364",
+        "SEG_00365",
+        "SEG_00366",
+        "SEG_00367"
+      ]
+    }
+  ],
+  "retrieval": [
+    {
+      "task_id": "semantic.global_topic_map",
+      "source_segment_ids": [
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00206"
+      ],
+      "method": "canonical_neighbours_and_incremental_idf_lexical_retrieval",
+      "semantic_reasoning": "injected_local_model",
+      "context_chars": 23214
+    },
+    {
+      "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+      "source_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00174",
+        "SEG_00175",
+        "SEG_00176",
+        "SEG_00187",
+        "SEG_00188",
+        "SEG_00189",
+        "SEG_00191",
+        "SEG_00192",
+        "SEG_00193",
+        "SEG_00244",
+        "SEG_00245",
+        "SEG_00246",
+        "SEG_00247",
+        "SEG_00248",
+        "SEG_00249",
+        "SEG_00250",
+        "SEG_00251",
+        "SEG_00252",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00299",
+        "SEG_00300",
+        "SEG_00301",
+        "SEG_00363",
+        "SEG_00364",
+        "SEG_00365",
+        "SEG_00366",
+        "SEG_00367"
+      ],
+      "method": "canonical_neighbours_and_incremental_idf_lexical_retrieval",
+      "semantic_reasoning": "injected_local_model",
+      "context_chars": 19599
+    },
+    {
+      "task_id": "semantic.qa.Q_0015",
+      "source_segment_ids": [
+        "SEG_00011",
+        "SEG_00012",
+        "SEG_00013",
+        "SEG_00036",
+        "SEG_00037",
+        "SEG_00038",
+        "SEG_00097",
+        "SEG_00098",
+        "SEG_00099",
+        "SEG_00122",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00152",
+        "SEG_00156",
+        "SEG_00157",
+        "SEG_00158",
+        "SEG_00159",
+        "SEG_00160",
+        "SEG_00161",
+        "SEG_00178",
+        "SEG_00179",
+        "SEG_00180",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00255"
+      ],
+      "method": "canonical_neighbours_and_incremental_idf_lexical_retrieval",
+      "semantic_reasoning": "injected_local_model",
+      "context_chars": 11100
+    },
+    {
+      "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+      "source_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00174",
+        "SEG_00175",
+        "SEG_00176",
+        "SEG_00187",
+        "SEG_00188",
+        "SEG_00189",
+        "SEG_00191",
+        "SEG_00192",
+        "SEG_00193",
+        "SEG_00244",
+        "SEG_00245",
+        "SEG_00246",
+        "SEG_00247",
+        "SEG_00248",
+        "SEG_00249",
+        "SEG_00250",
+        "SEG_00251",
+        "SEG_00252",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00299",
+        "SEG_00300",
+        "SEG_00301",
+        "SEG_00363",
+        "SEG_00364",
+        "SEG_00365",
+        "SEG_00366",
+        "SEG_00367"
+      ],
+      "method": "canonical_neighbours_and_incremental_idf_lexical_retrieval",
+      "semantic_reasoning": "injected_local_model",
+      "context_chars": 21447
+    },
+    {
+      "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+      "source_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143",
+        "SEG_00174",
+        "SEG_00175",
+        "SEG_00176",
+        "SEG_00187",
+        "SEG_00188",
+        "SEG_00189",
+        "SEG_00191",
+        "SEG_00192",
+        "SEG_00193",
+        "SEG_00244",
+        "SEG_00245",
+        "SEG_00246",
+        "SEG_00247",
+        "SEG_00248",
+        "SEG_00249",
+        "SEG_00250",
+        "SEG_00251",
+        "SEG_00252",
+        "SEG_00253",
+        "SEG_00254",
+        "SEG_00299",
+        "SEG_00300",
+        "SEG_00301",
+        "SEG_00363",
+        "SEG_00364",
+        "SEG_00365",
+        "SEG_00366",
+        "SEG_00367"
+      ],
+      "method": "canonical_neighbours_and_incremental_idf_lexical_retrieval",
+      "semantic_reasoning": "injected_local_model",
+      "context_chars": 21465
+    }
+  ],
+  "abstentions": [
+    {
+      "task_id": "semantic.global_topic_map",
+      "reason": "Não há evidência suficiente para determinar a causa direta do erro de rumo."
+    },
+    {
+      "task_id": "semantic.global_topic_map",
+      "reason": "Não há informações claras sobre o número exato de vítimas no acidente."
+    }
+  ],
+  "rejected_proposals": [
+    {
+      "task_id": "semantic.global_topic_map",
+      "proposal_kind": "global_topic",
+      "proposal": {
+        "label": "Erro de rumo e impacto no acidente do Varig 254",
+        "kind": "TOPIC",
+        "source_arc_ids": [
+          "STORY_0033",
+          "STORY_0034",
+          "STORY_0036",
+          "STORY_0039",
+          "STORY_0040"
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00124",
+            "quote": "Então, quando o avião tomou a proa 270, ao invés de 027, ninguém percebeu o erro da tripulação."
+          },
+          {
+            "segment_id": "SEG_00339",
+            "quote": "O impacto do avião na floresta foi devastador, resultando em um grande número de vítimas."
+          }
+        ],
+        "search_terms": [
+          "proa 270",
+          "erro de rumo",
+          "Varig 254",
+          "acidente",
+          "impacto"
+        ]
+      },
+      "reason": "quote_segment_unknown_or_out_of_context",
+      "publication_ready": false
+    },
+    {
+      "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+      "proposal_kind": "cross_arc_relation",
+      "proposal": {
+        "source_arc_id": "STORY_0017",
+        "target_arc_id": "STORY_0032",
+        "relation_type": "EXPLAINS",
+        "semantic_basis": "EXPLICIT_CAUSAL_STATEMENT",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00128",
+            "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+          },
+          {
+            "segment_id": "SEG_00250",
+            "quote": "Os pilotos sobrevoavam novamente o rio Xingu e os instrumentos do avião captaram a direção de onde viam os sinais de 1330 e 1270 kHz."
+          }
+        ],
+        "reasoning_summary": "A explicação sobre como os pilotos usavam radionavegação antes do GPS (STORY_0017) explica o funcionamento dos instrumentos que captaram os sinais de rádio durante o sobrevoar do rio Xingu (STORY_0032). A relação causal é estabelecida pela descrição do uso das antenas e frequências específicas, que são mencionadas em ambas as partes.",
+        "confidence_basis": [
+          "SEG_00128",
+          "SEG_00250"
+        ],
+        "contradictions": []
+      },
+      "reason": "nonliteral_supporting_quote",
+      "publication_ready": false
+    },
+    {
+      "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+      "proposal_kind": "narrative_completion",
+      "proposal": {
+        "source_arc_ids": [
+          "STORY_0017"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "QUESTION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00126",
+                "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+              }
+            ]
+          },
+          {
+            "component": "EXPLANATION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00127",
+                "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+              },
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00129",
+                "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+              },
+              {
+                "segment_id": "SEG_00130",
+                "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              },
+              {
+                "segment_id": "SEG_00132",
+                "quote": "Grosseiramente é isso."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "RESULT"
+        ],
+        "summary": "Explicação sobre como pilotos usavam radionavegação antes do GPS, incluindo o uso de antenas que emitem sinais de rádio e o instrumento ADF para determinar a direção do voo. Faltam informações sobre o resultado prático desse método de navegação.",
+        "contradictions": [],
+        "narrative_dependencies": []
+      },
+      "reason": "nonliteral_supporting_quote",
+      "publication_ready": false
+    },
+    {
+      "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+      "proposal_kind": "narrative_completion",
+      "proposal": {
+        "source_arc_ids": [
+          "STORY_0018"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "DEVELOPMENT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00133",
+                "quote": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá."
+              },
+              {
+                "segment_id": "SEG_00134",
+                "quote": "A indicação das agulhas dos RMI, que é esse instrumento aí que você está vendo, estavam apontadas para trás."
+              },
+              {
+                "segment_id": "SEG_00135",
+                "quote": "Com 15 minutos de voo, por volta das 17h50, o Zilli sintonizou os instrumentos dele na frequência de Belém."
+              },
+              {
+                "segment_id": "SEG_00136",
+                "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+              },
+              {
+                "segment_id": "SEG_00137",
+                "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+              },
+              {
+                "segment_id": "SEG_00138",
+                "quote": "E aí, nem se preocuparam com isso."
+              },
+              {
+                "segment_id": "SEG_00139",
+                "quote": "Só que eles não se tocaram de um detalhe."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "RESULT"
+        ],
+        "summary": "Descrição do uso de instrumentos de navegação durante o voo, incluindo a sintonização em frequências de VOR e ADF, e a reação dos pilotos ao sinal não encontrado. Faltam informações sobre o resultado prático desse uso de instrumentos.",
+        "contradictions": [],
+        "narrative_dependencies": []
+      },
+      "reason": "nonliteral_supporting_quote",
+      "publication_ready": false
+    },
+    {
+      "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+      "proposal_kind": "story_series",
+      "proposal": {
+        "title": "Explicação sobre como pilotos usavam radionavegação antes do GPS",
+        "summary": "Antes do GPS, os pilotos utilizavam sinais de rádio emitidos por antenas ao redor do mundo para navegar. Ao sintonizar essas frequências, o instrumento ADF (Automatic Direction Finder) apontava a direção para onde o avião deveria voar, indicando se estava em direção à estação de rádio ou não.",
+        "stories": [
+          {
+            "source_unit_ids": [
+              "UNIT_eabcd282c5637f6a"
+            ],
+            "source_segment_ids": [
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131",
+              "SEG_00132"
+            ],
+            "narrative_role": "EXPLANATION",
+            "summary": "Os pilotos usavam antenas que emitiam sinais de rádio em frequências específicas. Ao sintonizar essas frequências, o ADF apontava a direção correta para o avião seguir.",
+            "context_required": [
+              "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+            ],
+            "previous_story_position": null,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Antes do GPS, os pilotos dependiam de uma tecnologia chamada radionavegação.",
+            "suggested_ending": "Essa técnica era essencial para a navegação em áreas onde o radar não estava disponível.",
+            "new_information": "O uso do ADF e das antenas de rádio era uma prática comum antes da era do GPS, permitindo que os pilotos determinassem sua direção com base nos sinais captados.",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              }
+            ],
+            "missing_information": [
+              "Detalhes sobre como os pilotos ajustavam as frequências durante o voo.",
+              "Como os sinais eram captados em diferentes condições climáticas."
+            ]
+          }
+        ],
+        "continuity_checks": {
+          "first_story_self_contained": true,
+          "progression_without_repetition": true,
+          "order_understandable": true,
+          "hook_closure_honest": true,
+          "essential_context_preserved": true
+        },
+        "contradictions": [],
+        "missing_information": [
+          "Detalhes sobre como os pilotos ajustavam as frequências durante o voo.",
+          "Como os sinais eram captados em diferentes condições climáticas."
+        ],
+        "ending_status": "OPEN_ENDING_DECLARED"
+      },
+      "reason": "nonliteral_supporting_quote",
+      "publication_ready": false
+    }
+  ],
+  "selected_question_ids": [
+    "Q_0015"
+  ],
+  "canonical_question_count": 34,
+  "limitations": [
+    "canonical_asr_not_human_audio_verified",
+    "literal_quotes_do_not_certify_semantic_entailment",
+    "no_new_audiovisual_analysis",
+    "commercial_rights_camera_preview_and_publication_gates_preserved"
+  ]
+}

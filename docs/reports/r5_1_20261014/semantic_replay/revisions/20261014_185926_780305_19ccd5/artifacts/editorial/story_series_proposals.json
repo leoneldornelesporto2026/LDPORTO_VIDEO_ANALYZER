@@ -1,0 +1,903 @@
+{
+  "schema_version": "1.0",
+  "publication_ready": false,
+  "human_review_completed": false,
+  "canonical_data_modified": false,
+  "series": [
+    {
+      "title": "Introdução da história do voo e do contexto do acidente",
+      "summary": "A introdução apresenta a narrativa do voo e o contexto do acidente, estabelecendo uma base para compreender os eventos que se seguiram.",
+      "stories": [
+        {
+          "source_unit_ids": [
+            "UNIT_61bd86b4406b95aa"
+          ],
+          "source_segment_ids": [
+            "SEG_00016"
+          ],
+          "narrative_role": "SETUP",
+          "summary": "A introdução apresenta a narrativa do voo e o contexto do acidente, estabelecendo uma base para compreender os eventos que se seguiram.",
+          "context_required": [],
+          "previous_story_position": null,
+          "next_story_relationship": {
+            "story_id": "SEM_STORY_09a101b8e9045e87",
+            "relationship": "CONTINUES"
+          },
+          "suggested_opening": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo.",
+          "suggested_ending": "A introdução apresenta a narrativa do voo e o contexto do acidente, estabelecendo uma base para compreender os eventos que se seguiram.",
+          "new_information": "Introdução da história do voo e do contexto do acidente",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00016",
+              "quote": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo."
+            }
+          ],
+          "missing_information": [],
+          "story_id": "SEM_STORY_0b97d1114045b5b7",
+          "series_id": "SEM_SERIES_c2bb12c010e16522",
+          "sequence_position": 1,
+          "sequence_total": 6,
+          "source_arc_ids": [
+            "STORY_0001"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00016",
+              "start": 82.46,
+              "end": 91.58
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00016",
+              "text": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo.",
+              "start": 82.46,
+              "end": 91.58
+            }
+          ],
+          "model_provenance": {
+            "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+            "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+            "duration_seconds": 141.03200000000652,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": null,
+          "estimated_source_duration": 9.12,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        },
+        {
+          "source_unit_ids": [
+            "UNIT_ca64f9649a7ffbf8"
+          ],
+          "source_segment_ids": [
+            "SEG_00017",
+            "SEG_00018"
+          ],
+          "narrative_role": "SETUP",
+          "summary": "Contexto histórico da Varig e como uma mudança específica foi a causa determinante do acidente.",
+          "context_required": [],
+          "previous_story_position": 1,
+          "next_story_relationship": {
+            "story_id": "SEM_STORY_1a77fed99901826e",
+            "relationship": "CONTINUES"
+          },
+          "suggested_opening": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente.",
+          "suggested_ending": "Contexto histórico da Varig e como uma mudança específica foi a causa determinante do acidente.",
+          "new_information": "Contexto da mudança na Varig e sua relação com o acidente",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00017",
+              "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+            },
+            {
+              "segment_id": "SEG_00018",
+              "quote": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+            }
+          ],
+          "missing_information": [],
+          "story_id": "SEM_STORY_09a101b8e9045e87",
+          "series_id": "SEM_SERIES_c2bb12c010e16522",
+          "sequence_position": 2,
+          "sequence_total": 6,
+          "source_arc_ids": [
+            "STORY_0002"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00017",
+              "start": 91.68,
+              "end": 100.42
+            },
+            {
+              "segment_id": "SEG_00018",
+              "start": 100.68,
+              "end": 106.88
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00017",
+              "text": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente.",
+              "start": 91.68,
+              "end": 100.42
+            },
+            {
+              "segment_id": "SEG_00018",
+              "text": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo.",
+              "start": 100.68,
+              "end": 106.88
+            }
+          ],
+          "model_provenance": {
+            "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+            "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+            "duration_seconds": 141.03200000000652,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": "SEM_STORY_0b97d1114045b5b7",
+          "estimated_source_duration": 14.94,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        },
+        {
+          "source_unit_ids": [
+            "UNIT_caf4fa118bbb5c74"
+          ],
+          "source_segment_ids": [
+            "SEG_00123",
+            "SEG_00124",
+            "SEG_00125"
+          ],
+          "narrative_role": "SETUP",
+          "summary": "O aeroporto de Marabá não tinha radar, o que levou à necessidade de usar outros métodos de navegação.",
+          "context_required": [],
+          "previous_story_position": 2,
+          "next_story_relationship": {
+            "story_id": "SEM_STORY_3f9655e90b784e6e",
+            "relationship": "CONTINUES"
+          },
+          "suggested_opening": "O aeroporto lá de Marabá não tinha radar.",
+          "suggested_ending": "O aeroporto de Marabá não tinha radar, o que levou à necessidade de usar outros métodos de navegação.",
+          "new_information": "Decolagem e informações sobre o avião",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00123",
+              "quote": "O aeroporto lá de Marabá não tinha radar."
+            },
+            {
+              "segment_id": "SEG_00124",
+              "quote": "Então, quando o avião tomou a proa 270, ao invés de 027, ninguém percebeu o erro da tripulação."
+            },
+            {
+              "segment_id": "SEG_00125",
+              "quote": "Mais um elo se fechava."
+            }
+          ],
+          "missing_information": [],
+          "story_id": "SEM_STORY_1a77fed99901826e",
+          "series_id": "SEM_SERIES_c2bb12c010e16522",
+          "sequence_position": 3,
+          "sequence_total": 6,
+          "source_arc_ids": [
+            "STORY_0016"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00123",
+              "start": 696.06,
+              "end": 698.84
+            },
+            {
+              "segment_id": "SEG_00124",
+              "start": 699.12,
+              "end": 707.24
+            },
+            {
+              "segment_id": "SEG_00125",
+              "start": 707.36,
+              "end": 709.22
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00123",
+              "text": "O aeroporto lá de Marabá não tinha radar.",
+              "start": 696.06,
+              "end": 698.84
+            },
+            {
+              "segment_id": "SEG_00124",
+              "text": "Então, quando o avião tomou a proa 270, ao invés de 027, ninguém percebeu o erro da tripulação.",
+              "start": 699.12,
+              "end": 707.24
+            },
+            {
+              "segment_id": "SEG_00125",
+              "text": "Mais um elo se fechava.",
+              "start": 707.36,
+              "end": 709.22
+            }
+          ],
+          "model_provenance": {
+            "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+            "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+            "duration_seconds": 141.03200000000652,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": "SEM_STORY_09a101b8e9045e87",
+          "estimated_source_duration": 12.76,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        },
+        {
+          "source_unit_ids": [
+            "UNIT_5b31b4dd48b24eae",
+            "UNIT_5e1ac5211aadfb82",
+            "UNIT_eabcd282c5637f6a"
+          ],
+          "source_segment_ids": [
+            "SEG_00126",
+            "SEG_00127",
+            "SEG_00128",
+            "SEG_00129",
+            "SEG_00130",
+            "SEG_00131",
+            "SEG_00132"
+          ],
+          "narrative_role": "SETUP",
+          "summary": "Explicação sobre como os pilotos usavam a radionavegação antes do GPS.",
+          "context_required": [],
+          "previous_story_position": 3,
+          "next_story_relationship": {
+            "story_id": "SEM_STORY_c42efd19fae3b7cd",
+            "relationship": "CONTINUES"
+          },
+          "suggested_opening": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+          "suggested_ending": "Explicação sobre como os pilotos usavam a radionavegação antes do GPS.",
+          "new_information": "Explicação sobre como pilotos usavam radionavegação antes do GPS",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00126",
+              "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+            },
+            {
+              "segment_id": "SEG_00127",
+              "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+            },
+            {
+              "segment_id": "SEG_00128",
+              "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+            },
+            {
+              "segment_id": "SEG_00129",
+              "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+            },
+            {
+              "segment_id": "SEG_00130",
+              "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+            },
+            {
+              "segment_id": "SEG_00131",
+              "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+            },
+            {
+              "segment_id": "SEG_00132",
+              "quote": "Grosseiramente é isso."
+            }
+          ],
+          "missing_information": [],
+          "story_id": "SEM_STORY_3f9655e90b784e6e",
+          "series_id": "SEM_SERIES_c2bb12c010e16522",
+          "sequence_position": 4,
+          "sequence_total": 6,
+          "source_arc_ids": [
+            "STORY_0017"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00126",
+              "start": 709.46,
+              "end": 714.72
+            },
+            {
+              "segment_id": "SEG_00127",
+              "start": 714.94,
+              "end": 722.38
+            },
+            {
+              "segment_id": "SEG_00128",
+              "start": 722.48,
+              "end": 730.92
+            },
+            {
+              "segment_id": "SEG_00129",
+              "start": 731.08,
+              "end": 734.92
+            },
+            {
+              "segment_id": "SEG_00130",
+              "start": 735.12,
+              "end": 739.66
+            },
+            {
+              "segment_id": "SEG_00131",
+              "start": 739.9,
+              "end": 752.1
+            },
+            {
+              "segment_id": "SEG_00132",
+              "start": 753.34,
+              "end": 754.26
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00126",
+              "text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+              "start": 709.46,
+              "end": 714.72
+            },
+            {
+              "segment_id": "SEG_00127",
+              "text": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação.",
+              "start": 714.94,
+              "end": 722.38
+            },
+            {
+              "segment_id": "SEG_00128",
+              "text": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+              "start": 722.48,
+              "end": 730.92
+            },
+            {
+              "segment_id": "SEG_00129",
+              "text": "E o avião consegue captar essas frequências, basta sintonizar.",
+              "start": 731.08,
+              "end": 734.92
+            },
+            {
+              "segment_id": "SEG_00130",
+              "text": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo.",
+              "start": 735.12,
+              "end": 739.66
+            },
+            {
+              "segment_id": "SEG_00131",
+              "text": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+              "start": 739.9,
+              "end": 752.1
+            },
+            {
+              "segment_id": "SEG_00132",
+              "text": "Grosseiramente é isso.",
+              "start": 753.34,
+              "end": 754.26
+            }
+          ],
+          "model_provenance": {
+            "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+            "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+            "duration_seconds": 141.03200000000652,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": "SEM_STORY_1a77fed99901826e",
+          "estimated_source_duration": 42.64,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        },
+        {
+          "source_unit_ids": [
+            "UNIT_4328b28b45d028db",
+            "UNIT_3b8d58d26091fea5"
+          ],
+          "source_segment_ids": [
+            "SEG_00133",
+            "SEG_00134",
+            "SEG_00135",
+            "SEG_00136",
+            "SEG_00137",
+            "SEG_00138",
+            "SEG_00139"
+          ],
+          "narrative_role": "SETUP",
+          "summary": "Descrição do uso de instrumentos de navegação durante o voo.",
+          "context_required": [],
+          "previous_story_position": 4,
+          "next_story_relationship": {
+            "story_id": "SEM_STORY_42f6d46a1e32c91c",
+            "relationship": "CONTINUES"
+          },
+          "suggested_opening": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá.",
+          "suggested_ending": "Descrição do uso de instrumentos de navegação durante o voo.",
+          "new_information": "Descrição do uso de instrumentos de navegação durante o voo",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00133",
+              "quote": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá."
+            },
+            {
+              "segment_id": "SEG_00134",
+              "quote": "Então, a indicação das agulhas dos RMI, que é esse instrumento aí que você está vendo, estavam apontadas para trás."
+            },
+            {
+              "segment_id": "SEG_00135",
+              "quote": "Com 15 minutos de voo, por volta das 17h50, o Zilli sintonizou os instrumentos dele na frequência de Belém."
+            },
+            {
+              "segment_id": "SEG_00136",
+              "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+            },
+            {
+              "segment_id": "SEG_00137",
+              "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+            },
+            {
+              "segment_id": "SEG_00138",
+              "quote": "E aí, nem se preocuparam com isso."
+            },
+            {
+              "segment_id": "SEG_00139",
+              "quote": "Só que eles não se tocaram de um detalhe."
+            }
+          ],
+          "missing_information": [],
+          "story_id": "SEM_STORY_c42efd19fae3b7cd",
+          "series_id": "SEM_SERIES_c2bb12c010e16522",
+          "sequence_position": 5,
+          "sequence_total": 6,
+          "source_arc_ids": [
+            "STORY_0018"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00133",
+              "start": 754.42,
+              "end": 764.12
+            },
+            {
+              "segment_id": "SEG_00134",
+              "start": 764.4,
+              "end": 771.46
+            },
+            {
+              "segment_id": "SEG_00135",
+              "start": 771.46,
+              "end": 779.7
+            },
+            {
+              "segment_id": "SEG_00136",
+              "start": 779.82,
+              "end": 793.1
+            },
+            {
+              "segment_id": "SEG_00137",
+              "start": 793.2,
+              "end": 804.72
+            },
+            {
+              "segment_id": "SEG_00138",
+              "start": 804.86,
+              "end": 807.4
+            },
+            {
+              "segment_id": "SEG_00139",
+              "start": 807.54,
+              "end": 810.08
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00133",
+              "text": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá.",
+              "start": 754.42,
+              "end": 764.12
+            },
+            {
+              "segment_id": "SEG_00134",
+              "text": "Então, a indicação das agulhas dos RMI, que é esse instrumento aí que você está vendo, estavam apontadas para trás.",
+              "start": 764.4,
+              "end": 771.46
+            },
+            {
+              "segment_id": "SEG_00135",
+              "text": "Com 15 minutos de voo, por volta das 17h50, o Zilli sintonizou os instrumentos dele na frequência de Belém.",
+              "start": 771.46,
+              "end": 779.7
+            },
+            {
+              "segment_id": "SEG_00136",
+              "text": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém.",
+              "start": 779.82,
+              "end": 793.1
+            },
+            {
+              "segment_id": "SEG_00137",
+              "text": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém.",
+              "start": 793.2,
+              "end": 804.72
+            },
+            {
+              "segment_id": "SEG_00138",
+              "text": "E aí, nem se preocuparam com isso.",
+              "start": 804.86,
+              "end": 807.4
+            },
+            {
+              "segment_id": "SEG_00139",
+              "text": "Só que eles não se tocaram de um detalhe.",
+              "start": 807.54,
+              "end": 810.08
+            }
+          ],
+          "model_provenance": {
+            "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+            "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+            "duration_seconds": 141.03200000000652,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": "SEM_STORY_3f9655e90b784e6e",
+          "estimated_source_duration": 54.88,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        },
+        {
+          "source_unit_ids": [
+            "UNIT_921943a5a6ba0cb7",
+            "UNIT_4ce92d86c6d99336",
+            "UNIT_62e9f998a0d2f23f"
+          ],
+          "source_segment_ids": [
+            "SEG_00140",
+            "SEG_00141",
+            "SEG_00142",
+            "SEG_00143"
+          ],
+          "narrative_role": "SETUP",
+          "summary": "Menciona a existência de uma antena intermediária entre Marabá e Belém.",
+          "context_required": [],
+          "previous_story_position": 5,
+          "next_story_relationship": null,
+          "suggested_opening": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí.",
+          "suggested_ending": "Menciona a existência de uma antena intermediária entre Marabá e Belém.",
+          "new_information": "Menciona a existência de uma antena intermediária entre Marabá e Belém",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00140",
+              "quote": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí."
+            },
+            {
+              "segment_id": "SEG_00141",
+              "quote": "Inclusive, essa antena aparece nas cartas de navegação da região."
+            },
+            {
+              "segment_id": "SEG_00142",
+              "quote": "Se os pilotos tivessem tentado sintonizar essa antena, ela poderia aparecer no ADF, mesmo que eles estivessem voando em outra direção, porque eles estavam dentro do alcance dela."
+            },
+            {
+              "segment_id": "SEG_00143",
+              "quote": "E os pilotos provavelmente perceberiam também o erro que eles tinham cometido."
+            }
+          ],
+          "missing_information": [],
+          "story_id": "SEM_STORY_42f6d46a1e32c91c",
+          "series_id": "SEM_SERIES_c2bb12c010e16522",
+          "sequence_position": 6,
+          "sequence_total": 6,
+          "source_arc_ids": [
+            "STORY_0019"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00140",
+              "start": 810.26,
+              "end": 822.4
+            },
+            {
+              "segment_id": "SEG_00141",
+              "start": 822.64,
+              "end": 826.74
+            },
+            {
+              "segment_id": "SEG_00142",
+              "start": 826.74,
+              "end": 837.86
+            },
+            {
+              "segment_id": "SEG_00143",
+              "start": 838.04,
+              "end": 842.96
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00140",
+              "text": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí.",
+              "start": 810.26,
+              "end": 822.4
+            },
+            {
+              "segment_id": "SEG_00141",
+              "text": "Inclusive, essa antena aparece nas cartas de navegação da região.",
+              "start": 822.64,
+              "end": 826.74
+            },
+            {
+              "segment_id": "SEG_00142",
+              "text": "Se os pilotos tivessem tentado sintonizar essa antena, ela poderia aparecer no ADF, mesmo que eles estivessem voando em outra direção, porque eles estavam dentro do alcance dela.",
+              "start": 826.74,
+              "end": 837.86
+            },
+            {
+              "segment_id": "SEG_00143",
+              "text": "E os pilotos provavelmente perceberiam também o erro que eles tinham cometido.",
+              "start": 838.04,
+              "end": 842.96
+            }
+          ],
+          "model_provenance": {
+            "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+            "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+            "duration_seconds": 141.03200000000652,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": "SEM_STORY_c42efd19fae3b7cd",
+          "estimated_source_duration": 32.28,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        }
+      ],
+      "continuity_checks": {
+        "first_story_self_contained": true,
+        "progression_without_repetition": true,
+        "order_understandable": true,
+        "hook_closure_honest": true,
+        "essential_context_preserved": true
+      },
+      "contradictions": [],
+      "missing_information": [],
+      "ending_status": "OPEN_ENDING_DECLARED",
+      "series_id": "SEM_SERIES_c2bb12c010e16522",
+      "sequence_id": "SEM_SERIES_c2bb12c010e16522",
+      "source_segment_ids": [
+        "SEG_00016",
+        "SEG_00017",
+        "SEG_00018",
+        "SEG_00123",
+        "SEG_00124",
+        "SEG_00125",
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132",
+        "SEG_00133",
+        "SEG_00134",
+        "SEG_00135",
+        "SEG_00136",
+        "SEG_00137",
+        "SEG_00138",
+        "SEG_00139",
+        "SEG_00140",
+        "SEG_00141",
+        "SEG_00142",
+        "SEG_00143"
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00016",
+          "start": 82.46,
+          "end": 91.58
+        },
+        {
+          "segment_id": "SEG_00017",
+          "start": 91.68,
+          "end": 100.42
+        },
+        {
+          "segment_id": "SEG_00018",
+          "start": 100.68,
+          "end": 106.88
+        },
+        {
+          "segment_id": "SEG_00123",
+          "start": 696.06,
+          "end": 698.84
+        },
+        {
+          "segment_id": "SEG_00124",
+          "start": 699.12,
+          "end": 707.24
+        },
+        {
+          "segment_id": "SEG_00125",
+          "start": 707.36,
+          "end": 709.22
+        },
+        {
+          "segment_id": "SEG_00126",
+          "start": 709.46,
+          "end": 714.72
+        },
+        {
+          "segment_id": "SEG_00127",
+          "start": 714.94,
+          "end": 722.38
+        },
+        {
+          "segment_id": "SEG_00128",
+          "start": 722.48,
+          "end": 730.92
+        },
+        {
+          "segment_id": "SEG_00129",
+          "start": 731.08,
+          "end": 734.92
+        },
+        {
+          "segment_id": "SEG_00130",
+          "start": 735.12,
+          "end": 739.66
+        },
+        {
+          "segment_id": "SEG_00131",
+          "start": 739.9,
+          "end": 752.1
+        },
+        {
+          "segment_id": "SEG_00132",
+          "start": 753.34,
+          "end": 754.26
+        },
+        {
+          "segment_id": "SEG_00133",
+          "start": 754.42,
+          "end": 764.12
+        },
+        {
+          "segment_id": "SEG_00134",
+          "start": 764.4,
+          "end": 771.46
+        },
+        {
+          "segment_id": "SEG_00135",
+          "start": 771.46,
+          "end": 779.7
+        },
+        {
+          "segment_id": "SEG_00136",
+          "start": 779.82,
+          "end": 793.1
+        },
+        {
+          "segment_id": "SEG_00137",
+          "start": 793.2,
+          "end": 804.72
+        },
+        {
+          "segment_id": "SEG_00138",
+          "start": 804.86,
+          "end": 807.4
+        },
+        {
+          "segment_id": "SEG_00139",
+          "start": 807.54,
+          "end": 810.08
+        },
+        {
+          "segment_id": "SEG_00140",
+          "start": 810.26,
+          "end": 822.4
+        },
+        {
+          "segment_id": "SEG_00141",
+          "start": 822.64,
+          "end": 826.74
+        },
+        {
+          "segment_id": "SEG_00142",
+          "start": 826.74,
+          "end": 837.86
+        },
+        {
+          "segment_id": "SEG_00143",
+          "start": 838.04,
+          "end": 842.96
+        }
+      ],
+      "model_provenance": {
+        "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+        "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+        "duration_seconds": 141.03200000000652,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "blocking_issues": [],
+      "editorial_status": "PROPOSED",
+      "review_required": true,
+      "requires_review": true,
+      "publication_ready": false,
+      "human_review_completed": false,
+      "preview_approved": false,
+      "assembly_disclosure_required": true
+    }
+  ],
+  "rejected_proposals": []
+}

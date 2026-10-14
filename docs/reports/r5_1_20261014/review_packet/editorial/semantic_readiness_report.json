@@ -1,0 +1,46 @@
+{
+  "status": "SEMANTIC_HANDOFF_PARTIAL",
+  "comparison": {
+    "arcs_R5": 50,
+    "arcs_R51_preserved": 50,
+    "cross_arc_relations": 3,
+    "relations_with_source_quotes": 3,
+    "rejected_relations": 1,
+    "semantic_answers_proposed": 1,
+    "semantic_questions_not_evaluated": 33,
+    "canonical_qa_preserved": true,
+    "complete_explanations_proposed": 0,
+    "complete_narratives_proposed": 0,
+    "story_series": 1,
+    "real_stories": 1,
+    "stories_per_series": [
+      1
+    ],
+    "new_textual_model_calls": 19,
+    "task_cache_hits": 11,
+    "new_audiovisual_inference": false,
+    "source_scores_and_shortlist_preserved": true,
+    "human_review_completed": false,
+    "preview_approved": false,
+    "publication_ready": false,
+    "stories_with_main_and_two_alternatives": 1,
+    "subtitle_granularity_counts": {
+      "word": 1
+    },
+    "visual_metadata_status_counts": {
+      "COMPLETE_FOR_REVIEW": 1
+    },
+    "grounded_highlight_candidates": 3,
+    "editorial_title_proposals": 3,
+    "title_proposals_abstained": 0,
+    "broken_references": 0,
+    "final_gate": "SEMANTIC_HANDOFF_PARTIAL"
+  },
+  "publication_ready": false,
+  "limitations": [
+    "targeted_textual_replay_not_full_semantic_coverage",
+    "source_quotes_verified_semantic_entailment_not_human_verified",
+    "source_ASR_and_numbers_require_listening",
+    "no_new_frames_audio_or_render_validation"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "status": "B_VALIDATED",
+  "validation": {
+    "status": "valid",
+    "errors": [],
+    "broken_reference_count": 0,
+    "publication_ready": false
+  },
+  "actual_semantic_evidence_available": true,
+  "new_model_calls": 0,
+  "cache_hits": 5,
+  "wall_seconds": 4.735824099974707,
+  "diagnostics_ref": "artifacts/editorial/semantic_resolver_diagnostics.json"
+}

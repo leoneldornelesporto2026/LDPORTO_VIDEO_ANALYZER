@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.038" timestamp="2026-10-14T16:24:36.060874-03:00" hostname="leonelporto"><testcase classname="src.tests.test_r51_semantic_package" name="test_real_zip_consumer_resolves_new_provenance_and_preserves_legacy" time="0.880"><failure message="Failed: no stories, no model">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-642/test_real_zip_consumer_resolve0')
+
+    def test_real_zip_consumer_resolves_new_provenance_and_preserves_legacy(tmp_path):
+        from pathlib import Path
+        from ldporto.core import digest, file_hash
+        from ldporto.second_curation_export import build_core_package
+        from ldporto.semantic_package import read_package, decoded_documents, export_semantic_package, validate_semantic_package
+        from ldporto.semantic_replay import delivery_documents
+        from ldporto.story_visual_handoff import build_story_visual_handoff
+        from test_stage06_report_coherence import fixture
+        analysis = fixture()
+        analysis['metadata'].update(sha256='a'*64, source={'id':'synthetic-semantic-consumer'})
+        original = build_core_package(analysis, output_dir=tmp_path/'original',
+            cfg={'narrative_handoff_enabled':True, 'second_curation_visual_candidate_limit':0})
+        reference = Path(original['path'])
+        legacy = decoded_documents(read_package(reference))
+        sem = build_semantic_analysis(legacy, lambda *a: ({'topics':[], 'abstentions':['synthetic empty input']}, {'origin':'fixture'}))
+&gt;       sem.update(build_story_visual_handoff(legacy, sem, lambda *a: pytest.fail('no stories, no model')))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\tests\test_r51_semantic_package.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ldporto\story_visual_handoff.py:554: in build_story_visual_handoff
+    reel_pieces, reel_tasks = _reel_titles(legacy, metadata, by_id, infer)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\ldporto\story_visual_handoff.py:391: in _reel_titles
+    payload, model = infer(task_id, deepcopy(context), title_response_schema())
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = ('titles:reel:M1', {'prompt_version': 'r51-story-visual-source-bound-v1', 'instruction': 'Produza propostas editoriais...ote'], 'properties': {'segment_id': {...}, 'quote': {...}}, 'additionalProperties': False}, 'maxItems': 4}, ...}, ...})
+
+&gt;   sem.update(build_story_visual_handoff(legacy, sem, lambda *a: pytest.fail('no stories, no model')))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: no stories, no model
+
+src\tests\test_r51_semantic_package.py:79: Failed</failure></testcase></testsuite></testsuites>

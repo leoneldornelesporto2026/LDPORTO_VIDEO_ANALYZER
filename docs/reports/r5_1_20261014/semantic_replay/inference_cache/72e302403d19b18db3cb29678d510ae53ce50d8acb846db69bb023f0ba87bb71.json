@@ -1,0 +1,27 @@
+{
+  "key": "72e302403d19b18db3cb29678d510ae53ce50d8acb846db69bb023f0ba87bb71",
+  "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+  "payload": {
+    "primary_title": null,
+    "alternative_titles": [],
+    "opening_hook_text": null,
+    "hook_supporting_quotes": [],
+    "social_caption": null,
+    "caption_supporting_quotes": [],
+    "engagement_question": null,
+    "cta": null,
+    "keywords": [],
+    "abstention_reason": "Falta de informações suficientes para formular títulos, hooks e perguntas com base em suporte textual. Não há citações claras que sustentem o uso de palavras específicas como 'radar', 'ADF' ou 'frequências de rádio' de forma contextualizada para criar títulos ou perguntas editoriais fundamentadas."
+  },
+  "response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67",
+  "provenance": {
+    "call_id": "a87d6b5e7eeb4b1ab63a77d5dcc803bd:1",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "f74c6fd576027f6c462fa7256eb8407bc84abe4f8ce5643f7da5141d9d9b8393",
+    "response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67",
+    "duration_seconds": 5.516000000061467,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

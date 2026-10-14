@@ -1,0 +1,51 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\r5_1_20261014\\final_validation.xml"
+  ],
+  "returncode": 0,
+  "wall_seconds": 257.480404599919,
+  "test_count": 2293,
+  "passed": 2290,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 3,
+  "status": "PASSED",
+  "scope": "full local regression; heavy pipelines mocked by existing fixtures; no new AV inference",
+  "baseline_R5_passed": 2078,
+  "baseline_R5_test_identities": 2081,
+  "missing_R5_test_identities": [],
+  "old_pass_not_reproduced": [],
+  "skipped_test_identities": [
+    "src.tests.test_stage46_commercial_visual_replay.test_symlink_media_and_parent_artifacts_rejected",
+    "src.tests.test_stage55_commercial_evidence.test_opt_in_tesseract_on_authored_synthetic_offer",
+    "src.tests.test_stage64_curation_recovery.test_links_are_blocked"
+  ],
+  "evidence_files": [
+    {
+      "path_relative_to_project": "docs/reports/r5_1_20261014/final_validation.json",
+      "bytes": 254490,
+      "sha256": "e9d5f0959a0569f118dc20f160ee05df22a76b552c2aacdfb890f2a9b72b5dcb"
+    },
+    {
+      "path_relative_to_project": "docs/reports/r5_1_20261014/final_validation.xml",
+      "bytes": 337571,
+      "sha256": "97baa6536d1c09141e60d133ebb9274125ed9ed7207161e60a20bdf6812f63d4"
+    },
+    {
+      "path_relative_to_project": "docs/reports/r5_1_20261014/final_validation.log",
+      "bytes": 2637,
+      "sha256": "3939ab32cc49c1801a56e6f574156fdb48e2bee58c78b9495b1d7a2b29297d70"
+    },
+    {
+      "path_relative_to_project": "docs/reports/r5_1_20261014/sources_before_release.json",
+      "bytes": 30556,
+      "sha256": "4e9d7647d1daf80f06b66f433c69cc0185250b83c95f66db712ccde9ada56451"
+    }
+  ],
+  "human_review_completed": false,
+  "publication_ready": false
+}

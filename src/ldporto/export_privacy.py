@@ -15,7 +15,9 @@ from .core import scrub
 SENSITIVE_KEYS = {'hf_token', 'token', 'password', 'passphrase', 'authorization',
                   'api_key', 'credentials', 'cookies_file', 'private_prompt',
                   'secret', 'client_secret', 'access_token', 'refresh_token'}
-PRIVATE_PATH = re.compile(r'(?i)(?:[a-z]:[\\/]|\\\\[^\\/\s]+[\\/][^\s]+|(?<!\w)/(?:Users|home|tmp|mnt)/)[^\s"\r\n]*')
+# A drive may follow punctuation, but never begin inside an identifier/scheme:
+# without this boundary, the final "s:/" in "https://" is a false drive.
+PRIVATE_PATH = re.compile(r'(?i)(?:(?<!\w)[a-z]:[\\/]|\\\\[^\\/\s]+[\\/][^\s]+|(?<!\w)/(?:Users|home|tmp|mnt)/)[^\s"\r\n]*')
 PATTERNS = {
     'private_path': PRIVATE_PATH,
     'email': re.compile(r'(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'),

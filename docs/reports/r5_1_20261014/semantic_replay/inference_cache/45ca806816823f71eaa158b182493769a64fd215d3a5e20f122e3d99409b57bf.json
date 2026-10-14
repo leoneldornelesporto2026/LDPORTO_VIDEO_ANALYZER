@@ -1,0 +1,75 @@
+{
+  "key": "45ca806816823f71eaa158b182493769a64fd215d3a5e20f122e3d99409b57bf",
+  "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "series": [
+      {
+        "title": "Explicação sobre como pilotos usavam radionavegação antes do GPS",
+        "summary": "Antes do GPS, os pilotos utilizavam sinais de rádio emitidos por antenas ao redor do mundo para navegar. Ao sintonizar essas frequências, o instrumento ADF (Automatic Direction Finder) apontava a direção para onde o avião deveria voar, indicando se estava em direção à estação de rádio ou não.",
+        "stories": [
+          {
+            "source_unit_ids": [
+              "UNIT_eabcd282c5637f6a"
+            ],
+            "source_segment_ids": [
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131",
+              "SEG_00132"
+            ],
+            "narrative_role": "EXPLANATION",
+            "summary": "Os pilotos usavam antenas que emitiam sinais de rádio em frequências específicas. Ao sintonizar essas frequências, o ADF apontava a direção correta para o avião seguir.",
+            "context_required": [
+              "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+            ],
+            "previous_story_position": null,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Antes do GPS, os pilotos dependiam de uma tecnologia chamada radionavegação.",
+            "suggested_ending": "Essa técnica era essencial para a navegação em áreas onde o radar não estava disponível.",
+            "new_information": "O uso do ADF e das antenas de rádio era uma prática comum antes da era do GPS, permitindo que os pilotos determinassem sua direção com base nos sinais captados.",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              }
+            ],
+            "missing_information": [
+              "Detalhes sobre como os pilotos ajustavam as frequências durante o voo.",
+              "Como os sinais eram captados em diferentes condições climáticas."
+            ]
+          }
+        ],
+        "continuity_checks": {
+          "first_story_self_contained": true,
+          "progression_without_repetition": true,
+          "order_understandable": true,
+          "hook_closure_honest": true,
+          "essential_context_preserved": true
+        },
+        "contradictions": [],
+        "missing_information": [
+          "Detalhes sobre como os pilotos ajustavam as frequências durante o voo.",
+          "Como os sinais eram captados em diferentes condições climáticas."
+        ],
+        "ending_status": "OPEN_ENDING_DECLARED"
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "704b472e095678cc9081ff36ac6b1fa294a6c35d95252180ce91ff431ad3d1b4",
+  "provenance": {
+    "call_id": "7c44100c662b435f8c7aff2261865379:2",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "10f5aaa0128916bf4ee58da3289c7280a331a34f8ce23a8a4e3f4d8496dd4e5f",
+    "response_sha256": "704b472e095678cc9081ff36ac6b1fa294a6c35d95252180ce91ff431ad3d1b4",
+    "duration_seconds": 30.655999999959022,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

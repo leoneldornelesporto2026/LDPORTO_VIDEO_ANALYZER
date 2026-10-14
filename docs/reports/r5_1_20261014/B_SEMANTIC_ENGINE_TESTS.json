@@ -1,0 +1,14 @@
+{
+  "command": ".venv/Scripts/python.exe -m pytest src/tests/test_r51_semantic_narrative.py src/tests/test_r5_narrative_relations.py src/tests/test_r5_narrative_handoff.py -q --junitxml=docs/reports/r5_1_20261014/B_SEMANTIC_ENGINE_TESTS.xml",
+  "result": {
+    "tests": 112,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "files": {
+    "src/ldporto/semantic_narrative.py": "c810a2e72a06c879f845949bc6572a8de236918549f6973bebba4f2814b7e8f5",
+    "src/tests/test_r51_semantic_narrative.py": "32282df5d8e843066f1ce9689ca97c35d809edc7632b955696595b36a8f8f384"
+  },
+  "scope": "Synthetic text boundary regression plus preserved R5 relation/handoff tests. No model, audio, video, human accuracy or publication claims."
+}

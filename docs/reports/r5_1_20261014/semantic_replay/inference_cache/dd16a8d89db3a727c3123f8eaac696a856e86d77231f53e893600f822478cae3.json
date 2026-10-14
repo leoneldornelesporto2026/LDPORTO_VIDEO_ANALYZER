@@ -1,0 +1,78 @@
+{
+  "key": "dd16a8d89db3a727c3123f8eaac696a856e86d77231f53e893600f822478cae3",
+  "task_id": "semantic.global_topic_map",
+  "payload": {
+    "topics": [
+      {
+        "label": "Uso da radionavegação antes do GPS",
+        "kind": "TOPIC",
+        "source_arc_ids": [
+          "STORY_0017",
+          "STORY_0018",
+          "STORY_0031",
+          "STORY_0032"
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00127",
+            "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+          },
+          {
+            "segment_id": "SEG_00131",
+            "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          }
+        ],
+        "search_terms": [
+          "radionavegação",
+          "ADF",
+          "frequência",
+          "sintonizar",
+          "antenas"
+        ]
+      },
+      {
+        "label": "Erro de rumo e impacto no acidente do Varig 254",
+        "kind": "TOPIC",
+        "source_arc_ids": [
+          "STORY_0033",
+          "STORY_0034",
+          "STORY_0036",
+          "STORY_0039",
+          "STORY_0040"
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00124",
+            "quote": "Então, quando o avião tomou a proa 270, ao invés de 027, ninguém percebeu o erro da tripulação."
+          },
+          {
+            "segment_id": "SEG_00339",
+            "quote": "O impacto do avião na floresta foi devastador, resultando em um grande número de vítimas."
+          }
+        ],
+        "search_terms": [
+          "proa 270",
+          "erro de rumo",
+          "Varig 254",
+          "acidente",
+          "impacto"
+        ]
+      }
+    ],
+    "abstentions": [
+      "Não há evidência suficiente para determinar a causa direta do erro de rumo.",
+      "Não há informações claras sobre o número exato de vítimas no acidente."
+    ]
+  },
+  "response_sha256": "459518acdeb67fb804eeafdf32561229645f70dc87c7b4a57d32c89b4a219df8",
+  "provenance": {
+    "call_id": "f0928eef4de74047a10e1950f5c406d5:1",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "29b9db96163a5c7444558b4b907045cacc5665c23efbc95253d5abecf76c4e02",
+    "response_sha256": "459518acdeb67fb804eeafdf32561229645f70dc87c7b4a57d32c89b4a219df8",
+    "duration_seconds": 43.48499999998603,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

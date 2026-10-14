@@ -1,0 +1,15 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "src/tests/test_r51_story_visual_handoff.py",
+    "src/tests/test_r51_privacy_schema.py",
+    "-q",
+    "--junitxml=docs\\reports\\r5_1_20261014\\visual_focus\\refined.junit.xml"
+  ],
+  "started_at_utc": "2026-10-14T18:54:22.268651+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 4.1837955000810325
+}

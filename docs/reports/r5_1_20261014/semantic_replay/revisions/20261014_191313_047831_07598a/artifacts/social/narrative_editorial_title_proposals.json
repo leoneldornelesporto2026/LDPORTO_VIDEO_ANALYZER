@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "review_required": true,
+  "publication_ready": false,
+  "pieces": [
+    {
+      "piece_type": "STORY",
+      "story_id": "SEM_STORY_9698de3fd86bc2ed",
+      "series_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "sequence_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "sequence_position": 1,
+      "primary_title": null,
+      "alternative_titles": [],
+      "supporting_evidence": [
+        {
+          "segment_id": "SEG_00126",
+          "text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+          "start": 709.46,
+          "end": 714.72
+        },
+        {
+          "segment_id": "SEG_00127",
+          "text": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação.",
+          "start": 714.94,
+          "end": 722.38
+        },
+        {
+          "segment_id": "SEG_00128",
+          "text": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+          "start": 722.48,
+          "end": 730.92
+        },
+        {
+          "segment_id": "SEG_00129",
+          "text": "E o avião consegue captar essas frequências, basta sintonizar.",
+          "start": 731.08,
+          "end": 734.92
+        },
+        {
+          "segment_id": "SEG_00130",
+          "text": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo.",
+          "start": 735.12,
+          "end": 739.66
+        },
+        {
+          "segment_id": "SEG_00131",
+          "text": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+          "start": 739.9,
+          "end": 752.1
+        },
+        {
+          "segment_id": "SEG_00132",
+          "text": "Grosseiramente é isso.",
+          "start": 753.34,
+          "end": 754.26
+        }
+      ],
+      "source_segment_ids": [
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132"
+      ],
+      "abstention_reason": "Falta de informações suficientes para formular títulos, hooks e perguntas com base em suporte textual. Não há citações claras que sustentem o uso de palavras específicas como 'radar', 'ADF' ou 'frequências de rádio' de forma contextualizada para criar títulos ou perguntas editoriais fundamentadas.",
+      "validated_payload": {
+        "primary_title": null,
+        "alternative_titles": [],
+        "opening_hook_text": null,
+        "hook_supporting_quotes": [],
+        "social_caption": null,
+        "caption_supporting_quotes": [],
+        "engagement_question": null,
+        "cta": null,
+        "keywords": [],
+        "abstention_reason": "Falta de informações suficientes para formular títulos, hooks e perguntas com base em suporte textual. Não há citações claras que sustentem o uso de palavras específicas como 'radar', 'ADF' ou 'frequências de rádio' de forma contextualizada para criar títulos ou perguntas editoriais fundamentadas."
+      },
+      "provenance": {
+        "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+        "source_context_sha256": "dab0ad3d06e340d9c35e6e4d195cce1776b9461cecf66f152f36b79cc7c6af34",
+        "title_response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67",
+        "prompt_version": "r51-story-visual-source-bound-v1",
+        "title_response_hash_scope": "validated_payload_after_privacy_redaction_not_raw_model_bytes",
+        "model_provenance": {
+          "call_id": "a87d6b5e7eeb4b1ab63a77d5dcc803bd:1",
+          "model": "qwen3:14b",
+          "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+          "request_sha256": "f74c6fd576027f6c462fa7256eb8407bc84abe4f8ce5643f7da5141d9d9b8393",
+          "response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67",
+          "duration_seconds": 5.516000000061467,
+          "cache_hit": false,
+          "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+        },
+        "inference_owner": "injected_callback",
+        "source_alignment": "persisted_source_data_no_audiovisual_inference"
+      },
+      "factual_review_required": true,
+      "spoiler_risk": "CURATOR_REVIEW_REQUIRED_NO_FUTURE_SEGMENTS_USED",
+      "editorial_status": "BLOCKED_REVIEW_REQUIRED",
+      "review_required": true,
+      "publication_ready": false
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+      "story_id": "SEM_STORY_9698de3fd86bc2ed",
+      "status": "ABSTAINED",
+      "provenance": {
+        "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+        "source_context_sha256": "dab0ad3d06e340d9c35e6e4d195cce1776b9461cecf66f152f36b79cc7c6af34",
+        "title_response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67",
+        "prompt_version": "r51-story-visual-source-bound-v1",
+        "title_response_hash_scope": "validated_payload_after_privacy_redaction_not_raw_model_bytes",
+        "model_provenance": {
+          "call_id": "a87d6b5e7eeb4b1ab63a77d5dcc803bd:1",
+          "model": "qwen3:14b",
+          "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+          "request_sha256": "f74c6fd576027f6c462fa7256eb8407bc84abe4f8ce5643f7da5141d9d9b8393",
+          "response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67",
+          "duration_seconds": 5.516000000061467,
+          "cache_hit": false,
+          "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+        },
+        "inference_owner": "injected_callback",
+        "source_alignment": "persisted_source_data_no_audiovisual_inference"
+      }
+    }
+  ],
+  "claim_validation_scope": "source_references_quotes_numbers_lexical_anchors_not_semantic_truth"
+}

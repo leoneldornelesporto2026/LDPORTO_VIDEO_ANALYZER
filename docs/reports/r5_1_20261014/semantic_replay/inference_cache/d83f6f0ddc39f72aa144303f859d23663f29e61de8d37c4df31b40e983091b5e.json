@@ -1,0 +1,108 @@
+{
+  "key": "d83f6f0ddc39f72aa144303f859d23663f29e61de8d37c4df31b40e983091b5e",
+  "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "proposals": [
+      {
+        "source_arc_ids": [
+          "STORY_0001"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "QUESTION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00016",
+                "quote": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo."
+              }
+            ]
+          },
+          {
+            "component": "EXPLANATION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              }
+            ]
+          },
+          {
+            "component": "RESULT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00018",
+                "quote": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "CLOSING"
+        ],
+        "summary": "A introdução da história do voo e do contexto do acidente é apresentada com uma explicação sobre a mudança na Varig, que foi um fator determinante do acidente. A mudança ocorreu em 12 de junho de 1989, mas o fechamento do relato ainda não foi abordado.",
+        "contradictions": [],
+        "narrative_dependencies": [
+          "STORY_0002"
+        ]
+      },
+      {
+        "source_arc_ids": [
+          "STORY_0002"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "QUESTION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              }
+            ]
+          },
+          {
+            "component": "EXPLANATION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00018",
+                "quote": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+              }
+            ]
+          },
+          {
+            "component": "RESULT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "CLOSING"
+        ],
+        "summary": "A mudança na Varig em 12 de junho de 1989, que alterou a indicação dos rumos nos planos de voo, é apresentada como um fator determinante do acidente. No entanto, o fechamento do relato ainda não foi abordado.",
+        "contradictions": [],
+        "narrative_dependencies": [
+          "STORY_0001"
+        ]
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "a39e25b78f7a542fe7bba89c1a7b6970e890df96ecf26c60d62c226dda01ba3f",
+  "provenance": {
+    "call_id": "b02ffb7b01d54ee88f6176a37e91e947:2",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "f7f74f6f02c96ddc8cec1a0a60f8767db5bf81e114caaad35b20515f78e5f505",
+    "response_sha256": "a39e25b78f7a542fe7bba89c1a7b6970e890df96ecf26c60d62c226dda01ba3f",
+    "duration_seconds": 36.54700000002049,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

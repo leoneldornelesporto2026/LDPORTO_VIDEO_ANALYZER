@@ -1,0 +1,110 @@
+{
+  "key": "41c32e2ccde4152481cd8b3d8a9791db28efae8504310d1adf81243e7afa4c20",
+  "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+  "payload": {
+    "primary_title": {
+      "text": "SEM RADAR, COMO O PILOTO SABE A DIREÇÃO?",
+      "angle": "FACTUAL",
+      "factual_claims": [
+        "A pergunta sobre como o piloto sabe para onde está indo sem radar é abordada no primeiro segmento.",
+        "A resposta envolve o uso de sinais de rádio e do instrumento ADF."
+      ],
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00126",
+          "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+        },
+        {
+          "segment_id": "SEG_00131",
+          "quote": "E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+        }
+      ],
+      "condensed_text": "Explicação sobre como os pilotos usavam sinais de rádio e o ADF para navegação antes do GPS."
+    },
+    "alternative_titles": [
+      {
+        "text": "ANTENAS DE RÁDIO GUIAM AVIÕES NA NAVEGAÇÃO",
+        "angle": "FACTUAL",
+        "factual_claims": [
+          "O uso de antenas que emitem sinais de rádio é mencionado como parte do sistema de radionavegação.",
+          "Esses sinais são captados pelo avião e usados para orientação."
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00128",
+            "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+          },
+          {
+            "segment_id": "SEG_00130",
+            "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+          }
+        ],
+        "condensed_text": "Como as antenas de rádio e o ADF eram usados para orientar aviões antes do GPS."
+      },
+      {
+        "text": "ADF: O INSTRUMENTO QUE APONTA A DIREÇÃO DO VOO",
+        "angle": "FACTUAL",
+        "factual_claims": [
+          "O ADF é descrito como um instrumento que aponta a direção correta para o piloto.",
+          "Ele funciona com base em sinais de rádio captados por antenas no solo."
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00131",
+            "quote": "E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          }
+        ],
+        "condensed_text": "Explicação sobre o funcionamento do ADF e sua importância na radionavegação."
+      }
+    ],
+    "opening_hook_text": "SEM RADAR, COMO O PILOTO SABE A DIREÇÃO?",
+    "hook_supporting_quotes": [
+      {
+        "segment_id": "SEG_00126",
+        "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+      }
+    ],
+    "social_caption": "Como os aviões eram guiados antes do GPS? Descubra como o ADF e as antenas de rádio ajudavam na navegação aérea.",
+    "caption_supporting_quotes": [
+      {
+        "segment_id": "SEG_00128",
+        "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+      },
+      {
+        "segment_id": "SEG_00131",
+        "quote": "E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+      }
+    ],
+    "engagement_question": "Comente sua opinião.",
+    "cta": "Comente sua opinião.",
+    "keywords": [
+      {
+        "text": "radionavegação",
+        "segment_id": "SEG_00127",
+        "reason": "EMPHASIS"
+      },
+      {
+        "text": "ADF",
+        "segment_id": "SEG_00131",
+        "reason": "EMPHASIS"
+      },
+      {
+        "text": "frequências de rádio",
+        "segment_id": "SEG_00128",
+        "reason": "EMPHASIS"
+      }
+    ],
+    "abstention_reason": null
+  },
+  "response_sha256": "c906704f02965e7de265415131d4795ce323947d0c7708ad63d3ef33ed23eefb",
+  "provenance": {
+    "call_id": "730b6043d3604ac6af21698b36665e88:1",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "c8693d0ab0ca8336dd638a869590fbc40ea991b948e6a3ea18246b3b0bcd2a01",
+    "response_sha256": "c906704f02965e7de265415131d4795ce323947d0c7708ad63d3ef33ed23eefb",
+    "duration_seconds": 35.48399999993853,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

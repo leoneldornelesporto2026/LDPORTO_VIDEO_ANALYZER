@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "origin": "codex_assisted_source_verification",
+  "source_segment_ids": [
+    "SEG_00126",
+    "SEG_00127",
+    "SEG_00128",
+    "SEG_00129",
+    "SEG_00130",
+    "SEG_00131",
+    "SEG_00132"
+  ],
+  "original_series_summary": "Antes do GPS, os pilotos utilizavam sinais de rádio emitidos por antenas ao redor do mundo para navegar. Ao sintonizar essas frequências, os instrumentos do avião, como o ADF, indicavam a direção da estação de rádio, ajudando o piloto a determinar sua posição e rota.",
+  "original_suggested_ending": "Essa tecnologia era essencial para a navegação em áreas onde o GPS não estava disponível.",
+  "reason": "source describes direction toward a station and pre-GPS time; not position/route determination or geographic GPS availability",
+  "replacement_series_summary": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+  "replacement_suggested_ending": "Grosseiramente é isso.",
+  "canonical_source_modified": false,
+  "human_review_completed": false,
+  "publication_ready": false
+}

@@ -1,0 +1,15 @@
+{
+  "uri": "https://json-schema.org/draft/2020-12/schema",
+  "core_scrub": "https://json-schema.org/draft/2020-12/schema",
+  "privacy_match": "s://json-schema.org/draft/2020-12/schema",
+  "sanitized_uri": "http[PRIVATE_PATH]",
+  "findings": [
+    {
+      "pointer": "",
+      "type": "str",
+      "rule": "private_path",
+      "length": 44,
+      "sha256": "206ae48f6cae3f8701b1373596aeff53ce8e101fbbe08a5184d2f2e7f89b7807"
+    }
+  ]
+}

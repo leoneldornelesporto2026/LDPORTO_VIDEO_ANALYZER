@@ -1,0 +1,14 @@
+{
+  "status": "C_VALIDATED",
+  "validation": {
+    "status": "valid",
+    "errors": [],
+    "broken_reference_count": 0,
+    "publication_ready": false
+  },
+  "new_model_calls": 0,
+  "scope": "assisted editorial metadata; Qwen attempts retained",
+  "draft_payload_sha256": "c56e50503c24809beffe473bc68dae1ef42d6e1e3d72307baa2c43930b6812f8",
+  "human_review_completed": false,
+  "publication_ready": false
+}

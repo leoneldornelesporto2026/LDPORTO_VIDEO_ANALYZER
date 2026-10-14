@@ -1,0 +1,100 @@
+{
+  "origin": "codex_assisted_editorial_draft_from_canonical_source",
+  "author": "Codex",
+  "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "payload": {
+    "primary_title": {
+      "text": "COMO O ADF APONTA A DIRE??O?",
+      "angle": "CURIOSITY",
+      "factual_claims": [
+        "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+      ],
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00131",
+          "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+        }
+      ],
+      "condensed_text": null
+    },
+    "alternative_titles": [
+      {
+        "text": "FREQU?NCIAS DE R?DIO: PARA ONDE VOAR?",
+        "angle": "EXPLANATORY",
+        "factual_claims": [
+          "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+          "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00128",
+            "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+          },
+          {
+            "segment_id": "SEG_00131",
+            "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          }
+        ],
+        "condensed_text": null
+      },
+      {
+        "text": "O PILOTO E OS AUX?LIOS DE RADIONAVEGA??O",
+        "angle": "CONTEXT",
+        "factual_claims": [
+          "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+          "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00126",
+            "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+          },
+          {
+            "segment_id": "SEG_00127",
+            "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+          }
+        ],
+        "condensed_text": null
+      }
+    ],
+    "opening_hook_text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+    "hook_supporting_quotes": [
+      {
+        "segment_id": "SEG_00126",
+        "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+      }
+    ],
+    "social_caption": "E o avião consegue captar essas frequências, basta sintonizar.",
+    "caption_supporting_quotes": [
+      {
+        "segment_id": "SEG_00129",
+        "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+      }
+    ],
+    "engagement_question": "Comente sua opini?o.",
+    "cta": "Comente sua opini?o.",
+    "keywords": [
+      {
+        "text": "radionavega??o",
+        "segment_id": "SEG_00127",
+        "reason": "KEY_FACT"
+      },
+      {
+        "text": "frequ?ncias",
+        "segment_id": "SEG_00128",
+        "reason": "KEY_FACT"
+      },
+      {
+        "text": "ADF",
+        "segment_id": "SEG_00131",
+        "reason": "KEY_FACT"
+      }
+    ],
+    "abstention_reason": null
+  },
+  "payload_sha256": "cf439c0dcd620caf036a4268d2ad4e6bc4e2c53a1dffe27ab966a2aec8fb7cb2",
+  "new_ollama_calls": 0,
+  "human_review_completed": false,
+  "publication_ready": false,
+  "reason": "Qwen attempts retained; no generated title set passed all source validators"
+}

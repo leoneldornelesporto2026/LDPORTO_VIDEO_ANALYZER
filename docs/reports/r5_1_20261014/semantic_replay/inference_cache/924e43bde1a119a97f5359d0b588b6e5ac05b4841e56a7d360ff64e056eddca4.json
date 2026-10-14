@@ -1,0 +1,152 @@
+{
+  "key": "924e43bde1a119a97f5359d0b588b6e5ac05b4841e56a7d360ff64e056eddca4",
+  "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "relations": [
+      {
+        "source_arc_id": "STORY_0017",
+        "target_arc_id": "STORY_0018",
+        "relation_type": "EXPLAINS",
+        "semantic_basis": "EXPLICIT_CAUSAL_STATEMENT",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00131",
+            "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          },
+          {
+            "segment_id": "SEG_00133",
+            "quote": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá."
+          }
+        ],
+        "reasoning_summary": "O uso da radionavegação antes do GPS (STORY_0017) explica como os pilotos utilizavam instrumentos como o ADF para navegar, o que está diretamente relacionado ao uso dos instrumentos de navegação durante o voo (STORY_0018). A sintonização das frequências e a indicação do ADF são mencionadas em ambos os arcos, estabelecendo uma relação causal explícita entre os conceitos explicados e sua aplicação prática no voo descrito em STORY_0018.",
+        "confidence_basis": [
+          "SEG_00131",
+          "SEG_00133"
+        ],
+        "contradictions": []
+      },
+      {
+        "source_arc_id": "STORY_0018",
+        "target_arc_id": "STORY_0031",
+        "relation_type": "CONTINUES",
+        "semantic_basis": "EXISTING_EVENT_REFERENCE",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00137",
+            "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+          },
+          {
+            "segment_id": "SEG_00247",
+            "quote": "Mais uma vez entraram contato com Belém e tentaram outra forma de encontrar a cidade Sintonizaram os instrumentos do avião nas rádios AM lá de Belém O controle de tráfego aéreo passou as frequências das rádios Liberal, que é 1330 kHz E"
+          }
+        ],
+        "reasoning_summary": "O uso dos instrumentos de navegação durante o voo (STORY_0018) continua com a tentativa de sintonizar as rádios AM de Belém e utilizar as frequências fornecidas pelo controle de tráfego aéreo, conforme descrito em STORY_0031. A falha na navegação anterior leva à nova tentativa de localização da cidade, mantendo a continuidade do evento.",
+        "confidence_basis": [
+          "SEG_00137",
+          "SEG_00247"
+        ],
+        "contradictions": []
+      },
+      {
+        "source_arc_id": "STORY_0031",
+        "target_arc_id": "STORY_0032",
+        "relation_type": "CONTINUES",
+        "semantic_basis": "EXISTING_EVENT_REFERENCE",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00249",
+            "quote": "coincidência aconteceu, fechando mais um elo da corrente."
+          },
+          {
+            "segment_id": "SEG_00250",
+            "quote": "Os pilotos sobrevoavam novamente o rio Xingu e os instrumentos do avião captaram a direção de onde viam os sinais de 1330 e 1270 kHz."
+          }
+        ],
+        "reasoning_summary": "A tentativa de sintonizar as rádios AM de Belém (STORY_0031) continua com o sobrevoar do rio Xingu e a captura dos sinais de rádio, conforme descrito em STORY_0032. A continuidade do evento é evidenciada pela descrição da ação subsequente dos pilotos após a tentativa anterior.",
+        "confidence_basis": [
+          "SEG_00249",
+          "SEG_00250"
+        ],
+        "contradictions": []
+      },
+      {
+        "source_arc_id": "STORY_0017",
+        "target_arc_id": "STORY_0032",
+        "relation_type": "EXPLAINS",
+        "semantic_basis": "EXPLICIT_CAUSAL_STATEMENT",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00128",
+            "quote": "Ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+          },
+          {
+            "segment_id": "SEG_00250",
+            "quote": "Os pilotos sobrevoavam novamente o rio Xingu e os instrumentos do avião captaram a direção de onde viam os sinais de 1330 e 1270 kHz."
+          }
+        ],
+        "reasoning_summary": "A explicação sobre como os pilotos usavam radionavegação antes do GPS (STORY_0017) explica o funcionamento dos instrumentos que captaram os sinais de rádio durante o sobrevoar do rio Xingu (STORY_0032). A relação causal é estabelecida pela descrição do uso das antenas e frequências específicas, que são mencionadas em ambas as partes.",
+        "confidence_basis": [
+          "SEG_00128",
+          "SEG_00250"
+        ],
+        "contradictions": []
+      },
+      {
+        "source_arc_id": "STORY_0018",
+        "target_arc_id": "STORY_0032",
+        "relation_type": "CONTINUES",
+        "semantic_basis": "EXISTING_EVENT_REFERENCE",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00136",
+            "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+          },
+          {
+            "segment_id": "SEG_00250",
+            "quote": "Os pilotos sobrevoavam novamente o rio Xingu e os instrumentos do avião captaram a direção de onde viam os sinais de 1330 e 1270 kHz."
+          }
+        ],
+        "reasoning_summary": "O uso dos instrumentos de navegação durante o voo (STORY_0018) continua com a tentativa de localizar a cidade através do sobrevoar do rio Xingu e capturar sinais de rádio, conforme descrito em STORY_0032. A continuidade do evento é evidenciada pela descrição da ação subsequente dos pilotos após a falha anterior.",
+        "confidence_basis": [
+          "SEG_00136",
+          "SEG_00250"
+        ],
+        "contradictions": []
+      },
+      {
+        "source_arc_id": "STORY_0031",
+        "target_arc_id": "STORY_0032",
+        "relation_type": "CAUSES",
+        "semantic_basis": "EXPLICIT_CAUSAL_STATEMENT",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00249",
+            "quote": "coincidência aconteceu, fechando mais um elo da corrente."
+          },
+          {
+            "segment_id": "SEG_00250",
+            "quote": "Os pilotos sobrevoavam novamente o rio Xingu e os instrumentos do avião captaram a direção de onde viam os sinais de 1330 e 1270 kHz."
+          }
+        ],
+        "reasoning_summary": "A tentativa de sintonizar as rádios AM de Belém (STORY_0031) causou o sobrevoar do rio Xingu e a captura dos sinais de rádio, conforme descrito em STORY_0032. A relação causal é estabelecida pela descrição da ação subsequente dos pilotos após a tentativa anterior.",
+        "confidence_basis": [
+          "SEG_00249",
+          "SEG_00250"
+        ],
+        "contradictions": []
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "afba3bf5c9cff5b0ec42b0c0c713e2ef41d49cbea7ecc903d502bb8d6964280d",
+  "provenance": {
+    "call_id": "eb9e062d6b2644ab9d6f164f31786d16:1",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "52ea73c2f92b8821b692c7c2f46507405f87f51aab717e798253f6b3b1a89858",
+    "response_sha256": "afba3bf5c9cff5b0ec42b0c0c713e2ef41d49cbea7ecc903d502bb8d6964280d",
+    "duration_seconds": 74.64100000006147,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

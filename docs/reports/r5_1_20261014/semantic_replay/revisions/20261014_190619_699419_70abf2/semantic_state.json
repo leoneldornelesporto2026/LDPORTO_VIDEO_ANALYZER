@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "operation": "semantic-replay",
+  "run_id": "R51_91b7c9994fbc4cfd",
+  "reference_package_sha256": "a84ede22de5fe91b8a5e1abe7044229534fe55943777d769364ff58842ab9807",
+  "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "input_transcript_sha256": "45ae2351033bcffb67972a5b4fee25e80a2ad36fa786af459025ac48de407388",
+  "input_story_units_sha256": "76a5fa844db5de686af603d7b7838dbf0f9b54761f7935f9696d71cb29cc813f",
+  "input_arcs_sha256": "3404c64934e046fda61827578b75aec93299c9d0e8af563c1bab33914d9f624e",
+  "input_graph_sha256": "9ea9e6ab4a6173da31b84f06b4c6a5963bafa395f2ce5722d9c12cff4ed63665",
+  "phase": "B_PARTIAL",
+  "artifact_hashes": {
+    "editorial/global_topic_map.json": "dd3d89b50abe327d1a60ccd963dc4767912e8dd4362008199589e9954337a0f7",
+    "editorial/semantic_narrative_graph.json": "45cf6d5c55dc0a04aa7be760869e457b9a521526e00206a6d5dd0d98df92bb05",
+    "editorial/cross_arc_relations.json": "0950a0fe3bc5913920f33e22ad4581840b482b7cf19623292caa41f2171250f8",
+    "editorial/semantic_qa_proposals.json": "dfdb4462b4ebeb7251c75299bb7137d5d13480e4b536f0ffb366e65e82baa651",
+    "editorial/narrative_completion_proposals.json": "ae76f50c3a8e88ae96071c1ec18da6333bb35f55988032a1f655a87b011c397b",
+    "editorial/story_series_proposals.json": "d2b50e160323d93f1176b9679ba2e2fd9438e6e85912c6ec8bfbd4cdadadcd31",
+    "editorial/semantic_resolver_diagnostics.json": "ea3c9939a128d6ffc0e5ecaa5f3fcba317d0b92f655f1ef3ba9a337999defc79"
+  },
+  "publication_ready": false,
+  "updated_at": "2026-10-14T19:02:44.607080+00:00"
+}

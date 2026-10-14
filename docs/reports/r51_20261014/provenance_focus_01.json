@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "src/tests/test_r51_provenance.py",
+    "src/tests/test_build_manifest_truth.py",
+    "src/tests/test_sol_v4_review_provenance.py",
+    "--junitxml=docs\\reports\\r51_20261014\\provenance_focus_01.junit.xml"
+  ],
+  "exit_code": 0,
+  "seconds": 23.283687829971313,
+  "sources_sha256": {
+    "src\\ldporto\\build_provenance.py": "6bb5887afff821295c44a14e6c923b2fc103d881a42a07c542c5cd18009c3146",
+    "src\\tests\\test_r51_provenance.py": "b3c96bca02c171230108f4e2111aa7b0455c72dd887c18f4d9651d23b3a7aadc"
+  }
+}

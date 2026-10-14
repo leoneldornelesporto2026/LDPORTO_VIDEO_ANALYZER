@@ -1,0 +1,9 @@
+{
+  "status": "valid",
+  "errors": [],
+  "core_validation_status": "valid",
+  "embedded_schemas_validated": true,
+  "manifest_hashes_verified": 187,
+  "legacy_documents_preserved": 122,
+  "publication_ready": false
+}

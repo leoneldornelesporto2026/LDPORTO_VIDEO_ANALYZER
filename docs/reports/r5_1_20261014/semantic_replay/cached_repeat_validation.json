@@ -1,0 +1,21 @@
+{
+  "phase": "D_VALIDATED",
+  "package": {
+    "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\r5_1_20261014\\semantic_replay\\package\\SECOND_CURATION_R5_1_zd_wjssZ7mc_20261014_193320_488278_a2efe8.zip",
+    "sha256": "3d64e70aa28a6ee3f3c16c4ce198302e567ab6501bb270ffe9a7ee3e42bc2733",
+    "bytes": 2055876,
+    "validation": {
+      "status": "valid",
+      "errors": [],
+      "core_validation_status": "valid",
+      "embedded_schemas_validated": true,
+      "manifest_hashes_verified": 187,
+      "legacy_documents_preserved": 122,
+      "publication_ready": false
+    },
+    "publication_ready": false
+  },
+  "cache_hit": true,
+  "new_model_calls": 0,
+  "wall_seconds": 19.084580300026573
+}

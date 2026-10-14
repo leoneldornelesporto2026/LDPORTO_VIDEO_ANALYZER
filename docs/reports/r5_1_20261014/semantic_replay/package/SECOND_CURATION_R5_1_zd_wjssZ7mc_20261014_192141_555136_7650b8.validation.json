@@ -1,0 +1,12 @@
+{
+  "status": "invalid",
+  "errors": [
+    "semantic_handoff_dangling_reference:provenance/assisted_editorial_draft.json",
+    "semantic_handoff_dangling_reference:provenance/semantic_series_reuse.json"
+  ],
+  "core_validation_status": "valid",
+  "embedded_schemas_validated": true,
+  "manifest_hashes_verified": 186,
+  "legacy_documents_preserved": 122,
+  "publication_ready": false
+}

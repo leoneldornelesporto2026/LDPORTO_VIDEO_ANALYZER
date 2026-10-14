@@ -1,0 +1,13 @@
+{
+  "status": "VERIFIED",
+  "package_sha256": "3d64e70aa28a6ee3f3c16c4ce198302e567ab6501bb270ffe9a7ee3e42bc2733",
+  "same_package_path": true,
+  "cache_hit": true,
+  "new_model_calls": 0,
+  "first_export_wall_seconds": 27.26195449999068,
+  "repeat_wall_seconds": 19.084580300026573,
+  "logs": {
+    "package_final.log": "832cd85288bc0c6ceb3c711d269271077db8eb0614b9628908b0d9193c1a7d79",
+    "package_cached_repeat.log": "05ecd2f580b48fdd4d6dc31311054d8a4b4cf076b3cad777c456143d6cffe9d9"
+  }
+}

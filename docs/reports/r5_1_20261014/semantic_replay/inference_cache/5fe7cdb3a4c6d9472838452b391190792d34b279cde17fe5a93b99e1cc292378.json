@@ -1,0 +1,33 @@
+{
+  "key": "5fe7cdb3a4c6d9472838452b391190792d34b279cde17fe5a93b99e1cc292378",
+  "task_id": "semantic.qa.Q_0015",
+  "payload": {
+    "proposals": [
+      {
+        "question_id": "Q_0015",
+        "status": "UNRESOLVED",
+        "answers": [],
+        "reasoning_summary": "A pergunta não foi respondida diretamente no segmento fornecido. Embora o texto mencione que os pilotos usavam radionavegação e antenas de rádio para orientação, não há uma resposta explícita ao questionamento sobre como o piloto saberia para onde estava indo sem radar.",
+        "uncertainty_reasons": [
+          "A pergunta é retórica e não espera uma resposta direta, mas sim uma explicação subsequente.",
+          "O segmento fornecido não contém uma resposta explícita à pergunta, apenas o início da discussão sobre os recursos de navegação."
+        ],
+        "contradictions": []
+      }
+    ],
+    "abstentions": [
+      "A pergunta não foi respondida diretamente no segmento fornecido. Embora o texto mencione que os pilotos usavam radionavegação e antenas de rádio para orientação, não há uma resposta explícita ao questionamento sobre como o piloto saberia para onde estava indo sem radar."
+    ]
+  },
+  "response_sha256": "b8d83ab759657d703c1a773ac2eba8575a4e757f2710e26790acf784f184d61c",
+  "provenance": {
+    "call_id": "f0928eef4de74047a10e1950f5c406d5:3",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "b717339a6d6a30f0c50bb8967bf5b1f27ed425c3123469ef81f477ed41ed99bf",
+    "response_sha256": "b8d83ab759657d703c1a773ac2eba8575a4e757f2710e26790acf784f184d61c",
+    "duration_seconds": 13.094000000040978,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

@@ -1,0 +1,289 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "review_required": true,
+  "publication_ready": false,
+  "pieces": [
+    {
+      "piece_type": "STORY",
+      "story_id": "SEM_STORY_9698de3fd86bc2ed",
+      "series_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "sequence_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "sequence_position": 1,
+      "primary_title": {
+        "text": "COMO O ADF VAI APONTAR A DIREÇÃO?",
+        "angle": "CURIOSITY",
+        "factual_claims": [
+          "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+        ],
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00131",
+            "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          }
+        ],
+        "condensed_text": null,
+        "editorial_status": "PROPOSED",
+        "review_required": true,
+        "line_break_suggestion": [
+          "COMO O ADF VAI APONTAR A DIREÇÃO?"
+        ],
+        "typographic_hierarchy": "CURATOR_CONFIGURABLE_NO_PIXEL_PLACEMENT",
+        "claim_validation_scope": "literal_quotes_numbers_lexical_anchors_not_entailment_certification",
+        "factual_review_required": true,
+        "publication_ready": false
+      },
+      "alternative_titles": [
+        {
+          "text": "FREQUÊNCIAS DE RÁDIO: PARA ONDE VOAR?",
+          "angle": "EXPLANATORY",
+          "factual_claims": [
+            "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+            "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          ],
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00128",
+              "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+            },
+            {
+              "segment_id": "SEG_00131",
+              "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+            }
+          ],
+          "condensed_text": null,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "line_break_suggestion": [
+            "FREQUÊNCIAS DE RÁDIO: PARA ONDE VOAR?"
+          ],
+          "typographic_hierarchy": "CURATOR_CONFIGURABLE_NO_PIXEL_PLACEMENT",
+          "claim_validation_scope": "literal_quotes_numbers_lexical_anchors_not_entailment_certification",
+          "factual_review_required": true,
+          "publication_ready": false
+        },
+        {
+          "text": "O PILOTO E OS AUXÍLIOS DE RADIONAVEGAÇÃO",
+          "angle": "CONTEXT",
+          "factual_claims": [
+            "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+            "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+          ],
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00126",
+              "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+            },
+            {
+              "segment_id": "SEG_00127",
+              "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+            }
+          ],
+          "condensed_text": null,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "line_break_suggestion": [
+            "O PILOTO E OS AUXÍLIOS DE RADIONAVEGAÇÃO"
+          ],
+          "typographic_hierarchy": "CURATOR_CONFIGURABLE_NO_PIXEL_PLACEMENT",
+          "claim_validation_scope": "literal_quotes_numbers_lexical_anchors_not_entailment_certification",
+          "factual_review_required": true,
+          "publication_ready": false
+        }
+      ],
+      "supporting_evidence": [
+        {
+          "segment_id": "SEG_00126",
+          "text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+          "start": 709.46,
+          "end": 714.72
+        },
+        {
+          "segment_id": "SEG_00127",
+          "text": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação.",
+          "start": 714.94,
+          "end": 722.38
+        },
+        {
+          "segment_id": "SEG_00128",
+          "text": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+          "start": 722.48,
+          "end": 730.92
+        },
+        {
+          "segment_id": "SEG_00129",
+          "text": "E o avião consegue captar essas frequências, basta sintonizar.",
+          "start": 731.08,
+          "end": 734.92
+        },
+        {
+          "segment_id": "SEG_00130",
+          "text": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo.",
+          "start": 735.12,
+          "end": 739.66
+        },
+        {
+          "segment_id": "SEG_00131",
+          "text": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+          "start": 739.9,
+          "end": 752.1
+        },
+        {
+          "segment_id": "SEG_00132",
+          "text": "Grosseiramente é isso.",
+          "start": 753.34,
+          "end": 754.26
+        }
+      ],
+      "source_segment_ids": [
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132"
+      ],
+      "abstention_reason": null,
+      "validated_payload": {
+        "primary_title": {
+          "text": "COMO O ADF VAI APONTAR A DIREÇÃO?",
+          "angle": "CURIOSITY",
+          "factual_claims": [
+            "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+          ],
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00131",
+              "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+            }
+          ],
+          "condensed_text": null
+        },
+        "alternative_titles": [
+          {
+            "text": "FREQUÊNCIAS DE RÁDIO: PARA ONDE VOAR?",
+            "angle": "EXPLANATORY",
+            "factual_claims": [
+              "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+              "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+            ],
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              }
+            ],
+            "condensed_text": null
+          },
+          {
+            "text": "O PILOTO E OS AUXÍLIOS DE RADIONAVEGAÇÃO",
+            "angle": "CONTEXT",
+            "factual_claims": [
+              "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+              "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+            ],
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00126",
+                "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+              },
+              {
+                "segment_id": "SEG_00127",
+                "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+              }
+            ],
+            "condensed_text": null
+          }
+        ],
+        "opening_hook_text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+        "hook_supporting_quotes": [
+          {
+            "segment_id": "SEG_00126",
+            "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+          }
+        ],
+        "social_caption": "E o avião consegue captar essas frequências, basta sintonizar.",
+        "caption_supporting_quotes": [
+          {
+            "segment_id": "SEG_00129",
+            "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+          }
+        ],
+        "engagement_question": "Comente sua opinião.",
+        "cta": "Comente sua opinião.",
+        "keywords": [
+          {
+            "text": "radionavegação",
+            "segment_id": "SEG_00127",
+            "reason": "KEY_FACT"
+          },
+          {
+            "text": "frequências",
+            "segment_id": "SEG_00128",
+            "reason": "KEY_FACT"
+          },
+          {
+            "text": "ADF",
+            "segment_id": "SEG_00131",
+            "reason": "KEY_FACT"
+          }
+        ],
+        "abstention_reason": null
+      },
+      "provenance": {
+        "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+        "source_context_sha256": "dab0ad3d06e340d9c35e6e4d195cce1776b9461cecf66f152f36b79cc7c6af34",
+        "title_response_sha256": "c56e50503c24809beffe473bc68dae1ef42d6e1e3d72307baa2c43930b6812f8",
+        "prompt_version": "r51-story-visual-source-bound-v1",
+        "title_response_hash_scope": "validated_payload_after_privacy_redaction_not_raw_model_bytes",
+        "model_provenance": {
+          "origin": "codex_assisted_editorial_draft_from_canonical_source",
+          "author": "Codex",
+          "execution_mode": "assisted_editorial_draft",
+          "payload_sha256": "c56e50503c24809beffe473bc68dae1ef42d6e1e3d72307baa2c43930b6812f8",
+          "draft_script_sha256": "b6c2a46fefa903324d2a2807257d83b8c14acf138c2a053100114cf2cd79b425",
+          "new_ollama_call": false,
+          "human_review_completed": false
+        },
+        "inference_owner": "injected_callback",
+        "source_alignment": "persisted_source_data_no_audiovisual_inference"
+      },
+      "factual_review_required": true,
+      "spoiler_risk": "CURATOR_REVIEW_REQUIRED_NO_FUTURE_SEGMENTS_USED",
+      "editorial_status": "PROPOSED",
+      "review_required": true,
+      "publication_ready": false
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+      "story_id": "SEM_STORY_9698de3fd86bc2ed",
+      "status": "PROPOSED",
+      "provenance": {
+        "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+        "source_context_sha256": "dab0ad3d06e340d9c35e6e4d195cce1776b9461cecf66f152f36b79cc7c6af34",
+        "title_response_sha256": "c56e50503c24809beffe473bc68dae1ef42d6e1e3d72307baa2c43930b6812f8",
+        "prompt_version": "r51-story-visual-source-bound-v1",
+        "title_response_hash_scope": "validated_payload_after_privacy_redaction_not_raw_model_bytes",
+        "model_provenance": {
+          "origin": "codex_assisted_editorial_draft_from_canonical_source",
+          "author": "Codex",
+          "execution_mode": "assisted_editorial_draft",
+          "payload_sha256": "c56e50503c24809beffe473bc68dae1ef42d6e1e3d72307baa2c43930b6812f8",
+          "draft_script_sha256": "b6c2a46fefa903324d2a2807257d83b8c14acf138c2a053100114cf2cd79b425",
+          "new_ollama_call": false,
+          "human_review_completed": false
+        },
+        "inference_owner": "injected_callback",
+        "source_alignment": "persisted_source_data_no_audiovisual_inference"
+      }
+    }
+  ],
+  "claim_validation_scope": "source_references_quotes_numbers_lexical_anchors_not_semantic_truth"
+}

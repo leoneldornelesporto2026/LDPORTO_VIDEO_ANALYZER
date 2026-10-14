@@ -1,0 +1,79 @@
+{
+  "key": "09d255fc9a151dff362c0d8e13229a23c79cd64ceaddf1dd310362310fef1e5a",
+  "task_id": "semantic.qa.Q_0015",
+  "payload": {
+    "proposals": [
+      {
+        "question_id": "Q_0015",
+        "status": "ANSWER_SUPPORTED",
+        "answers": [
+          {
+            "answer_segment_ids": [
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131",
+              "SEG_00136",
+              "SEG_00137",
+              "SEG_00142",
+              "SEG_00143"
+            ],
+            "summary": "Antes do GPS, os pilotos usavam sinais de radionavegação emitidos por antenas ao redor do mundo. O avião captava essas frequências e, com o uso de instrumentos como o ADF (Automatic Direction Finder), conseguia determinar a direção para onde deveria voar. Por exemplo, o plano de voo indicava a frequência das antenas de Belém, e ao sintonizar essa frequência, o ADF apontaria para a direção daquela estação de rádio. No entanto, durante o voo em questão, os pilotos não perceberam que estavam se afastando de Belém e não sintonizaram uma antena intermediária (como a de Tucuruí), o que poderia ter alertado sobre o erro de direção.",
+            "answer_relation": "DIRECT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00129",
+                "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+              },
+              {
+                "segment_id": "SEG_00130",
+                "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              },
+              {
+                "segment_id": "SEG_00136",
+                "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+              },
+              {
+                "segment_id": "SEG_00137",
+                "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+              },
+              {
+                "segment_id": "SEG_00142",
+                "quote": "Se os pilotos tivessem tentado sintonizar essa antena, ela poderia aparecer no ADF, mesmo que eles estivessem voando em outra direção, porque eles estavam dentro do alcance dela."
+              },
+              {
+                "segment_id": "SEG_00143",
+                "quote": "E os pilotos provavelmente perceberiam também o erro que eles tinham cometido."
+              }
+            ]
+          }
+        ],
+        "reasoning_summary": "O texto explica que, antes do GPS, os pilotos usavam radionavegação para determinar a direção do voo. Isso era feito por meio de antenas que emitiam sinais de rádio, captados pelo avião e interpretados por instrumentos como o ADF. O uso dessas ferramentas permitia aos pilotos saber para onde estavam indo, mesmo sem radar. No entanto, durante o voo em questão, os pilotos não sintonizaram uma antena intermediária (como a de Tucuruí), o que poderia ter alertado sobre o erro de direção.",
+        "uncertainty_reasons": [
+          "O texto menciona que os pilotos não sintonizaram a antena de Tucuruí, mas não há evidência explícita de que isso tenha sido uma falha intencional ou um erro de procedimento."
+        ],
+        "contradictions": []
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "e08e3b1dd58b24a8c4b598c28d7b38946cd3ff5a858c0f5956835b838b7ca94c",
+  "provenance": {
+    "call_id": "b02ffb7b01d54ee88f6176a37e91e947:1",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "bbc24a70061c56abe18d93cf13acc58f3763fbbdc8195a8305ae57062f68d397",
+    "response_sha256": "e08e3b1dd58b24a8c4b598c28d7b38946cd3ff5a858c0f5956835b838b7ca94c",
+    "duration_seconds": 40.93700000003446,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

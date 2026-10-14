@@ -1,0 +1,74 @@
+{
+  "key": "0b41e037cc45223a3c596a834b29fb3250d32b66cb347c6b77158100373581ad",
+  "task_id": "semantic.qa.Q_0015",
+  "payload": {
+    "proposals": [
+      {
+        "question_id": "Q_0015",
+        "status": "ANSWER_SUPPORTED",
+        "answers": [
+          {
+            "answer_segment_ids": [
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131",
+              "SEG_00136",
+              "SEG_00137",
+              "SEG_00142"
+            ],
+            "summary": "Antes do GPS, os pilotos usavam sinais de radionavegação emitidos por antenas ao redor do mundo. O avião captava essas frequências e, com o uso de instrumentos como o ADF (Automatic Direction Finder), conseguia determinar a direção para onde deveria voar. No caso específico, os pilotos estavam sintonizados na frequência de VOR de Marabá, mas ao se afastarem da cidade, o sinal do ADF começou a indicar uma direção incorreta, revelando o erro no rumo do voo. Além disso, uma antena de radionavegação localizada em Tucuruí poderia ter ajudado os pilotos a identificar o desvio, caso tivessem sintonizado esse sinal.",
+            "answer_relation": "DIRECT",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00129",
+                "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+              },
+              {
+                "segment_id": "SEG_00130",
+                "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              },
+              {
+                "segment_id": "SEG_00136",
+                "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+              },
+              {
+                "segment_id": "SEG_00137",
+                "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+              },
+              {
+                "segment_id": "SEG_00142",
+                "quote": "Se os pilotos tivessem tentado sintonizar essa antena, ela poderia aparecer no ADF, mesmo que eles estivessem voando em outra direção, porque eles estavam dentro do alcance dela."
+              }
+            ]
+          }
+        ],
+        "reasoning_summary": "A pergunta questiona como os pilotos sabiam para onde estavam indo sem radar. A resposta está baseada em informações sobre o uso de antenas de radionavegação e instrumentos como o ADF, que permitiam aos pilotos determinar a direção do voo com base em sinais de rádio. O texto menciona especificamente como os pilotos usavam essas ferramentas e como o erro no rumo foi detectado (ou poderia ter sido detectado) por meio delas.",
+        "uncertainty_reasons": [
+          "A falta de sintonização na antena de Tucuruí não foi confirmada diretamente, apenas sugerida como uma possibilidade."
+        ],
+        "contradictions": []
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "2629cc69de62395c575804535d7c1d10969457e647b80638719c0db3fdea4db3",
+  "provenance": {
+    "call_id": "eb9e062d6b2644ab9d6f164f31786d16:2",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "93394b89d9631ebc711fc1f3b60b4a9e427312ca01bb107a3ce852b64ae44784",
+    "response_sha256": "2629cc69de62395c575804535d7c1d10969457e647b80638719c0db3fdea4db3",
+    "duration_seconds": 35.10999999998603,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "command": ".venv/Scripts/python.exe -m pytest src/tests/test_r51_semantic_package.py src/tests/test_r51_story_visual_handoff.py src/tests/test_r51_semantic_narrative.py -q --junitxml=docs/reports/r5_1_20261014/B_PACKAGE_CONSUMER_TESTS.xml",
+  "result": {
+    "tests": 125,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "files": {
+    "src/ldporto/semantic_package.py": "bd0592df16f4624f05713a9334528bece4fa88a59e2fd816591a6bce82c562a6",
+    "src/tests/test_r51_semantic_package.py": "999001e397ef3b9489185d2223e7e093eca139feaef1511e44dee61fb40f1966"
+  },
+  "scope": "Offline consumer, visual metadata and text proposal regression, without model/media execution."
+}

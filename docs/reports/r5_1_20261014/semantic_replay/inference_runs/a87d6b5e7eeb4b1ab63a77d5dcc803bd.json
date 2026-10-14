@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "invocation_id": "a87d6b5e7eeb4b1ab63a77d5dcc803bd",
+  "model": "qwen3:14b",
+  "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+  "service_version": "0.35.1",
+  "calls": [
+    {
+      "call_id": "a87d6b5e7eeb4b1ab63a77d5dcc803bd:1",
+      "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+      "model": "qwen3:14b",
+      "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+      "status": "ok",
+      "origin": "new_textual_inference",
+      "execution_mode": "executed",
+      "modality": "text",
+      "request_sent": true,
+      "request_sha256": "f74c6fd576027f6c462fa7256eb8407bc84abe4f8ce5643f7da5141d9d9b8393",
+      "started_at": "2026-10-14T19:10:44.487668+00:00",
+      "attempt": 1,
+      "cache_key": "72e302403d19b18db3cb29678d510ae53ce50d8acb846db69bb023f0ba87bb71",
+      "code_sha256": "47e8cff2574284b796d4f011efd47a1dfb47b7afcbb92f0ca2880588f1f611d9",
+      "request_id": "224b780a6c8d59530c3b",
+      "profile": "balanced",
+      "options": {
+        "num_ctx": 16384,
+        "num_predict": 4096,
+        "temperature": 0.0,
+        "top_k": 40,
+        "top_p": 0.9,
+        "repeat_penalty": 1.05,
+        "seed": 42
+      },
+      "input_chars": 4619,
+      "message_count": 2,
+      "schema_bytes": 3010,
+      "request_bytes": 8184,
+      "measurement_scope": "ollama_server_reported_non_streaming",
+      "duration_seconds": 5.516000000061467,
+      "total_duration_ns": 5499682700,
+      "load_duration_ns": 3736500,
+      "prompt_eval_count": 1472,
+      "eval_count": 155,
+      "eval_duration_ns": 5254557000,
+      "prompt_eval_duration_ns": 234738000,
+      "thinking_chars": 0,
+      "thinking_requested": false,
+      "response_fields": [
+        "content",
+        "role"
+      ],
+      "done_reason": "stop",
+      "output_chars": 566,
+      "confidence_is_calibrated": false,
+      "server_total_seconds": 5.4996827,
+      "load_seconds": 0.0037365,
+      "prompt_seconds": 0.234738,
+      "generation_seconds": 5.254557,
+      "prompt_tokens_per_second": 6270.8210856359,
+      "generation_tokens_per_second": 29.49820508179852,
+      "response_sha256": "e8b40dfd5cf92f434cc0f0d785faed7bc5ab676c2d07bde0934061f8759f3f67"
+    }
+  ],
+  "cache_hits": 0,
+  "tasks": [
+    {
+      "task_id": "titles:SEM_STORY_9698de3fd86bc2ed",
+      "cache_key": "72e302403d19b18db3cb29678d510ae53ce50d8acb846db69bb023f0ba87bb71",
+      "status": "ok"
+    }
+  ],
+  "new_audiovisual_inference": false,
+  "publication_ready": false
+}

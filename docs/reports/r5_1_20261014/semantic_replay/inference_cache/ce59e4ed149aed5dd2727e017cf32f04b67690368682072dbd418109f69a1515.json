@@ -1,0 +1,89 @@
+{
+  "key": "ce59e4ed149aed5dd2727e017cf32f04b67690368682072dbd418109f69a1515",
+  "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "series": [
+      {
+        "title": "Introdução da história do voo e do contexto do acidente",
+        "summary": "O relato começa com uma introdução sobre o voo e o contexto do acidente, estabelecendo a base para a narrativa.",
+        "stories": [
+          {
+            "source_unit_ids": [
+              "UNIT_61bd86b4406b95aa"
+            ],
+            "source_segment_ids": [
+              "SEG_00016"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "A introdução apresenta o objetivo de recontar a história do voo com imagens do Flight Simulator.",
+            "context_required": [],
+            "previous_story_position": null,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo.",
+            "suggested_ending": "A introdução prepara o terreno para o contexto histórico da Varig e sua relação com o acidente.",
+            "new_information": "O relato será condensado e ilustrado com imagens do Flight Simulator.",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00016",
+                "quote": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo."
+              }
+            ],
+            "missing_information": []
+          },
+          {
+            "source_unit_ids": [
+              "UNIT_ca64f9649a7ffbf8"
+            ],
+            "source_segment_ids": [
+              "SEG_00017",
+              "SEG_00018"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "O contexto histórico da Varig é apresentado, estabelecendo uma relação explicativa com o acidente.",
+            "context_required": [
+              "UNIT_61bd86b4406b95aa"
+            ],
+            "previous_story_position": 1,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente.",
+            "suggested_ending": "A mudança na Varig em 12 de junho de 1989 é apresentada como uma causa determinante do acidente.",
+            "new_information": "A mudança na Varig em 12 de junho de 1989 é apresentada como uma causa determinante do acidente.",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              },
+              {
+                "segment_id": "SEG_00018",
+                "quote": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+              }
+            ],
+            "missing_information": []
+          }
+        ],
+        "continuity_checks": {
+          "first_story_self_contained": true,
+          "progression_without_repetition": true,
+          "order_understandable": true,
+          "hook_closure_honest": true,
+          "essential_context_preserved": true
+        },
+        "contradictions": [],
+        "missing_information": [],
+        "ending_status": "OPEN_ENDING_DECLARED"
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "7ef93b7afb8c69bda13af422ff29d109c3eb0655b353b09b141e8629fd214754",
+  "provenance": {
+    "call_id": "f0928eef4de74047a10e1950f5c406d5:5",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "ff56501dcb88f9f17e81928454db64471d313aea272ce87de2a2aeb6f7e63a71",
+    "response_sha256": "7ef93b7afb8c69bda13af422ff29d109c3eb0655b353b09b141e8629fd214754",
+    "duration_seconds": 42.625,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

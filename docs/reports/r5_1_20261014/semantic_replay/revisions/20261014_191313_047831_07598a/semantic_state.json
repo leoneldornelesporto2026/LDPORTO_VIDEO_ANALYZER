@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "operation": "semantic-replay",
+  "run_id": "R51_91b7c9994fbc4cfd",
+  "reference_package_sha256": "a84ede22de5fe91b8a5e1abe7044229534fe55943777d769364ff58842ab9807",
+  "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "input_transcript_sha256": "45ae2351033bcffb67972a5b4fee25e80a2ad36fa786af459025ac48de407388",
+  "input_story_units_sha256": "76a5fa844db5de686af603d7b7838dbf0f9b54761f7935f9696d71cb29cc813f",
+  "input_arcs_sha256": "3404c64934e046fda61827578b75aec93299c9d0e8af563c1bab33914d9f624e",
+  "input_graph_sha256": "9ea9e6ab4a6173da31b84f06b4c6a5963bafa395f2ce5722d9c12cff4ed63665",
+  "phase": "C_VALIDATED",
+  "artifact_hashes": {
+    "editorial/global_topic_map.json": "566107fe8c0721f50bdb5cd105ad7e9b560010e11b9364e6f2375f14d1328b91",
+    "editorial/semantic_narrative_graph.json": "6f8a7fa906ef4399c6e79952b44220e7c842aa6969c630d70ec8d68b42728704",
+    "editorial/cross_arc_relations.json": "3de61ccf5fc29bec4f66e7197911603863b24a0d602d707ec00256e7e3156c41",
+    "editorial/semantic_qa_proposals.json": "67c6b6ecb5e5e7b32e1be79be8fc4b94d4891c1dbc457438a097f006f6ed2e92",
+    "editorial/narrative_completion_proposals.json": "ae76f50c3a8e88ae96071c1ec18da6333bb35f55988032a1f655a87b011c397b",
+    "editorial/story_series_proposals.json": "b6358b780c4b5b75fe21fae161c8f476cca3a1bfdd1b6e9426f88953e2b7fb0f",
+    "editorial/semantic_resolver_diagnostics.json": "6003f3ac1f0be495ac8cac849ca7fc494ff48a523d11c1165cdcf1fd2034a81b",
+    "provenance/semantic_series_reuse.json": "ce7ba05619f4476dc99515c868581259b97f26980bcb2b4e74d2b0ae413a87c1",
+    "social/story_visual_handoff.json": "87feef8e903d3413779a6b21a57c2040b3ca07ead582a6e48984a7c5c2e4db90",
+    "social/narrative_editorial_title_proposals.json": "7a8593b4e5a86a9c9ff6db03b120b44c4e93ec1f0d89509f5b79cc4ce9fa3f9f",
+    "editorial/story_visual_completeness_report.json": "83a11de2f26889b2f834718e536a4d82254b14d7038f8f40069bb79281ccfc9b",
+    "schemas/story_visual_handoff.schema.json": "3e7bf865bf884af736bf85c2c47b5781aa37bc224c670a796fa1ff7207f122e5"
+  },
+  "publication_ready": false,
+  "updated_at": "2026-10-14T19:10:50.701663+00:00"
+}

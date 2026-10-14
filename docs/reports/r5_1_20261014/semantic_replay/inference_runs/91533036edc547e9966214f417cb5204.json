@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "invocation_id": "91533036edc547e9966214f417cb5204",
+  "model": "qwen3:14b",
+  "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+  "service_version": "0.35.1",
+  "calls": [],
+  "cache_hits": 5,
+  "tasks": [
+    {
+      "task_id": "semantic.global_topic_map",
+      "cache_key": "dd16a8d89db3a727c3123f8eaac696a856e86d77231f53e893600f822478cae3",
+      "status": "cache_reused"
+    },
+    {
+      "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+      "cache_key": "924e43bde1a119a97f5359d0b588b6e5ac05b4841e56a7d360ff64e056eddca4",
+      "status": "cache_reused"
+    },
+    {
+      "task_id": "semantic.qa.Q_0015",
+      "cache_key": "0b41e037cc45223a3c596a834b29fb3250d32b66cb347c6b77158100373581ad",
+      "status": "cache_reused"
+    },
+    {
+      "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+      "cache_key": "353f2a9a9cf3a0133776fd5b220308ef4b2836f6a2f019603eb66b63911cff08",
+      "status": "cache_reused"
+    },
+    {
+      "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+      "cache_key": "45ca806816823f71eaa158b182493769a64fd215d3a5e20f122e3d99409b57bf",
+      "status": "cache_reused"
+    }
+  ],
+  "new_audiovisual_inference": false,
+  "publication_ready": false
+}

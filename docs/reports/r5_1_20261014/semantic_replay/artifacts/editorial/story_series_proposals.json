@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.0",
+  "publication_ready": false,
+  "human_review_completed": false,
+  "canonical_data_modified": false,
+  "series": [
+    {
+      "title": "Explicação sobre como pilotos usavam radionavegação antes do GPS",
+      "summary": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+      "stories": [
+        {
+          "source_unit_ids": [
+            "UNIT_5b31b4dd48b24eae",
+            "UNIT_5e1ac5211aadfb82",
+            "UNIT_eabcd282c5637f6a"
+          ],
+          "source_segment_ids": [
+            "SEG_00126",
+            "SEG_00127",
+            "SEG_00128",
+            "SEG_00129",
+            "SEG_00130",
+            "SEG_00131",
+            "SEG_00132"
+          ],
+          "narrative_role": "EXPLANATION",
+          "summary": "Explicação sobre o uso de sinais de rádio e instrumentos como o ADF para navegação aérea antes do GPS.",
+          "context_required": [
+            "radionavegação",
+            "ADF",
+            "frequências de rádio"
+          ],
+          "previous_story_position": null,
+          "next_story_relationship": null,
+          "suggested_opening": "Como os pilotos conseguiam navegar sem o GPS?",
+          "suggested_ending": "Grosseiramente é isso.",
+          "new_information": "A radionavegação dependia de antenas que emitiam sinais específicos, captados pelos instrumentos do avião.",
+          "supporting_quotes": [
+            {
+              "segment_id": "SEG_00126",
+              "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+            },
+            {
+              "segment_id": "SEG_00127",
+              "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+            },
+            {
+              "segment_id": "SEG_00131",
+              "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+            }
+          ],
+          "missing_information": [
+            "Detalhes sobre como os sinais eram captados em diferentes condições climáticas"
+          ],
+          "story_id": "SEM_STORY_9698de3fd86bc2ed",
+          "series_id": "SEM_SERIES_0ab8edbb24f957bd",
+          "sequence_position": 1,
+          "sequence_total": 1,
+          "source_arc_ids": [
+            "STORY_0017"
+          ],
+          "source_intervals": [
+            {
+              "segment_id": "SEG_00126",
+              "start": 709.46,
+              "end": 714.72
+            },
+            {
+              "segment_id": "SEG_00127",
+              "start": 714.94,
+              "end": 722.38
+            },
+            {
+              "segment_id": "SEG_00128",
+              "start": 722.48,
+              "end": 730.92
+            },
+            {
+              "segment_id": "SEG_00129",
+              "start": 731.08,
+              "end": 734.92
+            },
+            {
+              "segment_id": "SEG_00130",
+              "start": 735.12,
+              "end": 739.66
+            },
+            {
+              "segment_id": "SEG_00131",
+              "start": 739.9,
+              "end": 752.1
+            },
+            {
+              "segment_id": "SEG_00132",
+              "start": 753.34,
+              "end": 754.26
+            }
+          ],
+          "supporting_evidence": [
+            {
+              "segment_id": "SEG_00126",
+              "text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+              "start": 709.46,
+              "end": 714.72
+            },
+            {
+              "segment_id": "SEG_00127",
+              "text": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação.",
+              "start": 714.94,
+              "end": 722.38
+            },
+            {
+              "segment_id": "SEG_00128",
+              "text": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?",
+              "start": 722.48,
+              "end": 730.92
+            },
+            {
+              "segment_id": "SEG_00129",
+              "text": "E o avião consegue captar essas frequências, basta sintonizar.",
+              "start": 731.08,
+              "end": 734.92
+            },
+            {
+              "segment_id": "SEG_00130",
+              "text": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo.",
+              "start": 735.12,
+              "end": 739.66
+            },
+            {
+              "segment_id": "SEG_00131",
+              "text": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+              "start": 739.9,
+              "end": 752.1
+            },
+            {
+              "segment_id": "SEG_00132",
+              "text": "Grosseiramente é isso.",
+              "start": 753.34,
+              "end": 754.26
+            }
+          ],
+          "model_provenance": {
+            "call_id": "eb9e062d6b2644ab9d6f164f31786d16:4",
+            "model": "qwen3:14b",
+            "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+            "request_sha256": "3df9546678403b121425b09de915835f7b6c03af8c6bd86dfacc6a11a044213e",
+            "response_sha256": "367e77627f3621623d11c6d82a21407c1e036ad511c6c930082f5d6ea28d5dc9",
+            "duration_seconds": 30.733999999938533,
+            "cache_hit": false,
+            "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+          },
+          "factual_review_required": true,
+          "previous_story_dependency": null,
+          "estimated_source_duration": 42.64,
+          "duration_scope": "source_intervals_union_not_final_render",
+          "assembly_disclosure_required": false,
+          "source_is_continuous": true,
+          "editorial_status": "PROPOSED",
+          "review_required": true,
+          "requires_review": true,
+          "human_review_completed": false,
+          "preview_approved": false,
+          "publication_ready": false
+        }
+      ],
+      "continuity_checks": {
+        "first_story_self_contained": true,
+        "progression_without_repetition": true,
+        "order_understandable": true,
+        "hook_closure_honest": true,
+        "essential_context_preserved": true
+      },
+      "contradictions": [],
+      "missing_information": [
+        "Detalhes sobre como os sinais eram captados em diferentes condições climáticas"
+      ],
+      "ending_status": "OPEN_ENDING_DECLARED",
+      "series_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "sequence_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "source_segment_ids": [
+        "SEG_00126",
+        "SEG_00127",
+        "SEG_00128",
+        "SEG_00129",
+        "SEG_00130",
+        "SEG_00131",
+        "SEG_00132"
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00126",
+          "start": 709.46,
+          "end": 714.72
+        },
+        {
+          "segment_id": "SEG_00127",
+          "start": 714.94,
+          "end": 722.38
+        },
+        {
+          "segment_id": "SEG_00128",
+          "start": 722.48,
+          "end": 730.92
+        },
+        {
+          "segment_id": "SEG_00129",
+          "start": 731.08,
+          "end": 734.92
+        },
+        {
+          "segment_id": "SEG_00130",
+          "start": 735.12,
+          "end": 739.66
+        },
+        {
+          "segment_id": "SEG_00131",
+          "start": 739.9,
+          "end": 752.1
+        },
+        {
+          "segment_id": "SEG_00132",
+          "start": 753.34,
+          "end": 754.26
+        }
+      ],
+      "model_provenance": {
+        "call_id": "eb9e062d6b2644ab9d6f164f31786d16:4",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "3df9546678403b121425b09de915835f7b6c03af8c6bd86dfacc6a11a044213e",
+        "response_sha256": "367e77627f3621623d11c6d82a21407c1e036ad511c6c930082f5d6ea28d5dc9",
+        "duration_seconds": 30.733999999938533,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "blocking_issues": [],
+      "editorial_status": "PROPOSED",
+      "review_required": true,
+      "requires_review": true,
+      "publication_ready": false,
+      "human_review_completed": false,
+      "preview_approved": false,
+      "assembly_disclosure_required": false,
+      "editorial_metadata_origin": {
+        "origin": "codex_assisted_source_verification",
+        "repair_artifact": "provenance/editorial_metadata_repair.json"
+      }
+    }
+  ],
+  "rejected_proposals": []
+}

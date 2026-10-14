@@ -1,0 +1,20 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "src/tests/test_r51_story_visual_handoff.py",
+    "src/tests/test_r51_privacy_schema.py",
+    "-q",
+    "--junitxml=docs\\reports\\r5_1_20261014\\visual_focus\\freeze.junit.xml"
+  ],
+  "started_at_utc": "2026-10-14T18:56:17.690976+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 2.808739800006151,
+  "source_sha256": {
+    "src/ldporto/story_visual_handoff.py": "5ea73b55b8355d830325381c0a2b84278d78a76e45f810c9077bc1d2c016245a",
+    "schemas/story_visual_handoff.schema.json": "1683547be7fe61c798ec8cfb32eae717e283494293254aa38a24708d6887e9b8",
+    "src/tests/test_r51_story_visual_handoff.py": "77a7f91d8c5e2a20faf0e42b7356454b636e1544afce04a414d053c9d2ef0fca"
+  }
+}

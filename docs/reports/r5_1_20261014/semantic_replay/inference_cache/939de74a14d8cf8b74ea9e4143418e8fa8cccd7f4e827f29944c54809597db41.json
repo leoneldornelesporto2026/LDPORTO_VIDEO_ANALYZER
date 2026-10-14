@@ -1,0 +1,86 @@
+{
+  "key": "939de74a14d8cf8b74ea9e4143418e8fa8cccd7f4e827f29944c54809597db41",
+  "task_id": "semantic.completion.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "proposals": [
+      {
+        "source_arc_ids": [
+          "STORY_0001"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "QUESTION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00016",
+                "quote": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo."
+              }
+            ]
+          },
+          {
+            "component": "EXPLANATION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "RESULT"
+        ],
+        "summary": "O contexto histórico da Varig é apresentado antes de descrever o voo, estabelecendo uma relação explicativa entre os arcos.",
+        "contradictions": [],
+        "narrative_dependencies": []
+      },
+      {
+        "source_arc_ids": [
+          "STORY_0002"
+        ],
+        "content_type": "EXPLANATION",
+        "completeness_type": "PARTIAL_RESOLUTION",
+        "components": [
+          {
+            "component": "QUESTION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              }
+            ]
+          },
+          {
+            "component": "EXPLANATION",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00018",
+                "quote": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+              }
+            ]
+          }
+        ],
+        "missing_components": [
+          "RESULT"
+        ],
+        "summary": "A mudança na Varig em 12 de junho de 1989 é apresentada como uma causa determinante do acidente.",
+        "contradictions": [],
+        "narrative_dependencies": []
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "da807dc1f2634abb22841e660a3da761a3cecbef94f7abd852bee513e69d500b",
+  "provenance": {
+    "call_id": "f0928eef4de74047a10e1950f5c406d5:4",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "aac9148feb53e641d74a0dea9727d56bddd36c911b9b47009cc5c547b934dfe8",
+    "response_sha256": "da807dc1f2634abb22841e660a3da761a3cecbef94f7abd852bee513e69d500b",
+    "duration_seconds": 25.93700000003446,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

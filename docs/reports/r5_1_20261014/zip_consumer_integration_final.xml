@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.091" timestamp="2026-10-14T16:25:08.379479-03:00" hostname="leonelporto"><testcase classname="src.tests.test_r51_semantic_package" name="test_real_zip_consumer_resolves_new_provenance_and_preserves_legacy" time="0.947"><failure message="ValueError: {'semantic_validation': {'status': 'invalid', 'errors': ['semantic_handoff_dangling_reference:provenance/editorial_replay.json'], 'broken_reference_count': 1, 'publication_ready': False}, 'schema_validation': {'status': 'valid', 'errors': [], 'metadata_removed': False}}">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-643/test_real_zip_consumer_resolve0')
+
+    def test_real_zip_consumer_resolves_new_provenance_and_preserves_legacy(tmp_path):
+        from pathlib import Path
+        from ldporto.core import digest, file_hash
+        from ldporto.second_curation_export import build_core_package
+        from ldporto.semantic_package import read_package, decoded_documents, export_semantic_package, validate_semantic_package
+        from ldporto.semantic_replay import delivery_documents
+        from ldporto.story_visual_handoff import build_story_visual_handoff
+        from test_stage06_report_coherence import fixture
+        analysis = fixture()
+        analysis['metadata'].update(sha256='a'*64, source={'id':'synthetic-semantic-consumer'})
+        original = build_core_package(analysis, output_dir=tmp_path/'original',
+            cfg={'narrative_handoff_enabled':True, 'second_curation_visual_candidate_limit':0})
+        reference = Path(original['path'])
+        legacy = decoded_documents(read_package(reference))
+        sem = build_semantic_analysis(legacy, lambda *a: ({'topics':[], 'abstentions':['synthetic empty input']}, {'origin':'fixture'}))
+        def no_copy(*args):
+            return {'primary_title':None, 'alternative_titles':[], 'opening_hook_text':None,
+                'hook_supporting_quotes':[], 'social_caption':None, 'caption_supporting_quotes':[],
+                'engagement_question':None, 'cta':None, 'keywords':[],
+                'abstention_reason':'synthetic contract fixture'}, {'origin':'fixture_no_inference'}
+        sem.update(build_story_visual_handoff(legacy, sem, no_copy))
+        sem['provenance/assisted_editorial_draft.json'] = {'origin':'synthetic_only', 'publication_ready':False}
+        sem['provenance/semantic_series_reuse.json'] = {'origin':'synthetic_only', 'publication_ready':False}
+        state = {'run_id':'fixture', 'source_sha256':'a'*64, 'input_transcript_sha256':digest(legacy['transcript/relevant_segments.jsonl']),
+                 'reference_package_sha256':file_hash(reference)}
+        documents = delivery_documents(legacy, sem, state, tmp_path, {'classification':'expected'}, {'scope':'synthetic-contract-test'})
+&gt;       exported = export_semantic_package(reference, tmp_path/'export', documents)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\tests\test_r51_semantic_package.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+reference = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-643/test_real_zip_consumer_resolve0/original/SECOND_CURATION_PARTIAL_synthetic-semantic-consumer_20261014_192508_583213_89e5a4.zip')
+output = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-643/test_real_zip_consumer_resolve0/export')
+additions = {'editorial/global_topic_map.json': {'schema_version': '1.0', 'publication_ready': False, 'human_review_completed': Fa...sion': '1.0', 'publication_ready': False, 'human_review_completed': False, 'canonical_data_modified': False, ...}, ...}
+
+    def export_semantic_package(reference, output, additions):
+        """Copy legacy *data*, add validated derived contracts, repair only embedded schemas."""
+        from .core import file_hash
+        from .second_curation_export import validate_core_package
+        from .semantic_runtime import atomic_json
+        from datetime import datetime, timezone
+        import uuid
+        members = read_package(reference)
+        legacy = decoded_documents(members)
+        protected = {n: hashlib.sha256(v).hexdigest() for n, v in members.items()
+                     if n != 'SECOND_CURATION_MANIFEST.json' and not n.startswith('schemas/')}
+        for name, value in additions.items():
+            if name in members:
+                raise ValueError('semantic_addition_cannot_replace_legacy:' + name)
+            path = Path(name)
+            if path.is_absolute() or '..' in path.parts or ':' in name or '\\' in name:
+                raise ValueError('unsafe_semantic_artifact_path')
+            members[name] = (value if isinstance(value, bytes) else value.encode('utf-8') if isinstance(value, str)
+                             else json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False).encode('utf-8'))
+        if 'SECOND_CURATION_SEMANTIC_HANDOFF.json' in members and 'schemas/semantic_handoff.schema.json' not in members:
+            members['schemas/semantic_handoff.schema.json'] = (Path(__file__).parents[2]/'schemas/semantic_handoff.schema.json').read_bytes()
+        for name in list(members):
+            if name.startswith('schemas/') and name.endswith('.schema.json'):
+                source = Path(__file__).parents[2]/name
+                if source.is_file():
+                    members[name] = source.read_bytes()
+        documents = decoded_documents(members)
+        validation = validate_semantic_artifacts({n: doc for n, doc in documents.items() if n not in legacy or n in additions}, legacy)
+        schema_validation = validate_embedded_schemas(documents)
+        if validation['status'] != 'valid' or schema_validation['status'] != 'valid':
+&gt;           raise ValueError({'semantic_validation': validation, 'schema_validation': schema_validation})
+E           ValueError: {'semantic_validation': {'status': 'invalid', 'errors': ['semantic_handoff_dangling_reference:provenance/editorial_replay.json'], 'broken_reference_count': 1, 'publication_ready': False}, 'schema_validation': {'status': 'valid', 'errors': [], 'metadata_removed': False}}
+
+src\ldporto\semantic_package.py:267: ValueError</failure></testcase></testsuite></testsuites>

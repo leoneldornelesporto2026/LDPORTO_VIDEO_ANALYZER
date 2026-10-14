@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "review_required": true,
+  "publication_ready": false,
+  "series_count": 1,
+  "story_count": 1,
+  "metadata_status_counts": {
+    "PARTIAL": 1
+  },
+  "alignment_granularity_counts": {
+    "word": 1
+  },
+  "stories": [
+    {
+      "story_id": "SEM_STORY_9698de3fd86bc2ed",
+      "series_id": "SEM_SERIES_0ab8edbb24f957bd",
+      "metadata_status": "PARTIAL",
+      "blocking_issues": [
+        "editorial_titles_unavailable",
+        "human_editorial_review_pending",
+        "layout_collision_check_pending",
+        "preview_not_approved",
+        "rights_review_pending",
+        "source_asr_review_pending",
+        "title_proposal_abstained:ValueError:copy_unanchored_vocabulary_or_entity"
+      ],
+      "alignment_granularity": "word",
+      "highlight_count": 0,
+      "title_count": 0
+    }
+  ],
+  "visual_regions_status": "UNKNOWN",
+  "new_visual_inference": false,
+  "limitations": [
+    "all_copy_requires_editorial_review",
+    "canonical_asr_requires_source_audio_review",
+    "relative_times_require_curator_edit",
+    "spatial_layout_rights_and_preview_pending"
+  ]
+}

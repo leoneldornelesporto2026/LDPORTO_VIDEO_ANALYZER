@@ -1,0 +1,83 @@
+{
+  "key": "b4c9ff4ed99f8ad835f96382bc36f6cda69531ea345ff71933cc8dc45fc0ed12",
+  "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "series": [
+      {
+        "title": "Explicação sobre como pilotos usavam radionavegação antes do GPS",
+        "summary": "Antes do GPS, os pilotos utilizavam sinais de rádio emitidos por antenas ao redor do mundo para navegar. Ao sintonizar essas frequências, os instrumentos do avião, como o ADF, indicavam a direção da estação de rádio, ajudando o piloto a determinar sua posição e rota.",
+        "stories": [
+          {
+            "source_unit_ids": [
+              "UNIT_5b31b4dd48b24eae",
+              "UNIT_5e1ac5211aadfb82",
+              "UNIT_eabcd282c5637f6a"
+            ],
+            "source_segment_ids": [
+              "SEG_00126",
+              "SEG_00127",
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131",
+              "SEG_00132"
+            ],
+            "narrative_role": "EXPLANATION",
+            "summary": "Explicação sobre o uso de sinais de rádio e instrumentos como o ADF para navegação aérea antes do GPS.",
+            "context_required": [
+              "radionavegação",
+              "ADF",
+              "frequências de rádio"
+            ],
+            "previous_story_position": null,
+            "next_story_relationship": "SEQUENTIAL",
+            "suggested_opening": "Como os pilotos conseguiam navegar sem o GPS?",
+            "suggested_ending": "Essa tecnologia era essencial para a navegação em áreas onde o GPS não estava disponível.",
+            "new_information": "A radionavegação dependia de antenas que emitiam sinais específicos, captados pelos instrumentos do avião.",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00126",
+                "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+              },
+              {
+                "segment_id": "SEG_00127",
+                "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              }
+            ],
+            "missing_information": [
+              "Detalhes sobre como os sinais eram captados em diferentes condições climáticas"
+            ]
+          }
+        ],
+        "continuity_checks": {
+          "first_story_self_contained": true,
+          "progression_without_repetition": true,
+          "order_understandable": true,
+          "hook_closure_honest": true,
+          "essential_context_preserved": true
+        },
+        "contradictions": [],
+        "missing_information": [
+          "Detalhes sobre como os sinais eram captados em diferentes condições climáticas"
+        ],
+        "ending_status": "OPEN_ENDING_DECLARED"
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "367e77627f3621623d11c6d82a21407c1e036ad511c6c930082f5d6ea28d5dc9",
+  "provenance": {
+    "call_id": "eb9e062d6b2644ab9d6f164f31786d16:4",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "3df9546678403b121425b09de915835f7b6c03af8c6bd86dfacc6a11a044213e",
+    "response_sha256": "367e77627f3621623d11c6d82a21407c1e036ad511c6c930082f5d6ea28d5dc9",
+    "duration_seconds": 30.733999999938533,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

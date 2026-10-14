@@ -1,0 +1,16 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "src/tests/test_r51_privacy_schema.py",
+    "src/tests/test_stage64_curation_recovery.py",
+    "src/tests/test_r5_narrative_handoff.py",
+    "-q",
+    "--junitxml=docs\\reports\\r5_1_20261014\\privacy_focus_junit.xml"
+  ],
+  "started_at_utc": "2026-10-14T14:53:32.079940+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 19.774116
+}

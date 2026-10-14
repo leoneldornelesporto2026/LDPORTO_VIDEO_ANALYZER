@@ -1,0 +1,269 @@
+{
+  "key": "b8df1bc07769a7e3dd8ddaf851c2b599f2869b1b611c18f7b9d201717e403a35",
+  "task_id": "semantic.series.SEM_TOPIC_c08a787114d057e6",
+  "payload": {
+    "series": [
+      {
+        "title": "Introdução da história do voo e do contexto do acidente",
+        "summary": "A introdução apresenta a narrativa do voo e o contexto do acidente, estabelecendo uma base para compreender os eventos que se seguiram.",
+        "stories": [
+          {
+            "source_unit_ids": [
+              "UNIT_61bd86b4406b95aa"
+            ],
+            "source_segment_ids": [
+              "SEG_00016"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "A introdução apresenta a narrativa do voo e o contexto do acidente, estabelecendo uma base para compreender os eventos que se seguiram.",
+            "context_required": [],
+            "previous_story_position": null,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo.",
+            "suggested_ending": "A introdução apresenta a narrativa do voo e o contexto do acidente, estabelecendo uma base para compreender os eventos que se seguiram.",
+            "new_information": "Introdução da história do voo e do contexto do acidente",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00016",
+                "quote": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo."
+              }
+            ],
+            "missing_information": []
+          },
+          {
+            "source_unit_ids": [
+              "UNIT_ca64f9649a7ffbf8"
+            ],
+            "source_segment_ids": [
+              "SEG_00017",
+              "SEG_00018"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "Contexto histórico da Varig e como uma mudança específica foi a causa determinante do acidente.",
+            "context_required": [],
+            "previous_story_position": 1,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente.",
+            "suggested_ending": "Contexto histórico da Varig e como uma mudança específica foi a causa determinante do acidente.",
+            "new_information": "Contexto da mudança na Varig e sua relação com o acidente",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00017",
+                "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+              },
+              {
+                "segment_id": "SEG_00018",
+                "quote": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+              }
+            ],
+            "missing_information": []
+          },
+          {
+            "source_unit_ids": [
+              "UNIT_caf4fa118bbb5c74"
+            ],
+            "source_segment_ids": [
+              "SEG_00123",
+              "SEG_00124",
+              "SEG_00125"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "O aeroporto de Marabá não tinha radar, o que levou à necessidade de usar outros métodos de navegação.",
+            "context_required": [],
+            "previous_story_position": 2,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "O aeroporto lá de Marabá não tinha radar.",
+            "suggested_ending": "O aeroporto de Marabá não tinha radar, o que levou à necessidade de usar outros métodos de navegação.",
+            "new_information": "Decolagem e informações sobre o avião",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00123",
+                "quote": "O aeroporto lá de Marabá não tinha radar."
+              },
+              {
+                "segment_id": "SEG_00124",
+                "quote": "Então, quando o avião tomou a proa 270, ao invés de 027, ninguém percebeu o erro da tripulação."
+              },
+              {
+                "segment_id": "SEG_00125",
+                "quote": "Mais um elo se fechava."
+              }
+            ],
+            "missing_information": []
+          },
+          {
+            "source_unit_ids": [
+              "UNIT_5b31b4dd48b24eae",
+              "UNIT_5e1ac5211aadfb82",
+              "UNIT_eabcd282c5637f6a"
+            ],
+            "source_segment_ids": [
+              "SEG_00126",
+              "SEG_00127",
+              "SEG_00128",
+              "SEG_00129",
+              "SEG_00130",
+              "SEG_00131",
+              "SEG_00132"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "Explicação sobre como os pilotos usavam a radionavegação antes do GPS.",
+            "context_required": [],
+            "previous_story_position": 3,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+            "suggested_ending": "Explicação sobre como os pilotos usavam a radionavegação antes do GPS.",
+            "new_information": "Explicação sobre como pilotos usavam radionavegação antes do GPS",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00126",
+                "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+              },
+              {
+                "segment_id": "SEG_00127",
+                "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+              },
+              {
+                "segment_id": "SEG_00128",
+                "quote": "Para não complicar muito, ao redor do mundo existem milhares de antenas que emitem sinais de rádio em frequências específicas, tá?"
+              },
+              {
+                "segment_id": "SEG_00129",
+                "quote": "E o avião consegue captar essas frequências, basta sintonizar."
+              },
+              {
+                "segment_id": "SEG_00130",
+                "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+              },
+              {
+                "segment_id": "SEG_00131",
+                "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+              },
+              {
+                "segment_id": "SEG_00132",
+                "quote": "Grosseiramente é isso."
+              }
+            ],
+            "missing_information": []
+          },
+          {
+            "source_unit_ids": [
+              "UNIT_4328b28b45d028db",
+              "UNIT_3b8d58d26091fea5"
+            ],
+            "source_segment_ids": [
+              "SEG_00133",
+              "SEG_00134",
+              "SEG_00135",
+              "SEG_00136",
+              "SEG_00137",
+              "SEG_00138",
+              "SEG_00139"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "Descrição do uso de instrumentos de navegação durante o voo.",
+            "context_required": [],
+            "previous_story_position": 4,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá.",
+            "suggested_ending": "Descrição do uso de instrumentos de navegação durante o voo.",
+            "new_information": "Descrição do uso de instrumentos de navegação durante o voo",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00133",
+                "quote": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá."
+              },
+              {
+                "segment_id": "SEG_00134",
+                "quote": "Então, a indicação das agulhas dos RMI, que é esse instrumento aí que você está vendo, estavam apontadas para trás."
+              },
+              {
+                "segment_id": "SEG_00135",
+                "quote": "Com 15 minutos de voo, por volta das 17h50, o Zilli sintonizou os instrumentos dele na frequência de Belém."
+              },
+              {
+                "segment_id": "SEG_00136",
+                "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+              },
+              {
+                "segment_id": "SEG_00137",
+                "quote": "O problema é que era comum as antenas da Amazônia não terem um alcance muito longo, E ele imaginou que ainda não estava na distância suficiente para entrar na área das antenas de Belém."
+              },
+              {
+                "segment_id": "SEG_00138",
+                "quote": "E aí, nem se preocuparam com isso."
+              },
+              {
+                "segment_id": "SEG_00139",
+                "quote": "Só que eles não se tocaram de um detalhe."
+              }
+            ],
+            "missing_information": []
+          },
+          {
+            "source_unit_ids": [
+              "UNIT_921943a5a6ba0cb7",
+              "UNIT_4ce92d86c6d99336",
+              "UNIT_62e9f998a0d2f23f"
+            ],
+            "source_segment_ids": [
+              "SEG_00140",
+              "SEG_00141",
+              "SEG_00142",
+              "SEG_00143"
+            ],
+            "narrative_role": "SETUP",
+            "summary": "Menciona a existência de uma antena intermediária entre Marabá e Belém.",
+            "context_required": [],
+            "previous_story_position": 5,
+            "next_story_relationship": "CONTINUES",
+            "suggested_opening": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí.",
+            "suggested_ending": "Menciona a existência de uma antena intermediária entre Marabá e Belém.",
+            "new_information": "Menciona a existência de uma antena intermediária entre Marabá e Belém",
+            "supporting_quotes": [
+              {
+                "segment_id": "SEG_00140",
+                "quote": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí."
+              },
+              {
+                "segment_id": "SEG_00141",
+                "quote": "Inclusive, essa antena aparece nas cartas de navegação da região."
+              },
+              {
+                "segment_id": "SEG_00142",
+                "quote": "Se os pilotos tivessem tentado sintonizar essa antena, ela poderia aparecer no ADF, mesmo que eles estivessem voando em outra direção, porque eles estavam dentro do alcance dela."
+              },
+              {
+                "segment_id": "SEG_00143",
+                "quote": "E os pilotos provavelmente perceberiam também o erro que eles tinham cometido."
+              }
+            ],
+            "missing_information": []
+          }
+        ],
+        "continuity_checks": {
+          "first_story_self_contained": true,
+          "progression_without_repetition": true,
+          "order_understandable": true,
+          "hook_closure_honest": true,
+          "essential_context_preserved": true
+        },
+        "contradictions": [],
+        "missing_information": [],
+        "ending_status": "OPEN_ENDING_DECLARED"
+      }
+    ],
+    "abstentions": []
+  },
+  "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+  "provenance": {
+    "call_id": "b02ffb7b01d54ee88f6176a37e91e947:3",
+    "model": "qwen3:14b",
+    "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+    "request_sha256": "a5e908cea5cbd89c034ff3aa0c9a3a398cf0ec0ad45cb9a11be96ce63921a5b1",
+    "response_sha256": "62ab15e189312785f19c09d18e617f802d99608bd5d56fd3cbb90ab8b4b5be3e",
+    "duration_seconds": 141.03200000000652,
+    "cache_hit": false,
+    "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+  }
+}

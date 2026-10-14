@@ -1,0 +1,167 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-10-14T14:54:25.110603+00:00",
+  "curator_root": "../LDPORTO_VIDEO_CURATOR",
+  "pointer_ref": "output/curation/zd_wjssZ7mc/EDIT_DECISIONS.json",
+  "state_ref": "output/curation/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/STATE.json",
+  "project_id": "zd_wjssZ7mc",
+  "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+  "recorded_approval_state": "BATCH_COMPLETED",
+  "pointer_state_agree": true,
+  "recorded_source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+  "approved_clip_count": 7,
+  "recorded_final_count": 7,
+  "renders": [
+    {
+      "clip_id": "CLIP_001",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "116d842babc2274ab9133f166521ff5529780761ae4fef29247a100da518bb19",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_001/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_001_FINAL.mp4",
+      "source_interval": {
+        "source_start": 197.46,
+        "source_end": 238.72,
+        "duration": 41.26
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 32212741,
+        "mtime_ns": 1791980194429837100,
+        "mtime_utc": "2026-10-14T12:16:34.429837+00:00"
+      }
+    },
+    {
+      "clip_id": "CLIP_002",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "287f7b8fce67ce08570693cd5ae6e47b6f8a35a654c8fc21b113ef2f7e38beb8",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_002/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_002_FINAL.mp4",
+      "source_interval": {
+        "source_start": 238.94,
+        "source_end": 331.18,
+        "duration": 92.24
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 61173173,
+        "mtime_ns": 1791980381267529100,
+        "mtime_utc": "2026-10-14T12:19:41.267529+00:00"
+      }
+    },
+    {
+      "clip_id": "CLIP_003",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "222946cec8431cdaf38564b4cfbbce9f13a7f78fd745eeb8561fa145a40c7ab1",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_003/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_003_FINAL.mp4",
+      "source_interval": {
+        "source_start": 1842.3,
+        "source_end": 1872.3,
+        "duration": 30
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 9199446,
+        "mtime_ns": 1791980584960573700,
+        "mtime_utc": "2026-10-14T12:23:04.960574+00:00"
+      }
+    },
+    {
+      "clip_id": "CLIP_004",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "be099854fe5814fd969856b088c429a26a846aa299286a16d553fa4679232274",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_004/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_004_FINAL.mp4",
+      "source_interval": {
+        "source_start": 91.68,
+        "source_end": 178.24,
+        "duration": 86.56
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 73823182,
+        "mtime_ns": 1791980783774082400,
+        "mtime_utc": "2026-10-14T12:26:23.774082+00:00"
+      }
+    },
+    {
+      "clip_id": "CLIP_005",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "34053a5128c491a4d86b4041763d88a86168ae6c21147186b5426c37820d81cb",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_005/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_005_FINAL.mp4",
+      "source_interval": {
+        "source_start": 422.54,
+        "source_end": 492.96,
+        "duration": 70.42
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 38480121,
+        "mtime_ns": 1791980971455223500,
+        "mtime_utc": "2026-10-14T12:29:31.455224+00:00"
+      }
+    },
+    {
+      "clip_id": "CLIP_006",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "f8e559d21c5a47f7077ce6baee4af6e649cc05965adbcab92791cfdb54ebdd0c",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_006/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_006_FINAL.mp4",
+      "source_interval": {
+        "source_start": 493.14,
+        "source_end": 533.44,
+        "duration": 40.3
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 29465558,
+        "mtime_ns": 1791981183796318900,
+        "mtime_utc": "2026-10-14T12:33:03.796319+00:00"
+      }
+    },
+    {
+      "clip_id": "CLIP_007",
+      "batch_id": "30bb488c18c3443aa978cc5a85d20477",
+      "plan_revision": "a39c0fdedd2a4c2ba8107c3a4b55e038",
+      "render_validated": true,
+      "sha256": "6d2c4d6783bc6dc97767ede5c61d6a108ebe27cb5333a73974d2120221427d5e",
+      "source_media_sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+      "path_relative_to_curator": "output/renders/zd_wjssZ7mc/revisions/a39c0fdedd2a4c2ba8107c3a4b55e038/CLIP_007/batches/30bb488c18c3443aa978cc5a85d20477/CLIP_007_FINAL.mp4",
+      "source_interval": {
+        "source_start": 565.29,
+        "source_end": 595.29,
+        "duration": 30
+      },
+      "stat": {
+        "exists": true,
+        "bytes": 26426549,
+        "mtime_ns": 1791981400110986100,
+        "mtime_utc": "2026-10-14T12:36:40.110986+00:00"
+      }
+    }
+  ],
+  "verification_scope": {
+    "metadata_read": true,
+    "media_stat_only": true,
+    "media_bytes_opened": false,
+    "media_decoded": false,
+    "media_hashed": false,
+    "model_calls": 0,
+    "files_modified_in_curator": false,
+    "render_sha256_fields": "Historical declarations copied from persisted state; not verified by reading media in this task.",
+    "approval_state": "Existing Curator state only; no new human, editorial or publication approval was performed."
+  }
+}

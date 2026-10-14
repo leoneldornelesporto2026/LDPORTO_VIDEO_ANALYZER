@@ -338,3 +338,174 @@ def validate_editorial_replay(replay, source_sha256, identity):
                     type(row.get('bytes')) is not int or row['bytes'] < 0):
                 return ['invalid_editorial_replay_hash:' + key]
     return []
+
+
+def classify_provenance_mismatch(identity, editorial_replay=None, *, source_sha256=None,
+                                 verified_checkpoint_sha256=None, compatible_schema=True):
+    """Explain version boundaries without clearing historical mismatch or stage 20.
+
+    ``expected`` means a recognized exporter/replay boundary with verification
+    still pending; ``explained`` additionally requires independently verified
+    checkpoint hashes. Unknown reasons remain unresolved. A checksum, source,
+    receipt or schema conflict is incompatible, even alongside expected drift.
+    This pure classifier does not verify files or attest new source inference.
+    """
+    from pathlib import PurePosixPath
+    identity = identity or {}
+    reasons = list(identity.get('mismatch_reasons') or [])
+    replay = editorial_replay or {}
+    checkpoints = replay.get('reused_checkpoints') or {}
+    stages = identity.get('stages') or {}
+
+    def observed(mapping, stage):
+        values = []
+        for name, value in (mapping or {}).items():
+            if name == stage or PurePosixPath(str(name).replace('\\', '/')).name == stage + '.json':
+                values.append(value.get('sha256') if isinstance(value, dict) else value)
+        return list(dict.fromkeys(values))
+
+    hard = ('source_sha256_mismatch', 'attestation_hash_mismatch', 'stage_identity_mismatch',
+            'checkpoint_hash_mismatch', 'checkpoint_receipt_mismatch', 'producer_receipt_invalid',
+            'dependency_contract_mismatch', 'artifact_hash_mismatch', 'execution_policy_mismatch',
+            'execution_code_hashes_invalid', 'optional_policy_mismatch', 'invalid_attestation_contract')
+    expected = {'analysis_code_differs_from_exporter', 'analysis_build_differs_from_exporter',
+                'stage_code_differs_from_exporter:20_handoff', 'stage_build_differs_from_exporter:20_handoff',
+                'mixed_replay_not_full_execution'}
+    conflicts, pending = [], []
+    if compatible_schema is False:
+        conflicts.append('incompatible_schema')
+    elif compatible_schema is not True:
+        pending.append('schema_compatibility_unresolved')
+    if replay:
+        if source_sha256 is None:
+            pending.append('source_hash_unresolved')
+        else:
+            conflicts.extend(validate_editorial_replay(replay, source_sha256, identity))
+    elif reasons:
+        pending.append('editorial_replay_evidence_missing')
+    for name, row in checkpoints.items():
+        stage = PurePosixPath(name).stem
+        expected_hash = row.get('sha256') if isinstance(row, dict) else None
+        original = stages.get(stage, {}).get('checkpoint_sha256')
+        verified = observed(verified_checkpoint_sha256, stage)
+        if original and original != expected_hash or verified and verified != [expected_hash]:
+            conflicts.append('reused_checkpoint_hash_conflict:' + stage)
+        elif not verified:
+            pending.append('checkpoint_verification_pending:' + stage)
+    details = []
+    for reason in reasons:
+        if reason.startswith(hard):
+            status = 'incompatible'
+        elif reason not in expected:
+            status = 'unresolved'
+        elif not replay or source_sha256 is None or compatible_schema is not True:
+            status = 'unresolved'
+        else:
+            status = 'expected' if pending else 'explained'
+        if reason.endswith(':20_handoff') and not observed(checkpoints, '20_handoff'):
+            status = 'unresolved'
+        details.append({'reason': reason, 'classification': status,
+                        'scope': 'historical_20_handoff' if reason.endswith(':20_handoff') else
+                                 'original_source_vs_current_exporter'})
+    if conflicts or any(row['classification'] == 'incompatible' for row in details):
+        classification = 'incompatible'
+    elif any(row['classification'] == 'unresolved' for row in details) or identity.get('build_mismatch') is None:
+        classification = 'unresolved'
+    elif not reasons and identity.get('build_mismatch') is True:
+        classification = 'unresolved'
+        pending.append('mismatch_reason_missing')
+    elif not details:
+        classification = 'expected'
+    elif all(row['classification'] == 'explained' for row in details):
+        classification = 'explained'
+    else:
+        classification = 'expected'
+    return {'schema_version': '1.0', 'classification': classification,
+            'original_build_mismatch': identity.get('build_mismatch'), 'original_mismatch_reasons': reasons,
+            'reason_classifications': details, 'conflicts': list(dict.fromkeys(conflicts)),
+            'pending_verification': list(dict.fromkeys(pending)),
+            'stage20': {'original': stages.get('20_handoff'), 'reused_sha256': observed(checkpoints, '20_handoff'),
+                        'verified_sha256': observed(verified_checkpoint_sha256, '20_handoff')},
+            'original_execution_complete': identity.get('execution_complete'),
+            'original_unverified_stages': list(identity.get('unverified_stages') or []),
+            'changes_original_flags': False, 'full_pipeline_execution_attested': False,
+            'scope': 'compatibility_explanation_only; not_source_inference_proof'}
+
+
+def semantic_text_provenance(source_sha256, calls, *, run_id, purpose, input_sha256=None,
+                             code_sha256=None, prompt_sha256=None):
+    """Record observed textual requests separately from CPU replay and history.
+
+    Each new request needs call_id/model/status, origin=new_textual_inference,
+    execution_mode=executed and request_sent=True. Historical/cache metadata never
+    counts as a new request. Missing measurements stay null. Caller observations
+    are not an independent attestation of a running model or human correctness.
+    """
+    import math
+    import re
+    from .core import digest
+    if not re.fullmatch(r'[0-9a-f]{64}', str(source_sha256)) or not run_id or not purpose:
+        raise ValueError('invalid_semantic_text_run_identity')
+    if not isinstance(calls, list) or any(not isinstance(row, dict) for row in calls):
+        raise ValueError('invalid_semantic_text_call_records')
+    measurements = ('duration_seconds', 'server_total_seconds', 'load_seconds', 'prompt_seconds',
+                    'generation_seconds', 'prompt_eval_count', 'eval_count', 'request_bytes')
+    rows, issues, new, cache, historical = [], [], [], [], []
+    identifiers = set()
+    for index, original in enumerate(calls):
+        row = {key: original.get(key) for key in ('call_id', 'request_id', 'model', 'status',
+               'origin', 'execution_mode', 'request_sent', 'request_sha256', 'response_sha256')}
+        if original.get('modality', 'text') != 'text':
+            raise ValueError('non_textual_inference_record')
+        sent = row['request_sent']
+        if row['execution_mode'] == 'cache_reused' and sent is True:
+            raise ValueError('cache_reuse_cannot_claim_request_sent')
+        valid = (isinstance(row['call_id'], str) and bool(row['call_id']) and row['call_id'] not in identifiers
+                 and isinstance(row['model'], str) and bool(row['model']) and
+                 row['status'] in {'ok', 'failed', 'timeout', 'cancelled'} and type(sent) is bool)
+        identifiers.add(str(row['call_id']))
+        if valid and row['origin'] == 'new_textual_inference' and row['execution_mode'] == 'executed' and sent:
+            new.append(row)
+        elif valid and row['origin'] == 'historical_source_inference':
+            historical.append(row)
+        elif valid and row['execution_mode'] == 'cache_reused' and not sent:
+            cache.append(row)
+        else:
+            issues.append({'index': index, 'reason': 'request_origin_or_execution_unverified'})
+        for key in measurements:
+            value = original.get(key)
+            row[key] = value if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0 else None
+        rows.append(row)
+    totals = {key: sum(row[key] for row in new if row[key] is not None)
+              if any(row[key] is not None for row in new) else None for key in measurements}
+    block = {'schema_version': '1.0', 'scope': 'semantic_text_analysis_only',
+             'source_sha256': source_sha256, 'run_id': run_id, 'purpose': purpose,
+             'input_sha256': input_sha256, 'code_sha256': code_sha256, 'prompt_sha256': prompt_sha256,
+             'calls': rows, 'record_count': len(rows), 'observed_new_textual_model_calls': len(new),
+             'new_textual_model_calls': None if issues else len(new), 'cache_reuse_count': len(cache),
+             'historical_record_count': len(historical), 'unverified_records': issues,
+             'failed_new_textual_model_calls': sum(row['status'] != 'ok' for row in new),
+             'new_textual_measurements': totals,
+             'measurement_coverage': {key: sum(row[key] is not None for row in new) for key in measurements},
+             'new_asr_calls': 0, 'new_asd_calls': 0, 'new_audiovisual_inference': False,
+             'overwrites_editorial_replay': False, 'full_pipeline_execution_attested': False,
+             'publication_ready': False, 'evidence_scope': 'caller_observed_request_records_not_independent_attestation'}
+    block['provenance_sha256'] = digest(block)
+    return block
+
+
+def validate_semantic_text_provenance(document, source_sha256):
+    """Check the separate textual-run contract without invoking a model."""
+    from .core import digest
+    try:
+        if (document.get('schema_version') != '1.0' or document.get('scope') != 'semantic_text_analysis_only'
+                or document.get('source_sha256') != source_sha256 or
+                document.get('provenance_sha256') != digest({key: value for key, value in document.items()
+                                                           if key != 'provenance_sha256'})):
+            return ['invalid_semantic_text_provenance']
+        expected = semantic_text_provenance(source_sha256, document['calls'], run_id=document['run_id'],
+                    purpose=document['purpose'], input_sha256=document.get('input_sha256'),
+                    code_sha256=document.get('code_sha256'), prompt_sha256=document.get('prompt_sha256'))
+        return [] if expected == document else ['semantic_text_counters_or_scope_disagree']
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return ['invalid_semantic_text_provenance']

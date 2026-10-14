@@ -1,0 +1,336 @@
+{
+  "schema_version": "1.0",
+  "publication_ready": false,
+  "human_review_completed": false,
+  "canonical_data_modified": false,
+  "relations": [
+    {
+      "source_arc_id": "STORY_0001",
+      "target_arc_id": "STORY_0002",
+      "relation_type": "EXPLAINS",
+      "semantic_basis": "SEMANTIC_CONTINUITY",
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00016",
+          "quote": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo."
+        },
+        {
+          "segment_id": "SEG_00017",
+          "quote": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente."
+        }
+      ],
+      "reasoning_summary": "O contexto histórico da Varig é apresentado antes de descrever o voo, estabelecendo uma relação explicativa entre os arcos.",
+      "confidence_basis": [
+        "SEMANTIC_CONTINUITY"
+      ],
+      "contradictions": [],
+      "relation_id": "SEM_REL_0e866cf099a10d0c756b",
+      "source_node_id": "STORY_0001",
+      "target_node_id": "STORY_0002",
+      "supporting_segment_ids": [
+        "SEG_00016",
+        "SEG_00017"
+      ],
+      "supporting_text": [
+        {
+          "segment_id": "SEG_00016",
+          "text": "Só que hoje a gente vai recontar essa história um pouco mais condensada e com imagens do Flight Simulator para ilustrar cada passo do que aconteceu naquele voo.",
+          "start": 82.46,
+          "end": 91.58
+        },
+        {
+          "segment_id": "SEG_00017",
+          "text": "Antes da gente ir para o voo, a gente precisa dar o contexto do que estava acontecendo na Varig e como que uma mudança específica foi a causa determinante do acidente.",
+          "start": 91.68,
+          "end": 100.42
+        }
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00016",
+          "start": 82.46,
+          "end": 91.58
+        },
+        {
+          "segment_id": "SEG_00017",
+          "start": 91.68,
+          "end": 100.42
+        }
+      ],
+      "evidence_status": "SOURCE_QUOTES_VALIDATED_SEMANTIC_REVIEW_REQUIRED",
+      "requires_review": true,
+      "causality_human_verified": false,
+      "model_provenance": {
+        "call_id": "f0928eef4de74047a10e1950f5c406d5:2",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "0e304fff1c91aad87e60c1dae68e3cac114f9ff4554938c9bf992bfd2bb4169a",
+        "response_sha256": "123689b139a18bad9b891e20313f3462178681a31cb0f77ccda2309b5644ac3c",
+        "duration_seconds": 67.84399999992456,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "publication_ready": false
+    },
+    {
+      "source_arc_id": "STORY_0016",
+      "target_arc_id": "STORY_0017",
+      "relation_type": "EXPLAINS",
+      "semantic_basis": "SEMANTIC_CONTINUITY",
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00123",
+          "quote": "O aeroporto lá de Marabá não tinha radar."
+        },
+        {
+          "segment_id": "SEG_00126",
+          "quote": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?"
+        }
+      ],
+      "reasoning_summary": "A ausência de radar em Marabá leva à explicação sobre como os pilotos usavam a radionavegação antes do GPS.",
+      "confidence_basis": [
+        "SEMANTIC_CONTINUITY"
+      ],
+      "contradictions": [],
+      "relation_id": "SEM_REL_1806bbfa4cefde540f46",
+      "source_node_id": "STORY_0016",
+      "target_node_id": "STORY_0017",
+      "supporting_segment_ids": [
+        "SEG_00123",
+        "SEG_00126"
+      ],
+      "supporting_text": [
+        {
+          "segment_id": "SEG_00123",
+          "text": "O aeroporto lá de Marabá não tinha radar.",
+          "start": 696.06,
+          "end": 698.84
+        },
+        {
+          "segment_id": "SEG_00126",
+          "text": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+          "start": 709.46,
+          "end": 714.72
+        }
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00123",
+          "start": 696.06,
+          "end": 698.84
+        },
+        {
+          "segment_id": "SEG_00126",
+          "start": 709.46,
+          "end": 714.72
+        }
+      ],
+      "evidence_status": "SOURCE_QUOTES_VALIDATED_SEMANTIC_REVIEW_REQUIRED",
+      "requires_review": true,
+      "causality_human_verified": false,
+      "model_provenance": {
+        "call_id": "f0928eef4de74047a10e1950f5c406d5:2",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "0e304fff1c91aad87e60c1dae68e3cac114f9ff4554938c9bf992bfd2bb4169a",
+        "response_sha256": "123689b139a18bad9b891e20313f3462178681a31cb0f77ccda2309b5644ac3c",
+        "duration_seconds": 67.84399999992456,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "publication_ready": false
+    },
+    {
+      "source_arc_id": "STORY_0017",
+      "target_arc_id": "STORY_0018",
+      "relation_type": "EXPLAINS",
+      "semantic_basis": "SEMANTIC_CONTINUITY",
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00130",
+          "quote": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo."
+        },
+        {
+          "segment_id": "SEG_00133",
+          "quote": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá."
+        }
+      ],
+      "reasoning_summary": "A explicação sobre a radionavegação é seguida pela descrição do uso dos instrumentos durante o voo.",
+      "confidence_basis": [
+        "SEMANTIC_CONTINUITY"
+      ],
+      "contradictions": [],
+      "relation_id": "SEM_REL_4097d68b4e649aa1b9f2",
+      "source_node_id": "STORY_0017",
+      "target_node_id": "STORY_0018",
+      "supporting_segment_ids": [
+        "SEG_00130",
+        "SEG_00133"
+      ],
+      "supporting_text": [
+        {
+          "segment_id": "SEG_00130",
+          "text": "O plano de voo tem a frequência dessas antenas, de Belém, por exemplo.",
+          "start": 735.12,
+          "end": 739.66
+        },
+        {
+          "segment_id": "SEG_00133",
+          "text": "Quando eles decolaram, tanto os instrumentos do comandante, quanto do primeiro oficial, estavam sintonizados na frequência de VOR de Marabá.",
+          "start": 754.42,
+          "end": 764.12
+        }
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00130",
+          "start": 735.12,
+          "end": 739.66
+        },
+        {
+          "segment_id": "SEG_00133",
+          "start": 754.42,
+          "end": 764.12
+        }
+      ],
+      "evidence_status": "SOURCE_QUOTES_VALIDATED_SEMANTIC_REVIEW_REQUIRED",
+      "requires_review": true,
+      "causality_human_verified": false,
+      "model_provenance": {
+        "call_id": "f0928eef4de74047a10e1950f5c406d5:2",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "0e304fff1c91aad87e60c1dae68e3cac114f9ff4554938c9bf992bfd2bb4169a",
+        "response_sha256": "123689b139a18bad9b891e20313f3462178681a31cb0f77ccda2309b5644ac3c",
+        "duration_seconds": 67.84399999992456,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "publication_ready": false
+    },
+    {
+      "source_arc_id": "STORY_0018",
+      "target_arc_id": "STORY_0019",
+      "relation_type": "EXPLAINS",
+      "semantic_basis": "SEMANTIC_CONTINUITY",
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00136",
+          "quote": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém."
+        },
+        {
+          "segment_id": "SEG_00140",
+          "quote": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí."
+        }
+      ],
+      "reasoning_summary": "A falha na sintonização das antenas leva à menção da existência de uma antena intermediária entre Marabá e Belém.",
+      "confidence_basis": [
+        "SEMANTIC_CONTINUITY"
+      ],
+      "contradictions": [],
+      "relation_id": "SEM_REL_4bbe73b6745d0ab3a4ca",
+      "source_node_id": "STORY_0018",
+      "target_node_id": "STORY_0019",
+      "supporting_segment_ids": [
+        "SEG_00136",
+        "SEG_00140"
+      ],
+      "supporting_text": [
+        {
+          "segment_id": "SEG_00136",
+          "text": "Ao invés da agulha do ADF apontar para frente, ela começou a girar, já que o avião não estava encontrando aquelas antenas, porque eles tinham se afastado de Belém e não ido em direção a Belém.",
+          "start": 779.82,
+          "end": 793.1
+        },
+        {
+          "segment_id": "SEG_00140",
+          "text": "Sabendo que as antenas na Amazônia apresentam esse problema, as autoridades construíram outra antena de radionavegação justamente entre Marabá e Belém, nas proximidades de Tucuruí.",
+          "start": 810.26,
+          "end": 822.4
+        }
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00136",
+          "start": 779.82,
+          "end": 793.1
+        },
+        {
+          "segment_id": "SEG_00140",
+          "start": 810.26,
+          "end": 822.4
+        }
+      ],
+      "evidence_status": "SOURCE_QUOTES_VALIDATED_SEMANTIC_REVIEW_REQUIRED",
+      "requires_review": true,
+      "causality_human_verified": false,
+      "model_provenance": {
+        "call_id": "f0928eef4de74047a10e1950f5c406d5:2",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "0e304fff1c91aad87e60c1dae68e3cac114f9ff4554938c9bf992bfd2bb4169a",
+        "response_sha256": "123689b139a18bad9b891e20313f3462178681a31cb0f77ccda2309b5644ac3c",
+        "duration_seconds": 67.84399999992456,
+        "cache_hit": false,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "publication_ready": false
+    }
+  ],
+  "rejected_proposals": [
+    {
+      "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+      "proposal_kind": "cross_arc_relation",
+      "proposal": {
+        "source_arc_id": "STORY_0019",
+        "target_arc_id": "STORY_0023",
+        "relation_type": "EXPLAINS",
+        "semantic_basis": "SEMANTIC_CONTINUITY",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00143",
+            "quote": "E os pilotos provavelmente perceberiam também o erro que eles tinham cometido."
+          },
+          {
+            "segment_id": "SEG_00244",
+            "quote": "De acordo com o computador, eles já tinham passado umas 40 milhas lá de Belém."
+          }
+        ],
+        "reasoning_summary": "A falha na sintonização das antenas leva à decisão de Garcês de dar meia volta e ajustar a altitude do avião.",
+        "confidence_basis": [
+          "SEMANTIC_CONTINUITY"
+        ],
+        "contradictions": []
+      },
+      "reason": "relation_requires_evidence_from_both_arcs",
+      "publication_ready": false
+    },
+    {
+      "task_id": "semantic.relations.SEM_TOPIC_c08a787114d057e6",
+      "proposal_kind": "cross_arc_relation",
+      "proposal": {
+        "source_arc_id": "STORY_0023",
+        "target_arc_id": "STORY_0044",
+        "relation_type": "EXPLAINS",
+        "semantic_basis": "SEMANTIC_CONTINUITY",
+        "supporting_quotes": [
+          {
+            "segment_id": "SEG_00246",
+            "quote": "E ainda a 20 mil pés, apontou o avião na direção 90 graus."
+          },
+          {
+            "segment_id": "SEG_00364",
+            "quote": "A visibilidade ruim causada pela névoa e pelo anoitecer, além dos instrumentos do avião ter detectado rádio-faróis e emissoras de rádio em Goiás ao invés de Belém, que tinham a mesma frequência, foi um fator contribuinte."
+          }
+        ],
+        "reasoning_summary": "A decisão de ajustar a altitude e a direção do avião contribuiu para os fatores que levaram ao acidente.",
+        "confidence_basis": [
+          "SEMANTIC_CONTINUITY"
+        ],
+        "contradictions": []
+      },
+      "reason": "relation_requires_evidence_from_both_arcs",
+      "publication_ready": false
+    }
+  ]
+}

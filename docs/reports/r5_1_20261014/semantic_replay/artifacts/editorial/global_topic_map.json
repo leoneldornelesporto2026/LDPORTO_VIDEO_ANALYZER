@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "publication_ready": false,
+  "human_review_completed": false,
+  "canonical_data_modified": false,
+  "topics": [
+    {
+      "label": "Uso da radionavegação antes do GPS",
+      "kind": "TOPIC",
+      "source_arc_ids": [
+        "STORY_0017",
+        "STORY_0018",
+        "STORY_0031",
+        "STORY_0032"
+      ],
+      "supporting_quotes": [
+        {
+          "segment_id": "SEG_00127",
+          "quote": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação."
+        },
+        {
+          "segment_id": "SEG_00131",
+          "quote": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio."
+        }
+      ],
+      "search_terms": [
+        "radionavegação",
+        "ADF",
+        "frequência",
+        "sintonizar",
+        "antenas"
+      ],
+      "topic_id": "SEM_TOPIC_c08a787114d057e6",
+      "source_segment_ids": [
+        "SEG_00127",
+        "SEG_00131"
+      ],
+      "source_intervals": [
+        {
+          "segment_id": "SEG_00127",
+          "start": 714.94,
+          "end": 722.38
+        },
+        {
+          "segment_id": "SEG_00131",
+          "start": 739.9,
+          "end": 752.1
+        }
+      ],
+      "supporting_evidence": [
+        {
+          "segment_id": "SEG_00127",
+          "text": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação.",
+          "start": 714.94,
+          "end": 722.38
+        },
+        {
+          "segment_id": "SEG_00131",
+          "text": "Então, a uma certa distância da cidade, basta sintonizar essa frequência E o instrumento, chamado ADF, ele vai apontar para a direção onde você deve voar, se está indo em direção àquela estação de rádio.",
+          "start": 739.9,
+          "end": 752.1
+        }
+      ],
+      "model_provenance": {
+        "call_id": "f0928eef4de74047a10e1950f5c406d5:1",
+        "model": "qwen3:14b",
+        "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "request_sha256": "29b9db96163a5c7444558b4b907045cacc5665c23efbc95253d5abecf76c4e02",
+        "response_sha256": "459518acdeb67fb804eeafdf32561229645f70dc87c7b4a57d32c89b4a219df8",
+        "duration_seconds": 43.48499999998603,
+        "cache_hit": true,
+        "evidence_scope": "textual_model_proposal_not_human_or_audiovisual_confirmation"
+      },
+      "requires_review": true,
+      "publication_ready": false
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 # ============================================================
 # L.D.PORTO VIDEO ANALYZER
-# .gitignore
+# .gitignore — source, tests and curated documentation in Git;
+#              local datasets, raw evidence and runtime outputs out
 # ============================================================
 
 # ------------------------------------------------------------
@@ -231,6 +232,25 @@ ffmpeg_tmp/
 *.arrow
 
 # ------------------------------------------------------------
+# R5 / SOL V4 — raw historical review evidence and snapshots
+# Keep curated reports/manifest summaries but do not commit
+# full before/after runtime storage exports (some >300 MB).
+#
+# Blocks (among others):
+# docs/reports/sol_v4_20261013/storage_before/10_active_speaker.json
+# docs/reports/sol_v4_20261013/storage_after/10_active_speaker.json
+#
+# Does NOT exclude curated docs/reports/*.md or tests/fixtures/.
+# ------------------------------------------------------------
+/docs/reports/**/storage_before/
+/docs/reports/**/storage_after/
+/docs/reports/**/storage_*/
+
+# Local safety backups, never part of releases
+/.local_backups/
+/local_backups/
+
+# ------------------------------------------------------------
 # SQLite / local runtime databases
 # ------------------------------------------------------------
 *.db
@@ -275,22 +295,9 @@ profiling_raw/
 *.stackdump
 
 # ------------------------------------------------------------
-# IMPORTANT:
-# Source code, tests, schemas, docs, configs and scripts SHOULD
-# remain versioned. Examples:
-#
-# src/
-# scripts/
-# tests/
-# schemas/
-# config/
-# docs/
-# examples/
-# analyze.py
-# app.py
-# compare_runs.py
-# *.bat used by the project
-# requirements*.txt
-# README*.md
-# DELIVERY_MANIFEST*.json
+# IMPORTANT — Keep source, tests and curated docs versioned:
+# src/, scripts/, tests/, schemas/, config/, docs/, examples/
+# src/tests/fixtures/ (including curated historical JSON)
+# analyze.py, app.py, compare_runs.py, project *.bat
+# requirements*.txt, README*.md, DELIVERY_MANIFEST*.json
 # ------------------------------------------------------------

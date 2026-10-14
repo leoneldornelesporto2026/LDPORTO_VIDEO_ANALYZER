@@ -1,0 +1,2048 @@
+{
+  "schema_version": "1.0",
+  "benchmark": "bounded_cpu_mouth_audio_recalculation",
+  "slices": [
+    [
+      86.26221875,
+      89.83971875
+    ],
+    [
+      105.47203333333334,
+      112.82346875
+    ],
+    [
+      164.51159375,
+      168.56159375000001
+    ]
+  ],
+  "gpu_calls": 0,
+  "ollama_calls": 0,
+  "visual_model_calls": 0,
+  "asr_calls": 0,
+  "audio": {
+    "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\analysis\\video_1da839aad175\\audio\\original_mono_16k.wav",
+    "sha256": "70dc0db256f0a946534574b1b82160291dc5b6ef8df5fef0d58a9d3568eb292f",
+    "sample_rate": 16000,
+    "source_duration_seconds": 3982.833
+  },
+  "input_files": {
+    "active_speaker_evidence.json": "49454472100403560d783747ce909e49e08b736c3fbd690d50af2fcea95aae29",
+    "people_summary.json": "d6b195bfb20c9a76819505909ce478e0affd213ac72b53a943d78f7c3eed1551",
+    "scenes.json": "e43a657ce99633d982589e631c125258b576461d5f610da33b57e3fc3ca1d4a1",
+    "shots.json": "2cdb1a7a3395656586dbc2644093abe9d52afd683ec7dd38e64dd5e48717ea0c"
+  },
+  "observation_chunks": [
+    {
+      "path": "review_evidence/people_observations_00001.json",
+      "sha256": "febe80462cc34c630314229b0dde0b8bbdf5b1df4cca9c6bde5aac01db338697",
+      "bytes": 333618,
+      "record_count": 500
+    },
+    {
+      "path": "review_evidence/people_observations_00002.json",
+      "sha256": "262082780c94699fe79b63071840a3dc096b7a172b41577d6d686c3e7fabff86",
+      "bytes": 332191,
+      "record_count": 500
+    },
+    {
+      "path": "review_evidence/people_observations_00003.json",
+      "sha256": "1a9a7b2fde9d1cabaa43ff55049f2eaa837c1d42583e4fb866460932e28dfc81",
+      "bytes": 331404,
+      "record_count": 500
+    }
+  ],
+  "projected_observation_count": 115,
+  "source_code_sha256": {
+    "vision.py": "360f4a3c30190389b436ee8e176184ad2381f5e162c2e8a0cc8fce673eaac6b4",
+    "speaker_windows.py": "ddcbab48422cb402df162e02489d2e9ac6ddf674b2b78e4866d68b004006f73e",
+    "speaker_signals.py": "4f1e64a477675f1c107582f86679404b624429898ba8502b3527be25c8c4e9a0",
+    "speaker_roles.py": "4d3c3e982ef37d7b43638272cff9aa56b98aa12a575074c21d7f5b72f1a6790b",
+    "audiovisual_diagnostics.py": "4b4cdadf6613e08751666eedfa93918329ab9a61452185ef571370d12fe7416e",
+    "config.py": "aa90fa2a3994f3ea2069fdf3b204c6a1dcd03cdc1e84988676f4ef9c3b1a9bbc"
+  },
+  "versions": {
+    "numpy": "2.2.6",
+    "soundfile": "0.13.1"
+  },
+  "config": {
+    "vision_association_min_correlation": 0.45,
+    "vision_association_min_margin": 0.2,
+    "active_speaker": {
+      "backend": "heuristic_consensus",
+      "min_consensus_windows": 2,
+      "min_consensus_share": 0.67,
+      "min_confidence": 0.55,
+      "evidence_window_seconds": 3.0,
+      "min_evidence_samples": 8,
+      "min_audio_window_seconds": 1.5,
+      "min_evidence_window_seconds": 0.5,
+      "window_seconds": 0.5,
+      "max_observation_gap_seconds": 0.6,
+      "max_sync_offset_seconds": 0.12,
+      "max_sync_lag_deviation_seconds": 0.1,
+      "min_local_visibility": 0.6,
+      "min_local_face_fraction": 0.6,
+      "min_local_track_stability": 0.5,
+      "min_local_margin": 0.1,
+      "min_active_confidence": 0.7
+    }
+  },
+  "scope": "Three bounded source slices; existing visual observations reused. Local signal quality only.",
+  "human_identity_accuracy_measured": false,
+  "ASD_confirmed": false,
+  "legacy_geometry_matches_recorded_source": true,
+  "results": {
+    "legacy": {
+      "elapsed_seconds": 0.004932799958623946,
+      "window_count": 7,
+      "audio_windows_read": 4,
+      "candidate_count": 4,
+      "qualified_local_candidate_count": 1,
+      "window_planning": {
+        "schema_version": "1.0",
+        "policy": "legacy",
+        "bounded_slice_count": 3,
+        "balanced_slice_count": 0,
+        "legacy_short_window_count": 3,
+        "planned_short_window_count": 3,
+        "planned_window_count": 7,
+        "minimum_audio_seconds": 1.5,
+        "maximum_window_seconds": 3.0,
+        "scope": "measurement_plan; does_not_create_ASD_evidence"
+      },
+      "measurement_failure_counts": {
+        "mouth_tracks_examined": 4,
+        "candidates_emitted": 4,
+        "audio_window_below_minimum": 3
+      },
+      "windows": [
+        {
+          "start": 86.26221875,
+          "end": 89.26221875,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000000",
+          "turn_id": "TURN_000018",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": "PERSON_006",
+          "person_id": "PERSON_006",
+          "association_confidence": 0.27842892562339644,
+          "confidence": 0.27842892562339644,
+          "association_evidence_score": 0.6031359090928681,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 53120,
+            "start": 86.10221875,
+            "end": 89.42221875
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": 0.6031359090928681,
+              "correlation_lower_bound_proxy": 0.115458831911954,
+              "correlation_upper_bound_proxy": 0.8565240831532004,
+              "audio_lag_seconds": 0.08,
+              "lag_trial_count": 3,
+              "sample_count": 20,
+              "mouth_start": 86.28620000000001,
+              "mouth_end": 89.15573333333336,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.0811854069121182,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.956511111111117,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00003",
+              "mouth_sample_diagnostics": {
+                "observation_count": 20,
+                "unique_timestamp_count": 20,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 86.28620000000001,
+                "last_observed_at": 89.15573333333336,
+                "maximum_observed_gap_seconds": 0.4671333333333223,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 1.0329462739283586,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "lip_audio_correlation",
+          "evidence": [
+            "diarization",
+            "mouth_activity",
+            "face_visible"
+          ],
+          "inference": true,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              86.28620000000001,
+              86.41966666666667,
+              86.55313333333334,
+              86.68660000000001,
+              86.82006666666668,
+              86.95353333333334,
+              87.087,
+              87.22046666666667,
+              87.35393333333334,
+              87.48740000000001,
+              87.62086666666667,
+              87.75433333333334,
+              87.8878,
+              88.02126666666668,
+              88.15473333333334,
+              88.2882,
+              88.42166666666667,
+              88.55513333333334,
+              89.02226666666667,
+              89.15573333333336
+            ],
+            "face_observation_count": 23,
+            "mouth_observation_count": 20,
+            "mouth_frame_times": [
+              86.28620000000001,
+              86.41966666666667,
+              86.55313333333334,
+              86.68660000000001,
+              86.82006666666668,
+              86.95353333333334,
+              87.087,
+              87.22046666666667,
+              87.35393333333334,
+              87.48740000000001,
+              87.62086666666667,
+              87.75433333333334,
+              87.8878,
+              88.02126666666668,
+              88.15473333333334,
+              88.2882,
+              88.42166666666667,
+              88.55513333333334,
+              89.02226666666667,
+              89.15573333333336
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "qualified_local_signal_pending_independent_consensus",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": 0.6031359090928681,
+                "correlation_lower_bound_proxy": 0.115458831911954,
+                "correlation_upper_bound_proxy": 0.8565240831532004,
+                "audio_lag_seconds": 0.08,
+                "sample_count": 20,
+                "mouth_start": 86.28620000000001,
+                "mouth_end": 89.15573333333336,
+                "audio_activity_rms": 0.0811854069121182,
+                "visibility_coverage": 0.956511111111117,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00003",
+                "local_sync_qualified": true,
+                "rejection_reasons": [],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 86.3662,
+                    "end": 89.23573333333336
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 1,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 89.26221875,
+          "end": 89.83971875,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000001",
+          "turn_id": "TURN_000018",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": null,
+          "candidate_screening": {
+            "audio_window_below_minimum": 1
+          },
+          "audio_measurement": {
+            "status": "skipped_short_audio_window",
+            "sample_rate": 16000,
+            "sample_count": null,
+            "start": null,
+            "end": null
+          },
+          "candidates": [],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              89.28920000000001,
+              89.42266666666667,
+              89.55613333333334,
+              89.68960000000001,
+              89.82306666666668
+            ],
+            "face_observation_count": 5,
+            "mouth_observation_count": 5,
+            "mouth_frame_times": [
+              89.28920000000001,
+              89.42266666666667,
+              89.55613333333334,
+              89.68960000000001,
+              89.82306666666668
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "audio_window_too_short",
+            "candidates": [],
+            "candidate_count": 0,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 105.47203333333334,
+          "end": 108.47203333333334,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000002",
+          "turn_id": "TURN_000022",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": -0.046431881317670017,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 53120,
+            "start": 105.31203333333335,
+            "end": 108.63203333333334
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": -0.046431881317670017,
+              "correlation_lower_bound_proxy": -0.5456392720605807,
+              "correlation_upper_bound_proxy": 0.4770978842092666,
+              "audio_lag_seconds": -0.08,
+              "lag_trial_count": 3,
+              "sample_count": 21,
+              "mouth_start": 105.47203333333334,
+              "mouth_end": 108.24146666666667,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.10084201883347262,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9231444444444415,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00005",
+              "mouth_sample_diagnostics": {
+                "observation_count": 21,
+                "unique_timestamp_count": 21,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 105.47203333333334,
+                "last_observed_at": 108.24146666666667,
+                "maximum_observed_gap_seconds": 0.23356666666666115,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 1.366356221151172,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              105.47203333333334,
+              105.6055,
+              105.73896666666667,
+              105.87243333333333,
+              106.00590000000001,
+              106.13936666666667,
+              106.27283333333334,
+              106.4063,
+              106.53976666666667,
+              106.67323333333334,
+              106.8067,
+              106.94016666666667,
+              107.07363333333333,
+              107.20710000000001,
+              107.34056666666667,
+              107.47403333333334,
+              107.6075,
+              107.74096666666667,
+              107.87443333333334,
+              108.0079,
+              108.24146666666667
+            ],
+            "face_observation_count": 40,
+            "mouth_observation_count": 21,
+            "mouth_frame_times": [
+              105.47203333333334,
+              105.6055,
+              105.73896666666667,
+              105.87243333333333,
+              106.00590000000001,
+              106.13936666666667,
+              106.27283333333334,
+              106.4063,
+              106.53976666666667,
+              106.67323333333334,
+              106.8067,
+              106.94016666666667,
+              107.07363333333333,
+              107.20710000000001,
+              107.34056666666667,
+              107.47403333333334,
+              107.6075,
+              107.74096666666667,
+              107.87443333333334,
+              108.0079,
+              108.24146666666667
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": -0.046431881317670017,
+                "correlation_lower_bound_proxy": -0.5456392720605807,
+                "correlation_upper_bound_proxy": 0.4770978842092666,
+                "audio_lag_seconds": -0.08,
+                "sample_count": 21,
+                "mouth_start": 105.47203333333334,
+                "mouth_end": 108.24146666666667,
+                "audio_activity_rms": 0.10084201883347262,
+                "visibility_coverage": 0.9231444444444415,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00005",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 105.47203333333334,
+                    "end": 108.16146666666667
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 108.47203333333334,
+          "end": 111.47203333333334,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000003",
+          "turn_id": "TURN_000022",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": 0.33346321023297126,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 53120,
+            "start": 108.31203333333335,
+            "end": 111.63203333333334
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": 0.33346321023297126,
+              "correlation_lower_bound_proxy": -0.3600188151935867,
+              "correlation_upper_bound_proxy": 0.789591893598619,
+              "audio_lag_seconds": 0.08,
+              "lag_trial_count": 3,
+              "sample_count": 14,
+              "mouth_start": 108.47503333333334,
+              "mouth_end": 111.44466666666668,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.10172787681221962,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9898777777777781,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00005",
+              "mouth_sample_diagnostics": {
+                "observation_count": 14,
+                "unique_timestamp_count": 14,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 108.47503333333334,
+                "last_observed_at": 111.44466666666668,
+                "maximum_observed_gap_seconds": 0.4671333333333365,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 0.38529572640118115,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              108.47503333333334,
+              108.7086,
+              108.94216666666667,
+              109.17573333333334,
+              109.4093,
+              109.64286666666668,
+              109.87643333333334,
+              110.11,
+              110.34356666666667,
+              110.57713333333334,
+              111.04426666666667,
+              111.17773333333334,
+              111.3112,
+              111.44466666666668
+            ],
+            "face_observation_count": 14,
+            "mouth_observation_count": 14,
+            "mouth_frame_times": [
+              108.47503333333334,
+              108.7086,
+              108.94216666666667,
+              109.17573333333334,
+              109.4093,
+              109.64286666666668,
+              109.87643333333334,
+              110.11,
+              110.34356666666667,
+              110.57713333333334,
+              111.04426666666667,
+              111.17773333333334,
+              111.3112,
+              111.44466666666668
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": 0.33346321023297126,
+                "correlation_lower_bound_proxy": -0.3600188151935867,
+                "correlation_upper_bound_proxy": 0.789591893598619,
+                "audio_lag_seconds": 0.08,
+                "sample_count": 14,
+                "mouth_start": 108.47503333333334,
+                "mouth_end": 111.44466666666668,
+                "audio_activity_rms": 0.10172787681221962,
+                "visibility_coverage": 0.9898777777777781,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00005",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 108.55503333333334,
+                    "end": 111.47203333333334
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 111.47203333333334,
+          "end": 112.82346875,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000004",
+          "turn_id": "TURN_000022",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": null,
+          "candidate_screening": {
+            "audio_window_below_minimum": 1
+          },
+          "audio_measurement": {
+            "status": "skipped_short_audio_window",
+            "sample_rate": 16000,
+            "sample_count": null,
+            "start": null,
+            "end": null
+          },
+          "candidates": [],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              111.57813333333334,
+              111.7116,
+              111.84506666666667,
+              111.97853333333335,
+              112.11200000000001,
+              112.24546666666667,
+              112.37893333333334,
+              112.5124,
+              112.64586666666668
+            ],
+            "face_observation_count": 9,
+            "mouth_observation_count": 9,
+            "mouth_frame_times": [
+              111.57813333333334,
+              111.7116,
+              111.84506666666667,
+              111.97853333333335,
+              112.11200000000001,
+              112.24546666666667,
+              112.37893333333334,
+              112.5124,
+              112.64586666666668
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "audio_window_too_short",
+            "candidates": [],
+            "candidate_count": 0,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 164.51159375,
+          "end": 167.51159375,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000005",
+          "turn_id": "TURN_000036",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": -0.009584359792787642,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 53120,
+            "start": 164.35159375,
+            "end": 167.67159375
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": -0.009584359792787642,
+              "correlation_lower_bound_proxy": -0.531095736371347,
+              "correlation_upper_bound_proxy": 0.5171935440521941,
+              "audio_lag_seconds": 0.08,
+              "lag_trial_count": 3,
+              "sample_count": 20,
+              "mouth_start": 164.5644,
+              "mouth_end": 167.5006666666667,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.07861823423299938,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9787555555555608,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00012",
+              "mouth_sample_diagnostics": {
+                "observation_count": 20,
+                "unique_timestamp_count": 20,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 164.5644,
+                "last_observed_at": 167.5006666666667,
+                "maximum_observed_gap_seconds": 0.23356666666668957,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 0.9647123274704272,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              164.5644,
+              164.69786666666667,
+              164.83133333333333,
+              164.9648,
+              165.0982666666667,
+              165.23173333333335,
+              165.36520000000002,
+              165.49866666666668,
+              165.63213333333334,
+              165.7656,
+              165.89906666666667,
+              166.03253333333333,
+              166.166,
+              166.29946666666666,
+              166.43293333333335,
+              166.56640000000002,
+              166.79996666666668,
+              167.03353333333334,
+              167.2671,
+              167.5006666666667
+            ],
+            "face_observation_count": 20,
+            "mouth_observation_count": 20,
+            "mouth_frame_times": [
+              164.5644,
+              164.69786666666667,
+              164.83133333333333,
+              164.9648,
+              165.0982666666667,
+              165.23173333333335,
+              165.36520000000002,
+              165.49866666666668,
+              165.63213333333334,
+              165.7656,
+              165.89906666666667,
+              166.03253333333333,
+              166.166,
+              166.29946666666666,
+              166.43293333333335,
+              166.56640000000002,
+              166.79996666666668,
+              167.03353333333334,
+              167.2671,
+              167.5006666666667
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": -0.009584359792787642,
+                "correlation_lower_bound_proxy": -0.531095736371347,
+                "correlation_upper_bound_proxy": 0.5171935440521941,
+                "audio_lag_seconds": 0.08,
+                "sample_count": 20,
+                "mouth_start": 164.5644,
+                "mouth_end": 167.5006666666667,
+                "audio_activity_rms": 0.07861823423299938,
+                "visibility_coverage": 0.9787555555555608,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00012",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 164.64440000000002,
+                    "end": 167.51159375
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 167.51159375,
+          "end": 168.56159375000001,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000006",
+          "turn_id": "TURN_000036",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": null,
+          "candidate_screening": {
+            "audio_window_below_minimum": 1
+          },
+          "audio_measurement": {
+            "status": "skipped_short_audio_window",
+            "sample_rate": 16000,
+            "sample_count": null,
+            "start": null,
+            "end": null
+          },
+          "candidates": [],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              167.73423333333335,
+              168.20136666666667,
+              168.33483333333334,
+              168.4683
+            ],
+            "face_observation_count": 4,
+            "mouth_observation_count": 4,
+            "mouth_frame_times": [
+              167.73423333333335,
+              168.20136666666667,
+              168.33483333333334,
+              168.4683
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "audio_window_too_short",
+            "candidates": [],
+            "candidate_count": 0,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        }
+      ]
+    },
+    "balanced_tail": {
+      "elapsed_seconds": 0.0032036000629886985,
+      "window_count": 7,
+      "audio_windows_read": 7,
+      "candidate_count": 7,
+      "qualified_local_candidate_count": 0,
+      "window_planning": {
+        "schema_version": "1.0",
+        "policy": "balanced_tail",
+        "bounded_slice_count": 3,
+        "balanced_slice_count": 3,
+        "legacy_short_window_count": 3,
+        "planned_short_window_count": 0,
+        "planned_window_count": 7,
+        "minimum_audio_seconds": 1.5,
+        "maximum_window_seconds": 3.0,
+        "scope": "measurement_plan; does_not_create_ASD_evidence"
+      },
+      "measurement_failure_counts": {
+        "mouth_tracks_examined": 7,
+        "candidates_emitted": 7
+      },
+      "windows": [
+        {
+          "start": 86.26221875,
+          "end": 88.05096875000001,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000000",
+          "turn_id": "TURN_000018",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": 0.6053180103195436,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 33740,
+            "start": 86.10221875,
+            "end": 88.21096875
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": 0.6053180103195436,
+              "correlation_lower_bound_proxy": -0.02212521465193553,
+              "correlation_upper_bound_proxy": 0.8906633381411915,
+              "audio_lag_seconds": 0.08,
+              "lag_trial_count": 3,
+              "sample_count": 14,
+              "mouth_start": 86.28620000000001,
+              "mouth_end": 88.02126666666668,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.09099802002310753,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9699883531330041,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00003",
+              "mouth_sample_diagnostics": {
+                "observation_count": 14,
+                "unique_timestamp_count": 14,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 86.28620000000001,
+                "last_observed_at": 88.02126666666668,
+                "maximum_observed_gap_seconds": 0.13346666666667772,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 1.2563232457469056,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              86.28620000000001,
+              86.41966666666667,
+              86.55313333333334,
+              86.68660000000001,
+              86.82006666666668,
+              86.95353333333334,
+              87.087,
+              87.22046666666667,
+              87.35393333333334,
+              87.48740000000001,
+              87.62086666666667,
+              87.75433333333334,
+              87.8878,
+              88.02126666666668
+            ],
+            "face_observation_count": 17,
+            "mouth_observation_count": 14,
+            "mouth_frame_times": [
+              86.28620000000001,
+              86.41966666666667,
+              86.55313333333334,
+              86.68660000000001,
+              86.82006666666668,
+              86.95353333333334,
+              87.087,
+              87.22046666666667,
+              87.35393333333334,
+              87.48740000000001,
+              87.62086666666667,
+              87.75433333333334,
+              87.8878,
+              88.02126666666668
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": 0.6053180103195436,
+                "correlation_lower_bound_proxy": -0.02212521465193553,
+                "correlation_upper_bound_proxy": 0.8906633381411915,
+                "audio_lag_seconds": 0.08,
+                "sample_count": 14,
+                "mouth_start": 86.28620000000001,
+                "mouth_end": 88.02126666666668,
+                "audio_activity_rms": 0.09099802002310753,
+                "visibility_coverage": 0.9699883531330041,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00003",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 86.3662,
+                    "end": 88.05096875000001
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 88.05096875000001,
+          "end": 89.83971875,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000001",
+          "turn_id": "TURN_000018",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": -0.06920266088354078,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 33740,
+            "start": 87.89096875000001,
+            "end": 89.99971875000001
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": -0.06920266088354078,
+              "correlation_lower_bound_proxy": -0.7248747275652121,
+              "correlation_upper_bound_proxy": 0.6522557258651649,
+              "audio_lag_seconds": -0.08,
+              "lag_trial_count": 3,
+              "sample_count": 11,
+              "mouth_start": 88.15473333333334,
+              "mouth_end": 89.82306666666668,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.06552432697605003,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.932681108781743,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00003",
+              "mouth_sample_diagnostics": {
+                "observation_count": 11,
+                "unique_timestamp_count": 11,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 88.15473333333334,
+                "last_observed_at": 89.82306666666668,
+                "maximum_observed_gap_seconds": 0.4671333333333223,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 0.5164291928184741,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              88.15473333333334,
+              88.2882,
+              88.42166666666667,
+              88.55513333333334,
+              89.02226666666667,
+              89.15573333333336,
+              89.28920000000001,
+              89.42266666666667,
+              89.55613333333334,
+              89.68960000000001,
+              89.82306666666668
+            ],
+            "face_observation_count": 11,
+            "mouth_observation_count": 11,
+            "mouth_frame_times": [
+              88.15473333333334,
+              88.2882,
+              88.42166666666667,
+              88.55513333333334,
+              89.02226666666667,
+              89.15573333333336,
+              89.28920000000001,
+              89.42266666666667,
+              89.55613333333334,
+              89.68960000000001,
+              89.82306666666668
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": -0.06920266088354078,
+                "correlation_lower_bound_proxy": -0.7248747275652121,
+                "correlation_upper_bound_proxy": 0.6522557258651649,
+                "audio_lag_seconds": -0.08,
+                "sample_count": 11,
+                "mouth_start": 88.15473333333334,
+                "mouth_end": 89.82306666666668,
+                "audio_activity_rms": 0.06552432697605003,
+                "visibility_coverage": 0.932681108781743,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00003",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 88.07473333333334,
+                    "end": 89.74306666666668
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 105.47203333333334,
+          "end": 107.92251180555556,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000002",
+          "turn_id": "TURN_000022",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": -0.20279821012281618,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 44328,
+            "start": 105.31203333333335,
+            "end": 108.08253333333334
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": -0.20279821012281618,
+              "correlation_lower_bound_proxy": -0.6671830732655898,
+              "correlation_upper_bound_proxy": 0.37510505814040873,
+              "audio_lag_seconds": -0.08,
+              "lag_trial_count": 3,
+              "sample_count": 19,
+              "mouth_start": 105.47203333333334,
+              "mouth_end": 107.87443333333334,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.10641889058445629,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9803799654772664,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00005",
+              "mouth_sample_diagnostics": {
+                "observation_count": 19,
+                "unique_timestamp_count": 19,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 105.47203333333334,
+                "last_observed_at": 107.87443333333334,
+                "maximum_observed_gap_seconds": 0.13346666666667772,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 1.397584968169958,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              105.47203333333334,
+              105.6055,
+              105.73896666666667,
+              105.87243333333333,
+              106.00590000000001,
+              106.13936666666667,
+              106.27283333333334,
+              106.4063,
+              106.53976666666667,
+              106.67323333333334,
+              106.8067,
+              106.94016666666667,
+              107.07363333333333,
+              107.20710000000001,
+              107.34056666666667,
+              107.47403333333334,
+              107.6075,
+              107.74096666666667,
+              107.87443333333334
+            ],
+            "face_observation_count": 38,
+            "mouth_observation_count": 19,
+            "mouth_frame_times": [
+              105.47203333333334,
+              105.6055,
+              105.73896666666667,
+              105.87243333333333,
+              106.00590000000001,
+              106.13936666666667,
+              106.27283333333334,
+              106.4063,
+              106.53976666666667,
+              106.67323333333334,
+              106.8067,
+              106.94016666666667,
+              107.07363333333333,
+              107.20710000000001,
+              107.34056666666667,
+              107.47403333333334,
+              107.6075,
+              107.74096666666667,
+              107.87443333333334
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": -0.20279821012281618,
+                "correlation_lower_bound_proxy": -0.6671830732655898,
+                "correlation_upper_bound_proxy": 0.37510505814040873,
+                "audio_lag_seconds": -0.08,
+                "sample_count": 19,
+                "mouth_start": 105.47203333333334,
+                "mouth_end": 107.87443333333334,
+                "audio_activity_rms": 0.10641889058445629,
+                "visibility_coverage": 0.9803799654772664,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00005",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 105.47203333333334,
+                    "end": 107.79443333333334
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 107.92251180555556,
+          "end": 110.37299027777779,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000003",
+          "turn_id": "TURN_000022",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": 0.5724814089355034,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 44328,
+            "start": 107.76251180555556,
+            "end": 110.53301180555556
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": 0.5724814089355034,
+              "correlation_lower_bound_proxy": -0.1948002365133165,
+              "correlation_upper_bound_proxy": 0.9051002342571169,
+              "audio_lag_seconds": 0.08,
+              "lag_trial_count": 3,
+              "sample_count": 11,
+              "mouth_start": 108.0079,
+              "mouth_end": 110.34356666666667,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.08598578958348795,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9531471886584485,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00005",
+              "mouth_sample_diagnostics": {
+                "observation_count": 11,
+                "unique_timestamp_count": 11,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 108.0079,
+                "last_observed_at": 110.34356666666667,
+                "maximum_observed_gap_seconds": 0.23356666666667536,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 0.5994414970619653,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              108.0079,
+              108.24146666666667,
+              108.47503333333334,
+              108.7086,
+              108.94216666666667,
+              109.17573333333334,
+              109.4093,
+              109.64286666666668,
+              109.87643333333334,
+              110.11,
+              110.34356666666667
+            ],
+            "face_observation_count": 11,
+            "mouth_observation_count": 11,
+            "mouth_frame_times": [
+              108.0079,
+              108.24146666666667,
+              108.47503333333334,
+              108.7086,
+              108.94216666666667,
+              109.17573333333334,
+              109.4093,
+              109.64286666666668,
+              109.87643333333334,
+              110.11,
+              110.34356666666667
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": 0.5724814089355034,
+                "correlation_lower_bound_proxy": -0.1948002365133165,
+                "correlation_upper_bound_proxy": 0.9051002342571169,
+                "audio_lag_seconds": 0.08,
+                "sample_count": 11,
+                "mouth_start": 108.0079,
+                "mouth_end": 110.34356666666667,
+                "audio_activity_rms": 0.08598578958348795,
+                "visibility_coverage": 0.9531471886584485,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00005",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 108.0879,
+                    "end": 110.37299027777779
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 110.37299027777779,
+          "end": 112.82346875,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000004",
+          "turn_id": "TURN_000022",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": 0.05815356433117168,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 44328,
+            "start": 110.21299027777779,
+            "end": 112.98349027777779
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": 0.05815356433117168,
+              "correlation_lower_bound_proxy": -0.581951140262982,
+              "correlation_upper_bound_proxy": 0.6537652603809134,
+              "audio_lag_seconds": 0.0,
+              "lag_trial_count": 3,
+              "sample_count": 14,
+              "mouth_start": 110.57713333333334,
+              "mouth_end": 112.64586666666668,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.09432006747062717,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.8442160813832048,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00005",
+              "mouth_sample_diagnostics": {
+                "observation_count": 14,
+                "unique_timestamp_count": 14,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 110.57713333333334,
+                "last_observed_at": 112.64586666666668,
+                "maximum_observed_gap_seconds": 0.4671333333333365,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 0.3585185502088634,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              110.57713333333334,
+              111.04426666666667,
+              111.17773333333334,
+              111.3112,
+              111.44466666666668,
+              111.57813333333334,
+              111.7116,
+              111.84506666666667,
+              111.97853333333335,
+              112.11200000000001,
+              112.24546666666667,
+              112.37893333333334,
+              112.5124,
+              112.64586666666668
+            ],
+            "face_observation_count": 14,
+            "mouth_observation_count": 14,
+            "mouth_frame_times": [
+              110.57713333333334,
+              111.04426666666667,
+              111.17773333333334,
+              111.3112,
+              111.44466666666668,
+              111.57813333333334,
+              111.7116,
+              111.84506666666667,
+              111.97853333333335,
+              112.11200000000001,
+              112.24546666666667,
+              112.37893333333334,
+              112.5124,
+              112.64586666666668
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": 0.05815356433117168,
+                "correlation_lower_bound_proxy": -0.581951140262982,
+                "correlation_upper_bound_proxy": 0.6537652603809134,
+                "audio_lag_seconds": 0.0,
+                "sample_count": 14,
+                "mouth_start": 110.57713333333334,
+                "mouth_end": 112.64586666666668,
+                "audio_activity_rms": 0.09432006747062717,
+                "visibility_coverage": 0.8442160813832048,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00005",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 110.57713333333334,
+                    "end": 112.64586666666668
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 164.51159375,
+          "end": 166.53659375,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000005",
+          "turn_id": "TURN_000036",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": -0.054133919881825664,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 37520,
+            "start": 164.35159375,
+            "end": 166.69659375
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": -0.054133919881825664,
+              "correlation_lower_bound_proxy": -0.6333601046486852,
+              "correlation_upper_bound_proxy": 0.5639683531086714,
+              "audio_lag_seconds": -0.08,
+              "lag_trial_count": 3,
+              "sample_count": 15,
+              "mouth_start": 164.5644,
+              "mouth_end": 166.43293333333335,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.07398078708599011,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9227325102880696,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00012",
+              "mouth_sample_diagnostics": {
+                "observation_count": 15,
+                "unique_timestamp_count": 15,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 164.5644,
+                "last_observed_at": 166.43293333333335,
+                "maximum_observed_gap_seconds": 0.13346666666669194,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 1.037659669087194,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              164.5644,
+              164.69786666666667,
+              164.83133333333333,
+              164.9648,
+              165.0982666666667,
+              165.23173333333335,
+              165.36520000000002,
+              165.49866666666668,
+              165.63213333333334,
+              165.7656,
+              165.89906666666667,
+              166.03253333333333,
+              166.166,
+              166.29946666666666,
+              166.43293333333335
+            ],
+            "face_observation_count": 15,
+            "mouth_observation_count": 15,
+            "mouth_frame_times": [
+              164.5644,
+              164.69786666666667,
+              164.83133333333333,
+              164.9648,
+              165.0982666666667,
+              165.23173333333335,
+              165.36520000000002,
+              165.49866666666668,
+              165.63213333333334,
+              165.7656,
+              165.89906666666667,
+              166.03253333333333,
+              166.166,
+              166.29946666666666,
+              166.43293333333335
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": -0.054133919881825664,
+                "correlation_lower_bound_proxy": -0.6333601046486852,
+                "correlation_upper_bound_proxy": 0.5639683531086714,
+                "audio_lag_seconds": -0.08,
+                "sample_count": 15,
+                "mouth_start": 164.5644,
+                "mouth_end": 166.43293333333335,
+                "audio_activity_rms": 0.07398078708599011,
+                "visibility_coverage": 0.9227325102880696,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00012",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 164.51159375,
+                    "end": 166.35293333333334
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        },
+        {
+          "start": 166.53659375,
+          "end": 168.56159375000001,
+          "speaker": "SPEAKER_02",
+          "evidence_window_id": "ASD_WINDOW_000006",
+          "turn_id": "TURN_000036",
+          "overlap": false,
+          "speaker_id": "SPEAKER_02",
+          "visible_person": null,
+          "person_id": null,
+          "association_confidence": null,
+          "confidence": null,
+          "association_evidence_score": 0.3726460121177699,
+          "candidate_screening": {
+            "mouth_tracks_examined": 1,
+            "candidates_emitted": 1
+          },
+          "audio_measurement": {
+            "status": "audio_window_read",
+            "sample_rate": 16000,
+            "sample_count": 37520,
+            "start": 166.37659375,
+            "end": 168.72159375
+          },
+          "candidates": [
+            {
+              "person_id": "PERSON_006",
+              "correlation": 0.3726460121177699,
+              "correlation_lower_bound_proxy": -0.5286744412226713,
+              "correlation_upper_bound_proxy": 0.878985441030949,
+              "audio_lag_seconds": 0.08,
+              "lag_trial_count": 3,
+              "sample_count": 9,
+              "mouth_start": 166.56640000000002,
+              "mouth_end": 168.4683,
+              "temporal_support_basis": "matched_mouth_sample_span",
+              "audio_activity_rms": 0.05743200678585304,
+              "signal_method": "mouth_opening_audio_envelope_bounded_lag",
+              "confidence_is_calibrated": false,
+              "visibility_coverage": 0.9392098765431991,
+              "track_stability": 1.0,
+              "source_shot_id": "SCENE_00012",
+              "mouth_sample_diagnostics": {
+                "observation_count": 9,
+                "unique_timestamp_count": 9,
+                "missing_mouth_observation_count": 0,
+                "invalid_mouth_value_count": 0,
+                "first_observed_at": 166.56640000000002,
+                "last_observed_at": 168.4683,
+                "maximum_observed_gap_seconds": 0.4671333333333223,
+                "tracklet_count": 1,
+                "scope": "observed_samples; null_does_not_prove_invalid_landmarks"
+              },
+              "mouth_activity_mean": 0.6349012561771192,
+              "face_visibility": 1.0,
+              "embedding_continuity": 1.0
+            }
+          ],
+          "method": "unresolved",
+          "evidence": [
+            "diarization"
+          ],
+          "inference": false,
+          "needs_review": true,
+          "visual_measurement": {
+            "schema_version": "1.0",
+            "source_width": 1920,
+            "source_height": 1080,
+            "source_fps": 29.97002997002997,
+            "sampled_frame_times": [
+              166.56640000000002,
+              166.79996666666668,
+              167.03353333333334,
+              167.2671,
+              167.5006666666667,
+              167.73423333333335,
+              168.20136666666667,
+              168.33483333333334,
+              168.4683
+            ],
+            "face_observation_count": 9,
+            "mouth_observation_count": 9,
+            "mouth_frame_times": [
+              166.56640000000002,
+              166.79996666666668,
+              167.03353333333334,
+              167.2671,
+              167.5006666666667,
+              167.73423333333335,
+              168.20136666666667,
+              168.33483333333334,
+              168.4683
+            ],
+            "face_pixel_status_counts": {},
+            "face_pixel_quality_sample_count": 0,
+            "minimum_observed_face_width_px": null,
+            "minimum_observed_face_height_px": null,
+            "face_pixel_reference": "existing_face_embedding_quality_threshold_diagnostic_only",
+            "face_pixel_reference_minimum": 28,
+            "continuous_visibility_verified": false,
+            "physical_occlusion_verified": null
+          },
+          "signal_diagnostic": {
+            "schema_version": "1.0",
+            "status": "measured_signal_below_acceptance_gates",
+            "candidates": [
+              {
+                "person_id": "PERSON_006",
+                "correlation": 0.3726460121177699,
+                "correlation_lower_bound_proxy": -0.5286744412226713,
+                "correlation_upper_bound_proxy": 0.878985441030949,
+                "audio_lag_seconds": 0.08,
+                "sample_count": 9,
+                "mouth_start": 166.56640000000002,
+                "mouth_end": 168.4683,
+                "audio_activity_rms": 0.05743200678585304,
+                "visibility_coverage": 0.9392098765431991,
+                "face_visibility": 1.0,
+                "track_stability": 1.0,
+                "source_shot_id": "SCENE_00012",
+                "local_sync_qualified": false,
+                "rejection_reasons": [
+                  "CORRELATION_BELOW_MINIMUM",
+                  "NO_BOUNDED_POSITIVE_SYNC"
+                ],
+                "required_correlation": 0.55,
+                "support_spans": [
+                  {
+                    "start": 166.64640000000003,
+                    "end": 168.5483
+                  }
+                ]
+              }
+            ],
+            "candidate_count": 1,
+            "qualified_local_candidate_count": 0,
+            "measurement_scope": "candidate_signal_not_accepted_identity",
+            "confidence_is_calibrated": false
+          }
+        }
+      ]
+    }
+  },
+  "command_argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "scripts/dev/benchmark_speaker_windows_sol_v4.py",
+    "--analysis",
+    "analysis/video_1da839aad175",
+    "--config",
+    "config/config.yaml",
+    "--output",
+    "docs/reports/sol_v4_20261013/speaker_windows_b_cpu.json"
+  ]
+}

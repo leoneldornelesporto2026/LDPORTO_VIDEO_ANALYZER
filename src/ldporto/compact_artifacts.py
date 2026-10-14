@@ -15,6 +15,12 @@ COLLECTION_FILES = {
     'people_observations':'people_observations.json', 'tracklet_observations':'tracklet_observations.json',
     'person_identities':'person_identities.json', 'person_motion':'person_motion.json',
     'active_speaker':'active_speaker.json', 'speaker_person_mapping':'speaker_person_mapping.json',
+    'active_speaker_evidence':'active_speaker_evidence.json',
+    'speaker_person_diagnostics':'speaker_person_diagnostics.json',
+    'speaker_person_affinity':'speaker_person_affinity.json',
+    'semantic_chunk_profile':'semantic_chunk_profile.json',
+    'ollama_editorial_review':'ollama_editorial_review.json',
+    'broadcast_graphics':'broadcast_graphics.json',
     'speaker_person_summary':'speaker_person_summary.json', 'scenes':'scenes.json', 'shots':'shots.json',
     'topics':'topics.json', 'program_sections':'program_sections.json', 'participants':'participants.json',
     'entities':'entities.json', 'story_arcs':'story_arcs.json', 'main_moments':'main_moments.json',
@@ -27,6 +33,10 @@ COLLECTION_FILES = {
     'second_curation_package':'second_curation_package.json', 'thumbnail_candidates':'thumbnail_candidates.json',
     'moment_frames':'moment_frames.json',
     'transcription_alternatives':'transcription_alternatives.json', 'low_confidence_words':'low_confidence_words.json',
+    'transcript_translations':'translations.json', 'transcript_original_import_segments':'original_import_segments.json',
+    'transcription_language_hypotheses':'transcription_language_hypotheses.json',
+    'source_audio_review':'source_audio_review.json',
+    'transcription_hypothesis_comparison':'transcription_hypothesis_comparison.json',
     'ocr_text':'ocr_text.json', 'commercial_visual_s8':'commercial_visual_s8.json', 'reid_merge_decisions':'reid_merge_decisions.json',
 }
 OBSERVATION_KEYS = ('time','frame','track_id','tracklet_id','raw_person_id','person_id','scene_id',
@@ -84,13 +94,17 @@ def write_indexed_projection(folder, name, records, source_artifact, max_records
 def compact_analysis_document(analysis, folder):
     """Preserve cheap metadata and name explicit collections instead of embedding them."""
     folder = Path(folder)
-    document = {key:value for key,value in analysis.items() if key not in COLLECTION_FILES}
+    # Missing sidecars retain their evidence inline; knowing a filename is not
+    # proof that its collection was safely written.
+    document = dict(analysis)
     refs = {}
     for key, filename in COLLECTION_FILES.items():
         if key in analysis and (folder / filename).is_file():
+            document.pop(key, None)
             refs[key] = {'path':filename,'sha256':file_hash(folder / filename),
                          'record_count':len(analysis[key]) if isinstance(analysis[key],list) else None}
     document.update(schema_version='4.2', collection_storage='references', collection_refs=refs)
+    document['collection_reference_schema_version'] = '1.1'
     for key, ref in refs.items():
         document[key + '_ref'] = ref
     return document
@@ -169,6 +183,7 @@ def create_compact_artifacts(analysis, folder, cfg=None):
                'semantic_metrics':analysis.get('semantic_metrics',{}),'candidate_metrics':analysis.get('candidate_metrics',{}),
                'stage_runtime':analysis.get('stage_runtime',{}),'stage_status':manifest.get('stage_status',analysis.get('stage_status',{})),
                'editorial_shortlist':analysis.get('editorial_shortlist',[]),
+               'editorial_result':analysis.get('editorial_result',{}),
                'quality_gate':analysis.get('quality_gate',{}),
                'final_package_gate':analysis.get('final_package_gate'),
                'subtitle_review_metrics':analysis.get('subtitle_review_metrics'),
@@ -193,7 +208,10 @@ def create_compact_artifacts(analysis, folder, cfg=None):
     compact_master = {'schema_version':'1.0','master_timeline_projection':master_index,'text_resolves_via':'transcript_segments.json'}
     handoff = {'schema_version':'4.2','producer_version':__version__,'metadata_locale':'pt-BR',
                'analysis_summary':summary,'second_curation_package_ref':{'path':'second_curation_package.json'},
-               'transcript_refs':{'segments':'transcript_segments.json','words':'words.json','low_confidence':'low_confidence_words.json'},
+               'transcript_refs':{'segments':'transcript_segments.json','words':'words.json',
+                    'low_confidence':'low_confidence_words.json', 'text_kind':'original_transcript',
+                    'translations':'translations.json', 'source_audio_review':'source_audio_review.json',
+                    'hypothesis_comparison':'transcription_hypothesis_comparison.json'},
                'participants_ref':'participants.json','speakers_ref':'speakers.json','person_identities_ref':'person_identities.json',
                'qa_refs':{'questions':'question_candidates.json','answer_pairs':'question_answer_pairs.json'},
                'topics_ref':'topics.json','program_sections_ref':'program_sections.json','story_arcs_ref':'story_arcs.json',

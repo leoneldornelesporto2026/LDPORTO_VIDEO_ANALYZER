@@ -1,0 +1,75 @@
+{
+  "schema_version": "S6",
+  "duration_seconds": 19.014,
+  "focus": {
+    "resolved_focus_coverage": 0.0,
+    "known_speaker_focus_fraction": 0.0,
+    "dominant_face_coverage": 0.0,
+    "camera_director_coverage": 0.0,
+    "camera_director_visual_sample_coverage": 0.9999999999999956,
+    "focus_evidence_funnel": {
+      "window_counts": {
+        "NO_CONFIRMED_AUDIO_VISUAL_TARGET": 189,
+        "NO_PERSON_OBSERVATION": 40,
+        "AUDIO_OVERLAP": 22
+      },
+      "duration_seconds": {
+        "NO_CONFIRMED_AUDIO_VISUAL_TARGET": 14.4919,
+        "NO_PERSON_OBSERVATION": 2.7333,
+        "AUDIO_OVERLAP": 1.7887
+      },
+      "fractions_of_video": {
+        "NO_CONFIRMED_AUDIO_VISUAL_TARGET": 0.762171,
+        "NO_PERSON_OBSERVATION": 0.143754,
+        "AUDIO_OVERLAP": 0.094075
+      },
+      "method": "exclusive_predecision_buckets_not_identity_accuracy"
+    },
+    "evaluation_windows_without_visual_sample": 0,
+    "evaluation_windows_with_face_evidence": 211,
+    "evaluation_windows_with_grounded_speaker": 0,
+    "crop_preflight_blocked_windows": 0,
+    "visual_only_fallback_windows": 0
+  },
+  "zoom": {
+    "editorial_beat_raw_windows": 0,
+    "editorial_beat_eligible_windows": 0,
+    "editorial_beat_suppressed_due_to_cut_or_overlap": 0,
+    "editorial_beat_without_focus_windows": 0,
+    "editorial_beat_with_speaker_focus_windows": 0,
+    "zoom_opportunity_window_count": 0,
+    "zoom_request_window_count": 0,
+    "zoom_accepted_event_count": 0,
+    "zoom_delivered_event_count": 0,
+    "zoom_aborted_window_count": 0,
+    "zoom_block_reason_counts": {},
+    "zoom_zero_root_cause": "NO_GROUNDED_EDITORIAL_BEAT"
+  },
+  "camera": {
+    "director_switches_per_minute": 0.0,
+    "switches_suppressed": 0,
+    "deadzone_suppressed_moves": 0,
+    "split_fraction": 0.0,
+    "two_shot_fraction": 0.0,
+    "full_frame_fraction": 1.0,
+    "split_preflight_rejected_windows": 0
+  },
+  "roles_windows": {
+    "SOURCE_CLOSEUP_PRESERVE": 8
+  },
+  "roles_duration_seconds": {
+    "SOURCE_CLOSEUP_PRESERVE": 19.014
+  },
+  "timeline_reason_counts": {
+    "source_shot_reset": 1,
+    "INSUFFICIENT_CONFIDENCE": 8
+  },
+  "review_flags": [
+    "FOCUS_UNDER_10_PERCENT_REQUIRES_VISUAL_AND_ACTIVE_SPEAKER_AUDIT",
+    "ZERO_ZOOM_DELIVERED_REVIEW_ZOOM_FUNNEL"
+  ],
+  "preview_border": {
+    "issues": []
+  },
+  "scope": "saved_stage_diagnostics_no_live_video_validation"
+}

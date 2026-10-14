@@ -345,7 +345,10 @@ def editorial_review_units(candidates):
     return groups
 
 
-def human_review_queue(candidates):
+def human_review_queue(candidates, schema_version='1.2'):
+    """Keep legacy queues readable; add actionable triage without changing gates."""
+    if not isinstance(schema_version, str) or schema_version not in {'1.0', '1.1', '1.2'}:
+        raise ValueError('unsupported_human_review_queue_schema')
     entries = []
     for group in editorial_review_units(candidates):
         available = [r for r in group if r.get('eligible_for_human_review')]
@@ -360,5 +363,36 @@ def human_review_queue(candidates):
             'transcript_ref': 'transcript/relevant_segments.jsonl', 'segment_ids': row.get('segment_ids', []),
             'visual_refs': row.get('visual_refs', []),
             'alternative_ids': [r['candidate_id'] for r in group if r is not row]})
-    return {'schema_version': '1.0', 'entries': entries,
+    if schema_version in {'1.1', '1.2'}:
+        from .second_curation import candidate_editorial_review_plan
+        by_id = {row['candidate_id']: row for row in candidates}
+        for entry in entries:
+            plan = candidate_editorial_review_plan(by_id[entry['candidate_id']])
+            entry.update({key: value for key, value in plan.items() if key != 'schema_version'})
+        def priority(entry):
+            from .editorial import finite_score
+            score = finite_score(entry.get('editorial_score_final'))
+            return (-(score if score is not None else -1), len(entry.get('local_gate_reasons') or []),
+                    entry.get('rank') if isinstance(entry.get('rank'), (int, float)) else 999999,
+                    entry['start'], entry['candidate_id'])
+        entries.sort(key=priority)
+        for rank, entry in enumerate(entries, 1):
+            entry.update(priority_rank=rank,
+                         priority_method='recorded_score_then_local_gate_count_then_source_rank')
+        if schema_version == '1.2':
+            from copy import deepcopy
+            from .editorial_review import editorial_potential, review_milestones
+            for entry in entries:
+                source = by_id[entry['candidate_id']]
+                entry.update(editorial_potential=editorial_potential(source),
+                             review_milestones=review_milestones(source),
+                             boundary_review_proposals=deepcopy(source.get('boundary_review_proposals') or []))
+                if source.get('source_media_references') is not None:
+                    entry['source_media_references'] = deepcopy(source['source_media_references'])
+            groups = {'CONTENT_REVIEW': 0, 'MIXED_CTA_CONTENT': 0, 'UNRESOLVED': 1, 'CTA_HOUSEKEEPING': 2}
+            entries.sort(key=lambda entry: (groups[entry['editorial_potential']['classification']], *priority(entry)))
+            for rank, entry in enumerate(entries, 1):
+                entry.update(priority_rank=rank,
+                             priority_method='content_interest_before_cta_then_recorded_score')
+    return {'schema_version': schema_version, 'entries': entries,
             'candidate_ids': [r['candidate_id'] for r in entries], 'publication_ready': False}

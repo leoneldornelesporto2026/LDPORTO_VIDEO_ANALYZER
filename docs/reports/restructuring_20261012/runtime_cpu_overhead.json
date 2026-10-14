@@ -1,0 +1,46 @@
+{
+  "scope": "synthetic_cpu_serialization_and_telemetry_overhead_only",
+  "actual_inference_executed": false,
+  "gpu_used": false,
+  "quality_ab_validated": false,
+  "compact_prompt_is_existing_opt_in": true,
+  "schema_unchanged": true,
+  "options_unchanged": true,
+  "profile": "max",
+  "options": {
+    "num_ctx": 32768,
+    "num_predict": 6144,
+    "temperature": 0.0,
+    "top_k": 40,
+    "top_p": 0.9,
+    "repeat_penalty": 1.05,
+    "seed": 42
+  },
+  "legacy_message_chars": 3903,
+  "compact_message_chars": 1956,
+  "legacy_payload_build": {
+    "median_seconds": 6.643800064921379e-05,
+    "min_seconds": 6.529600010253489e-05,
+    "max_seconds": 6.787899998016656e-05
+  },
+  "compact_payload_build": {
+    "median_seconds": 5.186299909837544e-05,
+    "min_seconds": 4.96810011100024e-05,
+    "max_seconds": 5.2574999863281846e-05
+  },
+  "legacy_generation_tps_aggregation_1000_records": {
+    "median_seconds": 4.382099956274033e-05,
+    "min_seconds": 4.350999952293932e-05,
+    "max_seconds": 4.5133000239729883e-05
+  },
+  "expanded_finite_cost_aggregation_1000_records": {
+    "median_seconds": 0.0014211099944077433,
+    "min_seconds": 0.001384934998350218,
+    "max_seconds": 0.0019042300002183766
+  },
+  "limitations": [
+    "No elapsed inference comparison with the reported 289.4 seconds.",
+    "Synthetic counters are inputs to CPU cost-accounting, not measured model tokens.",
+    "Smaller prompts do not prove real speed or unchanged editorial quality."
+  ]
+}

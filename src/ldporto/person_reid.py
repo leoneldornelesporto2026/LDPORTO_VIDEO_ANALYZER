@@ -1,6 +1,6 @@
 """Conservative tracklet-to-person consolidation, separate from the online tracker."""
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 import math
 import numpy as np
 from .core import ok
@@ -65,17 +65,106 @@ def _face_neighbors(vector, people, limit=12):
 
     Returns candidates plus the nearest competitor(s), so a weak indexed match
     cannot win simply because a stronger face fell on another hash boundary.
-    The identity count bound prevents adversarial inputs from exhausting memory.
+    Above the legacy gallery size, bounded matrix blocks retain exact global
+    competitors. No participant count, temporal veto or acceptance gate changes.
     """
+    vector = np.asarray(vector, dtype=float)
+    if vector.ndim != 1 or not 1 < len(vector) <= 4096 or not np.isfinite(vector).all():
+        return []
     valid = [(pid, person["template"]) for pid, person in people.items()
              if person.get("template") is not None and len(person["template"]) == len(vector)]
-    if not valid or len(valid) > 2500:
+    if not valid:
         return []
-    matrix = np.stack([value for _, value in valid])
-    scores = matrix @ vector
-    positions = np.argsort(-scores, kind="stable")[:max(2, min(int(limit), len(valid)))]
-    return [(float(scores[index]), valid[index][0]) for index in positions
-            if np.isfinite(scores[index])]
+    keep = max(2, min(int(limit), len(valid)))
+    if len(valid) <= 2500:
+        # Keep the original numerical path for existing galleries/builds.
+        matrix = np.stack([value for _, value in valid])
+        scores = matrix @ vector
+        positions = np.argsort(-scores, kind="stable")[:keep]
+        return [(float(scores[index]), valid[index][0]) for index in positions
+                if np.isfinite(scores[index])]
+    retained = []
+    for offset in range(0, len(valid), 256):
+        block = valid[offset:offset + 256]
+        scores = np.stack([value for _, value in block]) @ vector
+        retained.extend((float(score), offset + index, block[index][0])
+                        for index, score in enumerate(scores) if np.isfinite(score))
+        # Original gallery order resolves ties, as in stable argsort above.
+        retained.sort(key=lambda row: (-row[0], row[1]))
+        del retained[keep:]
+    return [(score, pid) for score, _, pid in retained]
+
+
+def reid_outcome_diagnostics(tracks, decisions, base_threshold=.55, *, review_limit=24):
+    """Separate seeds, accepted merges and genuinely unmapped tracks.
+
+Gate flags overlap and describe the actual best candidate, not every rejected
+gallery comparison. Online raw identities remain hypotheses for human review.
+"""
+    accepted, best = set(), {}
+    by_track = {row['track_id']: row for row in tracks}
+    for decision in decisions:
+        tid = decision['tracklet_id']
+        if decision.get('accepted'):
+            accepted.add(tid)
+        if not decision.get('candidate_person_id'):
+            continue
+        previous = best.get(tid)
+        key = (-decision['embedding_similarity'], decision['candidate_person_id'])
+        if previous is None or key < (-previous['embedding_similarity'], previous['candidate_person_id']):
+            best[tid] = decision
+    counts, gates, review = Counter(), Counter(), []
+    for track in tracks:
+        tid = track['track_id']
+        outcome = 'merged' if tid in accepted else 'seed' if track.get('person_id') else 'unmapped'
+        counts[outcome] += 1
+        if not track.get('embedding_sample_count'):
+            counts['micro_without_fresh_embedding' if not track['qualified'] else 'stable_without_fresh_embedding'] += 1
+        decision = best.get(tid)
+        failures = []
+        if tid not in accepted and decision:
+            counts['rejected_tracks_with_best_candidate'] += 1
+            if decision['embedding_similarity'] < decision['threshold']:
+                failures.append('score_below_threshold')
+            if decision['margin'] < decision['required_margin']:
+                failures.append('margin_below_required')
+            consistency = decision.get('cluster_min_similarity')
+            if consistency is not None and consistency < base_threshold:
+                failures.append('cluster_inconsistency')
+            if decision.get('temporal_conflict'):
+                failures.append('temporal_conflict')
+            gates.update(failures)
+        elif tid not in accepted:
+            counts['tracks_without_candidate_comparison'] += 1
+        online_score = track.get('legacy_embedding_similarity')
+        if online_score is None or not track['qualified']:
+            continue
+        counts['online_face_reentry_tracks'] += 1
+        if outcome != 'seed':
+            continue
+        counts['online_reentry_offline_seed_tracks'] += 1
+        if len(review) >= max(0, review_limit) or not decision:
+            continue
+        others = [by_track[ref] for ref in decision.get('candidate_tracklet_ids', []) if ref in by_track]
+        if not others:
+            continue
+        witness = min(others, key=lambda row: (abs(track['first_seen']-row['last_seen']), row['track_id']))
+        review.append({'pair_id': f'ONLINE_OFFLINE_{len(review)+1:05}',
+            'track_id_a': tid, 'track_id_b': witness['track_id'],
+            'time_a': track['first_seen'], 'time_b': witness['first_seen'],
+            'online_source_person_ids': track.get('source_person_ids', []),
+            'offline_person_id': track.get('person_id'),
+            'candidate_person_id': decision.get('candidate_person_id'),
+            'online_face_similarity': online_score,
+            'offline_face_similarity': decision.get('embedding_similarity'),
+            'offline_margin': decision.get('margin'), 'required_margin': decision.get('required_margin'),
+            'rejection_gates': failures, 'decision_kind': 'online_offline_disagreement',
+            'annotation_same_person': None, 'annotation_status': 'unreviewed',
+            'image_evidence': None, 'auto_merge': False})
+    return {'schema_version': '1.0', 'track_outcomes': dict(counts),
+            'best_candidate_rejection_gates': dict(gates), 'gate_counts_overlap': True,
+            'legacy_abstention_scope': 'identity_seeds_plus_unmapped_tracks; not_identity_accuracy',
+            'review_pairs': review, 'human_identity_accuracy_measured': False}
 
 
 def _cluster_similarity(vector, person):
@@ -381,12 +470,22 @@ def build_person_identities(vision, cfg=None):
     metrics['embedding_gap_tracklet_count'] = gap_audit['tracklets_without_embedding']
     metrics['micro_embedding_absence_by_cause'] = gap_audit['micro_without_embedding_by_cause']
     from .identity_goldset import sample_reid_pairs
+    outcome_diagnostics = reid_outcome_diagnostics(tracks, decisions, threshold)
+    outcomes = outcome_diagnostics['track_outcomes']
+    metrics.update(reid_seed_track_count=outcomes.get('seed', 0),
+                   reid_merged_track_count=outcomes.get('merged', 0),
+                   reid_unmapped_track_count=outcomes.get('unmapped', 0),
+                   reid_abstention_scope=outcome_diagnostics['legacy_abstention_scope'],
+                   best_candidate_rejection_gates=outcome_diagnostics['best_candidate_rejection_gates'],
+                   gallery_retrieval_contract='legacy_exact_up_to_2500; exact_global_topk_in_256_template_blocks_above')
     result = {"identities": identities, "tracklets": tracks, "tracklet_to_person": mapping,
               "merge_decisions": decisions}
     pairs = sample_reid_pairs(result)
     return ok({"review_pairs": pairs, "identities": identities, "tracklets": tracks, "tracklet_to_person": mapping,
                "merge_decisions": decisions, "metrics": metrics,
-               "embedding_gap_audit": gap_audit}, "ok" if identities else "partial",
+                "embedding_gap_audit": gap_audit,
+                'outcome_diagnostics': outcome_diagnostics,
+                'online_offline_review_pairs': outcome_diagnostics['review_pairs']}, "ok" if identities else "partial",
               ["Identidades sao anonimas dentro do video, nao pessoas civis unicas.",
                "Micro-tracklets ficam na evidencia bruta; somente reentrada facial estrita pode anexa-los a identidade existente; posicao nao e usada."])
 

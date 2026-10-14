@@ -1,0 +1,26 @@
+{
+  "source": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\analysis\\video_1da839aad175\\cache\\0231c20cfd8147d9\\10_active_speaker.json",
+  "source_physical_sha256": "33b372104fcc0aabad064b04929502263c9d68441cbb5385ad3787d587a962c1",
+  "source_bytes": 331319797,
+  "source_logical_sha256": "cec3c62a675a94a2fa6501eb946f4dcaf32a5dda47ea7005200e345577ee7ba3",
+  "read_seconds": 8.388340800069273,
+  "verify_seconds": 27.246657599927858,
+  "packing_seconds": 0.0,
+  "write_seconds": 21.035955500090495,
+  "receipt_state": "verified_partial",
+  "output_bytes": 331319797,
+  "output_physical_sha256": "33b372104fcc0aabad064b04929502263c9d68441cbb5385ad3787d587a962c1",
+  "mappings": 92974,
+  "intervals": 92974,
+  "resources": {
+    "process_cpu_seconds": 64.34375,
+    "working_set_bytes": 836567040,
+    "gpu_vram_used_bytes": null,
+    "gpu_utilization_percent": null,
+    "peak_process_memory_bytes": 1501851648,
+    "system_ram_bytes": null,
+    "available_ram_bytes": 36789526528,
+    "memory_measurement": "windows_process_peak_working_set_not_gpu_vram"
+  },
+  "measurement_scope": "Fresh process completed checkpoint only; read+integrity+write, no inference. Peak RAM is process lifetime."
+}

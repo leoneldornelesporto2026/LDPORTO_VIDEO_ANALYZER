@@ -1,0 +1,13 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v3_20261013\\before.xml"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 211.8777199999895,
+  "scope": "current complete suite before SOL V3 source changes"
+}

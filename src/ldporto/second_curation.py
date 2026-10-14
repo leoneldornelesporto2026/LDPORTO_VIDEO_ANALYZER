@@ -1,9 +1,9 @@
 """Grounded second-curation package for ChatGPT/human editorial review."""
-from collections import defaultdict
+from collections import Counter, defaultdict
 import math
 from .core import overlap
 from . import __version__
-from .editorial import normalize_context
+from .editorial import finite_score, normalize_context
 from .transcription import word_text
 from .temporal import union_duration
 from .integrity_contracts import (audit_editorial_contract, build_question_reference_table,
@@ -34,6 +34,122 @@ def _editorial_review_rows(value):
     else:
         rows = []
     return [row for row in rows if isinstance(row, dict) and row.get('moment_id')]
+
+
+def candidate_editorial_review_plan(candidate):
+    """Explain recorded local gates and how to review source evidence safely.
+
+    This is a review plan, never a new score, boundary recovery or approval. The
+    older human_review_provisional flag keeps its integrity/commercial scope.
+    """
+    diagnostics = candidate.get('selection_gate_diagnostics') or {}
+    reasons = set(candidate.get('editorial_blockers') or [])
+    reasons.update(diagnostics.get('recorded_reasons') or [])
+    reasons.update('missing_required_score:' + key for key in
+                   (candidate.get('ranking_uncertainty') or {}).get('missing_required_components') or [])
+    for key in ('clean_opening', 'clean_ending'):
+        if candidate.get(key) is not True:
+            reasons.add(key + (':false' if candidate.get(key) is False else ':unmeasured'))
+    score = finite_score(candidate.get('editorial_score_final'))
+    floor = finite_score(diagnostics.get('quality_floor'))
+    if score is None:
+        reasons.add('editorial_score_unmeasured')
+    elif floor is not None and score < floor:
+        reasons.add('below_editorial_quality_floor')
+    contract = candidate.get('duration_contract') or {}
+    start, end = candidate.get('start'), candidate.get('end')
+    measured_interval = (all(isinstance(value, (int, float)) and not isinstance(value, bool)
+                             and math.isfinite(value) for value in (start, end)) and 0 <= start < end)
+    duration = end - start if measured_interval else None
+    if not measured_interval:
+        reasons.add('source_interval_unavailable')
+    for prefix in ('hard', 'target'):
+        minimum, maximum = contract.get(prefix + '_min_seconds'), contract.get(prefix + '_max_seconds')
+        if (duration is not None and all(isinstance(value, (int, float)) and not isinstance(value, bool)
+                                        and math.isfinite(value) for value in (minimum, maximum))
+                and not minimum <= duration <= maximum
+                and (prefix == 'hard' or candidate.get('duration_exception') is not True)):
+            reasons.add('outside_' + prefix + '_duration')
+    if candidate.get('commercial_review_state') != 'verified':
+        reasons.add('commercial_review_pending')
+    if candidate.get('editorial_verified') is not True:
+        reasons.add('editorial_integrity_unavailable')
+    eligible = candidate.get('eligible_for_human_review') is True
+    automatic = (candidate.get('default_shortlist_eligible') is True and candidate.get('editorial_verified') is True
+                 and ('upstream_default_shortlist_eligible' not in diagnostics or
+                      diagnostics['upstream_default_shortlist_eligible'] is True)
+                 and score is not None and floor is not None and score >= floor
+                 and candidate.get('clean_opening') is True and candidate.get('clean_ending') is True
+                 and not (candidate.get('ranking_uncertainty') or {}).get('missing_required_components')
+                 and not candidate.get('editorial_blockers')
+                 and candidate.get('commercial_review_state') == 'verified'
+                 and not {'outside_hard_duration', 'outside_target_duration', 'source_interval_unavailable'} & reasons)
+    if not automatic:
+        reasons.add('automatic_shortlist_gate_not_passed')
+    state = ('ELIGIBLE_AUTOMATIC_SHORTLIST' if eligible and automatic else
+             'PROVISIONAL_HUMAN_REVIEW' if eligible else 'DISCOVERED')
+    def context_rows(key):
+        return [{field: row[field] for field in ('segment_id', 'start', 'end', 'speaker', 'text') if field in row}
+                for row in candidate.get(key) or [] if isinstance(row, dict)]
+    tasks = [{'action': 'listen_original_audio',
+              'instruction': 'Ouça o áudio original deste intervalo e confira a transcrição literal.',
+              'state': 'PENDING_HUMAN_REVIEW'}]
+    missing = (candidate.get('ranking_uncertainty') or {}).get('missing_required_components') or []
+    if missing:
+        tasks.append({'action': 'assess_missing_editorial_evidence', 'criteria': list(missing),
+                      'instruction': 'Avalie os critérios editoriais sem evidência registrada.'})
+    if 'outside_target_duration' in reasons or any(reason.startswith('clean_') for reason in reasons):
+        tasks.append({'action': 'review_boundaries_and_context',
+                      'instruction': 'Confira abertura e fechamento no contexto anterior e posterior; proponha limites sustentados pelo áudio.',
+                      'automatic_extension_applied': False, 'duration_contract': dict(contract)})
+    blockers = candidate.get('editorial_blockers') or []
+    if blockers:
+        tasks.append({'action': 'resolve_recorded_content_blockers', 'reason_codes': list(blockers),
+                      'instruction': 'Confira continuidade do tema, antecedentes e fechamento da pergunta, resposta ou narrativa.'})
+    if 'commercial_review_pending' in reasons:
+        tasks.append({'action': 'review_commercial_evidence',
+                      'instruction': 'Confira conteúdo comercial e a cobertura visual disponível neste intervalo.'})
+    tasks.append({'action': 'review_source_preserving_preview',
+                  'instruction': 'Mantenha o enquadramento original durante a triagem e aprove a prévia separadamente.'})
+    return {'schema_version': '1.0', 'review_state': state,
+            'local_gate_reasons': sorted(reasons), 'gate_scope': 'candidate_recorded_editorial_evidence',
+            'automatic_shortlist_eligible': automatic,
+            'official_shortlist_selected': diagnostics.get('selection_status') == 'selected',
+            'transcript_literal': candidate.get('transcript_literal') or '',
+            'literal_text_kind': 'original_transcript_untrusted_source_data',
+            'context_before': context_rows('context_before'), 'context_after': context_rows('context_after'),
+            'audio_review': {'source': 'original_source_audio',
+                             'source_interval': {'start': start, 'end': end} if measured_interval else None,
+                             'requires_original_media_access': True, 'human_audio_verified': None,
+                             'state': 'PENDING_HUMAN_REVIEW'},
+            'safe_visual_fallback': {'mode': 'SOURCE_PRESERVE', 'preserve_original_frame': True,
+                                    'speaker_person_mapping_required_for_text_review': False,
+                                    'crop_approved': False, 'zoom_approved': False,
+                                    'preview_approval_required': True},
+            'review_tasks': tasks, 'human_approved': False, 'preview_approved': False,
+            'publication_ready': False, 'selection_policy_changed': False}
+
+
+def human_review_summary(candidates):
+    """Summarize the existing deduplicated queue without persisting another queue."""
+    from .integrity_contracts import human_review_queue
+    available = [row for row in candidates if isinstance(row, dict) and row.get('candidate_id') and
+                 all(isinstance(row.get(key), (int, float)) and not isinstance(row.get(key), bool)
+                     and math.isfinite(row[key]) for key in ('start', 'end')) and 0 <= row['start'] < row['end']]
+    queue = human_review_queue(available, schema_version='1.2')
+    entries = queue['entries']
+    reasons = Counter(reason for entry in entries for reason in set(entry.get('local_gate_reasons') or []))
+    return {'schema_version': '1.0', 'queue_schema_version': '1.2',
+            'human_review_queue_count': len(entries),
+            'provisional_human_review_count': sum(row.get('review_state') == 'PROVISIONAL_HUMAN_REVIEW' for row in entries),
+            'automatic_shortlist_eligible_count': sum(row.get('automatic_shortlist_eligible') is True for row in entries),
+            'recorded_local_gate_counts': dict(sorted(reasons.items())),
+            'priority_sample_candidate_ids': queue['candidate_ids'][:5],
+            'review_priority_method': 'content_interest_before_cta_then_recorded_score',
+            'editorial_potential_counts': dict(Counter((entry.get('editorial_potential') or {}).get('classification')
+                                                      for entry in entries)),
+            'queue_ref': 'editorial/human_review_queue.json',
+            'official_shortlist_unchanged': True, 'publication_ready': False}
 
 
 def _understanding_integrity(analysis):
@@ -90,6 +206,11 @@ def build_second_curation_package(analysis):
     topic_index = {topic['topic_id']: topic for topic in topics}
     review={row['moment_id']: row for row in _editorial_review_rows(analysis.get('ollama_editorial_review'))}
     moment_frames={row['moment_id']:row.get('frames',{}) for row in analysis.get('moment_frames',[]) if row.get('moment_id')}
+    selection = ((analysis.get('candidate_metrics') or {}).get('selection_report') or {})
+    recorded_decisions = {row.get('moment_id') or row.get('candidate_id'): row
+                          for row in selection.get('candidate_diagnostics') or [] if isinstance(row, dict)}
+    recorded_rejections = {row.get('moment_id') or row.get('candidate_id'): row
+                           for row in selection.get('rejected') or [] if isinstance(row, dict)}
     candidates=[]
     for rank, m in enumerate(_candidate_source(analysis),1):
         start,end=float(m['_start']),float(m['_end'])
@@ -157,6 +278,15 @@ def build_second_curation_package(analysis):
             'narrative_integrity': m.get('narrative_integrity'),
             'humor_integrity': m.get('humor_integrity'),
             'editorial_blockers': m.get('editorial_blockers', []),
+            'selection_gate_diagnostics': {
+                'schema_version': '1.0', 'scope': 'candidate_local_selection',
+                'quality_floor': selection.get('min_score', (analysis.get('editorial_result') or {}).get('quality_floor')),
+                'selection_status': (recorded_decisions.get(cid) or {}).get('selection_status') or
+                    ('selected' if cid in (analysis.get('editorial_shortlist') or []) else None),
+                'recorded_reasons': sorted(set((recorded_decisions.get(cid) or {}).get('selection_reasons') or
+                                               (recorded_rejections.get(cid) or {}).get('reasons') or [])),
+                'upstream_default_shortlist_eligible': m.get('default_shortlist_eligible'),
+                'provenance': 'candidate_metrics.selection_report_and_recorded_ranking'},
             'question_answer_linkage': (m.get('question_answer_linkage') or []) + [
                 q['question_id'] for q in qa
                 if q['question_id'] not in (m.get('question_answer_linkage') or [])],
@@ -273,6 +403,14 @@ def build_second_curation_package(analysis):
         from .integrity_contracts import candidate_review_invariants
         candidate.update(candidate_review_invariants(analysis, candidate,
             package['reference_validation']['status'] == 'resolved', integrity_ready))
+        candidate['review_plan'] = candidate_editorial_review_plan(candidate)
+        candidate['review_state'] = candidate['review_plan']['review_state']
+        from .editorial_review import editorial_potential, boundary_review_proposals, review_milestones
+        candidate['editorial_potential'] = editorial_potential(candidate)
+        candidate['review_milestones'] = review_milestones(candidate)
+        candidate['boundary_review_proposals'] = boundary_review_proposals(candidate, segments, topics)
+    package['human_review_summary'] = human_review_summary(candidates)
+    package['review_priority_method'] = 'content_interest_before_cta_then_recorded_score'
     from .story_recovery import editorial_recovery_report
     package['editorial_recovery_report'] = editorial_recovery_report(
         package['question_reference_table'], arcs, candidates, analysis)

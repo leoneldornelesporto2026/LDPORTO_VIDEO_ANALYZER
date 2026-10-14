@@ -1,0 +1,112 @@
+{
+  "fps": 29.97002997002997,
+  "tolerance_seconds": 0.03336666666666667,
+  "timestamp_rounding_epsilon_seconds": 5e-07,
+  "comparisons": {
+    "after_pyav_slice": {
+      "matches": [
+        {
+          "opencv": 3.069733,
+          "pyav": 3.1031,
+          "delta_seconds": 0.03336700000000015,
+          "source_frame_delta": 1
+        },
+        {
+          "opencv": 7.007,
+          "pyav": 7.007,
+          "delta_seconds": 0.0,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 81.8818,
+          "pyav": 81.8818,
+          "delta_seconds": 0.0,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 101.4013,
+          "pyav": 101.4013,
+          "delta_seconds": 0.0,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 105.338567,
+          "pyav": 105.33856666666667,
+          "delta_seconds": -3.3333333249174757e-07,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 113.079633,
+          "pyav": 113.07963333333333,
+          "delta_seconds": 3.3333333249174757e-07,
+          "source_frame_delta": 0
+        }
+      ],
+      "new_relative_to_opencv": [],
+      "lost_relative_to_opencv": [],
+      "boundaries_equivalent_within_tolerance": true,
+      "opencv_seconds": 47.94421989994589,
+      "pyav_seconds": 12.468839399982244,
+      "speedup_x": 3.845122898929484,
+      "opencv_peak_ram_bytes": 327946240,
+      "pyav_peak_ram_bytes": 199180288,
+      "ram_scope": "Fresh scenes-only processes, no visual model or GPU inference.",
+      "opencv_decoded_frames": 3597,
+      "pyav_decoded_frames": 3597
+    },
+    "after_pyav_auto": {
+      "matches": [
+        {
+          "opencv": 3.069733,
+          "pyav": 3.1031,
+          "delta_seconds": 0.03336700000000015,
+          "source_frame_delta": 1
+        },
+        {
+          "opencv": 7.007,
+          "pyav": 7.007,
+          "delta_seconds": 0.0,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 81.8818,
+          "pyav": 81.8818,
+          "delta_seconds": 0.0,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 101.4013,
+          "pyav": 101.4013,
+          "delta_seconds": 0.0,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 105.338567,
+          "pyav": 105.33856666666667,
+          "delta_seconds": -3.3333333249174757e-07,
+          "source_frame_delta": 0
+        },
+        {
+          "opencv": 113.079633,
+          "pyav": 113.07963333333333,
+          "delta_seconds": 3.3333333249174757e-07,
+          "source_frame_delta": 0
+        }
+      ],
+      "new_relative_to_opencv": [],
+      "lost_relative_to_opencv": [],
+      "boundaries_equivalent_within_tolerance": true,
+      "opencv_seconds": 47.94421989994589,
+      "pyav_seconds": 12.319582200027071,
+      "speedup_x": 3.8917082674963233,
+      "opencv_peak_ram_bytes": 327946240,
+      "pyav_peak_ram_bytes": 199163904,
+      "ram_scope": "Fresh scenes-only processes, no visual model or GPU inference.",
+      "opencv_decoded_frames": 3597,
+      "pyav_decoded_frames": 3597
+    }
+  },
+  "human_cut_ground_truth": null,
+  "default_backend": "opencv",
+  "scope": "Same ContentDetector, thresholds, frame_skip=0, native resolution/fps and downscale. Decoder is the experimental variable. Reference equivalence does not establish human cut accuracy."
+}

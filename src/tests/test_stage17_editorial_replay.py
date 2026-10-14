@@ -10,7 +10,7 @@ from scripts.dev.replay_editorial_stage17 import compare, encoded, main
 from scripts.dev.review_editorial_s3 import evaluate
 
 
-EVIDENCE = Path(__file__).resolve().parents[2] / 'automacao/evidencias'
+EVIDENCE = Path(__file__).resolve().parent / 'fixtures/historical_evidence'
 
 
 def test_real_same_52_ids_reproducible_and_unapproved(tmp_path):

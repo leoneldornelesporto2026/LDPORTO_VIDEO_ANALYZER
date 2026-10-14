@@ -1,0 +1,107 @@
+[
+  {
+    "path": "scripts/dev/audit_camera_s6.py",
+    "state": "changed_after_initial",
+    "sha256": "a7470ba882f9882d1756ec43c1359fdccb8d6071e04c01ad4e5c35b99b8a1311"
+  },
+  {
+    "path": "scripts/dev/audit_speaker_s5.py",
+    "state": "changed_after_initial",
+    "sha256": "67737dbb9133c339bfbfdfb0057f713dfa80bdb679fa10560f4bfc8dafb6967e"
+  },
+  {
+    "path": "scripts/export/exportar_ldporto.py",
+    "state": "changed_after_initial",
+    "sha256": "dd2c05b1b1f718e4ace16da522b3e95688a1b7a6402f7bc4b8611df53979313d"
+  },
+  {
+    "path": "src/ldporto/compact_artifacts.py",
+    "state": "changed_after_initial",
+    "sha256": "c64b5e8c967a4ee4e0e55248385f9d15385d00e78b2eb22c02c1350e263fbd40"
+  },
+  {
+    "path": "src/ldporto/config.py",
+    "state": "changed_after_initial",
+    "sha256": "0b23ca838c64f3e1a4718ee2758c506b1f73a3560d1eb088412d8d8986ad44e7"
+  },
+  {
+    "path": "src/ldporto/core.py",
+    "state": "changed_after_initial",
+    "sha256": "0afb542be1f05f50a3096a855cc84b47315d4326dfc6c6671e2e6c74e07e6b33"
+  },
+  {
+    "path": "src/ldporto/execution_receipts.py",
+    "state": "changed_after_initial",
+    "sha256": "828a4d07a786d23d655f5a6c1cb0c570df97362c361804e9e64ce0e5714c7a0d"
+  },
+  {
+    "path": "src/ldporto/face_quality.py",
+    "state": "changed_after_initial",
+    "sha256": "19f9ff0a7115b9757559476d4717a87cc05d095540e9fc3ef62ad9dcf72cabba"
+  },
+  {
+    "path": "src/ldporto/person_reid.py",
+    "state": "changed_after_initial",
+    "sha256": "2a6258fadfaae6fb1bbf86f112ff082b7831b265eec23825d7a8b2796b3d576b"
+  },
+  {
+    "path": "src/ldporto/pipeline.py",
+    "state": "changed_after_initial",
+    "sha256": "1092b9efece958a5675be2bb4d508da014d283be2b93420be9bf30ad70065c4c"
+  },
+  {
+    "path": "src/ldporto/reports.py",
+    "state": "changed_after_initial",
+    "sha256": "f5499d41334d1382ad947676811d79fc5cd9b2db5dbd932c8cf359c5e51c35e8"
+  },
+  {
+    "path": "src/ldporto/run_status.py",
+    "state": "changed_after_initial",
+    "sha256": "910e1a6d91080ab88c7df581d226b70bb762c5b6c46dafea4a649cdd8061653a"
+  },
+  {
+    "path": "src/ldporto/scenes.py",
+    "state": "changed_after_initial",
+    "sha256": "8149c0924dbe3016f891501807f28df132b83f9c63ee5d4456710e74db803278"
+  },
+  {
+    "path": "src/ldporto/semantic.py",
+    "state": "changed_after_initial",
+    "sha256": "116bab82ae3d8f9cbfc8a3bd9028800cd5cba3b2058c2222ca8ff0d145e4e532"
+  },
+  {
+    "path": "src/ldporto/vision.py",
+    "state": "changed_after_initial",
+    "sha256": "3da6c0cb9121bfa860e13261ba0c7fc843dc189a6762cb5d3fc233bbcc4d2a78"
+  },
+  {
+    "path": "src/ldporto/checkpoint_storage.py",
+    "state": "new_v4",
+    "sha256": "d1b980f3608403e16e81957cc59ac565b93c3c3723f99ec1a2ea24ceaffb5c23"
+  },
+  {
+    "path": "src/ldporto/speaker_windows.py",
+    "state": "new_v4",
+    "sha256": "916691f58aab615417f00d299b013163de17993d27ae467855b0a0552fea9662"
+  },
+  {
+    "path": "src/tests/test_sol_v4_checkpoint_storage.py",
+    "state": "new_v4",
+    "sha256": "2565c05a6a8cbde8c913a01865c323dd135deda0ba23b1bbcb2484537221bc95"
+  },
+  {
+    "path": "src/tests/test_sol_v4_identity.py",
+    "state": "new_v4",
+    "sha256": "f167216d8fbcc2295cf40b22f1191127c3277c0a92cb5f3f8dbd1688362e882c"
+  },
+  {
+    "path": "src/tests/test_sol_v4_visual.py",
+    "state": "new_v4",
+    "sha256": "5b9f016eb993beb1d703d7e83bdea5443b38a071fe6d8efae2c5f31a29794dc6"
+  },
+  {
+    "path": "scripts/dev/benchmark_speaker_windows_sol_v4.py",
+    "state": "new_v4",
+    "sha256": "caf203491d699bb930790ae4149ad3674828d883352df529917a6dd81749ed89"
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "command_argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\storage_s6_independent_review_fix.xml",
+    "src/tests/test_sol_v4_checkpoint_storage.py"
+  ],
+  "cwd": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER",
+  "exit_code": 0,
+  "elapsed_seconds": 1.715392900048755,
+  "stdout_log": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\storage_s6_independent_review_fix.log",
+  "junit": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\storage_s6_independent_review_fix.xml",
+  "source_sha256": {
+    "scripts/dev/audit_camera_s6.py": "a7470ba882f9882d1756ec43c1359fdccb8d6071e04c01ad4e5c35b99b8a1311",
+    "src/tests/test_sol_v4_checkpoint_storage.py": "35764275e1138a20f7523f988e497f3dfcfafbb0d22889ea2be4f6857d935527"
+  }
+}

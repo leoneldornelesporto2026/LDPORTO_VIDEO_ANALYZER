@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "completed_calls": 12,
+  "wall_seconds": 1473.9070000000065,
+  "groups": {
+    "legacy_chunk": {
+      "n": 3,
+      "median_seconds": 146.35999999998603,
+      "min_seconds": 145.71799999999348,
+      "max_seconds": 149.73399999993853,
+      "valid_count": 3,
+      "prompt_tokens": [
+        2423,
+        2423,
+        2423
+      ],
+      "output_tokens": [
+        1043,
+        1043,
+        1043
+      ],
+      "load_seconds": [
+        5.736643,
+        4.9654691,
+        4.9336948
+      ],
+      "generation_tokens_per_second": [
+        8.405623508802698,
+        8.444562238306112,
+        8.378610498304162
+      ]
+    },
+    "legacy_global": {
+      "n": 3,
+      "median_seconds": 95.04700000002049,
+      "min_seconds": 94.53200000000652,
+      "max_seconds": 97.10900000005495,
+      "valid_count": 3,
+      "prompt_tokens": [
+        1985,
+        1985,
+        1985
+      ],
+      "output_tokens": [
+        688,
+        688,
+        688
+      ],
+      "load_seconds": [
+        0.0034693,
+        0.0027215,
+        0.0022718
+      ],
+      "generation_tokens_per_second": [
+        8.547368722355225,
+        8.60658102217861,
+        8.504314029607647
+      ]
+    },
+    "compact_chunk": {
+      "n": 3,
+      "median_seconds": 82.70299999997951,
+      "min_seconds": 81.46900000004098,
+      "max_seconds": 83.07800000009593,
+      "valid_count": 3,
+      "prompt_tokens": [
+        1804,
+        1804,
+        1804
+      ],
+      "output_tokens": [
+        555,
+        555,
+        555
+      ],
+      "load_seconds": [
+        4.9148405,
+        4.9185521,
+        4.9402734
+      ],
+      "generation_tokens_per_second": [
+        8.615934296468525,
+        8.437399022006637,
+        8.458015531019589
+      ]
+    },
+    "compact_global": {
+      "n": 3,
+      "median_seconds": 165.85999999998603,
+      "min_seconds": 163.53099999995902,
+      "max_seconds": 167.03099999995902,
+      "valid_count": 3,
+      "prompt_tokens": [
+        1724,
+        1724,
+        1724
+      ],
+      "output_tokens": [
+        1302,
+        1302,
+        1302
+      ],
+      "load_seconds": [
+        0.0027001,
+        0.0020874,
+        0.0031418
+      ],
+      "generation_tokens_per_second": [
+        8.594804232242673,
+        8.41346142972677,
+        8.46624376933715
+      ]
+    }
+  },
+  "human_quality_equivalence": "PENDING_REVIEW",
+  "default_compact_prompt": false,
+  "real_model_accuracy": null,
+  "full_pipeline_executed": false
+}

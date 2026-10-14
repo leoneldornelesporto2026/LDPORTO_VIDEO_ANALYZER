@@ -1,6 +1,9 @@
+> Registro/procedimento anterior: referências à antiga automação descrevem o
+> histórico. O desenvolvimento atual usa Git e pytest diretamente, conforme README.
+
 # R4.9 / Sessões 9–11 — Teste real e critérios de homologação
 
-**Retomada 2026-10-09:** usar o código presente no workspace. Referências a exportação e execuções datadas abaixo são históricas. Evidências novas da revalidação offline estão em `automacao/execucao/etapa42/retomada_20261009/`; consultar a seção de retomada de `FINAL_HOMOLOGACAO.md`. Os comandos de vídeo real deste roteiro não foram executados nesta retomada. Usar sempre caminhos novos de saída, inclusive para o relatório offline, preservando os artefatos anteriores.
+**Retomada 2026-10-09:** usar o código presente no workspace. Referências a exportação e execuções datadas abaixo são históricas. Evidências novas da revalidação offline estão em `docs/reports/homologation_s11/retomada_20261009/`; consultar a seção de retomada de `FINAL_HOMOLOGACAO.md`. Os comandos de vídeo real deste roteiro não foram executados nesta retomada. Usar sempre caminhos novos de saída, inclusive para o relatório offline, preservando os artefatos anteriores.
 
 **Base vigente:** workspace acumulado até a etapa 42, exportado em 2026-10-08 às 09:57. Os exemplos históricos abaixo não são resultados desta versão. **Separação obrigatória:** testes automáticos e MP4 sintético ≠ aprovação editorial. Esta distribuição contém Analyzer + ponte local renderizadora em FFmpeg. O aplicativo independente `LDPORTO_VIDEO_CURATOR` não foi homologado nesta etapa. A ponte legada `bridge_curator_r4.py` continua disponível.
 
@@ -159,14 +162,14 @@ O relatório desta execução está em `FINAL_HOMOLOGACAO.md`; resultados antigo
 
 1. Registrar `python --version`, `ffmpeg -version`, `ffprobe -version` e hashes dos scripts usados. Em futura sessão autorizada, diagnosticar CUDA com `nvidia-smi` e disponibilidade Ollama com `ollama list` (não faz inferência). GPU detectada não prova execução CUDA. Guardar saídas, exit codes, hardware, versões e modelos locais usados.
 2. Conferir `Get-FileHash -Algorithm SHA256 "CAMINHO_DO_ORIGINAL\tpcF5ri6GS4.mp4"` contra `bc598e72ec323ce824bcff749e8c1db2cd7d97627307aaf9cec53042bcd12575`. Nesta etapa o original não foi aberto nem procurado nas pastas de mídia. Hash divergente bloqueia; nunca editar hash para passar.
-3. Ler os gates do pacote. `automacao/evidencias/SECOND_CURATION_READY.zip` é S4 antigo e registra `partial/P1_DEGRADED`, Stories `REVIEW_REQUIRED`, preview não aprovado. O nome READY não permite canário nem publicação. Se o gate rejeitar, registrar a rejeição; não promover artificialmente o estado. O pacote S4 pode servir somente para replay downstream rotulado como legado.
+3. Ler os gates do pacote. `src/tests/fixtures/historical_evidence/SECOND_CURATION_READY.zip` é S4 antigo e registra `partial/P1_DEGRADED`, Stories `REVIEW_REQUIRED`, preview não aprovado. O nome READY não permite canário nem publicação. Se o gate rejeitar, registrar a rejeição; não promover artificialmente o estado. O pacote S4 pode servir somente para replay downstream rotulado como legado.
 4. Replay editorial offline seletivo disponível, sem ASR/visão/Ollama e sem extração sobre fontes. Não executado na etapa 42; reutilizar também as evidências já registradas no checkpoint 17. Usar uma pasta de saída nova:
 
 ```powershell
 python scripts/dev/replay_editorial_stage17.py `
-  --review-package automacao/evidencias/CHATGPT_REVIEW.zip `
-  --curation-package automacao/evidencias/SECOND_CURATION_READY.zip `
-  --output-dir automacao/execucao/etapa42/replay_editorial_NOVO
+  --review-package src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip `
+  --curation-package src/tests/fixtures/historical_evidence/SECOND_CURATION_READY.zip `
+  --output-dir docs/reports/homologation_s11/replay_editorial_NOVO
 ```
 
 Esse replay reaplica lógica editorial a scores/intervalos antigos; não mede o Analyzer atual no vídeo nem confirma fidelidade auditiva. Para replay de câmera, `replay_camera_v44.py FOLDER --output NOVO --active-folder FOLDER_ATIVO` requer os artefatos correspondentes e procedência conferida. Não usar `replay_second_curation_v44.py` para João Gordo: ele contém caminhos e decisões fixos de outro vídeo. Replay de ASR/visão exige motivo técnico e autorização futura específica, sem invalidar cache caro por mera correção downstream.
@@ -179,8 +182,8 @@ Relatório offline, sem consulta Ollama/GPU, com caminho novo:
 
 ```powershell
 python scripts/dev/homologation_s11.py --offline `
-  --junit automacao/execucao/etapa42/regression.xml `
-  --output automacao/execucao/etapa42/homologation_offline.json
+  --junit docs/reports/homologation_s11/regression.xml `
+  --output docs/reports/homologation_s11/homologation_offline.json
 ```
 
-Exit 2 é esperado quando faltam fonte/canário/lote/revisão humana. Não equivale a falha da suíte. Não chamar a entrega de “100% homologada”. Snapshot final e ZIP ficam exclusivamente com o orquestrador; checkpoints 01–42, changelog e script do teste real devem estar no snapshot.
+Exit 2 é esperado quando faltam fonte/canário/lote/revisão humana. Não equivale a falha da suíte. Não chamar a entrega de “100% homologada”. Exportação e regressão usam comandos diretos; registros anteriores continuam históricos e os gates de revisão humana permanecem separados.

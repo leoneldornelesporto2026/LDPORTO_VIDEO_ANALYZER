@@ -16,6 +16,7 @@ import re
 
 from .timeline import captions
 from .subtitle_style import wrap_text, checked_text
+from .asr_comparison import review_reason_metrics
 
 
 CRITICAL_ISSUES = {'cut_splits_word', 'interrupted_or_incomplete_word',
@@ -281,6 +282,10 @@ def review_selected_clips(words, candidates, selected_ids=None, *, alternatives=
             'original_review_fraction': (len(originally_flagged)/len(base)) if base else None,
             'words_flagged_for_review': len(suspect),
             'words_flagged_fraction': len(suspect) / len(base) if base else None,
+            'review_reason_metrics': review_reason_metrics(base),
+            'source_audio_review': deepcopy((targeted_report or {}).get('source_audio_review', {})),
+            'acoustic_multipass': deepcopy((targeted_report or {}).get('source_audio_review', {}).get('acoustic_multipass', {})),
+            'human_audio_review_status': 'pending',
             'global_word_reasons': dict(Counter(r for w in base for r in _word_issues(w, threshold))),
             'candidate_issue_counts': dict(global_reasons),
             'candidates': by_id, 'all_captions_require_final_audio_review': True,

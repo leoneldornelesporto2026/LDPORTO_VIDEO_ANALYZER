@@ -18,6 +18,8 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'src'))
 from ldporto.analysis_quality import camera_quality_metrics
 from ldporto.camera_director import build_camera_director
+from ldporto.core import read_json
+from ldporto.checkpoint_storage import decode_checkpoint
 
 
 def load(source, *names):
@@ -26,12 +28,12 @@ def load(source, *names):
         if source.is_dir():
             hits=sorted(source.rglob(name),key=lambda p:(len(p.parts),str(p)))
             if hits:
-                return json.loads(hits[0].read_text(encoding='utf-8-sig'))
+                return read_json(hits[0])
         elif source.suffix.lower()=='.zip':
             with zipfile.ZipFile(source) as zipfile_:
                 hits=sorted((p for p in zipfile_.namelist() if p==name or p.endswith('/'+name)),key=lambda p:(p.count('/'),p))
                 if hits:
-                    return json.loads(zipfile_.read(hits[0]).decode('utf-8-sig'))
+                    return decode_checkpoint(json.loads(zipfile_.read(hits[0]).decode('utf-8-sig')))
     return None
 
 
@@ -44,6 +46,11 @@ def replay(source):
     vision=bare(load(source,'08_person_reid.json','07_people_tracking.json') or {})
     if not vision.get('observations'):
         analysis=bare(load(source,'analysis.json') or {})
+        if Path(source).is_dir() and (Path(source)/'analysis.json').is_file():
+            from ldporto.compact_artifacts import load_analysis_artifacts
+            analysis=load_analysis_artifacts(source, collections=['video_analysis', 'people_observations',
+                'shots', 'active_speaker', 'person_motion', 'questions_answers', 'story_arcs', 'main_moments', 'camera_plan',
+                'broadcast_graphics'])
         vision={'frames':(analysis.get('video_analysis') or {}).get('frame_samples') or [],
                 'observations':analysis.get('people_observations') or [],
                 'broadcast_graphics':analysis.get('broadcast_graphics') or {}}
@@ -62,6 +69,7 @@ def replay(source):
     if not isinstance(active,list):
         raise ValueError('Replay requer lista de intervalos de 10_active_speaker, mesmo quando sem associação confirmada.')
     return build_camera_director(metadata,vision,shots,active,motion,
+        cfg=analysis.get('camera_director_config') if 'analysis' in locals() else None,
         questions_answers=semantic.get('questions_answers',[]),
         story_arcs=understanding.get('story_arcs',[]),
         main_moments=understanding.get('main_moments',[]), camera_plan=camera_plan)['data']
@@ -97,12 +105,13 @@ def assess(director, duration=None, preview=None):
             'focus':{key:metrics.get(key) for key in ('resolved_focus_coverage','known_speaker_focus_fraction',
                 'dominant_face_coverage','camera_director_coverage','camera_director_visual_sample_coverage',
                 'focus_evidence_funnel','evaluation_windows_without_visual_sample','evaluation_windows_with_face_evidence',
+                'focus_decision_audit',
                 'evaluation_windows_with_grounded_speaker','crop_preflight_blocked_windows','visual_only_fallback_windows')},
             'zoom':{key:metrics.get(key) for key in ('editorial_beat_raw_windows','editorial_beat_eligible_windows',
                 'editorial_beat_suppressed_due_to_cut_or_overlap','editorial_beat_without_focus_windows',
                 'editorial_beat_with_speaker_focus_windows','zoom_opportunity_window_count','zoom_request_window_count',
                 'zoom_accepted_event_count','zoom_delivered_event_count','zoom_aborted_window_count',
-                'zoom_block_reason_counts','zoom_zero_root_cause')},
+                'zoom_block_reason_counts','zoom_zero_root_cause','zoom_gate_diagnostics')},
             'camera':{key:metrics.get(key) for key in ('director_switches_per_minute','switches_suppressed',
                 'deadzone_suppressed_moves','split_fraction','two_shot_fraction','full_frame_fraction',
                 'split_preflight_rejected_windows')},

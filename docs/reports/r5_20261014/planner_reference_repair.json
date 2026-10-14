@@ -1,0 +1,10 @@
+{
+  "scope": "persisted_evidence_only_no_inference",
+  "validation": {
+    "status": "resolved",
+    "unresolved": [],
+    "errors": [],
+    "checked_candidate_count": 46
+  },
+  "reused_camera_plan_sha256": "b4d3ca22e2c7d517c1c9423f4ed8771c5acb37648929b2f25ea9977a07119224"
+}

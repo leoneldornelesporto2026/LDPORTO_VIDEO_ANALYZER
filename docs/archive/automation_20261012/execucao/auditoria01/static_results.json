@@ -1,0 +1,90 @@
+{
+  "python_compiled_in_memory": 271,
+  "imports": [
+    "core",
+    "build_provenance",
+    "execution_receipts",
+    "curation_recovery",
+    "reports",
+    "compact_artifacts",
+    "director_integration",
+    "pipeline",
+    "config",
+    "transcription",
+    "diarization",
+    "vision",
+    "active_speaker",
+    "second_curation_export",
+    "export_privacy"
+  ],
+  "schemas_valid": 16,
+  "json_parsed": [
+    "examples/llm_insights_DEMONSTRACAO_SINTETICA.json",
+    "examples/mapping_example.json",
+    "src/tests/fixtures/joao_gordo_qa_references.json",
+    "src/tests/fixtures/s1_clovis_proof.json",
+    "src/tests/fixtures/s1_emerson_proof.json",
+    "src/tests/fixtures/stage40_transcription_synthetic.json",
+    "src/tests/fixtures/stage48_clovis_review_refs.json",
+    "src/tests/fixtures/stage51_semantic_responses_synthetic.json",
+    "src/tests/fixtures/stage55_commercial_synthetic.json",
+    "src/tests/fixtures/autopilot_historico/MAPA_ETAPAS.json",
+    "src/tests/fixtures/autopilot_historico/ORIGEM.json",
+    "src/tests/fixtures/legacy_analysis/llm_insights.json",
+    "src/tests/fixtures/legacy_analysis/scenes.json",
+    "src/tests/fixtures/legacy_analysis/speakers.json",
+    "src/tests/fixtures/legacy_analysis/timeline.json",
+    "src/tests/fixtures/legacy_analysis/words.json",
+    "src/tests/fixtures/v44/commercial_false_negatives.json",
+    ".package/PROJECT_EXPORT_MANIFEST.json"
+  ],
+  "config_loaded": true,
+  "requirements_parsed": {
+    "requirements.txt": [
+      "numpy>=2,<2.3",
+      "scipy>=1.14,<2",
+      "PyYAML>=6.0.1,<7",
+      "opencv-contrib-python>=4.11,<4.12",
+      "soundfile>=0.12.1,<0.14",
+      "faster-whisper>=1.1,<2",
+      "ctranslate2>=4.6,<5",
+      "yt-dlp[default]>=2025.11.12",
+      "scenedetect>=0.6.5,<0.8",
+      "jsonschema>=4.21,<5",
+      "charset-normalizer>=3.3,<4"
+    ],
+    "requirements/audio-events.txt": [
+      "panns-inference>=0.1.1,<0.2"
+    ],
+    "requirements/demucs.txt": [
+      "numpy>=1.26,<2",
+      "torch==2.3.1",
+      "torchaudio==2.3.1",
+      "demucs==4.0.1"
+    ],
+    "requirements/dev.txt": [
+      "pytest>=8,<10"
+    ],
+    "requirements/diarization.txt": [
+      "pyannote.audio>=4,<5",
+      "torch>=2.8,<2.9",
+      "torchaudio>=2.8,<2.9",
+      "torchcodec>=0.7,<0.8"
+    ],
+    "requirements/gpu-windows.txt": [
+      "nvidia-cuda-runtime-cu12>=12.8,<13",
+      "nvidia-cublas-cu12>=12.8,<13",
+      "nvidia-cudnn-cu12>=9,<10"
+    ],
+    "requirements/ocr.txt": [
+      "pytesseract>=0.3.13,<0.4"
+    ],
+    "requirements/vision.txt": [
+      "mediapipe>=0.10.32,<0.11",
+      "opencv-contrib-python>=4.11,<4.12"
+    ],
+    "requirements/yolo.txt": [
+      "ultralytics>=8.3,<9"
+    ]
+  }
+}

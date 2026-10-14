@@ -1,0 +1,4037 @@
+{
+  "root": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER",
+  "directories": [
+    ".cache",
+    ".package",
+    ".pytest_cache",
+    "config",
+    "docs",
+    "examples",
+    "requirements",
+    "schemas",
+    "scripts",
+    "src",
+    "tmp",
+    "__pycache__",
+    ".pytest_cache/v",
+    ".pytest_cache/v/cache",
+    "docs/archive",
+    "docs/briefings",
+    "docs/releases",
+    "docs/reports",
+    "docs/setup",
+    "docs/troubleshooting",
+    "docs/archive/automation_20261012",
+    "docs/archive/automation_20261012/execucao",
+    "docs/archive/automation_20261012/execucao/auditoria01",
+    "docs/archive/automation_20261012/execucao/checkpoints",
+    "docs/reports/restructuring_20261012",
+    "scripts/dev",
+    "scripts/export",
+    "scripts/windows",
+    "scripts/__pycache__",
+    "scripts/dev/__pycache__",
+    "scripts/export/__pycache__",
+    "scripts/windows/diagnostics",
+    "scripts/windows/gpu",
+    "scripts/windows/install",
+    "scripts/windows/ollama",
+    "scripts/windows/testing",
+    "src/ldporto",
+    "src/tests",
+    "src/ldporto/__pycache__",
+    "src/tests/fixtures",
+    "src/tests/__pycache__",
+    "src/tests/fixtures/autopilot_historico",
+    "src/tests/fixtures/historical_evidence",
+    "src/tests/fixtures/legacy_analysis",
+    "src/tests/fixtures/v44",
+    "src/tests/fixtures/autopilot_historico/prompts",
+    "tmp/fechamento_estabilizacao_01_20261012_194559",
+    "tmp/fechamento_estabilizacao_01_20261012_194559/backup",
+    "tmp/fechamento_estabilizacao_01_20261012_194559/backup/src",
+    "tmp/fechamento_estabilizacao_01_20261012_194559/backup/src/tests"
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 6290,
+      "classification": "A"
+    },
+    {
+      "path": "ABRIR_ANALYZER.bat",
+      "bytes": 413,
+      "classification": "A"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 1327,
+      "classification": "C"
+    },
+    {
+      "path": "analyze.py",
+      "bytes": 15509,
+      "classification": "A"
+    },
+    {
+      "path": "app.py",
+      "bytes": 65783,
+      "classification": "A"
+    },
+    {
+      "path": "CHANGELOG_V43.md",
+      "bytes": 8586,
+      "classification": "C"
+    },
+    {
+      "path": "compare_runs.py",
+      "bytes": 333,
+      "classification": "A"
+    },
+    {
+      "path": "CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat",
+      "bytes": 250,
+      "classification": "A"
+    },
+    {
+      "path": "CORRIGIR_GPU_WINDOWS.bat",
+      "bytes": 220,
+      "classification": "A"
+    },
+    {
+      "path": "DIAGNOSTICO_GPU_WINDOWS.bat",
+      "bytes": 242,
+      "classification": "A"
+    },
+    {
+      "path": "DIAGNOSTICO_WINDOWS.bat",
+      "bytes": 234,
+      "classification": "A"
+    },
+    {
+      "path": "exportar_ldporto.py",
+      "bytes": 347,
+      "classification": "A"
+    },
+    {
+      "path": "INSTALAR_AVANCADO_WINDOWS.bat",
+      "bytes": 238,
+      "classification": "A"
+    },
+    {
+      "path": "INSTALAR_WINDOWS.bat",
+      "bytes": 220,
+      "classification": "A"
+    },
+    {
+      "path": "install.py",
+      "bytes": 4257,
+      "classification": "A"
+    },
+    {
+      "path": "pytest.ini",
+      "bytes": 51,
+      "classification": "A"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6222,
+      "classification": "C"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 385,
+      "classification": "A"
+    },
+    {
+      "path": "TESTAR_WINDOWS.bat",
+      "bytes": 216,
+      "classification": "A"
+    },
+    {
+      "path": ".cache/runtime_history.json",
+      "bytes": 446675,
+      "classification": "D"
+    },
+    {
+      "path": ".package/PROJECT_EXPORT_MANIFEST.json",
+      "bytes": 140249,
+      "classification": "D"
+    },
+    {
+      "path": ".package/PROJECT_EXPORT_README.txt",
+      "bytes": 766,
+      "classification": "D"
+    },
+    {
+      "path": ".package/PROJECT_EXPORT_TREE.txt",
+      "bytes": 14146,
+      "classification": "D"
+    },
+    {
+      "path": ".pytest_cache/.gitignore",
+      "bytes": 37,
+      "classification": "F"
+    },
+    {
+      "path": ".pytest_cache/CACHEDIR.TAG",
+      "bytes": 191,
+      "classification": "F"
+    },
+    {
+      "path": ".pytest_cache/README.md",
+      "bytes": 302,
+      "classification": "F"
+    },
+    {
+      "path": ".pytest_cache/v/cache/lastfailed",
+      "bytes": 56,
+      "classification": "F"
+    },
+    {
+      "path": ".pytest_cache/v/cache/nodeids",
+      "bytes": 187849,
+      "classification": "F"
+    },
+    {
+      "path": "config/config.yaml",
+      "bytes": 5100,
+      "classification": "A"
+    },
+    {
+      "path": "docs/ARQUITETURA.md",
+      "bytes": 7850,
+      "classification": "C"
+    },
+    {
+      "path": "docs/AUDIO_AVANCADO.md",
+      "bytes": 3668,
+      "classification": "C"
+    },
+    {
+      "path": "docs/BODY_AB_58.md",
+      "bytes": 7701,
+      "classification": "C"
+    },
+    {
+      "path": "docs/CAMERA_DIRECTOR_V3.md",
+      "bytes": 14521,
+      "classification": "C"
+    },
+    {
+      "path": "docs/CAMERA_PARAMETERS.md",
+      "bytes": 2120,
+      "classification": "C"
+    },
+    {
+      "path": "docs/CHANGELOG_ETAPA_42.md",
+      "bytes": 1416,
+      "classification": "C"
+    },
+    {
+      "path": "docs/CHANGELOG_V44.md",
+      "bytes": 5402,
+      "classification": "C"
+    },
+    {
+      "path": "docs/CONTRATO_DADOS.md",
+      "bytes": 4079,
+      "classification": "C"
+    },
+    {
+      "path": "docs/CURATION_CANARY_61.md",
+      "bytes": 3161,
+      "classification": "C"
+    },
+    {
+      "path": "docs/DIRECTOR_BENCHMARK.json",
+      "bytes": 1310,
+      "classification": "C"
+    },
+    {
+      "path": "docs/ETAPA64_RECUPERACAO.md",
+      "bytes": 12467,
+      "classification": "C"
+    },
+    {
+      "path": "docs/ETAPA_65_POS_BENCHMARK.md",
+      "bytes": 7932,
+      "classification": "C"
+    },
+    {
+      "path": "docs/FILES_CHANGED_V3.md",
+      "bytes": 1963,
+      "classification": "C"
+    },
+    {
+      "path": "docs/FONTES.md",
+      "bytes": 1956,
+      "classification": "C"
+    },
+    {
+      "path": "docs/INFERENCE_SMOKE_60.md",
+      "bytes": 4996,
+      "classification": "C"
+    },
+    {
+      "path": "docs/OCR_GUI_54.md",
+      "bytes": 2363,
+      "classification": "C"
+    },
+    {
+      "path": "docs/PERFORMANCE_59.md",
+      "bytes": 4941,
+      "classification": "C"
+    },
+    {
+      "path": "docs/R3B_PERFORMANCE_20261007.md",
+      "bytes": 5824,
+      "classification": "C"
+    },
+    {
+      "path": "docs/R3_CAMERA_PERCEPTION_PART1.md",
+      "bytes": 3538,
+      "classification": "C"
+    },
+    {
+      "path": "docs/R4_FINAL_HOMOLOGACAO_20261007.md",
+      "bytes": 6004,
+      "classification": "C"
+    },
+    {
+      "path": "docs/README.md",
+      "bytes": 1276,
+      "classification": "C"
+    },
+    {
+      "path": "docs/REPLAY_COMMERCIAL_VISUAL_46.md",
+      "bytes": 5326,
+      "classification": "C"
+    },
+    {
+      "path": "docs/REPLAY_OCR_56.md",
+      "bytes": 4619,
+      "classification": "C"
+    },
+    {
+      "path": "docs/REPOSITORY_STRUCTURE.md",
+      "bytes": 1905,
+      "classification": "C"
+    },
+    {
+      "path": "docs/REQUISITOS_RECEBIDOS.txt",
+      "bytes": 37458,
+      "classification": "C"
+    },
+    {
+      "path": "docs/ROADMAP_R2_R3_20261007.md",
+      "bytes": 2350,
+      "classification": "C"
+    },
+    {
+      "path": "docs/ROUND2_VISUAL_IDENTITY.md",
+      "bytes": 1808,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S11_AUTOMATED_TESTS.xml",
+      "bytes": 81325,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S11_TECHNICAL_VALIDATION_20261008.md",
+      "bytes": 2082,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S1_UNDERSTANDING_CONTRACT_FIX.md",
+      "bytes": 3607,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S2_PIPELINE_INTEGRITY_HARDENING.md",
+      "bytes": 4597,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S3_INTELIGENCIA_EDITORIAL_20261007.md",
+      "bytes": 4585,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S4_TRACKING_FACIAL_RECOVERY_20261007.md",
+      "bytes": 6445,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md",
+      "bytes": 5829,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S6_CAMERA_DIRECTOR_SMART_ZOOM_20261007.md",
+      "bytes": 7383,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S7_TRANSCRICAO_REPARACAO_LEGENDAS_20261007.md",
+      "bytes": 6531,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S8_COMMERCIAL_GRAPHICS_STORIES_20261008.md",
+      "bytes": 7966,
+      "classification": "C"
+    },
+    {
+      "path": "docs/S9_S11_REAL_TEST.md",
+      "bytes": 15748,
+      "classification": "C"
+    },
+    {
+      "path": "docs/TEST_REPORT_V3.md",
+      "bytes": 7713,
+      "classification": "C"
+    },
+    {
+      "path": "docs/TEST_RESULTS_V3.xml",
+      "bytes": 15096,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V43_ARCHITECTURE.md",
+      "bytes": 1207,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V43_AUDIT_COMPLETION.md",
+      "bytes": 1407,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V43_IMPLEMENTATION_LEDGER.md",
+      "bytes": 17219,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V43_PERFORMANCE.md",
+      "bytes": 1314,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V43_REAL_BENCHMARK.md",
+      "bytes": 1870,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V43_REPOSITORY_CLEANUP.md",
+      "bytes": 3191,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_BASELINE_RECONCILIATION.md",
+      "bytes": 2825,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_BENCHMARK_REPORT.md",
+      "bytes": 5470,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_FINALIZATION.md",
+      "bytes": 2631,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_FINAL_AUDIT.md",
+      "bytes": 2279,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_IMPLEMENTATION_LEDGER.md",
+      "bytes": 15801,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_R3_STABILIZATION.md",
+      "bytes": 2082,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_R4_2_INTEGRITY_VISION.md",
+      "bytes": 2964,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V44_R4_SOCIAL_OUTPUT.md",
+      "bytes": 1969,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_2_BENCHMARK_COMPARISON.md",
+      "bytes": 2981,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_2_IMPLEMENTATION_REPORT.md",
+      "bytes": 9516,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_2_REAL_BENCHMARK_FINDINGS.md",
+      "bytes": 3329,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_2_REQUIREMENT_MATRIX.md",
+      "bytes": 7284,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_2_WINDOWS_HOMOLOGATION.md",
+      "bytes": 3169,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_ASD_CANDIDATES_20261004.md",
+      "bytes": 2148,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_CACHE_RESUME.md",
+      "bytes": 755,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_FINAL_ARCHITECTURE.md",
+      "bytes": 2284,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_GLOBAL_PLANNER.md",
+      "bytes": 989,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_IMPLEMENTATION_REPORT.md",
+      "bytes": 6191,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_OVERRIDES.md",
+      "bytes": 684,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_PREVIEW_RENDERER_VERIFIER.md",
+      "bytes": 1110,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_REQUIREMENT_MATRIX.md",
+      "bytes": 4238,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_SECOND_CURATION.md",
+      "bytes": 800,
+      "classification": "C"
+    },
+    {
+      "path": "docs/V4_WINDOWS_PY311_HOMOLOGATION.md",
+      "bytes": 1553,
+      "classification": "C"
+    },
+    {
+      "path": "docs/VALIDACAO.md",
+      "bytes": 8139,
+      "classification": "C"
+    },
+    {
+      "path": "docs/WORKER_DISCOVERY_AUDIT.md",
+      "bytes": 11168,
+      "classification": "C"
+    },
+    {
+      "path": "docs/WORKER_DISCOVERY_AUDIT_V43.md",
+      "bytes": 2120,
+      "classification": "C"
+    },
+    {
+      "path": "docs/YOLO_LOCAL_57.md",
+      "bytes": 6421,
+      "classification": "C"
+    },
+    {
+      "path": "docs/archive/FINAL_HOMOLOGACAO_20261009.md",
+      "bytes": 11212,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/README.md",
+      "bytes": 730,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/AUDITORIA_GERAL_01.md",
+      "bytes": 9639,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/commands.json",
+      "bytes": 3594,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/CORRECOES_01.md",
+      "bytes": 1024,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/final_integrity.json",
+      "bytes": 152,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/focused.xml",
+      "bytes": 27573,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/full.xml",
+      "bytes": 233072,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/historical_evidence_readonly.json",
+      "bytes": 834384,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/initial_integrity.json",
+      "bytes": 55013,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/PENDENCIAS_02.md",
+      "bytes": 775,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/static_results.json",
+      "bytes": 2788,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/STATUS_FINAL_01.json",
+      "bytes": 936,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/TESTES_01.json",
+      "bytes": 12117,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/checkpoints/CHECKPOINT_ETAPA_01.md",
+      "bytes": 10339,
+      "classification": "D"
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/checkpoints/TESTES_01.json",
+      "bytes": 9357,
+      "classification": "D"
+    },
+    {
+      "path": "docs/briefings/README.md",
+      "bytes": 511,
+      "classification": "C"
+    },
+    {
+      "path": "docs/releases/DELIVERY_MANIFEST_V3.json",
+      "bytes": 17287,
+      "classification": "C"
+    },
+    {
+      "path": "docs/releases/DELIVERY_MANIFEST_V4.json",
+      "bytes": 4088,
+      "classification": "C"
+    },
+    {
+      "path": "docs/releases/README.md",
+      "bytes": 434,
+      "classification": "C"
+    },
+    {
+      "path": "docs/reports/ROUND_53_62_HOMOLOGACAO.json",
+      "bytes": 347747,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/ROUND_53_62_HOMOLOGACAO.md",
+      "bytes": 13637,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/WORKER_FINAL_REPORT_V42.md",
+      "bytes": 12145,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/after_full.log",
+      "bytes": 2441,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/after_full.xml",
+      "bytes": 245901,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/after_full_run.json",
+      "bytes": 1125,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/analyze_help.log",
+      "bytes": 5222,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/asr_audit.md",
+      "bytes": 9322,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/asr_new_test_collection.txt",
+      "bytes": 7428,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/asr_targeted_tests_final.txt",
+      "bytes": 368,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/asr_targeted_tests_initial.txt",
+      "bytes": 366,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/asr_targeted_tests_review.txt",
+      "bytes": 368,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/asr_understanding_uncertainty_tests.txt",
+      "bytes": 368,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/backup.json",
+      "bytes": 125691,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/before_active.log",
+      "bytes": 1908,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/before_active.xml",
+      "bytes": 230619,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/before_active_run.json",
+      "bytes": 464,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/before_collection.xml",
+      "bytes": 854,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/cleanup.json",
+      "bytes": 162026,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/code_audit.json",
+      "bytes": 408,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/COMANDOS.md",
+      "bytes": 5324,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/compare_runs_help.log",
+      "bytes": 595,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/exportar_ldporto_help.log",
+      "bytes": 2903,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/first_full.log",
+      "bytes": 2441,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/first_full.xml",
+      "bytes": 245761,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/first_full_run.json",
+      "bytes": 1424,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/inventory_before.json",
+      "bytes": 186987,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/RELATORIO_TECNICO.md",
+      "bytes": 17674,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_compatibility_focus.log",
+      "bytes": 204,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_cpu_overhead.json",
+      "bytes": 1523,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_final_focus.log",
+      "bytes": 204,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_focus.log",
+      "bytes": 1794,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_new_contracts.log",
+      "bytes": 204,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_review.md",
+      "bytes": 9805,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/runtime_versions.json",
+      "bytes": 494,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/source_before_final_tests.json",
+      "bytes": 29734,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/source_before_first_full.json",
+      "bytes": 29734,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/tests_summary.json",
+      "bytes": 15544,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/verification.json",
+      "bytes": 4521,
+      "classification": "D"
+    },
+    {
+      "path": "docs/reports/restructuring_20261012/vision_integrity.md",
+      "bytes": 4911,
+      "classification": "D"
+    },
+    {
+      "path": "docs/setup/LEIA_PRIMEIRO.md",
+      "bytes": 9654,
+      "classification": "C"
+    },
+    {
+      "path": "docs/setup/OLLAMA_MAXIMO.md",
+      "bytes": 1437,
+      "classification": "C"
+    },
+    {
+      "path": "docs/troubleshooting/GPU_FIX_NOTES.md",
+      "bytes": 1053,
+      "classification": "C"
+    },
+    {
+      "path": "examples/llm_insights_DEMONSTRACAO_SINTETICA.json",
+      "bytes": 16128,
+      "classification": "C"
+    },
+    {
+      "path": "examples/mapping_example.json",
+      "bytes": 319,
+      "classification": "C"
+    },
+    {
+      "path": "examples/README.md",
+      "bytes": 380,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/audio-events.txt",
+      "bytes": 108,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/demucs.txt",
+      "bytes": 137,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/dev.txt",
+      "bytes": 15,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/diarization.txt",
+      "bytes": 144,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/gpu-windows.txt",
+      "bytes": 227,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/ocr.txt",
+      "bytes": 26,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/README.md",
+      "bytes": 735,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/vision.txt",
+      "bytes": 61,
+      "classification": "C"
+    },
+    {
+      "path": "requirements/yolo.txt",
+      "bytes": 326,
+      "classification": "C"
+    },
+    {
+      "path": "schemas/camera_director_debug.schema.json",
+      "bytes": 491,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/camera_director_timeline.schema.json",
+      "bytes": 4929,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/camera_plan.schema.json",
+      "bytes": 919,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/compact_analysis.schema.json",
+      "bytes": 682,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/curation_catalog.schema.json",
+      "bytes": 863,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/curation_index.schema.json",
+      "bytes": 1301,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/editorial_candidate.schema.json",
+      "bytes": 1706,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/performance_feedback.schema.json",
+      "bytes": 1375,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/preflight.schema.json",
+      "bytes": 746,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/preview_validation.schema.json",
+      "bytes": 503,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/review_overrides.schema.json",
+      "bytes": 618,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/round62_homologation.schema.json",
+      "bytes": 1008,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/run_manifest.schema.json",
+      "bytes": 2419,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/second_curation_decisions.schema.json",
+      "bytes": 3188,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/second_curation_package.schema.json",
+      "bytes": 1228,
+      "classification": "A"
+    },
+    {
+      "path": "schemas/social_output.schema.json",
+      "bytes": 1097,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/configure_ollama.py",
+      "bytes": 3948,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/download_models.py",
+      "bytes": 3642,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/generate_director_fixture.py",
+      "bytes": 3267,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/README.md",
+      "bytes": 1284,
+      "classification": "C"
+    },
+    {
+      "path": "scripts/test_gpu.py",
+      "bytes": 2382,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_camera_s6.py",
+      "bytes": 8514,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_commercial_stories_s8.py",
+      "bytes": 7158,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_homologation52.py",
+      "bytes": 1700,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_pipeline_integrity_s2.py",
+      "bytes": 2682,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_qa.py",
+      "bytes": 2521,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_round62.py",
+      "bytes": 2334,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_second_curation64.py",
+      "bytes": 5276,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_speaker_s5.py",
+      "bytes": 6053,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_subtitles_s7.py",
+      "bytes": 6699,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/audit_tracking_s4.py",
+      "bytes": 6124,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/benchmark_resources59.py",
+      "bytes": 4659,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/benchmark_semantic_r3b.py",
+      "bytes": 10286,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/benchmark_vision_r3b.py",
+      "bytes": 9725,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/body_ab_stage58.py",
+      "bytes": 3034,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/bridge_curator_r4.py",
+      "bytes": 1355,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/compare_benchmark62.py",
+      "bytes": 3003,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/compare_runs.py",
+      "bytes": 24589,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/curation_canary61.py",
+      "bytes": 1273,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/curator_s9.py",
+      "bytes": 3752,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/diagnose_ocr53.py",
+      "bytes": 286,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/diagnosticar_proveniencia_etapa64.py",
+      "bytes": 6641,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/finalize_v44.py",
+      "bytes": 2872,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/homologate_r4.py",
+      "bytes": 5872,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/homologation_s11.py",
+      "bytes": 1550,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/legacy_review64.py",
+      "bytes": 3572,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/monitor_full_v44.py",
+      "bytes": 1059,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/performance_diagnostics_r3.py",
+      "bytes": 4763,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/performance_s10.py",
+      "bytes": 2131,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/recover_second_curation64.py",
+      "bytes": 2340,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_camera_v44.py",
+      "bytes": 1969,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_commercial_v44.py",
+      "bytes": 1890,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_editorial_stage17.py",
+      "bytes": 9105,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_perception_v44.py",
+      "bytes": 3738,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_second_curation_v44.py",
+      "bytes": 3999,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_targeted_asr_v44.py",
+      "bytes": 1902,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_understanding_snapshot.py",
+      "bytes": 5094,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/replay_visual_identity_r2.py",
+      "bytes": 3707,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/report_full_v44.py",
+      "bytes": 5366,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/resume_full_v44_benchmark.py",
+      "bytes": 2323,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/review_editorial_s3.py",
+      "bytes": 7800,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/run_full_v44_benchmark.py",
+      "bytes": 1799,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/start_real_test_s11.py",
+      "bytes": 2237,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/validate_diarization_cache_v44.py",
+      "bytes": 1474,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/visual_review_stage50.py",
+      "bytes": 2053,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/dev/__pycache__/audit_camera_s6.cpython-311.pyc",
+      "bytes": 15805,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/audit_commercial_stories_s8.cpython-311.pyc",
+      "bytes": 13937,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/audit_round62.cpython-311.pyc",
+      "bytes": 4878,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/audit_speaker_s5.cpython-311.pyc",
+      "bytes": 11119,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/audit_subtitles_s7.cpython-311.pyc",
+      "bytes": 10994,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/audit_tracking_s4.cpython-311.pyc",
+      "bytes": 10693,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/benchmark_resources59.cpython-311.pyc",
+      "bytes": 9010,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/benchmark_semantic_r3b.cpython-311.pyc",
+      "bytes": 14928,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/benchmark_vision_r3b.cpython-311.pyc",
+      "bytes": 17002,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/compare_runs.cpython-311.pyc",
+      "bytes": 41317,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/curator_s9.cpython-311.pyc",
+      "bytes": 6032,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/finalize_v44.cpython-311.pyc",
+      "bytes": 4993,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/performance_diagnostics_r3.cpython-311.pyc",
+      "bytes": 7860,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/replay_editorial_stage17.cpython-311.pyc",
+      "bytes": 16051,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/report_full_v44.cpython-311.pyc",
+      "bytes": 9501,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/review_editorial_s3.cpython-311.pyc",
+      "bytes": 15020,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/dev/__pycache__/visual_review_stage50.cpython-311.pyc",
+      "bytes": 3879,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/export/exportar_ldporto.py",
+      "bytes": 44235,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/export/__pycache__/exportar_ldporto.cpython-311.pyc",
+      "bytes": 66330,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/windows/CHECK_RUNTIME.bat",
+      "bytes": 589,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/TESTAR_FLUXO_REAL_WINDOWS.bat",
+      "bytes": 682,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/diagnostics/DIAGNOSTICO_GPU_WINDOWS.bat",
+      "bytes": 772,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/diagnostics/DIAGNOSTICO_WINDOWS.bat",
+      "bytes": 240,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/gpu/CORRIGIR_GPU_WINDOWS.bat",
+      "bytes": 1831,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/install/INSTALAR_AVANCADO_WINDOWS.bat",
+      "bytes": 495,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/install/INSTALAR_WINDOWS.bat",
+      "bytes": 304,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/ollama/CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat",
+      "bytes": 2556,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/windows/testing/TESTAR_WINDOWS.bat",
+      "bytes": 444,
+      "classification": "A"
+    },
+    {
+      "path": "scripts/__pycache__/download_models.cpython-311.pyc",
+      "bytes": 6459,
+      "classification": "F"
+    },
+    {
+      "path": "scripts/__pycache__/generate_director_fixture.cpython-311.pyc",
+      "bytes": 6124,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/active_speaker.py",
+      "bytes": 27154,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/analysis_quality.py",
+      "bytes": 10770,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/asd_backend.py",
+      "bytes": 1772,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/audio.py",
+      "bytes": 13662,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/baseline_audit.py",
+      "bytes": 3547,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/body_ab.py",
+      "bytes": 21083,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/broadcast_graphics.py",
+      "bytes": 5754,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/build_provenance.py",
+      "bytes": 16232,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/camera_director.py",
+      "bytes": 54161,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/camera_evidence.py",
+      "bytes": 7860,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/camera_geometry.py",
+      "bytes": 4821,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/camera_motion.py",
+      "bytes": 9816,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/camera_preflight.py",
+      "bytes": 6575,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/camera_timeline.py",
+      "bytes": 6772,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/commercial_gate.py",
+      "bytes": 38971,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/compact_artifacts.py",
+      "bytes": 15472,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/config.py",
+      "bytes": 36717,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/core.py",
+      "bytes": 26929,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/curation_canary.py",
+      "bytes": 13106,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/curation_recovery.py",
+      "bytes": 17525,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/curator_bridge.py",
+      "bytes": 10808,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/curator_delivery.py",
+      "bytes": 40005,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/diagnostic_dashboard.py",
+      "bytes": 1441,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/diarization.py",
+      "bytes": 12510,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/director_config.py",
+      "bytes": 9566,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/director_integration.py",
+      "bytes": 9058,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/editorial.py",
+      "bytes": 54816,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/editorial_handoff_audit.py",
+      "bytes": 6378,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/editorial_intelligence.py",
+      "bytes": 22397,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/editorial_outcome.py",
+      "bytes": 4627,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/execution_receipts.py",
+      "bytes": 10630,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/export_privacy.py",
+      "bytes": 4129,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/face_quality.py",
+      "bytes": 2464,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/global_camera_planner.py",
+      "bytes": 17445,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/gpu_runtime.py",
+      "bytes": 4435,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/handoff.py",
+      "bytes": 10988,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/homologation_audit.py",
+      "bytes": 9879,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/homologation_s11.py",
+      "bytes": 13102,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/identity_goldset.py",
+      "bytes": 14675,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/inference_smoke.py",
+      "bytes": 20186,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/integrity_contracts.py",
+      "bytes": 20837,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/interview_layout.py",
+      "bytes": 1040,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/legacy_review.py",
+      "bytes": 12013,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/master_timeline.py",
+      "bytes": 4870,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/media.py",
+      "bytes": 7576,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/media_runtime.py",
+      "bytes": 3404,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/model_cache.py",
+      "bytes": 747,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/ocr.py",
+      "bytes": 7300,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/ocr_diagnostics.py",
+      "bytes": 12204,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/ocr_execution.py",
+      "bytes": 1873,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/ocr_runtime.py",
+      "bytes": 2196,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/ollama_local.py",
+      "bytes": 10958,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/paths.py",
+      "bytes": 1038,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/perception_diagnostics.py",
+      "bytes": 10177,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/performance.py",
+      "bytes": 5877,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/performance_acceptance.py",
+      "bytes": 7875,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/person_motion.py",
+      "bytes": 6083,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/person_reid.py",
+      "bytes": 27365,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/pipeline.py",
+      "bytes": 29723,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/preflight.py",
+      "bytes": 22694,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/preview_integration.py",
+      "bytes": 9486,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/preview_renderer.py",
+      "bytes": 14927,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/preview_verifier.py",
+      "bytes": 23541,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/progress.py",
+      "bytes": 9404,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/qa_audit.py",
+      "bytes": 13566,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/replay.py",
+      "bytes": 39074,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/reports.py",
+      "bytes": 60731,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/review_overrides.py",
+      "bytes": 2315,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/round62_audit.py",
+      "bytes": 6259,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/runtime_metrics.py",
+      "bytes": 5810,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/run_status.py",
+      "bytes": 10166,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/safe_area.py",
+      "bytes": 9096,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/scenes.py",
+      "bytes": 5051,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/second_curation.py",
+      "bytes": 26449,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/second_curation_decisions.py",
+      "bytes": 8781,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/second_curation_export.py",
+      "bytes": 81944,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/semantic.py",
+      "bytes": 85813,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/semantic_benchmark.py",
+      "bytes": 6367,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/shots.py",
+      "bytes": 9130,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/social_output.py",
+      "bytes": 36807,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/speaker_goldset.py",
+      "bytes": 6345,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/speaker_roles.py",
+      "bytes": 9534,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/speaker_signals.py",
+      "bytes": 2638,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/storage.py",
+      "bytes": 4824,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/storage_dialog.py",
+      "bytes": 3087,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/story_recovery.py",
+      "bytes": 17521,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/subtitle_review.py",
+      "bytes": 30650,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/subtitle_style.py",
+      "bytes": 4458,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/targeted_asr.py",
+      "bytes": 23955,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/temporal.py",
+      "bytes": 3034,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/timeline.py",
+      "bytes": 9262,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/transcription.py",
+      "bytes": 43823,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/uncertain_words_audit.py",
+      "bytes": 9344,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/understanding.py",
+      "bytes": 55741,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/vision.py",
+      "bytes": 80853,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/vision_checkpoint.py",
+      "bytes": 7452,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/visual_identity_audit.py",
+      "bytes": 7957,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/visual_review.py",
+      "bytes": 15104,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/visual_sampling.py",
+      "bytes": 4372,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/zoom_delivery.py",
+      "bytes": 4631,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/__init__.py",
+      "bytes": 185,
+      "classification": "A"
+    },
+    {
+      "path": "src/ldporto/__pycache__/active_speaker.cpython-311.pyc",
+      "bytes": 45050,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/analysis_quality.cpython-311.pyc",
+      "bytes": 22119,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/asd_backend.cpython-311.pyc",
+      "bytes": 2732,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/audio.cpython-311.pyc",
+      "bytes": 20710,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/baseline_audit.cpython-311.pyc",
+      "bytes": 6456,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/body_ab.cpython-311.pyc",
+      "bytes": 36161,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/broadcast_graphics.cpython-311.pyc",
+      "bytes": 11162,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/build_provenance.cpython-311.pyc",
+      "bytes": 26015,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/camera_director.cpython-311.pyc",
+      "bytes": 75793,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/camera_evidence.cpython-311.pyc",
+      "bytes": 11548,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/camera_geometry.cpython-311.pyc",
+      "bytes": 10703,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/camera_motion.cpython-311.pyc",
+      "bytes": 13598,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/camera_preflight.cpython-311.pyc",
+      "bytes": 10992,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/camera_timeline.cpython-311.pyc",
+      "bytes": 11893,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/commercial_gate.cpython-311.pyc",
+      "bytes": 63698,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/compact_artifacts.cpython-311.pyc",
+      "bytes": 22622,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/config.cpython-311.pyc",
+      "bytes": 48944,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/core.cpython-311.pyc",
+      "bytes": 46003,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/curation_canary.cpython-311.pyc",
+      "bytes": 20833,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/curation_recovery.cpython-311.pyc",
+      "bytes": 26886,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/curator_bridge.cpython-311.pyc",
+      "bytes": 18001,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/curator_delivery.cpython-311.pyc",
+      "bytes": 66191,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/diagnostic_dashboard.cpython-311.pyc",
+      "bytes": 2375,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/diarization.cpython-311.pyc",
+      "bytes": 23099,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/director_config.cpython-311.pyc",
+      "bytes": 12577,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/director_integration.cpython-311.pyc",
+      "bytes": 15238,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/editorial.cpython-311.pyc",
+      "bytes": 83093,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/editorial_handoff_audit.cpython-311.pyc",
+      "bytes": 11517,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/editorial_intelligence.cpython-311.pyc",
+      "bytes": 40773,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/editorial_outcome.cpython-311.pyc",
+      "bytes": 8448,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/execution_receipts.cpython-311.pyc",
+      "bytes": 17256,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/export_privacy.cpython-311.pyc",
+      "bytes": 8100,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/face_quality.cpython-311.pyc",
+      "bytes": 4417,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/global_camera_planner.cpython-311.pyc",
+      "bytes": 25588,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/gpu_runtime.cpython-311.pyc",
+      "bytes": 8430,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/handoff.cpython-311.pyc",
+      "bytes": 16015,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/homologation_audit.cpython-311.pyc",
+      "bytes": 17579,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/homologation_s11.cpython-311.pyc",
+      "bytes": 22527,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/identity_goldset.cpython-311.pyc",
+      "bytes": 25019,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/inference_smoke.cpython-311.pyc",
+      "bytes": 31487,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/integrity_contracts.cpython-311.pyc",
+      "bytes": 30092,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/interview_layout.cpython-311.pyc",
+      "bytes": 1839,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/legacy_review.cpython-311.pyc",
+      "bytes": 17467,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/master_timeline.cpython-311.pyc",
+      "bytes": 10293,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/media.cpython-311.pyc",
+      "bytes": 13682,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/media_runtime.cpython-311.pyc",
+      "bytes": 6272,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/model_cache.cpython-311.pyc",
+      "bytes": 1729,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/ocr.cpython-311.pyc",
+      "bytes": 13995,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/ocr_diagnostics.cpython-311.pyc",
+      "bytes": 20827,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/ocr_execution.cpython-311.pyc",
+      "bytes": 3026,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/ocr_runtime.cpython-311.pyc",
+      "bytes": 4176,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/ollama_local.cpython-311.pyc",
+      "bytes": 19293,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/paths.cpython-311.pyc",
+      "bytes": 1871,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/perception_diagnostics.cpython-311.pyc",
+      "bytes": 22524,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/performance.cpython-311.pyc",
+      "bytes": 9282,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/performance_acceptance.cpython-311.pyc",
+      "bytes": 13265,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/person_motion.cpython-311.pyc",
+      "bytes": 8635,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/person_reid.cpython-311.pyc",
+      "bytes": 42682,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/pipeline.cpython-311.pyc",
+      "bytes": 44384,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/preflight.cpython-311.pyc",
+      "bytes": 35896,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/preview_integration.cpython-311.pyc",
+      "bytes": 12561,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/preview_renderer.cpython-311.pyc",
+      "bytes": 27396,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/preview_verifier.cpython-311.pyc",
+      "bytes": 35937,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/progress.cpython-311.pyc",
+      "bytes": 16021,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/qa_audit.cpython-311.pyc",
+      "bytes": 23241,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/replay.cpython-311.pyc",
+      "bytes": 57539,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/reports.cpython-311.pyc",
+      "bytes": 88422,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/review_overrides.cpython-311.pyc",
+      "bytes": 3790,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/round62_audit.cpython-311.pyc",
+      "bytes": 8363,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/runtime_metrics.cpython-311.pyc",
+      "bytes": 11410,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/run_status.cpython-311.pyc",
+      "bytes": 14928,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/safe_area.cpython-311.pyc",
+      "bytes": 18332,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/scenes.cpython-311.pyc",
+      "bytes": 9368,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/second_curation.cpython-311.pyc",
+      "bytes": 57406,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/second_curation_decisions.cpython-311.pyc",
+      "bytes": 15233,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/second_curation_export.cpython-311.pyc",
+      "bytes": 127082,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/semantic.cpython-311.pyc",
+      "bytes": 131717,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/semantic_benchmark.cpython-311.pyc",
+      "bytes": 11900,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/shots.cpython-311.pyc",
+      "bytes": 18063,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/social_output.cpython-311.pyc",
+      "bytes": 56610,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/speaker_goldset.cpython-311.pyc",
+      "bytes": 10268,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/speaker_roles.cpython-311.pyc",
+      "bytes": 15226,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/speaker_signals.cpython-311.pyc",
+      "bytes": 4989,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/storage.cpython-311.pyc",
+      "bytes": 9941,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/storage_dialog.cpython-311.pyc",
+      "bytes": 6632,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/story_recovery.cpython-311.pyc",
+      "bytes": 30716,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/subtitle_review.cpython-311.pyc",
+      "bytes": 53313,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/subtitle_style.cpython-311.pyc",
+      "bytes": 9248,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/targeted_asr.cpython-311.pyc",
+      "bytes": 39557,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/temporal.cpython-311.pyc",
+      "bytes": 9810,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/timeline.cpython-311.pyc",
+      "bytes": 18449,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/transcription.cpython-311.pyc",
+      "bytes": 67278,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/uncertain_words_audit.cpython-311.pyc",
+      "bytes": 18388,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/understanding.cpython-311.pyc",
+      "bytes": 90725,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/vision.cpython-311.pyc",
+      "bytes": 120764,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/vision_checkpoint.cpython-311.pyc",
+      "bytes": 13721,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/visual_identity_audit.cpython-311.pyc",
+      "bytes": 13436,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/visual_review.cpython-311.pyc",
+      "bytes": 29671,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/visual_sampling.cpython-311.pyc",
+      "bytes": 7905,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/zoom_delivery.cpython-311.pyc",
+      "bytes": 8764,
+      "classification": "F"
+    },
+    {
+      "path": "src/ldporto/__pycache__/__init__.cpython-311.pyc",
+      "bytes": 355,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/director_fixtures.py",
+      "bytes": 2410,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/ocr_test_support.py",
+      "bytes": 604,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_build_manifest_truth.py",
+      "bytes": 18451,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_camera_director.py",
+      "bytes": 11483,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_director_integration.py",
+      "bytes": 13466,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_historical_fixture_provenance.py",
+      "bytes": 1399,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_qa_reference_handoff.py",
+      "bytes": 6847,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_runtime_fidelity_contracts.py",
+      "bytes": 19524,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s2_pipeline_integrity.py",
+      "bytes": 11300,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s3_editorial_intelligence.py",
+      "bytes": 7876,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s3_editorial_reviewer.py",
+      "bytes": 1898,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s4_tracking_face_recovery.py",
+      "bytes": 9916,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s5_speaker_person_active.py",
+      "bytes": 11511,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s6_camera_director_smart_zoom.py",
+      "bytes": 8788,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s7_subtitle_review.py",
+      "bytes": 10339,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s8_commercial_graphics_stories.py",
+      "bytes": 14636,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_s9_s10_s11_delivery.py",
+      "bytes": 9554,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage04_readiness.py",
+      "bytes": 7106,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage05_selective_replay.py",
+      "bytes": 6089,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage06_report_coherence.py",
+      "bytes": 5121,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage07_qa_audit.py",
+      "bytes": 9222,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage08_resumed_answers.py",
+      "bytes": 9420,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage09_story_arcs.py",
+      "bytes": 6200,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage10_humor.py",
+      "bytes": 7111,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage11_discourse_boundaries.py",
+      "bytes": 8224,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage12_candidate_recovery.py",
+      "bytes": 5705,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage13_explainability.py",
+      "bytes": 6004,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage14_semantic_fallback.py",
+      "bytes": 6028,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage15_dedup_alternates.py",
+      "bytes": 5913,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage16_shortlist_diversity.py",
+      "bytes": 6095,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage17_editorial_replay.py",
+      "bytes": 3580,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage18_handoff_audit.py",
+      "bytes": 7401,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage19_uncertain_words.py",
+      "bytes": 6787,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage20_targeted_shortlist.py",
+      "bytes": 9463,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage21_subtitle_alignment.py",
+      "bytes": 7831,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage22_subtitle_style.py",
+      "bytes": 6453,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage23_honest_titles.py",
+      "bytes": 6020,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage24_audio_plan.py",
+      "bytes": 6894,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage25_body_backends.py",
+      "bytes": 10858,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage26_embedding_gaps.py",
+      "bytes": 8208,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage27_conservative_reid.py",
+      "bytes": 7143,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage28_voice_person_evidence.py",
+      "bytes": 7291,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage29_active_speaker_consensus.py",
+      "bytes": 7266,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage30_shot_continuity.py",
+      "bytes": 9293,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage31_focus_audit.py",
+      "bytes": 6132,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage32_safe_camera.py",
+      "bytes": 7420,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage33_ocr_graphics.py",
+      "bytes": 6582,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage34_commercial_gate.py",
+      "bytes": 7270,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage35_safe_area.py",
+      "bytes": 8797,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage36_preview_borders.py",
+      "bytes": 8399,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage37_curator_import.py",
+      "bytes": 11585,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage38_independent_mp4.py",
+      "bytes": 6011,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage39_human_hash_gate.py",
+      "bytes": 6844,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage40_semantic_benchmark.py",
+      "bytes": 10346,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage41_vision_resources.py",
+      "bytes": 9204,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage42_homologation_offline.py",
+      "bytes": 1285,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage43_capability_contract.py",
+      "bytes": 8503,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage45_commercial_consolidation.py",
+      "bytes": 8127,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage46_commercial_visual_replay.py",
+      "bytes": 16984,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage47_human_review_queue.py",
+      "bytes": 4324,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage48_editorial_recovery.py",
+      "bytes": 7882,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage49_on_demand_asr.py",
+      "bytes": 10620,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage50_visual_review.py",
+      "bytes": 13354,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage51_controlled_performance.py",
+      "bytes": 6859,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage52_homologation_audit.py",
+      "bytes": 5451,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage53_ocr_diagnostics.py",
+      "bytes": 10220,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage54_ocr_gui.py",
+      "bytes": 7614,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage55_commercial_evidence.py",
+      "bytes": 11051,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage56_ocr_replay_audit.py",
+      "bytes": 7579,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage57_local_yolo.py",
+      "bytes": 12254,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage58_body_ab.py",
+      "bytes": 14692,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage59_resource_budget.py",
+      "bytes": 8859,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage60_inference_smoke.py",
+      "bytes": 12872,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage61_curation_canary.py",
+      "bytes": 11511,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage62_round_homologation.py",
+      "bytes": 4973,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage63_ocr_runtime.py",
+      "bytes": 13261,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage64_curation_recovery.py",
+      "bytes": 15296,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage64_legacy_review.py",
+      "bytes": 8780,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_stage65_execution_receipts.py",
+      "bytes": 14326,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_transcription_fidelity.py",
+      "bytes": 15161,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_transcription_report_integrity.py",
+      "bytes": 2478,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_understanding_session1.py",
+      "bytes": 4992,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v2_perception.py",
+      "bytes": 13911,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_cache.py",
+      "bytes": 12367,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_camera.py",
+      "bytes": 5031,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_editorial.py",
+      "bytes": 16401,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_export.py",
+      "bytes": 11604,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_perception.py",
+      "bytes": 9126,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_preflight.py",
+      "bytes": 8614,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v42_security.py",
+      "bytes": 9826,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v43_camera.py",
+      "bytes": 6471,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v43_editorial.py",
+      "bytes": 17111,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v43_handoff.py",
+      "bytes": 8947,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v43_perception.py",
+      "bytes": 15343,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v43_runtime.py",
+      "bytes": 20338,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v43_semantic.py",
+      "bytes": 7246,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_camera.py",
+      "bytes": 4736,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_commercial.py",
+      "bytes": 6597,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_compare.py",
+      "bytes": 1904,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_diarization_cache.py",
+      "bytes": 3041,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_failure_categories.py",
+      "bytes": 244,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_observability_patch.py",
+      "bytes": 1151,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_ops.py",
+      "bytes": 3140,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_perception.py",
+      "bytes": 5807,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_replay_commercial.py",
+      "bytes": 1369,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_reporting_robustness.py",
+      "bytes": 445,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_second_curation.py",
+      "bytes": 5028,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_semantic_story.py",
+      "bytes": 5092,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_social_output.py",
+      "bytes": 6817,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v44_targeted_asr.py",
+      "bytes": 3515,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v45_r3_resource_budget.py",
+      "bytes": 1441,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v45_visual_identity_final.py",
+      "bytes": 3093,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v45_visual_identity_round2.py",
+      "bytes": 2122,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v46_r3_camera_perception.py",
+      "bytes": 5458,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v47_r3b_performance.py",
+      "bytes": 8093,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v48_r4_homologation.py",
+      "bytes": 6939,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_v4_final.py",
+      "bytes": 5753,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/test_vision_decision_integrity.py",
+      "bytes": 9834,
+      "classification": "B"
+    },
+    {
+      "path": "src/tests/fixtures/joao_gordo_qa_references.json",
+      "bytes": 766,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/s1_clovis_proof.json",
+      "bytes": 1624,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/s1_emerson_proof.json",
+      "bytes": 643,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/stage40_transcription_synthetic.json",
+      "bytes": 547,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/stage48_clovis_review_refs.json",
+      "bytes": 601,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/stage51_semantic_responses_synthetic.json",
+      "bytes": 1493,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/stage55_commercial_synthetic.json",
+      "bytes": 1598,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/.gitattributes",
+      "bytes": 208,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/MAPA_ETAPAS.json",
+      "bytes": 25104,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/ORIGEM.json",
+      "bytes": 13047,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/README.md",
+      "bytes": 1019,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_01.txt",
+      "bytes": 3830,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_02.txt",
+      "bytes": 3642,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_03.txt",
+      "bytes": 3757,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_04.txt",
+      "bytes": 3766,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_05.txt",
+      "bytes": 3612,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_06.txt",
+      "bytes": 3588,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_07.txt",
+      "bytes": 3670,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_08.txt",
+      "bytes": 3615,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_09.txt",
+      "bytes": 3627,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_10.txt",
+      "bytes": 3624,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_11.txt",
+      "bytes": 3647,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_12.txt",
+      "bytes": 3667,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_13.txt",
+      "bytes": 3575,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_14.txt",
+      "bytes": 3576,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_15.txt",
+      "bytes": 3592,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_16.txt",
+      "bytes": 3578,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_17.txt",
+      "bytes": 3635,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_18.txt",
+      "bytes": 3621,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_19.txt",
+      "bytes": 3588,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_20.txt",
+      "bytes": 3676,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_21.txt",
+      "bytes": 3514,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_22.txt",
+      "bytes": 3567,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_23.txt",
+      "bytes": 3584,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_24.txt",
+      "bytes": 3619,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_25.txt",
+      "bytes": 3538,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_26.txt",
+      "bytes": 3595,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_27.txt",
+      "bytes": 3550,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_28.txt",
+      "bytes": 3536,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_29.txt",
+      "bytes": 3629,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_30.txt",
+      "bytes": 3589,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_31.txt",
+      "bytes": 3595,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_32.txt",
+      "bytes": 3656,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_33.txt",
+      "bytes": 3551,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_34.txt",
+      "bytes": 3650,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_35.txt",
+      "bytes": 3549,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_36.txt",
+      "bytes": 3556,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_37.txt",
+      "bytes": 3651,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_38.txt",
+      "bytes": 3612,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_39.txt",
+      "bytes": 3583,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_40.txt",
+      "bytes": 3546,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_41.txt",
+      "bytes": 3651,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_42.txt",
+      "bytes": 3808,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_43.txt",
+      "bytes": 3557,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_44.txt",
+      "bytes": 3478,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_45.txt",
+      "bytes": 3437,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_46.txt",
+      "bytes": 3382,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_47.txt",
+      "bytes": 3320,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_48.txt",
+      "bytes": 3426,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_49.txt",
+      "bytes": 3033,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_50.txt",
+      "bytes": 3273,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_51.txt",
+      "bytes": 3060,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/autopilot_historico/prompts/ETAPA_52.txt",
+      "bytes": 3362,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip",
+      "bytes": 26956533,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/historical_evidence/ORIGEM.json",
+      "bytes": 800,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/historical_evidence/SECOND_CURATION_READY.zip",
+      "bytes": 1864261,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/llm_insights.json",
+      "bytes": 122,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/scenes.json",
+      "bytes": 165,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/speakers.json",
+      "bytes": 4,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/timeline.json",
+      "bytes": 639,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/legacy_analysis/words.json",
+      "bytes": 68,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/fixtures/v44/commercial_false_negatives.json",
+      "bytes": 6088,
+      "classification": "D"
+    },
+    {
+      "path": "src/tests/__pycache__/director_fixtures.cpython-311.pyc",
+      "bytes": 3991,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/ocr_test_support.cpython-311.pyc",
+      "bytes": 1420,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_build_manifest_truth.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 75602,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_camera_director.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 69394,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_director_integration.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 54116,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_historical_fixture_provenance.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 11187,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_qa_reference_handoff.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 27262,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_runtime_fidelity_contracts.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 77791,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s2_pipeline_integrity.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 42788,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s3_editorial_intelligence.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 28855,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s3_editorial_reviewer.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 7290,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s4_tracking_face_recovery.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 44549,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s5_speaker_person_active.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 41596,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s6_camera_director_smart_zoom.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 40208,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s7_subtitle_review.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 43521,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s8_commercial_graphics_stories.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 54609,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_s9_s10_s11_delivery.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 35791,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage04_readiness.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 22123,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage05_selective_replay.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 29961,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage06_report_coherence.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 17036,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage07_qa_audit.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 39895,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage08_resumed_answers.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 53070,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage09_story_arcs.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 33845,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage10_humor.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 38879,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage11_discourse_boundaries.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 40196,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage12_candidate_recovery.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 30990,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage13_explainability.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 33503,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage14_semantic_fallback.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 26162,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage15_dedup_alternates.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 28473,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage16_shortlist_diversity.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 29237,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage17_editorial_replay.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 18771,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage18_handoff_audit.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 38330,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage19_uncertain_words.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 37221,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage20_targeted_shortlist.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 41169,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage21_subtitle_alignment.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 29367,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage22_subtitle_style.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 34487,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage23_honest_titles.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 23894,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage24_audio_plan.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 35322,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage25_body_backends.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 53166,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage26_embedding_gaps.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 37170,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage27_conservative_reid.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 38882,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage28_voice_person_evidence.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 39470,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage29_active_speaker_consensus.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 39106,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage30_shot_continuity.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 45240,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage31_focus_audit.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 29986,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage32_safe_camera.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 33847,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage33_ocr_graphics.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 30914,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage34_commercial_gate.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 28495,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage35_safe_area.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 45551,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage36_preview_borders.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 35094,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage37_curator_import.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 45260,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage38_independent_mp4.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 34111,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage39_human_hash_gate.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 16034,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage40_semantic_benchmark.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 42294,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage41_vision_resources.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 42289,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage42_homologation_offline.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 7172,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage43_capability_contract.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 31939,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage45_commercial_consolidation.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 38127,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage46_commercial_visual_replay.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 69467,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage47_human_review_queue.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 19402,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage48_editorial_recovery.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 37197,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage49_on_demand_asr.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 54606,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage50_visual_review.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 55882,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage51_controlled_performance.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 34963,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage52_homologation_audit.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 22826,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage53_ocr_diagnostics.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 64051,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage54_ocr_gui.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 40459,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage55_commercial_evidence.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 43528,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage56_ocr_replay_audit.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 39337,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage57_local_yolo.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 61528,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage58_body_ab.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 64375,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage59_resource_budget.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 41951,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage60_inference_smoke.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 57941,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage61_curation_canary.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 46995,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage62_round_homologation.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 20672,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage63_ocr_runtime.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 67091,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage64_curation_recovery.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 54779,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage64_legacy_review.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 28503,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_stage65_execution_receipts.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 64631,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_transcription_fidelity.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 66532,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_transcription_report_integrity.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 8270,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_understanding_session1.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 19275,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v2_perception.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 38071,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_cache.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 41334,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_camera.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 14032,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_editorial.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 55568,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_export.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 35879,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_perception.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 33992,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_preflight.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 31584,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v42_security.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 34108,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v43_camera.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 34693,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v43_editorial.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 52659,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v43_handoff.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 36146,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v43_perception.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 64763,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v43_runtime.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 83366,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v43_semantic.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 34016,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_camera.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 21341,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_commercial.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 16353,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_compare.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 7895,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_diarization_cache.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 10901,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_failure_categories.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 1719,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_observability_patch.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 4764,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_ops.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 16173,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_perception.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 27050,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_replay_commercial.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 4010,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_reporting_robustness.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 2983,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_second_curation.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 21239,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_semantic_story.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 20001,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_social_output.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 26071,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v44_targeted_asr.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 16846,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v45_r3_resource_budget.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 8374,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v45_visual_identity_final.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 16280,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v45_visual_identity_round2.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 9327,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v46_r3_camera_perception.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 27979,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v47_r3b_performance.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 37674,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v48_r4_homologation.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 29173,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_v4_final.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 26071,
+      "classification": "F"
+    },
+    {
+      "path": "src/tests/__pycache__/test_vision_decision_integrity.cpython-311-pytest-9.1.1.pyc",
+      "bytes": 50549,
+      "classification": "F"
+    },
+    {
+      "path": "tmp/fechamento_estabilizacao_01_20261012_194559/backup_integrity.json",
+      "bytes": 1576,
+      "classification": "F"
+    },
+    {
+      "path": "tmp/fechamento_estabilizacao_01_20261012_194559/git_status_before.txt",
+      "bytes": 12595,
+      "classification": "F"
+    },
+    {
+      "path": "tmp/fechamento_estabilizacao_01_20261012_194559/backup/diagnosticar_proveniencia_etapa64.py",
+      "bytes": 6648,
+      "classification": "F"
+    },
+    {
+      "path": "tmp/fechamento_estabilizacao_01_20261012_194559/backup/src/tests/test_autopilot_orquestrador.py",
+      "bytes": 11847,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/analyze.cpython-311.pyc",
+      "bytes": 21688,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/analyze.cpython-313.pyc",
+      "bytes": 11110,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/app.cpython-311.pyc",
+      "bytes": 115208,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/app.cpython-313.pyc",
+      "bytes": 20508,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/compare_runs.cpython-311.pyc",
+      "bytes": 960,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/exportar_ldporto.cpython-311.pyc",
+      "bytes": 978,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/install.cpython-311.pyc",
+      "bytes": 7290,
+      "classification": "F"
+    },
+    {
+      "path": "__pycache__/install.cpython-313.pyc",
+      "bytes": 5026,
+      "classification": "F"
+    }
+  ],
+  "counts": {
+    "A": 192,
+    "C": 96,
+    "D": 132,
+    "F": 256,
+    "B": 118
+  },
+  "protected_root_policy": "metadata only; no content audit of user/model/environment roots",
+  "unknown_policy": "preserved",
+  "scope": "final filesystem snapshot before final_integrity.json generation"
+}

@@ -1,0 +1,23 @@
+{
+  "command_argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\identity_b_focus_01.xml",
+    "src/tests/test_sol_v4_identity.py",
+    "src/tests/test_stage27_conservative_reid.py",
+    "src/tests/test_stage29_active_speaker_consensus.py",
+    "src/tests/test_s5_speaker_person_active.py",
+    "src/tests/test_v45_visual_identity_round2.py",
+    "src/tests/test_v45_visual_identity_final.py",
+    "src/tests/test_sol_v3_visual_diagnostics.py"
+  ],
+  "cwd": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER",
+  "elapsed_seconds": 2.8184498000191525,
+  "exit_code": 1,
+  "stdout_log": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\identity_b_focus_01.log",
+  "junit": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\identity_b_focus_01.xml"
+}

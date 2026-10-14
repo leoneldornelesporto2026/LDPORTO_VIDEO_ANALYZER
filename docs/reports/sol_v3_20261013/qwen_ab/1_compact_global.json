@@ -1,0 +1,1451 @@
+{
+  "repetition": 1,
+  "mode": "compact",
+  "stage": "global",
+  "cache_state": "warm",
+  "request_sha256": "ca916a3273c44c751e9d31101eed14b6cf1d24b8a59197f65e65ac19a4637a54",
+  "quality_is_ground_truth": false,
+  "repair_call_count": 0,
+  "unloaded_models_before_pair": {
+    "models": []
+  },
+  "response": {
+    "locale": "pt-BR",
+    "overview": "O vídeo apresenta uma breve introdução ao contexto dos elefantes, destacando a característica de seus trombas longas e concluindo com uma afirmação sobre a simplicidade do conteúdo. Os trechos selecionados possuem diferentes níveis de utilidade editorial, com o primeiro momento sendo o mais forte em termos de clareza e abertura.",
+    "top_moments": [
+      {
+        "moment_id": "MOMENT_00000_0000",
+        "editorial_score": 0.75,
+        "why": "Este momento introduz o contexto do vídeo com clareza e uma abertura envolvente, apesar da incerteza na transcrição. A frase 'Alright, so here we are in front of the elephants' é eficaz para atrair a atenção do espectador.",
+        "hook_text": "O locutor começa com a frase 'Alright,' e menciona que está diante dos elefantes.",
+        "title_idea": "Diante dos Elefantes: Uma Introdução à Atraente Presença dos Grandes Mamíferos",
+        "context_note": "Nenhum contexto adicional é necessário para compreender este trecho.",
+        "evidence_segment_ids": [
+          "SEG_00000",
+          "SEG_00001"
+        ],
+        "quote_ref": "QUOTE_dfb2c8f6baac150c"
+      },
+      {
+        "moment_id": "MOMENT_00000_0001",
+        "editorial_score": 0.65,
+        "why": "Este momento destaca uma característica dos elefantes de forma educacional, com clareza e um leve grau de curiosidade. A repetição da palavra 'really' reforça a ideia de surpresa.",
+        "hook_text": "O locutor destaca que uma característica notável dos elefantes é o comprimento de seus trombas.",
+        "title_idea": "A Surpreendente Longeza dos Trombas dos Elefantes",
+        "context_note": "Nenhum contexto adicional é necessário para compreender este trecho.",
+        "evidence_segment_ids": [
+          "SEG_00002"
+        ],
+        "quote_ref": "QUOTE_b7749f65d46c9eb6"
+      },
+      {
+        "moment_id": "MOMENT_00000_0002",
+        "editorial_score": 0.55,
+        "why": "Este momento reforça a característica mencionada anteriormente com uma frase curta e simples, mas com um tom positivo ('cool'). Apesar da simplicidade, contribui para o fluxo do conteúdo.",
+        "hook_text": "O locutor reforça que a característica mencionada anteriormente é 'cool'.",
+        "title_idea": "Uma Característica Notável: O Tromba dos Elefantes é 'Cool'",
+        "context_note": "Nenhum contexto adicional é necessário para compreender este trecho.",
+        "evidence_segment_ids": [
+          "SEG_00003"
+        ],
+        "quote_ref": "QUOTE_667431e7652dff0f"
+      },
+      {
+        "moment_id": "MOMENT_00000_0003",
+        "editorial_score": 0.45,
+        "why": "Este momento conclui o conteúdo com uma afirmação direta, mas sem muito impacto editorial. A simplicidade da frase limita sua utilidade como hook ou título.",
+        "hook_text": "O locutor afirma que não há muito mais a dizer sobre o assunto.",
+        "title_idea": "Isso é Tudo: Uma Breve Conclusão Sobre os Elefantes",
+        "context_note": "Nenhum contexto adicional é necessário para compreender este trecho.",
+        "evidence_segment_ids": [
+          "SEG_00004"
+        ],
+        "quote_ref": "QUOTE_7175cb27ffd00c53"
+      }
+    ],
+    "content_angles": [
+      {
+        "angle": "Introdução ao contexto do vídeo",
+        "moment_ids": [
+          "MOMENT_00000_0000"
+        ],
+        "reason": "Este momento é ideal para introduzir o vídeo com clareza e envolvimento."
+      },
+      {
+        "angle": "Característica dos elefantes",
+        "moment_ids": [
+          "MOMENT_00000_0001"
+        ],
+        "reason": "Este momento destaca uma característica educacional e curiosa dos elefantes, apropriada para seções informativas."
+      },
+      {
+        "angle": "Reforço da característica mencionada",
+        "moment_ids": [
+          "MOMENT_00000_0002"
+        ],
+        "reason": "Este momento reforça a ideia anterior com um tom positivo, útil para manter o interesse do espectador."
+      },
+      {
+        "angle": "Conclusão do comentário sobre os elefantes",
+        "moment_ids": [
+          "MOMENT_00000_0003"
+        ],
+        "reason": "Este momento serve como uma conclusão direta, mas com baixa utilidade editorial para títulos ou hooks."
+      }
+    ],
+    "notes": [
+      "Alguns trechos possuem transcrições que necessitam revisão (source_transcript_needs_review = true), o que pode afetar a precisão da análise.",
+      "A repetição de 'really' no momento sobre os trombas longos pode ser interpretada como uma tentativa de enfatizar a característica, mas também pode indicar incerteza na transcrição."
+    ]
+  },
+  "metadata": {
+    "request_id": "c86b2b64f6ac1f8d465e",
+    "model": "qwen3:14b",
+    "profile": "max",
+    "options": {
+      "num_ctx": 32768,
+      "num_predict": 6144,
+      "temperature": 0.0,
+      "top_k": 40,
+      "top_p": 0.9,
+      "repeat_penalty": 1.05,
+      "seed": 42
+    },
+    "input_chars": 5151,
+    "message_count": 2,
+    "schema_bytes": 1228,
+    "request_bytes": 7122,
+    "measurement_scope": "ollama_server_reported_non_streaming",
+    "duration_seconds": 163.51599999994505,
+    "total_duration_ns": 163499369100,
+    "load_duration_ns": 2700100,
+    "prompt_eval_count": 1724,
+    "eval_count": 1302,
+    "eval_duration_ns": 151486871000,
+    "prompt_eval_duration_ns": 11900061000,
+    "thinking_chars": 0,
+    "thinking_requested": false,
+    "response_fields": [
+      "content",
+      "role"
+    ],
+    "done_reason": "stop",
+    "output_chars": 4305,
+    "confidence_is_calibrated": false,
+    "server_total_seconds": 163.4993691,
+    "load_seconds": 0.0027001,
+    "prompt_seconds": 11.900061,
+    "generation_seconds": 151.486871,
+    "prompt_tokens_per_second": 144.87320695246856,
+    "generation_tokens_per_second": 8.594804232242673
+  },
+  "json_valid": true,
+  "schema_references_and_coverage_valid": true,
+  "wall_seconds": 163.53099999995902,
+  "resource_samples": [
+    {
+      "elapsed": 328.76600000006147,
+      "system_ram_available": 31696195584,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 330.829000000027,
+      "system_ram_available": 31298904064,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 728,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 332.875,
+      "system_ram_available": 31275282432,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 728,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 334.9070000000065,
+      "system_ram_available": 31260311552,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 738,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 336.954000000027,
+      "system_ram_available": 31228518400,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 339.01600000006147,
+      "system_ram_available": 31267160064,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 341.06300000008196,
+      "system_ram_available": 31227113472,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 343.125,
+      "system_ram_available": 31234060288,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 345.18800000008196,
+      "system_ram_available": 31209689088,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 347.25,
+      "system_ram_available": 31276707840,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 738,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 349.2970000000205,
+      "system_ram_available": 31271002112,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 738,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 351.35999999998603,
+      "system_ram_available": 31245176832,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 353.4070000000065,
+      "system_ram_available": 31254171648,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 355.469000000041,
+      "system_ram_available": 31251750912,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 357.5320000000065,
+      "system_ram_available": 31236640768,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 359.594000000041,
+      "system_ram_available": 31235690496,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 361.6570000000065,
+      "system_ram_available": 31235956736,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 363.719000000041,
+      "system_ram_available": 31227432960,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 365.76600000006147,
+      "system_ram_available": 31211159552,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 367.81300000008196,
+      "system_ram_available": 31195054080,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 369.85999999998603,
+      "system_ram_available": 31184347136,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 371.9220000000205,
+      "system_ram_available": 31163736064,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 373.98499999998603,
+      "system_ram_available": 31215931392,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 376.0470000000205,
+      "system_ram_available": 31201599488,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 378.125,
+      "system_ram_available": 31220117504,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 380.18800000008196,
+      "system_ram_available": 31185330176,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 382.25,
+      "system_ram_available": 31174549504,
+      "benchmark_process_rss": 35741696,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 384.31300000008196,
+      "system_ram_available": 31160901632,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 386.375,
+      "system_ram_available": 31172218880,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 388.43800000008196,
+      "system_ram_available": 31153238016,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 390.469000000041,
+      "system_ram_available": 31160307712,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 392.5320000000065,
+      "system_ram_available": 31147515904,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 394.594000000041,
+      "system_ram_available": 31116984320,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 396.6570000000065,
+      "system_ram_available": 31055630336,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 725,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 398.719000000041,
+      "system_ram_available": 31087902720,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 715,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 400.76600000006147,
+      "system_ram_available": 31064690688,
+      "benchmark_process_rss": 35745792,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 402.829000000027,
+      "system_ram_available": 31154659328,
+      "benchmark_process_rss": 35708928,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 736,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 404.89100000006147,
+      "system_ram_available": 31131578368,
+      "benchmark_process_rss": 35708928,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 406.954000000027,
+      "system_ram_available": 31121756160,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 409.0,
+      "system_ram_available": 31092506624,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 728,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 411.06300000008196,
+      "system_ram_available": 31101333504,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 727,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 413.094000000041,
+      "system_ram_available": 31088943104,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 737,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 415.1570000000065,
+      "system_ram_available": 31089401856,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 417.204000000027,
+      "system_ram_available": 31080501248,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 419.2820000000065,
+      "system_ram_available": 31064793088,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 421.329000000027,
+      "system_ram_available": 31058780160,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 423.375,
+      "system_ram_available": 31059488768,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 425.43800000008196,
+      "system_ram_available": 31054462976,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 427.5,
+      "system_ram_available": 31004180480,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 737,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 429.56300000008196,
+      "system_ram_available": 31054848000,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 736,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 431.60999999998603,
+      "system_ram_available": 31016177664,
+      "benchmark_process_rss": 35713024,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 736,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 433.68800000008196,
+      "system_ram_available": 31005278208,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 435.73499999998603,
+      "system_ram_available": 30958657536,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 737,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 437.7970000000205,
+      "system_ram_available": 30972403712,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 736,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 439.85999999998603,
+      "system_ram_available": 31124516864,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 742,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 441.9070000000065,
+      "system_ram_available": 31520768000,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 738,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 443.969000000041,
+      "system_ram_available": 31506927616,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 446.0320000000065,
+      "system_ram_available": 31509594112,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 448.094000000041,
+      "system_ram_available": 31492616192,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 450.1570000000065,
+      "system_ram_available": 31472701440,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 452.219000000041,
+      "system_ram_available": 31460265984,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 454.2820000000065,
+      "system_ram_available": 31438721024,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 456.344000000041,
+      "system_ram_available": 31409790976,
+      "benchmark_process_rss": 35717120,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 458.39100000006147,
+      "system_ram_available": 31478968320,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 460.43800000008196,
+      "system_ram_available": 31466717184,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 739,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 462.5,
+      "system_ram_available": 31470170112,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 464.56300000008196,
+      "system_ram_available": 31426560000,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 466.64100000006147,
+      "system_ram_available": 31447097344,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 468.704000000027,
+      "system_ram_available": 31428739072,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 470.75,
+      "system_ram_available": 31415898112,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 472.81300000008196,
+      "system_ram_available": 31403839488,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 474.85999999998603,
+      "system_ram_available": 31361056768,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 476.93800000008196,
+      "system_ram_available": 31364243456,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 479.0,
+      "system_ram_available": 31366504448,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 481.06300000008196,
+      "system_ram_available": 31359021056,
+      "benchmark_process_rss": 35721216,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 483.125,
+      "system_ram_available": 31379369984,
+      "benchmark_process_rss": 35725312,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 485.204000000027,
+      "system_ram_available": 31357775872,
+      "benchmark_process_rss": 35725312,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 744,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 487.26600000006147,
+      "system_ram_available": 31407075328,
+      "benchmark_process_rss": 35729408,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 489.31300000008196,
+      "system_ram_available": 31394783232,
+      "benchmark_process_rss": 35729408,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    },
+    {
+      "elapsed": 491.35999999998603,
+      "system_ram_available": 31301136384,
+      "benchmark_process_rss": 35729408,
+      "gpu": {
+        "available": true,
+        "gpus": [
+          {
+            "name": "NVIDIA GeForce RTX 5070",
+            "vram_total_mib": 12227,
+            "vram_free_mib": 740,
+            "driver": "610.60"
+          }
+        ]
+      }
+    }
+  ],
+  "model_state_after": {
+    "models": [
+      {
+        "name": "qwen3:14b",
+        "model": "qwen3:14b",
+        "size": 14960411277,
+        "digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen3",
+          "families": [
+            "qwen3"
+          ],
+          "parameter_size": "14.8B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-13T03:14:57.1172076-03:00",
+        "size_vram": 10375753891,
+        "context_length": 32768
+      }
+    ]
+  },
+  "resource_scope": "system GPU and RAM; no exclusive attribution to model"
+}

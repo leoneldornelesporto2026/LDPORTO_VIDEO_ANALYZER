@@ -1,0 +1,12 @@
+{
+  "status": "VERIFIED",
+  "runner": "/root/v4_visual_readonly",
+  "command": ".venv/Scripts/python.exe -m pytest -q src/tests/test_sol_v4_visual.py src/tests/test_stage25_body_backends.py src/tests/test_stage26_embedding_gaps.py src/tests/test_stage57_local_yolo.py src/tests/test_stage59_resource_budget.py src/tests/test_s4_tracking_face_recovery.py src/tests/test_v42_cache.py src/tests/test_v43_perception.py src/tests/test_v2_perception.py",
+  "passed": 152,
+  "new_cases": 22,
+  "reported_seconds": 6.58,
+  "returncode": 0,
+  "scope": "Fixtures and CPU mocks; no real GPU or decoder benchmark in this test run.",
+  "initial_failure": "New fixture expected two face quality calls while rescue added a third. Rescue was disabled only in that fixture; production rescue preserved. Subsequent targeted runs passed.",
+  "source_frozen_before_after_benchmark": true
+}

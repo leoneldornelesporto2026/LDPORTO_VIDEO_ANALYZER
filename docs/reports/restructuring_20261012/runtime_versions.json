@@ -1,0 +1,15 @@
+{
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "package_versions": {
+    "pytest": "9.1.1",
+    "numpy": "2.2.6",
+    "torch": "2.8.0+cu128",
+    "torchaudio": "2.8.0+cu128",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.8.2",
+    "pyannote.audio": "4.0.7",
+    "opencv-contrib-python": "4.11.0.86",
+    "ultralytics": null
+  },
+  "scope": "installed distribution metadata only; no model/device/inference validation"
+}

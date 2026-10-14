@@ -1,5 +1,6 @@
 """Small local-only resource measurements and bounded throughput history."""
 import os
+import math
 import platform
 import time
 from functools import lru_cache
@@ -51,14 +52,21 @@ def gpu_history_profile():
 
 
 def history_fingerprint(metadata, cfg):
-    return digest({'machine': platform.machine(), 'processor': platform.processor(), 'cpu_count': os.cpu_count(),
+    from .ollama_local import profile_options
+    semantic = cfg.get('semantic_analysis') or {}
+    return digest({'history_contract': 'equivalent_work_v2',
+                   'machine': platform.machine(), 'processor': platform.processor(), 'cpu_count': os.cpu_count(),
                    'device': cfg.get('device'), 'gpus': gpu_history_profile(),
-                   'duration_bucket_minutes': round((metadata.get('duration') or 0) / 60),
+                   'duration_bucket_seconds': 5 * round((metadata.get('duration') or 0) / 5),
                    'resolution': [metadata.get('width'), metadata.get('height')], 'fps': metadata.get('fps'),
-                   'asr_model': cfg.get('transcription', {}).get('model'),
-                   'semantic_model': cfg.get('semantic_analysis', {}).get('model'),
-                   'semantic_profile': cfg.get('semantic_analysis', {}).get('profile'),
-                   'vision_config': cfg.get('vision', {})})
+                   'compute_type': cfg.get('compute_type'), 'language': cfg.get('language'),
+                   'transcription': cfg.get('transcription', {}), 'diarization': cfg.get('diarization', {}),
+                   'audio': cfg.get('audio', {}), 'scenes': cfg.get('scenes', {}),
+                   'semantic_config': {key: value for key, value in semantic.items() if key not in {'ollama_url', 'timeout_seconds'} and not key.startswith('_')},
+                   'semantic_options': profile_options(semantic),
+                   'vision_config': cfg.get('vision', {}), 'ocr': cfg.get('ocr', {}),
+                   'understanding': cfg.get('understanding', {}), 'camera_director': cfg.get('camera_director', {}),
+                   'preview': cfg.get('preview', {}), 'export': cfg.get('export', {})})
 
 
 def record_runtime_history(metadata, cfg, stage_metrics, path=None):
@@ -88,7 +96,8 @@ def historical_stage_estimates(metadata, cfg, path=None):
     for record in matches:
         for stage, row in record.get('stage_runtime', {}).items():
             cost = row.get('elapsed_seconds')
-            if not row.get('cache_hit') and isinstance(cost, (int,float)) and cost > 0:
+            if (not row.get('cache_hit') and row.get('status') not in {'failed', 'cancelled', 'blocked', 'unavailable'}
+                    and isinstance(cost, (int, float)) and not isinstance(cost, bool) and math.isfinite(cost) and cost > 0):
                 samples[stage].append(cost)
     return {stage:{'median_seconds':median(costs), 'range_seconds':[min(costs), max(costs)], 'sample_count':len(costs)}
             for stage, costs in samples.items() if len(costs) >= 3}

@@ -342,6 +342,13 @@ def is_generated_package_name(name: str) -> bool:
     return False
 
 
+def report_checkpoint_snapshot(rel: Path) -> bool:
+    """Raw stage snapshots are analysis data; report summaries remain project docs."""
+    return (len(rel.parts) >= 3 and
+            tuple(part.casefold() for part in rel.parts[:2]) == ('docs', 'reports') and
+            re.fullmatch(r'\d{2}[a-z]?_[a-z0-9_]+\.json', rel.name, flags=re.IGNORECASE) is not None)
+
+
 def looks_like_project_root(root: Path) -> bool:
     return (root / "src" / "ldporto" / "pipeline.py").is_file()
 
@@ -391,6 +398,11 @@ def project_file_allowed(root: Path, path: Path, output_dir: Path) -> bool:
         return False
 
     if rel.parts[0].lower() == "analysis":
+        return False
+
+    # Benchmarks retain their complete raw checkpoints locally. A sources ZIP
+    # carries their reports/manifests, not hundreds of MB of analysis snapshots.
+    if report_checkpoint_snapshot(rel):
         return False
 
     if any(part in EXCLUDED_DIR_NAMES for part in parts_lower[:-1]):
@@ -770,6 +782,8 @@ def inspect_package(path: Path) -> dict:
                     problems.append('forbidden_project_path:'+name)
             if project and (rel.suffix.casefold() in HEAVY_EXTENSIONS or sensitive_name(rel)):
                 problems.append('forbidden_project_file:'+name)
+            if project and report_checkpoint_snapshot(rel):
+                problems.append('raw_report_checkpoint_in_project:'+name)
             if entry.is_dir():
                 continue
             carry=b''
@@ -941,6 +955,7 @@ Exclui propositalmente:
 - caches
 - previews/proxies
 - ZIPs antigos e arquivos derivados de pacotes
+- snapshots brutos de checkpoints de etapas em docs/reports/ (relatorios e resumos permanecem)
 - scripts exportadores antigos substituidos por exportar_ldporto.py
 - credenciais/tokens detectados
 
@@ -957,6 +972,7 @@ Use este ZIP quando a tarefa for alterar, revisar ou evoluir o codigo.
         extra_manifest={
             "analysis_included": False,
             "legacy_exporters_excluded": sorted(LEGACY_EXPORTER_NAMES),
+            "report_checkpoint_snapshots": "retained_locally_excluded_from_sources_package",
         },
         readme_text=readme,
         manifest_name=".package/PROJECT_EXPORT_MANIFEST.json",

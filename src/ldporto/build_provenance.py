@@ -267,3 +267,74 @@ def analysis_provenance(analysis):
     return build_provenance(analysis.get('metadata') or {},
                             stages,
                             manifest, analysis.get('provenance'))
+
+
+def editorial_replay_provenance(analysis, checkpoint_paths, input_artifact_paths,
+                               output_fields, executed_stages):
+    """Describe a CPU editorial replay separately from source model execution."""
+    from pathlib import Path, PurePosixPath
+    import hashlib
+    allowed = {'editorial_potential', 'boundary_review_proposals', 'review_media_binding',
+               'second_curation_export', 'narrative_analysis', 'question_answer_proposals',
+               'narrative_handoff', 'commercial_context_review', 'targeted_repair_plan'}
+    if not executed_stages or not set(executed_stages) <= allowed:
+        raise ValueError('non_editorial_replay_stage')
+    def hashes(paths):
+        rows = {}
+        for name, value in sorted(paths.items()):
+            logical = PurePosixPath(name)
+            if logical.is_absolute() or '..' in logical.parts or ':' in name or '\\' in name:
+                raise ValueError('private_or_unsafe_replay_reference')
+            path = Path(value)
+            result = hashlib.sha256()
+            with path.open('rb') as stream:
+                for block in iter(lambda: stream.read(4 * 1024 * 1024), b''):
+                    result.update(block)
+            rows[name] = {'sha256': result.hexdigest(), 'bytes': path.stat().st_size}
+        return rows
+    modules = ('editorial_review.py', 'review_media.py', 'second_curation.py',
+               'integrity_contracts.py', 'second_curation_export.py', 'build_provenance.py',
+               'narrative_handoff.py', 'narrative_relations.py', 'narrative_replay.py',
+               'commercial_context.py', 'editorial.py', 'understanding.py', 'story_recovery.py')
+    source_identity = analysis_provenance(analysis)
+    return {'schema_version': '1.0', 'scope': 'editorial_replay_only',
+            'source_sha256': (analysis.get('metadata') or {}).get('sha256'),
+            'perception_run_identity': source_identity,
+            'replay_exporter': exporter_identity(),
+            'replay_code': hashes({name: Path(__file__).parent / name for name in modules}),
+            'reused_checkpoints': hashes(checkpoint_paths), 'reused_artifacts': hashes(input_artifact_paths),
+            'executed_components': list(executed_stages), 'output_fields': list(output_fields),
+            'new_audiovisual_inference': False, 'new_model_calls': 0,
+            'full_pipeline_execution_attested': False, 'publication_ready': False}
+
+
+def validate_editorial_replay(replay, source_sha256, identity):
+    """Validate replay claims; this is not an attestation of model execution."""
+    import re
+    from pathlib import PurePosixPath
+    if (not isinstance(replay, dict) or replay.get('schema_version') != '1.0' or
+            replay.get('scope') != 'editorial_replay_only' or replay.get('source_sha256') != source_sha256 or
+            replay.get('new_audiovisual_inference') is not False or type(replay.get('new_model_calls')) is not int or
+            replay['new_model_calls'] != 0 or replay.get('full_pipeline_execution_attested') is not False or
+            replay.get('publication_ready') is not False):
+        return ['invalid_editorial_replay_claim']
+    allowed = {'editorial_potential', 'boundary_review_proposals', 'review_media_binding', 'second_curation_export',
+               'narrative_analysis', 'question_answer_proposals', 'narrative_handoff',
+               'commercial_context_review', 'targeted_repair_plan'}
+    if not replay.get('executed_components') or not set(replay['executed_components']) <= allowed:
+        return ['non_editorial_replay_stage']
+    if (replay.get('replay_exporter') != identity.get('exporter') or
+            any((replay.get('perception_run_identity') or {}).get(key) != identity.get(key)
+                for key in ('analyzer_build', 'code_fingerprint'))):
+        return ['editorial_replay_identity_disagreement']
+    for key in ('replay_code', 'reused_checkpoints', 'reused_artifacts'):
+        records = replay.get(key)
+        if not isinstance(records, dict) or not records:
+            return ['editorial_replay_hashes_missing:' + key]
+        for name, row in records.items():
+            path = PurePosixPath(name)
+            if (path.is_absolute() or '..' in path.parts or ':' in name or '\\' in name or
+                    not isinstance(row, dict) or not re.fullmatch(r'[0-9a-f]{64}', str(row.get('sha256'))) or
+                    type(row.get('bytes')) is not int or row['bytes'] < 0):
+                return ['invalid_editorial_replay_hash:' + key]
+    return []

@@ -1,0 +1,15 @@
+{
+  "command_argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_pos_foquinha_20261013\\integration_focus.xml",
+    "src/tests/test_sol_v4_post_integration.py",
+    "src/tests/test_sol_v3_gui_review.py",
+    "src/tests/test_sol_v3_integration.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 11.016298100003041
+}

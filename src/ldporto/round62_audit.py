@@ -47,7 +47,7 @@ def build_report(root, runs, ocr, commercial):
     for stage, name in STAGES.items():
         matched = [case for run in runs for case in run['cases']
                    if f'test_stage{stage}_{name}' in case['id']]
-        checkpoints = reference(root, f'automacao/execucao/checkpoints/CHECKPOINT_ETAPA_{stage}.md')
+        checkpoints = reference(root, f'docs/archive/automation_20261012/execucao/checkpoints/CHECKPOINT_ETAPA_{stage}.md')
         checks.append({'stage': stage, 'checkpoint': checkpoints,
                        'test_module': reference(root, f'src/tests/test_stage{stage}_{name}.py'),
                        'tested_cases': len(matched),
@@ -73,7 +73,7 @@ def build_report(root, runs, ocr, commercial):
             'ocr': {'current_readiness': ocr, 'disabled_contract': 'tested_with_fixtures',
                     'episode_executed': None, 'episode_languages': None},
             'vision': {'yolo_real_execution': None, 'real_episode_device': None,
-                       'hog_synthetic_history': reference(root, 'automacao/execucao/etapa59/PERFORMANCE_REPORT_VERIFIED_59.json')},
+                       'hog_synthetic_history': reference(root, 'docs/archive/automation_20261012/execucao/etapa59/PERFORMANCE_REPORT_VERIFIED_59.json')},
             'replay_17c': {'observed_episode_execution': None, 'status': 'not_measured',
                            'contract_test': reference(root, 'src/tests/test_stage56_ocr_replay_audit.py')},
             'commercial': {'synthetic': commercial, 'real_false_positives': None,
@@ -81,12 +81,12 @@ def build_report(root, runs, ocr, commercial):
             'goldset': {'body_precision': None, 'body_recall': None, 'speaker_person': None,
                         'active_speaker': None, 'editorial_benefit': None, 'status': 'not_measured'},
             'canary': {'real_status': 'real_canary_not_run',
-                       'historical_receipt': reference(root, 'automacao/execucao/etapa61/real_not_run.json'),
-                       'synthetic_receipt': reference(root, 'automacao/execucao/etapa61/fixture_receipt.json'),
+                       'historical_receipt': reference(root, 'docs/archive/automation_20261012/execucao/etapa61/real_not_run.json'),
+                       'synthetic_receipt': reference(root, 'docs/archive/automation_20261012/execucao/etapa61/fixture_receipt.json'),
                        'human_approval': False},
             'baseline': {'scope': 'historical_supplied_not_remeasured',
-                         'reference': reference(root, 'automacao/execucao/checkpoints/CHECKPOINT_ETAPA_52.md'),
-                         'supplement_reference': reference(root, 'automacao/execucao/etapa58/REPORT_ETAPA_58.json'),
+                         'reference': reference(root, 'docs/archive/automation_20261012/execucao/checkpoints/CHECKPOINT_ETAPA_52.md'),
+                         'supplement_reference': reference(root, 'docs/archive/automation_20261012/execucao/etapa58/REPORT_ETAPA_58.json'),
                          'supplement_supplied': {'flagged_denominator': 19299, 'ollama_minutes_approx': 90},
                          'post': None, 'delta': None},
             'ab_provenance': {'source_sha256': None, 'model_fingerprints': None,

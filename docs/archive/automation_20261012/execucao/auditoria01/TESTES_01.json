@@ -1,0 +1,278 @@
+{
+  "commands": [
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "seconds": 0.031,
+      "log": "automacao/execucao/auditoria01/git_initial.log"
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "orquestrador.py",
+        "--status"
+      ],
+      "exit_code": 0,
+      "seconds": 0.062,
+      "log": "automacao/execucao/auditoria01/status_initial.log"
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\run_audit.py",
+        "_static"
+      ],
+      "exit_code": 0,
+      "seconds": 0.907,
+      "log": "automacao/execucao/auditoria01/static.log"
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.406,
+      "log": "automacao/execucao/auditoria01/pip_check.log"
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\focused.xml",
+        "src/tests/test_stage65_execution_receipts.py",
+        "src/tests/test_build_manifest_truth.py",
+        "src/tests/test_stage64_curation_recovery.py",
+        "src/tests/test_stage64_legacy_review.py",
+        "src/tests/test_v42_cache.py",
+        "src/tests/test_v44_reporting_robustness.py",
+        "src/tests/test_stage06_report_coherence.py",
+        "src/tests/test_camera_director.py",
+        "src/tests/test_s6_camera_director_smart_zoom.py",
+        "src/tests/test_v44_second_curation.py"
+      ],
+      "exit_code": 0,
+      "seconds": 42.203,
+      "log": "automacao/execucao/auditoria01/focused.log",
+      "tests": 195,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 194
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "-B",
+        "analyze.py",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.218,
+      "log": "automacao/execucao/auditoria01/cli_help.log"
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\full.xml"
+      ],
+      "exit_code": 0,
+      "seconds": 189.5,
+      "log": "automacao/execucao/auditoria01/full.log",
+      "tests": 1631,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 6,
+      "passed": 1625
+    },
+    {
+      "command": [
+        "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+        "orquestrador.py",
+        "--status"
+      ],
+      "exit_code": 0,
+      "seconds": 0.063,
+      "log": "automacao/execucao/auditoria01/status_final.log"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "seconds": 0.031,
+      "log": "automacao/execucao/auditoria01/git_final.log"
+    }
+  ],
+  "supplementary_commands": [
+    {
+      "command": "Get-CimInstance Win32_Process (filtro python|pytest|codex|ffmpeg|ollama)",
+      "exit_code": 1,
+      "output": "HRESULT 0x80041003: Acesso negado"
+    },
+    {
+      "command": "Get-Process -Name python,pytest,codex,ffmpeg,ollama -ErrorAction SilentlyContinue",
+      "exit_code": 0,
+      "output": "codex 19360/33536; ollama 9904; python 9504/43380/52520; lock do orquestrador pid 52520"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B automacao/execucao/auditoria01/run_audit.py evidence (primeira tentativa)",
+      "exit_code": 1,
+      "output": "ValueError: Manifest path outside the allowed baseline scope: models/vision_models_manifest.json",
+      "resolution": "Adaptado somente o recorder local para chamar inspect_zip; helper/fonte original preservado."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B automacao/execucao/auditoria01/run_audit.py evidence (segunda tentativa)",
+      "exit_code": 0,
+      "output": "SECOND_CURATION_READY: 113 membros, 0 divergências; CHATGPT_REVIEW: 424 membros, 0 divergências"
+    },
+    {
+      "command": "Test-Path automacao/execucao/logs/ETAPA_65_pytest.log",
+      "exit_code": 0,
+      "output": "False"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B automacao/execucao/auditoria01/run_audit.py final (primeira tentativa)",
+      "exit_code": 1,
+      "output": "AttributeError: module importlib has no attribute util",
+      "resolution": "Corrigido import explícito importlib.util no recorder novo; conferência final repetida."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B automacao/execucao/auditoria01/write_reports.py (primeira tentativa)",
+      "exit_code": 1,
+      "output": "FileNotFoundError final_integrity.json devido à falha anterior; repetido após a correção."
+    },
+    {
+      "command": "Verificação inline de final_integrity.json (primeira tentativa)",
+      "exit_code": 1,
+      "output": "FileNotFoundError final_integrity.json devido à falha anterior; repetida após a correção."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B automacao/execucao/auditoria01/run_audit.py final (após correção)",
+      "exit_code": 0,
+      "output": "Nenhum fonte manifestado adicionado/alterado; evidências e estado inalterados; backup verificado."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B automacao/execucao/auditoria01/write_reports.py (após correção)",
+      "exit_code": 0,
+      "output": "READY_FOR_NEXT_PROMPT; cinco entregáveis e checkpoint escritos."
+    },
+    {
+      "command": "Verificação inline de final_integrity.json/skip reasons/checkpoint (após correção)",
+      "exit_code": 0,
+      "output": "Integridade confirmada; seis motivos de skip lidos do XML; checkpoint existente."
+    }
+  ],
+  "full_pytest": {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\full.xml"
+    ],
+    "exit_code": 0,
+    "seconds": 189.5,
+    "log": "automacao/execucao/auditoria01/full.log",
+    "tests": 1631,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 6,
+    "passed": 1625
+  },
+  "focused_pytest": {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\focused.xml",
+      "src/tests/test_stage65_execution_receipts.py",
+      "src/tests/test_build_manifest_truth.py",
+      "src/tests/test_stage64_curation_recovery.py",
+      "src/tests/test_stage64_legacy_review.py",
+      "src/tests/test_v42_cache.py",
+      "src/tests/test_v44_reporting_robustness.py",
+      "src/tests/test_stage06_report_coherence.py",
+      "src/tests/test_camera_director.py",
+      "src/tests/test_s6_camera_director_smart_zoom.py",
+      "src/tests/test_v44_second_curation.py"
+    ],
+    "exit_code": 0,
+    "seconds": 42.203,
+    "log": "automacao/execucao/auditoria01/focused.log",
+    "tests": 195,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 194
+  },
+  "skipped_tests": [
+    {
+      "test": "src.tests.test_autopilot_orquestrador.test_cli_process_uses_global_approval_flag_and_structured_result",
+      "reason": "POSIX fake executable; Windows CLI tested on user machine",
+      "detail": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_autopilot_orquestrador.py:166: POSIX fake executable; Windows CLI tested on user machine"
+    },
+    {
+      "test": "src.tests.test_stage46_commercial_visual_replay.test_symlink_media_and_parent_artifacts_rejected",
+      "reason": "Windows symlink privilege unavailable; reparse check needs local homologation",
+      "detail": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_stage46_commercial_visual_replay.py:202: Windows symlink privilege unavailable; reparse check needs local homologation"
+    },
+    {
+      "test": "src.tests.test_stage55_commercial_evidence.test_opt_in_tesseract_on_authored_synthetic_offer",
+      "reason": "Opt-in synthetic Tesseract only: LDPORTO_STAGE55_REAL_OCR=1",
+      "detail": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_stage55_commercial_evidence.py:192: Opt-in synthetic Tesseract only: LDPORTO_STAGE55_REAL_OCR=1"
+    },
+    {
+      "test": "src.tests.test_stage63_ocr_runtime.test_optional_tk_event_loop_stays_responsive",
+      "reason": "Tk display unavailable; headless worker tests still run",
+      "detail": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_stage63_ocr_runtime.py:257: Tk display unavailable; headless worker tests still run"
+    },
+    {
+      "test": "src.tests.test_stage64_curation_recovery.test_links_are_blocked",
+      "reason": "Windows symlink privilege unavailable",
+      "detail": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_stage64_curation_recovery.py:149: Windows symlink privilege unavailable"
+    },
+    {
+      "test": "src.tests.test_v43_runtime.test_native_execution_screen_receives_structured_stage_events_and_final_package",
+      "reason": "Tk display unavailable in headless test environment",
+      "detail": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_v43_runtime.py:206: Tk display unavailable in headless test environment"
+    }
+  ],
+  "limitations": [
+    "Get-CimInstance Win32_Process negado (exit 1); Get-Process mostrou Python/Codex/Ollama, mas não suas linhas de comando. Nenhum processo foi interrompido.",
+    "Vídeo real, GPU, Faster-Whisper/Pyannote com pesos, identidade/falante ativo reais e Ollama não homologados. Fixtures não equivalem a homologação audiovisual.",
+    "Etapas históricas 64/65 não estão na fila nova (total=2); aprovação histórica e deferimento ficam null. ETAPA_65_pytest.log ausente.",
+    "Helper baseline_etapa01.build_baseline recusou models/vision_models_manifest.json antes de lê-lo (exit 1). Auditoria usou apenas inspect_zip e o manifesto autorizado do estado, sem acessar modelos.",
+    "Suíte oficial inclui um pipeline com mídia sintética de 4s, transcrição importada, visão/diarização desativadas e backend heurístico; nenhum pipeline de mídia real foi solicitado.",
+    "Testes existentes criam pacotes ZIP de fixtures em diretórios temporários. Nenhum snapshot/ZIP de entrega foi criado ou evidência existente alterada.",
+    "Integridade de análises/mídias/modelos locais não foi reavaliada por hashing indiscriminado: suas pastas foram preservadas e não usadas para inferência."
+  ],
+  "historical_test_results_used_as_current_proof": false
+}

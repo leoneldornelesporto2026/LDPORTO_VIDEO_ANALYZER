@@ -1,13 +1,13 @@
 from pathlib import Path
+from copy import deepcopy
 import gc
 import math
-import re
 import statistics
-import numpy as np
-from .core import ok, Unavailable, write_json, read_json, digest, file_hash, overlap, versions
+from .core import ok, Unavailable, write_json, read_json, digest, file_hash, versions
 from .config import ROOT, asset_path
 from .audio import ffmpeg_audio, separate_review_region
 from .gpu_runtime import configure_windows_nvidia_runtime
+from .asr_comparison import compare_hypotheses, source_review_dossier, review_reason_metrics, valid_interval
 
 
 def word_text(words):
@@ -15,7 +15,51 @@ def word_text(words):
     return raw.strip()
 
 
+def recognition_options(config):
+    """Whisper must transcribe source speech; metadata locale is unrelated."""
+    language = config.get('language')
+    language = None if language in (None, 'auto', '') else language
+    return {'task': 'transcribe', 'language': language,
+            'multilingual': language is None and config['transcription'].get('multilingual', True)}
+
+
+def segment_evidence(words):
+    """Retain source-language scope and uncertainty when consumers regroup words."""
+    languages = sorted({w['language'] for w in words if isinstance(w.get('language'), str)})
+    hints = sorted({w['language_hint'] for w in words if isinstance(w.get('language_hint'), str)})
+    scopes = sorted({w['language_detection_scope'] for w in words if w.get('language_detection_scope')})
+    reasons = sorted({reason for w in words for reason in w.get('review_reasons', [])})
+    return {'text_kind': 'original_transcript',
+            'language': languages[0] if len(languages) == 1 and all(w.get('language') for w in words) else None,
+            'languages': languages, 'language_hint': hints[0] if len(hints) == 1 else None,
+            'language_hints': hints,
+            'language_detection_scope': scopes[0] if len(scopes) == 1 else 'mixed_or_unknown',
+            'language_probability': None, 'language_is_segment_verified': False,
+            'hypothesis_ids': sorted({w['hypothesis_id'] for w in words if w.get('hypothesis_id')}),
+            'needs_review': any(w.get('needs_review') for w in words), 'review_reasons': reasons,
+            'uncertain_word_ids': [w.get('word_id') for w in words if w.get('needs_review')]}
+
+
+def hypothesis_metadata(hypothesis):
+    return {key: deepcopy(hypothesis.get(key)) for key in
+            ('hypothesis_id', 'task', 'text_kind', 'configured_language', 'language_mode',
+             'language_hint', 'language_detection_scope', 'language_probability', 'language_candidates', 'provenance')}
+
+
+def _require_original(row):
+    """Reject explicit translation/semantic output in the canonical import slot."""
+    if (row.get('task') not in (None, 'transcribe') or row.get('asr_task') not in (None, 'transcribe') or
+            row.get('is_translation') is True or row.get('text_kind') in
+            ('translation', 'translated', 'semantic_rewrite', 'semantic_summary') or
+            row.get('source') in ('translation', 'translated', 'semantic_rewrite')):
+        raise ValueError('Transcricao original nao pode conter traducao ou reescrita semantica; use translations separado.')
+
+
 def validate_import(data, duration):
+    data = deepcopy(data)
+    if not isinstance(data, dict):
+        raise ValueError('Transcricao importada deve ser objeto JSON.')
+    _require_original(data)
     words = data.get("words", [])
     segments = data.get("segments", data.get("transcript_segments", []))
     if not isinstance(words, list) or not isinstance(segments, list):
@@ -26,6 +70,9 @@ def validate_import(data, duration):
     for i, w in enumerate(words):
         if not isinstance(w, dict) or not isinstance(w.get("word"), str) or not w["word"].strip():
             raise ValueError(f"Palavra importada inválida no índice {i}.")
+        _require_original(w)
+        if 'raw' in w and not isinstance(w['raw'], str):
+            raise ValueError('Token raw importado deve ser texto original.')
         if isinstance(w.get('start'),bool) or isinstance(w.get('end'),bool):
             raise ValueError('Timestamp booleano nao e evidencia temporal.')
         a, b = float(w["start"]), float(w["end"])
@@ -40,6 +87,13 @@ def validate_import(data, duration):
                  word_id=w.get("word_id", f"WORD_{i:07}"),
                  segment_id=w.get("segment_id"), raw=w.get("raw", " " + w["word"]),
                  confidence=confidence, timestamp_method=w.get("timestamp_method", "imported"))
+        if b > duration:
+            w.update(raw_start=a, raw_end=b, timestamp_repaired=True)
+        if w['raw'].strip() != w['word'].strip():
+            w.update(needs_review=True, review_reasons=sorted(set(w.get('review_reasons', []) +
+                     ['imported_word_raw_disagreement'])))
+        if not isinstance(w['word_id'], str) or not w['word_id'].strip():
+            raise ValueError('word_id importado deve ser identificador de texto.')
         if w["word_id"] in word_ids:
             raise ValueError("word_id duplicado em transcricao importada.")
         word_ids.add(w["word_id"])
@@ -47,11 +101,22 @@ def validate_import(data, duration):
     if not segments and words:
         segments = regroup_words(words)
     for i, s in enumerate(segments):
+        if not isinstance(s, dict) or not isinstance(s.get('text', ''), str):
+            raise ValueError('Segmento importado deve conter texto original, sem conversao semantica.')
+        _require_original(s)
+        if isinstance(s.get('start'), bool) or isinstance(s.get('end'), bool):
+            raise ValueError('Timestamp booleano nao e evidencia temporal.')
         a, b = float(s["start"]), float(s["end"])
         if not math.isfinite(a+b) or not 0 <= a < b <= duration + 0.1:
             raise ValueError(f"Segmento importado inválido: {i}.")
         s.update(start=a, end=min(duration, b), segment_id=s.get("segment_id", f"SEG_{i:05}"),
                  speaker=s.get("speaker"), text=str(s.get("text", "")))
+        if not isinstance(s['segment_id'], str) or not s['segment_id'].strip():
+            raise ValueError('segment_id importado deve ser identificador de texto.')
+        s.setdefault('text_kind', 'original_import')
+        s.setdefault('language_detection_scope', 'imported_not_acoustically_verified')
+        if b > duration:
+            s.update(raw_start=a, raw_end=b, timestamp_repaired=True, needs_review=True)
     # Generated by GitHub Copilot - Oct-05-2026
     by_segment = {segment["segment_id"]: segment for segment in segments}
     if len(by_segment) != len(segments):
@@ -60,10 +125,48 @@ def validate_import(data, duration):
         if w["segment_id"] is None:
             s = next((s for s in segments if s["start"] <= w["start"] and w["end"] <= s["end"]), None)
             w["segment_id"] = s["segment_id"] if s else None
+        if w['segment_id'] is not None and not isinstance(w['segment_id'], str):
+            raise ValueError('Referencia de segmento importada deve ser identificador de texto.')
         segment = by_segment.get(w["segment_id"])
         if not segment or not segment["start"] <= w["start"] < w["end"] <= segment["end"]:
             raise ValueError("Palavra sem segmento existente ou fora dos limites do segmento.")
-    return {"words": words, "segments": segments, "source": "imported",
+    for w in words:
+        segment = by_segment[w['segment_id']]
+        language = w.get('language', segment.get('language', data.get('language')))
+        w['language'] = None if language in (None, 'auto', 'und', 'mixed') else language
+        w.setdefault('language_hint', w.get('language'))
+        w.setdefault('language_detection_scope', 'imported_not_acoustically_verified')
+        w.setdefault('asr_task', 'transcribe')
+        w.setdefault('text_kind', 'original_import')
+        if segment.get('needs_review'):
+            w['needs_review'] = True
+            w['review_reasons'] = sorted(set(w.get('review_reasons', []) + segment.get('review_reasons', [])))
+    members_by_segment = {}
+    for word in words:
+        members_by_segment.setdefault(word['segment_id'], []).append(word)
+    for segment in segments:
+        members = members_by_segment.get(segment['segment_id'], [])
+        if members and segment['text'].strip() != word_text(members):
+            segment.update(needs_review=True, review_reasons=sorted(set(segment.get('review_reasons', []) +
+                           ['imported_segment_word_disagreement'])))
+            for word in members:
+                word.update(needs_review=True, review_reasons=sorted(set(word.get('review_reasons', []) +
+                            ['imported_segment_word_disagreement'])))
+    translations = data.get('translations', data.get('transcript_translations', []))
+    if not isinstance(translations, list):
+        raise ValueError('translations precisa ser uma lista separada da transcricao original.')
+    for row in translations:
+        if (not isinstance(row, dict) or not isinstance(row.get('segment_id'), str) or row['segment_id'] not in by_segment or
+                not isinstance(row.get('text'), str) or not row['text'].strip() or
+                not isinstance(row.get('target_language'), str) or not row['target_language'].strip()):
+            raise ValueError('Traducao deve referenciar segmento original existente e idioma de destino.')
+        row['text_kind'] = 'translation'
+        row.setdefault('independent_audio_verification', False)
+    return {"words": words, "segments": segments, "source": "imported", 'task': 'transcribe',
+            'text_kind': 'original_import', 'configured_language': data.get('language'),
+            'language_mode': 'imported_not_acoustically_verified', 'translations': translations,
+            'original_import_segments': deepcopy(segments),
+            'import_provenance': deepcopy(data.get('provenance')),
             "engine": "imported", "confidence_is_calibrated": False}
 
 
@@ -87,7 +190,7 @@ def regroup_words(words, max_seconds=15):
             w["segment_id"] = sid
         result.append({"segment_id": sid, "start": group[0]["start"], "end": group[-1]["end"],
                        "text": word_text(group), "speaker": None,
-                       "word_ids": [w.get("word_id") for w in group]})
+                       "word_ids": [w.get("word_id") for w in group], **segment_evidence(group)})
     return result
 
 
@@ -97,6 +200,11 @@ class TranscriptionEngine:
         self.actual_device = None
         self.actual_compute = None
         self.notes = []
+        packages = versions()
+        self.identity_contract = {'code_sha256': file_hash(__file__),
+                                  'comparison_code_sha256': file_hash(Path(__file__).with_name('asr_comparison.py')),
+                                  'backend_versions': {key: packages.get(key) for key in ('faster-whisper', 'ctranslate2')},
+                                  'contract': 'original_speech_v1'}
 
     def _load(self, force_cpu=False):
         try:
@@ -131,20 +239,51 @@ class TranscriptionEngine:
     def recognize(self, path, offset=0.0):
         def infer():
             cfg = self.ctx.config["transcription"]
+            options = recognition_options(self.ctx.config)
+            provenance = {'engine': 'faster-whisper', 'model': cfg['model'],
+                          'task': 'transcribe', 'configured_language': self.ctx.config.get('language'),
+                          'multilingual': options['multilingual'], 'audio_sha256': file_hash(path),
+                          'offset_seconds': offset, 'initial_prompt_sha256': digest(cfg['glossary']),
+                          'device': self.actual_device, 'compute_type': self.actual_compute,
+                          'decoding': {'beam_size': cfg['beam_size'], 'vad_filter': cfg['vad_filter'],
+                                       'word_timestamps': True, 'condition_on_previous_text': False,
+                                       'temperature': 0, 'vad_parameters': {'min_silence_duration_ms': 500}},
+                          'model_fingerprint': getattr(self.ctx, 'asr_model_fingerprint', None),
+                          **self.identity_contract,
+                          'independent_audio_verification': False}
+            hypothesis_id = 'ASR_' + digest(provenance)[:24]
             iterator, info = self.model.transcribe(
-                str(path), language=self.ctx.config["language"], beam_size=cfg["beam_size"],
+                str(path), **options, beam_size=cfg["beam_size"],
                 word_timestamps=True, vad_filter=cfg["vad_filter"],
                 condition_on_previous_text=False, temperature=0,
                 initial_prompt=cfg["glossary"] or None,
                 vad_parameters={"min_silence_duration_ms": 500})
+            hint = getattr(info, 'language', None)
+            probability = getattr(info, 'language_probability', None) if options['language'] is None else None
+            if (isinstance(probability, bool) or not isinstance(probability, (int, float)) or
+                    not math.isfinite(probability) or not 0 <= probability <= 1):
+                probability = None
+            mode = 'automatic_multilingual' if options['multilingual'] else (
+                'automatic_chunk' if options['language'] is None else 'configured')
+            scope = 'chunk_initial_hint' if options['language'] is None else 'configured_language'
+            uncertain = options['language'] is None and (probability is None or
+                        probability < cfg.get('language_confidence_threshold', .6))
             rows, words = [], []
             for seg in iterator:
+                reported_language = getattr(seg, 'language', None)
+                language = reported_language or (None if options['multilingual'] else hint)
+                language_scope = 'segment_reported' if reported_language else scope
                 local_words = []
                 for w in seg.words or []:
                     item = {"word": w.word.strip(), "raw": w.word,
                             "start": offset + float(w.start), "end": offset + float(w.end),
                             "confidence": float(w.probability), "speaker": None,
-                            "segment_id": None, "timestamp_method": "whisper_attention_alignment"}
+                            "segment_id": None, "timestamp_method": "whisper_attention_alignment",
+                            'language': language, 'language_hint': hint,
+                            'language_detection_scope': language_scope,
+                            'language_probability': None, 'language_needs_review': uncertain,
+                            'asr_task': 'transcribe', 'text_kind': 'original_asr_hypothesis',
+                            'hypothesis_id': hypothesis_id}
                     # Generated by GitHub Copilot - Oct-05-2026
                     item.update(no_speech_prob=float(seg.no_speech_prob),
                                 avg_logprob=float(seg.avg_logprob),
@@ -156,9 +295,17 @@ class TranscriptionEngine:
                 rows.append({"start": offset+seg.start, "end": offset+seg.end,
                              "text": seg.text, "avg_logprob": seg.avg_logprob,
                              "no_speech_prob": seg.no_speech_prob,
-                             "words": local_words})
+                             "words": local_words, 'language': language, 'language_hint': hint,
+                             'language_detection_scope': language_scope, 'language_probability': None,
+                             'language_needs_review': uncertain, 'hypothesis_id': hypothesis_id,
+                             'asr_task': 'transcribe', 'text_kind': 'original_asr_hypothesis'})
             return {"words": words, "segments": rows,
-                    "language_probability": float(info.language_probability),
+                    'hypothesis_id': hypothesis_id, 'task': 'transcribe',
+                    'text_kind': 'original_asr_hypothesis', 'provenance': provenance,
+                    'configured_language': self.ctx.config.get('language'), 'language_mode': mode,
+                    'language_hint': hint, 'language_detection_scope': scope,
+                    "language_probability": probability,
+                    'language_candidates': getattr(info, 'all_language_probs', None),
                     "vad_speech_seconds": getattr(info, "duration_after_vad", None)}
         try:
             if self.model is None:
@@ -206,13 +353,32 @@ class TranscriptionEngine:
                 clip.unlink(missing_ok=True)
                 probabilities = [w["confidence"] for w in result["words"]]
                 hypotheses[label] = {"text": word_text(result["words"]),
+                                     'words': result['words'],
                                      "mean_model_probability": statistics.mean(probabilities) if probabilities else 0,
-                                     "word_count": len(probabilities)}
-            comparisons.append({"start": start, "end": end, "hypotheses": hypotheses})
+                                     "word_count": len(probabilities), **hypothesis_metadata(result)}
+            comparison = compare_hypotheses(hypotheses['original']['words'], hypotheses['speech_clean'], start, end,
+                                           original_text=hypotheses['original']['text'])
+            disagreement = comparison['status'] in ('localized_lexical_difference', 'unlocalized_text_difference', 'alignment_budget_exceeded')
+            language_disagreement = bool(hypotheses['original'].get('language_hint') and
+                hypotheses['speech_clean'].get('language_hint') and
+                hypotheses['original']['language_hint'] != hypotheses['speech_clean']['language_hint'])
+            comparisons.append({"start": start, "end": end, "hypotheses": hypotheses,
+                                'hypotheses_disagree': disagreement, 'language_disagreement': language_disagreement,
+                                'local_comparison': comparison,
+                                'needs_review': disagreement or language_disagreement})
         scores = {label: statistics.mean(c["hypotheses"][label]["mean_model_probability"]
                    for c in comparisons) if comparisons else 0 for label in ("original", "speech_clean")}
         # No preference without measurable benefit. Model scores are not factual correctness.
-        chosen = "speech_clean" if scores["speech_clean"] > scores["original"] + 0.03 else "original"
+        language_disagreement = any(c['hypotheses']['original'].get('language_hint') and
+            c['hypotheses']['speech_clean'].get('language_hint') and
+            c['hypotheses']['original']['language_hint'] != c['hypotheses']['speech_clean']['language_hint']
+            for c in comparisons)
+        source_disagreement = any(c['needs_review'] for c in comparisons)
+        chosen = "speech_clean" if scores["speech_clean"] > scores["original"] + 0.03 and not source_disagreement else "original"
+        if language_disagreement:
+            self.notes.append('Idioma das fontes ASR divergiu; audio original preservado e hipoteses requerem revisao.')
+        elif source_disagreement:
+            self.notes.append('Texto das fontes ASR divergiu; probabilidade do modelo nao autoriza trocar o audio original.')
         self.notes.append("Fonte ASR escolhida por comparação de amostras. Probabilidade do modelo "
                           "não garante fidelidade; hipóteses de amostra foram preservadas.")
         return audio["speech_clean" if chosen == "speech_clean" else "mono"], comparisons, chosen
@@ -224,18 +390,21 @@ class TranscriptionEngine:
             annotate_review(data, cfg["low_confidence"])
             # Generated by GitHub Copilot - Oct-05-2026
             data["quality_metrics"] = transcription_metrics(data, duration)
+            data['source_audio_review'] = source_review_dossier(data, duration,
+                max_regions=cfg.get('targeted_max_regions', 16), max_audio_seconds=cfg.get('targeted_max_audio_seconds', 180))
             return ok(data, notes=["Transcrição importada; não foi executado ASR nesta etapa."])
         selected, comparisons, label = self.select_source(audio, metrics, duration)
         chunk_dir = self.ctx.cache / "asr_chunks"
         chunk_dir.mkdir(exist_ok=True)
-        words, unaligned, chunk_files = [], [], []
+        words, unaligned, chunk_files, language_hypotheses = [], [], [], []
         chunk_size, pad = cfg["chunk_seconds"], cfg["overlap_seconds"]
         count = math.ceil(duration / chunk_size)
         base_key = digest({"video": self.ctx.signature, "cfg": cfg, "source": label,
                    "language":self.ctx.config['language'],"device":self.ctx.config['device'],
                    "compute_type":self.ctx.config['compute_type'],"cache_contract":"4.2",
                            "audio_sha256": file_hash(selected),
-                           "code": file_hash(Path(__file__)), "packages": versions()})
+                           "code": file_hash(Path(__file__)),
+                           'comparison_code': self.identity_contract['comparison_code_sha256'], "packages": versions()})
         for index in range(count):
             core_start, core_end = index*chunk_size, min(duration, (index+1)*chunk_size)
             start, end = max(0, core_start-pad), min(duration, core_end+pad)
@@ -261,6 +430,8 @@ class TranscriptionEngine:
                 finally:
                     wav.unlink(missing_ok=True)
             chunk_files.append(record)
+            language_hypotheses.append({**hypothesis_metadata(data), 'start': start, 'end': end,
+                                       'source': label, 'chunk_index': index})
             for w in data["words"]:
                 center = (w["start"]+w["end"])/2
                 # Overlapping context, disjoint ownership; genuine repetitions survive.
@@ -272,6 +443,8 @@ class TranscriptionEngine:
             for seg in data["segments"]:
                 if not seg.get("words") and core_start <= (seg["start"]+seg["end"])/2 < core_end:
                     unaligned.append({"start": seg["start"], "end": seg["end"], "text": seg["text"],
+                                      **{k: seg.get(k) for k in ('language', 'language_hint', 'language_detection_scope',
+                                                               'hypothesis_id', 'asr_task', 'text_kind')},
                                       "needs_review": True, "reason": "ASR_sem_alinhamento_de_palavras"})
         words.sort(key=lambda w: (w["start"], w["end"]))
         # Generated by GitHub Copilot - Oct-05-2026
@@ -280,6 +453,11 @@ class TranscriptionEngine:
             w["word_id"] = f"WORD_{i:07}"
         segments = regroup_words(words)
         data = {"words": words, "segments": segments, "unaligned_segments": unaligned,
+                'task': 'transcribe', 'text_kind': 'original_asr_hypothesis', 'translations': [],
+                'configured_language': self.ctx.config.get('language'),
+                'language_mode': 'automatic_multilingual' if recognition_options(self.ctx.config)['multilingual'] else (
+                    'automatic_chunk' if recognition_options(self.ctx.config)['language'] is None else 'configured'),
+                'language_hypotheses': language_hypotheses,
                 "source": label, "source_comparisons": comparisons,
                 "engine": "faster-whisper", "model": cfg["model"],
                 "device": self.actual_device, "compute_type": self.actual_compute,
@@ -290,13 +468,22 @@ class TranscriptionEngine:
             "unaligned_words": unaligned_words,
             "raw_hypotheses_ref": [{"path": str(path.relative_to(self.ctx.output)).replace("\\", "/"),
                         "sha256": file_hash(path)} for path in chunk_files]}
+        flag_alternative_disagreements(data)
         annotate_review(data, cfg["low_confidence"])
         alternatives = self.review(data, audio, duration)
         data["transcription_alternatives"] = alternatives
+        flag_alternative_disagreements(data)
+        annotate_review(data, cfg['low_confidence'])
         data["quality_metrics"] = transcription_metrics(data, duration)
+        data['source_audio_review'] = source_review_dossier(data, duration,
+            max_regions=cfg.get('targeted_max_regions', 16), max_audio_seconds=cfg.get('targeted_max_audio_seconds', 180))
         self.model = None
         gc.collect()
-        return ok(data, "partial" if unaligned or timestamp_anomalies else "ok", self.notes, chunk_files)
+        fidelity_uncertain = any(w.get('language_needs_review') or w.get('asr_discrepancy') or
+            set(w.get('review_reasons', [])) & {'comparison_clip_boundary', 'hypothesis_timestamp_disagreement'}
+            for w in words) or bool(
+            data.get('hypothesis_comparison', {}).get('unresolved_regions'))
+        return ok(data, "partial" if unaligned or timestamp_anomalies or fidelity_uncertain else "ok", self.notes, chunk_files)
 
     def review(self, data, audio, duration):
         cfg = self.ctx.config["transcription"]
@@ -314,6 +501,9 @@ class TranscriptionEngine:
             self.notes.append(f"Revisão limitada a {cfg['max_review_regions']} regiões; "
                               "todas as palavras duvidosas continuam sinalizadas.")
         results = []
+        calls, audio_seconds, deferred = 0, 0.0, []
+        max_calls = cfg.get('max_review_calls', 16)
+        max_audio_seconds = cfg.get('max_review_audio_seconds', 180)
         for index, (start, end) in enumerate(regions[:cfg["max_review_regions"]]):
             folder = self.ctx.cache / "review" / f"{index:05}"
             folder.mkdir(parents=True, exist_ok=True)
@@ -322,24 +512,38 @@ class TranscriptionEngine:
                                   ("speech_isolated", audio.get("speech_isolated"))]:
                 if not source or label == data["source"]:
                     continue
+                if calls >= max_calls or audio_seconds + end-start > max_audio_seconds:
+                    deferred.append({'start': start, 'end': end, 'source': label,
+                                     'reason': 'review_call_budget' if calls >= max_calls else 'review_audio_seconds_budget'})
+                    continue
                 wav = folder / f"{label}.wav"
                 ffmpeg_audio(source, wav, start=start, duration=end-start)
                 try:
+                    calls += 1
+                    audio_seconds += end-start
                     result = self.recognize(wav, start)
                     hypotheses.append({"source": label, "words": result["words"],
                                        "text": word_text(result["words"]),
+                                       **hypothesis_metadata(result),
                                        "comparison": alternative_evidence(result, start, end)})
                 finally:
                     wav.unlink(missing_ok=True)
             if self.ctx.config["audio"]["separation"] == "demucs" and not audio.get("speech_isolated") and not self.ctx.config["offline"]:
-                try:
-                    wav = separate_review_region(self.ctx, audio["mono"], start, end, folder)
-                    result = self.recognize(wav, start)
-                    hypotheses.append({"source": "demucs_region", "words": result["words"],
-                                       "text": word_text(result["words"])})
-                except Exception as exc:
-                    from .core import scrub
-                    self.notes.append(f"Separação da região {start:.3f} falhou: {scrub(exc)}")
+                if calls >= max_calls or audio_seconds + end-start > max_audio_seconds:
+                    deferred.append({'start': start, 'end': end, 'source': 'demucs_region',
+                                     'reason': 'review_call_budget' if calls >= max_calls else 'review_audio_seconds_budget'})
+                else:
+                    try:
+                        calls += 1
+                        audio_seconds += end-start
+                        wav = separate_review_region(self.ctx, audio["mono"], start, end, folder)
+                        result = self.recognize(wav, start)
+                        hypotheses.append({"source": "demucs_region", "words": result["words"],
+                                           "text": word_text(result["words"]), **hypothesis_metadata(result),
+                                           'comparison': alternative_evidence(result, start, end)})
+                    except Exception as exc:
+                        from .core import scrub
+                        self.notes.append(f"Separacao da regiao {start:.3f} falhou: {scrub(exc)}")
             results.append({"start": start, "end": end,
                             "selected_source": data["source"],
                             "selected_text": word_text([w for w in data["words"]
@@ -347,6 +551,13 @@ class TranscriptionEngine:
                             "alternatives": hypotheses, "replacement_applied": False,
                             "replacement_decision": "unresolved_no_independent_audio_verification",
                             "needs_human_review": True})
+        deferred.extend({'start': a, 'end': b, 'reason': 'review_region_budget'}
+                        for a, b in regions[cfg['max_review_regions']:])
+        data['review_budget'] = {'max_regions': cfg['max_review_regions'], 'max_calls': max_calls,
+                                'max_audio_seconds': max_audio_seconds, 'asr_calls': calls,
+                                'processed_audio_seconds': audio_seconds, 'deferred': deferred}
+        if deferred:
+            self.notes.append('Revisao ASR limitada pelo custo; regioes pendentes permanecem sinalizadas.')
         if results:
             self.notes.append("Multipass preserva alternativas. Divergências não substituem "
                               "automaticamente palavras da transcrição principal.")
@@ -356,7 +567,9 @@ class TranscriptionEngine:
 def annotate_review(data, threshold):
     low = []
     words = data["words"]
+    by_segment = {}
     for i, w in enumerate(words):
+        by_segment.setdefault(w.get('segment_id'), []).append(w)
         confidence = w.get("confidence")
         w['text_confidence'] = confidence
         w['timestamp_confidence'] = None
@@ -365,11 +578,26 @@ def annotate_review(data, threshold):
         repeated = i >= 3 and len({str(item["word"]).casefold().strip(".,!?") for item in words[i-3:i+1]}) == 1
         no_speech = w.get("no_speech_prob")
         w["suspected_hallucination"] = repeated or (isinstance(no_speech, (int, float)) and no_speech > .6)
-        w["needs_review"] = (confidence is None or confidence < threshold or w["end"] <= w["start"] or
-                     w.get("timestamp_repaired", False) or w["suspected_hallucination"])
+        reasons = set(w.get('review_reasons', []))
+        if confidence is None or confidence < threshold:
+            reasons.add('missing_or_low_model_probability')
+        if w['end'] <= w['start'] or w.get('timestamp_repaired', False):
+            reasons.add('timestamp_anomaly')
+        if w['suspected_hallucination']:
+            reasons.add('suspected_hallucination_proxy')
+        if w.get('language_needs_review'):
+            reasons.add('language_detection_uncertain')
+        if w.get('asr_discrepancy'):
+            reasons.add('acoustic_hypotheses_disagree')
+        if w.get('needs_review') and not reasons:
+            reasons.add('source_review_flag')
+        w['review_reasons'] = sorted(reasons)
+        w['needs_review'] = bool(reasons)
         if w["needs_review"]:
             low.append({"word": w["word"], "start": w["start"], "end": w["end"],
                         "confidence": confidence, "word_id": w.get("word_id"),
+                        'segment_id': w.get('segment_id'), 'speaker': w.get('speaker'), 'needs_review': True,
+                        'review_reasons': w['review_reasons'],
                         "context_before": word_text(words[max(0, i-5):i]),
                         "context_after": word_text(words[i+1:i+6])})
     data["low_confidence_words"] = low
@@ -386,6 +614,102 @@ def annotate_review(data, threshold):
                             'method':'repetition_or_high_no_speech_proxy','needs_review':True})
     data['suspected_hallucination_regions']=regions
     data['low_confidence_threshold']=threshold
+    for segment in data.get('segments', []):
+        members = by_segment.get(segment.get('segment_id'), [])
+        if members:
+            segment.update(segment_evidence(members))
+    propagate_unlocalized_review(data)
+
+
+def propagate_unlocalized_review(data):
+    """Keep region uncertainty on rebuilt segments, without guessing word flags."""
+    regions = data.get('hypothesis_comparison', {}).get('unresolved_regions', [])
+    for segment in data.get('segments', []):
+        if not valid_interval(segment):
+            continue
+        for region in regions:
+            if valid_interval(region) and region['start'] < segment['end'] and region['end'] > segment['start']:
+                segment['needs_review'] = True
+                segment['review_reasons'] = sorted(set(segment.get('review_reasons', []) +
+                    [region.get('reason', 'unlocalized_asr_comparison')]))
+
+
+def refresh_review_word_refs(data):
+    """Refresh sparse snapshot IDs after speaker regrouping, keeping flag scope."""
+    by_id = {word.get('word_id'): word for word in data.get('words', []) if word.get('word_id')}
+    for snapshot in data.get('low_confidence_words', []):
+        canonical = by_id.get(snapshot.get('word_id'))
+        if canonical:
+            for key in ('segment_id', 'speaker', 'needs_review', 'review_reasons'):
+                snapshot[key] = deepcopy(canonical.get(key))
+
+
+def flag_alternative_disagreements(data, *, recompute=False):
+    """Localize differing hypotheses without rewriting speech or human flags."""
+    automatic = {'acoustic_hypotheses_disagree', 'source_hypotheses_disagree',
+                 'comparison_clip_boundary', 'hypothesis_timestamp_disagreement'}
+    if recompute:
+        for word in data.get('words', []):
+            reasons = set(word.get('review_reasons', []))
+            if reasons & automatic:
+                reasons -= automatic
+                if word.get('human_review_required') or word.get('reviewer'):
+                    reasons.add('external_review_flag')
+                word.update(review_reasons=sorted(reasons), needs_review=bool(reasons), asr_discrepancy=False)
+    unresolved, recorded, affected = [], [], set()
+    def apply(comparison, reason):
+        recorded.append(comparison)
+        for region in comparison.get('unresolved_regions', []):
+            unresolved.append({**region, 'reason': reason, 'comparison_reason': region['reason']})
+        for word in data.get('words', []):
+            ident = word.get('word_id')
+            hit = ident in comparison.get('affected_word_ids', []) or any(
+                interval['start'] < word['end'] and interval['end'] > word['start']
+                for interval in comparison.get('affected_intervals', []))
+            boundary = ident in comparison.get('boundary_word_ids', []) or any(
+                interval['start'] < word['end'] and interval['end'] > word['start']
+                for interval in comparison.get('boundary_intervals', []))
+            timing = any(event['kind'] == 'timestamp_difference' and
+                         ((ident is not None and event.get('word_id') == ident) or
+                          (event['start'] < word['end'] and event['end'] > word['start']))
+                         for event in comparison.get('events', []))
+            if hit or boundary or timing:
+                reasons = set(word.get('review_reasons', []))
+                reasons.add(reason if hit else 'comparison_clip_boundary' if boundary else 'hypothesis_timestamp_disagreement')
+                word.update(review_reasons=sorted(reasons), needs_review=True)
+                if hit:
+                    word['asr_discrepancy'] = True
+                    if ident:
+                        affected.add(ident)
+    for row in data.get('source_comparisons', []):
+        hypotheses = row.get('hypotheses', {})
+        original, alternate = hypotheses.get('original'), hypotheses.get('speech_clean')
+        comparison = row.get('local_comparison')
+        if original and alternate:
+            comparison = compare_hypotheses(original.get('words', []), alternate, row['start'], row['end'],
+                                            original_text=original.get('text'))
+            row['local_comparison'] = comparison
+        elif comparison is None and row.get('needs_review'):
+            comparison = {'unresolved_regions': [{'start': row['start'], 'end': row['end'],
+                                                  'reason': 'legacy_source_comparison_unlocalized'}]}
+        if comparison:
+            apply(comparison, 'source_hypotheses_disagree')
+    for row in data.get('transcription_alternatives', []):
+        comparisons = [compare_hypotheses(data.get('words', []), alt, row['start'], row['end'],
+                                         original_text=row.get('selected_text')) for alt in row.get('alternatives', [])]
+        row['local_comparison'] = comparisons
+        row['hypotheses_disagree'] = any(comparison['status'] in ('localized_lexical_difference',
+            'unlocalized_text_difference', 'alignment_budget_exceeded') for comparison in comparisons)
+        row['text_differs'] = any(str(alt.get('text', '')).strip() != str(row.get('selected_text', '')).strip()
+                                 for alt in row.get('alternatives', []))
+        row['affected_word_ids'] = sorted({ident for comparison in comparisons for ident in comparison['affected_word_ids']})
+        row['boundary_word_ids'] = sorted({ident for comparison in comparisons for ident in comparison['boundary_word_ids']})
+        for comparison in comparisons:
+            apply(comparison, 'acoustic_hypotheses_disagree')
+    data['hypothesis_comparison'] = {'schema_version': '1.0', 'method': 'localized_word_time_comparison',
+        'comparison_count': len(recorded), 'affected_word_ids': sorted(affected), 'unresolved_regions': unresolved,
+        'recomputed_automatic_flags': recompute, 'flag_rate_is_error_rate': False,
+        'human_audio_verification_performed': False, 'replacement_applied': False}
 
 
 # Generated by GitHub Copilot - Oct-05-2026
@@ -451,6 +775,14 @@ def transcription_metrics(data, duration):
             "suspected_hallucination_region_count": len(data.get('suspected_hallucination_regions',[])),
             "unresolved_review_region_count":sum(bool(row.get('needs_human_review')) for row in alternatives),
             "review_needed_word_count":sum(bool(word.get('needs_review')) for word in words),
+            'language_uncertain_word_count': sum(bool(word.get('language_needs_review')) for word in words),
+            'asr_discrepancy_word_count': sum(bool(word.get('asr_discrepancy')) for word in words),
+            'source_disagreement_region_count': sum(bool(row.get('needs_review')) for row in data.get('source_comparisons', [])),
+            'multipass_asr_calls': data.get('review_budget', {}).get('asr_calls', 0),
+            'multipass_audio_seconds': data.get('review_budget', {}).get('processed_audio_seconds', 0),
+            'multipass_deferred_hypotheses': len(data.get('review_budget', {}).get('deferred', [])),
+            'review_reason_metrics': review_reason_metrics(words),
+            'review_scope': 'acoustic_multipass_not_human_audio_verification',
             "music_noise_evidence":'not_measured_when_audio_events_disabled',
             "speech_coverage": sum(word["end"] - word["start"] for word in words) / duration if duration > 0 else None,
             "coverage_method": "nonoverlapping_word_timing_not_vad_ground_truth"}

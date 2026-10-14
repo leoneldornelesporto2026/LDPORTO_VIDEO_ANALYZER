@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "src/tests/test_sol_v4_post_editorial.py",
+    "src/tests/test_stage47_human_review_queue.py",
+    "src/tests/test_s2_pipeline_integrity.py",
+    "src/tests/test_sol_v3_runtime_editorial.py",
+    "src/tests/test_v43_handoff.py",
+    "src/tests/test_v42_editorial.py",
+    "src/tests/test_stage43_capability_contract.py",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_pos_foquinha_20261013\\editorial_focused_final.xml"
+  ],
+  "return_code": 0,
+  "wall_seconds": 25.77455800003372,
+  "scope": "offline_editorial_queue_contract_compatibility"
+}

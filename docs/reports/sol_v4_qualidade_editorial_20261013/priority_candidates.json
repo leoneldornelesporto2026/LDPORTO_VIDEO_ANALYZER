@@ -1,0 +1,1415 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+  "candidates": [
+    {
+      "candidate_id": "MOMENT_00002_0000",
+      "start": 360.36,
+      "end": 407.76,
+      "title": "A ideia de podcast que a rádio recusou",
+      "hook": "Antecipou um formato inspirado em Grace Helbig e ouviu uma recusa.",
+      "context": "Incluir a pergunta sobre criadores de referência (SEG_00177–00178).",
+      "development": "SEG_00179–00182: referência, proposta à rádio e recusa.",
+      "ending": "SEG_00183–00184: comentário sobre estar à frente do tempo; termina antes da mudança em 407.96.",
+      "quality_hypothesis": "Promissor: causa, tentativa, obstáculo e autoavaliação final aparecem no texto; humor e surpresa não medidos.",
+      "risks": [
+        "topic_boundary_crossed permanece; conferir se a fronteira é uma mudança real de assunto",
+        "Grace Helbig e atribuição das intervenções precisam de escuta"
+      ],
+      "human_tasks": [
+        "Ouvir pergunta e resposta juntas",
+        "Conferir pronúncia e locutores sem atribuir identidade visual",
+        "Reavaliar a fronteira temática com evidência, sem remover gate por conveniência"
+      ],
+      "proposal_kind": "human_inspection_only",
+      "original_interval": {
+        "start": 363.1,
+        "end": 407.76
+      },
+      "inspection_interval": {
+        "start": 360.36,
+        "end": 407.76,
+        "duration_seconds": 47.4
+      },
+      "duration_contract": {
+        "target_min_seconds": 30.0,
+        "target_max_seconds": 90.0,
+        "hard_min_seconds": 8.0,
+        "hard_max_seconds": 180.0,
+        "allow_story_exception": true
+      },
+      "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+      "historical_score": 0.61,
+      "old_queue_position": 4,
+      "new_queue_position": 2,
+      "canonical_evidence": [
+        {
+          "segment_id": "SEG_00177",
+          "start": 360.36,
+          "end": 362.12,
+          "speaker": "SPEAKER_01",
+          "text": "algum criador, assim, que destaca pra você?"
+        },
+        {
+          "segment_id": "SEG_00178",
+          "start": 362.2,
+          "end": 363.06,
+          "speaker": "SPEAKER_01",
+          "text": "Que você sempre dá uma olhadinha?"
+        },
+        {
+          "segment_id": "SEG_00179",
+          "start": 363.1,
+          "end": 368.4,
+          "speaker": "SPEAKER_02",
+          "text": "Nossa, tinha Ela deu uma diminuída nos vídeos desse assunto Mas a Grace Helbig, eu sempre gostei muito"
+        },
+        {
+          "segment_id": "SEG_00180",
+          "start": 369.56,
+          "end": 384.34000000000003,
+          "speaker": "SPEAKER_02",
+          "text": "Inclusive, nossa Ela tem um podcast há muito, muito tempo Antes das pessoas pensarem em podcast Aqui no Brasil, assim eu sempre amei ela sempre uma referência assim para mim e a gente não consumia tão era tão fora da realidade consumir podcast que por causa dos vídeos dela de um"
+        },
+        {
+          "segment_id": "SEG_00181",
+          "start": 384.34000000000003,
+          "end": 399.28,
+          "speaker": "SPEAKER_02",
+          "text": "podcast e ficar vai acho que eu quero ter um programa na rádio porque assim não não pensar vai eu vou ter uma coisa com ela tem que um podcast não pensava nisso lembra até que eu tentei vender um programa que era um podcast a gente foi ver hoje para uma rádio sério do Brasil que é"
+        },
+        {
+          "segment_id": "SEG_00182",
+          "start": 399.28,
+          "end": 404.1,
+          "speaker": "SPEAKER_02",
+          "text": "bem conhecida e não eu levei o dela referência e falaram, ai não, nada a ver."
+        },
+        {
+          "segment_id": "SEG_00183",
+          "start": 404.24,
+          "end": 405.52,
+          "speaker": "SPEAKER_02",
+          "text": "Você tava muito pra frente."
+        },
+        {
+          "segment_id": "SEG_00184",
+          "start": 405.52,
+          "end": 407.76,
+          "speaker": "SPEAKER_02",
+          "text": "Eu tava muito à frente do meu tempo, por causa da Grace Helbig."
+        }
+      ],
+      "source_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00002_0000",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 360.36,
+          "end": 407.76
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=360.36,407.76"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=360.36,407.76"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "original_candidate_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00002_0000",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 363.1,
+          "end": 407.76
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=363.1,407.76"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=363.1,407.76"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "local_inspection_player": "review_players/MOMENT_00002_0000_inspection.html",
+      "recorded_editorial_blockers": [
+        "topic_boundary_crossed"
+      ],
+      "recorded_gate_reasons": [
+        "automatic_shortlist_gate_not_passed",
+        "ineligible_by_quality_gate",
+        "missing_required_score:hook",
+        "missing_required_score:standalone_clarity",
+        "topic_boundary_crossed"
+      ],
+      "review_milestones": {
+        "interest_state": "INTERESTING_CANDIDATE",
+        "interest_is_hypothesis": true,
+        "eligibility_state": "ELIGIBLE_FOR_REVIEW",
+        "human_review_state": "HUMAN_REVIEW_PENDING",
+        "human_review_completed": false,
+        "preview_approved": false,
+        "publish_ready": false,
+        "narrative_quality_verified": null,
+        "acoustic_quality_verified": null,
+        "visual_quality_verified": null,
+        "speaker_identity_verified": null,
+        "crop_approved": false
+      },
+      "human_review_completed": false,
+      "audio_listened_by_human": false,
+      "preview_approved": false,
+      "publication_ready": false,
+      "proposed_limits_applied_to_candidate": false,
+      "semantic_completion_verified": null
+    },
+    {
+      "candidate_id": "MOMENT_00006_0002",
+      "start": 1109.68,
+      "end": 1170.52,
+      "title": "A Live dos Anjos confundida com live religiosa",
+      "hook": "SEG_00497: “Gente, achei que era uma live bíblica.”",
+      "context": "Começar na apresentação do projeto com João (SEG_00481–00483); o nome composto está incerto na transcrição.",
+      "development": "SEG_00492–00495 explicam o nome ligado ao BBB; SEG_00496–00502 relatam a confusão.",
+      "ending": "SEG_00509–00513: formação de comunidade e “Então, isso foi muito legal.”",
+      "quality_hypothesis": "Promissor: há setup do nome, equívoco e consequência social explícita. A versão curta perde antecedentes.",
+      "risks": [
+        "“João, o Luiz Pedrosa” e a frase sobre porcentagem dos evangélicos precisam de revisão acústica",
+        "Q_0104 trata fala iniciada por “Porque” como pergunta; o trecho é discurso relatado, obrigação de resposta requer revisão"
+      ],
+      "human_tasks": [
+        "Confirmar nome e sentido da referência religiosa",
+        "Ouvir sem suprimir o contexto do BBB",
+        "Revisar Q_0104 sem alterar retroativamente o gate ou marcar resposta como confirmada"
+      ],
+      "proposal_kind": "human_inspection_only",
+      "original_interval": {
+        "start": 1135.3,
+        "end": 1170.52
+      },
+      "inspection_interval": {
+        "start": 1109.68,
+        "end": 1170.52,
+        "duration_seconds": 60.84
+      },
+      "duration_contract": {
+        "target_min_seconds": 30.0,
+        "target_max_seconds": 90.0,
+        "hard_min_seconds": 8.0,
+        "hard_max_seconds": 180.0,
+        "allow_story_exception": true
+      },
+      "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+      "historical_score": 0.279,
+      "old_queue_position": 10,
+      "new_queue_position": 3,
+      "canonical_evidence": [
+        {
+          "segment_id": "SEG_00481",
+          "start": 1109.68,
+          "end": 1111.8,
+          "speaker": "SPEAKER_02",
+          "text": "E aí, eu queria fazer já um projeto com o João."
+        },
+        {
+          "segment_id": "SEG_00482",
+          "start": 1111.9,
+          "end": 1114.06,
+          "speaker": "SPEAKER_02",
+          "text": "Eu e o João, o Luiz Pedrosa, né?"
+        },
+        {
+          "segment_id": "SEG_00483",
+          "start": 1114.08,
+          "end": 1115.22,
+          "speaker": "SPEAKER_02",
+          "text": "Que participou do BBB, inclusive."
+        },
+        {
+          "segment_id": "SEG_00484",
+          "start": 1115.44,
+          "end": 1115.78,
+          "speaker": "SPEAKER_02",
+          "text": "Sim."
+        },
+        {
+          "segment_id": "SEG_00485",
+          "start": 1115.88,
+          "end": 1116.98,
+          "speaker": "SPEAKER_02",
+          "text": "A gente é muito amigo."
+        },
+        {
+          "segment_id": "SEG_00486",
+          "start": 1117.46,
+          "end": 1117.82,
+          "speaker": null,
+          "text": "E"
+        },
+        {
+          "segment_id": "SEG_00487",
+          "start": 1117.82,
+          "end": 1119.24,
+          "speaker": "SPEAKER_02",
+          "text": "a gente já fez coisas juntos e tal."
+        },
+        {
+          "segment_id": "SEG_00488",
+          "start": 1119.28,
+          "end": 1122.56,
+          "speaker": "SPEAKER_02",
+          "text": "Mas a gente sempre falava de fazer alguma coisa mais oficial, assim, juntos."
+        },
+        {
+          "segment_id": "SEG_00489",
+          "start": 1122.72,
+          "end": 1126.54,
+          "speaker": "SPEAKER_02",
+          "text": "E o nosso público também esperava, assim, tinha essa expectativa."
+        },
+        {
+          "segment_id": "SEG_00490",
+          "start": 1126.76,
+          "end": 1128.82,
+          "speaker": "SPEAKER_02",
+          "text": "E aí, eu pensei, se eu fizer com ele, né?"
+        },
+        {
+          "segment_id": "SEG_00491",
+          "start": 1128.82,
+          "end": 1129.96,
+          "speaker": "SPEAKER_02",
+          "text": "Aí chamei ele, ele adorou a ideia."
+        },
+        {
+          "segment_id": "SEG_00492",
+          "start": 1130.44,
+          "end": 1132.3,
+          "speaker": "SPEAKER_02",
+          "text": "E aí, a gente criou a live dos anjos."
+        },
+        {
+          "segment_id": "SEG_00493",
+          "start": 1133.5,
+          "end": 1133.82,
+          "speaker": null,
+          "text": "Dos"
+        },
+        {
+          "segment_id": "SEG_00494",
+          "start": 1133.82,
+          "end": 1135.26,
+          "speaker": "SPEAKER_02",
+          "text": "anjos, por causa do BBB, né?"
+        },
+        {
+          "segment_id": "SEG_00495",
+          "start": 1135.3,
+          "end": 1137.22,
+          "speaker": "SPEAKER_02",
+          "text": "Que é o almoço do anjo, o presente do anjo."
+        },
+        {
+          "segment_id": "SEG_00496",
+          "start": 1137.3,
+          "end": 1139.46,
+          "speaker": "SPEAKER_02",
+          "text": "Porque tinha gente que entrava na live e falava assim..."
+        },
+        {
+          "segment_id": "SEG_00497",
+          "start": 1139.46,
+          "end": 1141.32,
+          "speaker": "SPEAKER_02",
+          "text": "Gente, achei que era uma live bíblica."
+        },
+        {
+          "segment_id": "SEG_00498",
+          "start": 1141.3600000000001,
+          "end": 1141.68,
+          "speaker": "SPEAKER_02",
+          "text": "Da"
+        },
+        {
+          "segment_id": "SEG_00499",
+          "start": 1141.68,
+          "end": 1142.12,
+          "speaker": null,
+          "text": "igreja!"
+        },
+        {
+          "segment_id": "SEG_00500",
+          "start": 1143.62,
+          "end": 1143.94,
+          "speaker": null,
+          "text": "E"
+        },
+        {
+          "segment_id": "SEG_00501",
+          "start": 1143.94,
+          "end": 1144.44,
+          "speaker": "SPEAKER_02",
+          "text": "aí, deu..."
+        },
+        {
+          "segment_id": "SEG_00502",
+          "start": 1144.44,
+          "end": 1147.04,
+          "speaker": "SPEAKER_02",
+          "text": "Pela porcentagem dos evangélicos da plataforma."
+        },
+        {
+          "segment_id": "SEG_00503",
+          "start": 1147.46,
+          "end": 1149.1399999999999,
+          "speaker": "SPEAKER_02",
+          "text": "E deu super certo, assim."
+        },
+        {
+          "segment_id": "SEG_00504",
+          "start": 1149.2,
+          "end": 1149.8,
+          "speaker": "SPEAKER_02",
+          "text": "Foi muito legal."
+        },
+        {
+          "segment_id": "SEG_00505",
+          "start": 1149.88,
+          "end": 1150.9,
+          "speaker": "SPEAKER_02",
+          "text": "E a gente fazia toda semana."
+        },
+        {
+          "segment_id": "SEG_00506",
+          "start": 1151.06,
+          "end": 1152.2,
+          "speaker": "SPEAKER_02",
+          "text": "Então, era um resumão da semana."
+        },
+        {
+          "segment_id": "SEG_00507",
+          "start": 1152.98,
+          "end": 1155.6,
+          "speaker": "SPEAKER_02",
+          "text": "Trazia fatos que estavam acontecendo naquela hora também e tal."
+        },
+        {
+          "segment_id": "SEG_00508",
+          "start": 1155.76,
+          "end": 1156.94,
+          "speaker": "SPEAKER_02",
+          "text": "E foi muito legal."
+        },
+        {
+          "segment_id": "SEG_00509",
+          "start": 1156.94,
+          "end": 1160.98,
+          "speaker": "SPEAKER_02",
+          "text": "Foi muito legal, porque acabou que a gente criou meio que uma comunidade ali."
+        },
+        {
+          "segment_id": "SEG_00510",
+          "start": 1161.06,
+          "end": 1162.66,
+          "speaker": "SPEAKER_02",
+          "text": "Uma galera que tava toda semana esperando."
+        },
+        {
+          "segment_id": "SEG_00511",
+          "start": 1162.84,
+          "end": 1164.22,
+          "speaker": "SPEAKER_02",
+          "text": "A gente já sabia quem eram as pessoas."
+        },
+        {
+          "segment_id": "SEG_00512",
+          "start": 1164.7,
+          "end": 1168.8,
+          "speaker": "SPEAKER_02",
+          "text": "Então, deu essa movimentada das pessoas esperando a gente toda quarta-feira pra essa live."
+        },
+        {
+          "segment_id": "SEG_00513",
+          "start": 1169.28,
+          "end": 1170.52,
+          "speaker": "SPEAKER_02",
+          "text": "Então, isso foi muito legal."
+        }
+      ],
+      "source_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00006_0002",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 1109.68,
+          "end": 1170.52
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=1109.68,1170.52"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=1109.68,1170.52"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "original_candidate_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00006_0002",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 1135.3,
+          "end": 1170.52
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=1135.3,1170.52"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=1135.3,1170.52"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "local_inspection_player": "review_players/MOMENT_00006_0002_inspection.html",
+      "recorded_editorial_blockers": [
+        "answer_or_payoff_unresolved",
+        "question_answer_unit_incomplete",
+        "question_without_complete_answer"
+      ],
+      "recorded_gate_reasons": [
+        "answer_or_payoff_unresolved",
+        "automatic_shortlist_gate_not_passed",
+        "below_editorial_quality_floor",
+        "clean_ending:false",
+        "ineligible_by_quality_gate",
+        "missing_required_score:hook",
+        "missing_required_score:standalone_clarity",
+        "question_answer_unit_incomplete",
+        "question_without_complete_answer"
+      ],
+      "review_milestones": {
+        "interest_state": "INTERESTING_CANDIDATE",
+        "interest_is_hypothesis": true,
+        "eligibility_state": "ELIGIBLE_FOR_REVIEW",
+        "human_review_state": "HUMAN_REVIEW_PENDING",
+        "human_review_completed": false,
+        "preview_approved": false,
+        "publish_ready": false,
+        "narrative_quality_verified": null,
+        "acoustic_quality_verified": null,
+        "visual_quality_verified": null,
+        "speaker_identity_verified": null,
+        "crop_approved": false
+      },
+      "human_review_completed": false,
+      "audio_listened_by_human": false,
+      "preview_approved": false,
+      "publication_ready": false,
+      "proposed_limits_applied_to_candidate": false,
+      "semantic_completion_verified": null
+    },
+    {
+      "candidate_id": "MOMENT_00008_0002",
+      "start": 1585.2,
+      "end": 1617.2,
+      "title": "Reconhecendo o primeiro vídeo do canal",
+      "hook": "Reconhecimento do primeiro vídeo diante de um mural de arquivos.",
+      "context": "SEG_00664–00665 apresentam a retrospectiva; a reação depende das imagens realmente exibidas.",
+      "development": "SEG_00666–00671: reação, reconhecimento e descrição de um teaser.",
+      "ending": "SEG_00672 explica o teaser: lançou o canal querendo ir para a TV. É uma unidade de reação; a trajetória continua depois.",
+      "quality_hypothesis": "Condicional: útil como reação nostálgica se o mural for legível. A posição alta na triagem não comprova história completa.",
+      "risks": [
+        "Original tem 28.74s e está abaixo do alvo de 30s",
+        "Extensão a 32s só faz sentido pela explicação do teaser, nunca como preenchimento de duração",
+        "Não encerrar a história da carreira em SEG_00672; SEG_00673 em diante continuam outro desenvolvimento"
+      ],
+      "human_tasks": [
+        "Ver o mural e ouvir a reação sincronizada",
+        "Decidir se a unidade é reação ou início de narrativa maior",
+        "A prévia existente cobre somente 1585.2–1613.94; inspecionar o restante no original"
+      ],
+      "proposal_kind": "human_inspection_only",
+      "original_interval": {
+        "start": 1585.2,
+        "end": 1613.94
+      },
+      "inspection_interval": {
+        "start": 1585.2,
+        "end": 1617.2,
+        "duration_seconds": 32.0
+      },
+      "duration_contract": {
+        "target_min_seconds": 30.0,
+        "target_max_seconds": 90.0,
+        "hard_min_seconds": 8.0,
+        "hard_max_seconds": 180.0,
+        "allow_story_exception": true
+      },
+      "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+      "historical_score": 0.713,
+      "old_queue_position": 3,
+      "new_queue_position": 1,
+      "canonical_evidence": [
+        {
+          "segment_id": "SEG_00664",
+          "start": 1585.2,
+          "end": 1600.08,
+          "speaker": "SPEAKER_00",
+          "text": "Falando um pouco de passado e das transformações que aconteceram na sua carreira ao longo dessa década que você está produzindo conteúdo aqui na plataforma, a minha produção vai colocar ali no video wall, aqui atrás de você, alguns dos"
+        },
+        {
+          "segment_id": "SEG_00665",
+          "start": 1600.08,
+          "end": 1602.6399999999999,
+          "speaker": "SPEAKER_00",
+          "text": "vídeos que eu queria saber o que você reconhece aí."
+        },
+        {
+          "segment_id": "SEG_00666",
+          "start": 1602.8600000000001,
+          "end": 1603.24,
+          "speaker": null,
+          "text": "Gente,"
+        },
+        {
+          "segment_id": "SEG_00667",
+          "start": 1603.34,
+          "end": 1603.8600000000001,
+          "speaker": "SPEAKER_02",
+          "text": "que lindo!"
+        },
+        {
+          "segment_id": "SEG_00668",
+          "start": 1605.9,
+          "end": 1606.62,
+          "speaker": "SPEAKER_02",
+          "text": "Nossa Senhora!"
+        },
+        {
+          "segment_id": "SEG_00669",
+          "start": 1606.78,
+          "end": 1611.96,
+          "speaker": "SPEAKER_02",
+          "text": "Olha, o primeiro ali, que tá repetindo e eu girando que nem uma tonta é o primeiro vídeo do meu canal."
+        },
+        {
+          "segment_id": "SEG_00670",
+          "start": 1612.18,
+          "end": 1612.88,
+          "speaker": "SPEAKER_02",
+          "text": "O de franjinha."
+        },
+        {
+          "segment_id": "SEG_00671",
+          "start": 1613.06,
+          "end": 1613.94,
+          "speaker": "SPEAKER_02",
+          "text": "É, que era um teaser."
+        },
+        {
+          "segment_id": "SEG_00672",
+          "start": 1614.56,
+          "end": 1617.2,
+          "speaker": "SPEAKER_02",
+          "text": "Porque eu lancei meu canal querendo ir pra TV."
+        }
+      ],
+      "source_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00008_0002",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 1585.2,
+          "end": 1617.2
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=1585.2,1617.2"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=1585.2,1617.2"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "original_candidate_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00008_0002",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 1585.2,
+          "end": 1613.94
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=1585.2,1613.94"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=1585.2,1613.94"
+        },
+        "existing_previews": [
+          {
+            "locator": {
+              "type": "relative_to_review_media_root",
+              "path": "source_previews/MOMENT_00008_0002/source_preserve.mp4"
+            },
+            "sha256": "3b85e66298be0c299dd75e9216ad78ded7a802f64c95cf4b55b7ea30a91c34af",
+            "bytes": 1397489,
+            "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+            "candidate_id": "MOMENT_00008_0002",
+            "start": 1585.2,
+            "end": 1613.94,
+            "observed_video_duration": 28.7287,
+            "layout": "SOURCE_PRESERVE",
+            "resolution": [
+              480,
+              270
+            ],
+            "audio": "original_source_reencoded_aac_no_music_or_replacement",
+            "preview_approved": false,
+            "audio_verified": null,
+            "publication_ready": false
+          }
+        ],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "local_inspection_player": "review_players/MOMENT_00008_0002_inspection.html",
+      "recorded_editorial_blockers": [],
+      "recorded_gate_reasons": [
+        "automatic_shortlist_gate_not_passed",
+        "ineligible_by_quality_gate",
+        "missing_required_score:hook",
+        "outside_target_duration"
+      ],
+      "review_milestones": {
+        "interest_state": "INTERESTING_CANDIDATE",
+        "interest_is_hypothesis": true,
+        "eligibility_state": "ELIGIBLE_FOR_REVIEW",
+        "human_review_state": "HUMAN_REVIEW_PENDING",
+        "human_review_completed": false,
+        "preview_approved": false,
+        "publish_ready": false,
+        "narrative_quality_verified": null,
+        "acoustic_quality_verified": null,
+        "visual_quality_verified": null,
+        "speaker_identity_verified": null,
+        "crop_approved": false
+      },
+      "human_review_completed": false,
+      "audio_listened_by_human": false,
+      "preview_approved": false,
+      "publication_ready": false,
+      "proposed_limits_applied_to_candidate": false,
+      "semantic_completion_verified": null
+    },
+    {
+      "candidate_id": "MOMENT_00018_0002",
+      "start": 3333.08,
+      "end": 3373.72,
+      "title": "Ser outra pessoa ao entrevistar em espanhol",
+      "hook": "O nervosismo vem de perder a própria personalidade em outro idioma.",
+      "context": "SEG_01206 inicia a pergunta sobre entrevistas internacionais; manter as intervenções breves.",
+      "development": "SEG_01207–01222: idioma, personalidade e autodescrição tímida em espanhol.",
+      "ending": "Original termina em “Eu fico meio, tipo...”. SEG_01224–01226 completam com “Eu sou básica” e “muito básica em espanhol”.",
+      "quality_hypothesis": "Promissor para identificação e autodepreciação. Desfecho da resposta melhora com a continuação literal; não há risada confirmada.",
+      "risks": [
+        "ASR “esmui ratatá” e fragmentação das intervenções exigem escuta",
+        "A anedota de La Casa de Papel começa em SEG_01236 (3377.5), fora da proposta"
+      ],
+      "human_tasks": [
+        "Confirmar palavras em espanhol sem normalização inventada",
+        "Conferir turnos de fala",
+        "Validar fim após a autodescrição antes da próxima anedota"
+      ],
+      "proposal_kind": "human_inspection_only",
+      "original_interval": {
+        "start": 3333.08,
+        "end": 3370.88
+      },
+      "inspection_interval": {
+        "start": 3333.08,
+        "end": 3373.72,
+        "duration_seconds": 40.64
+      },
+      "duration_contract": {
+        "target_min_seconds": 30.0,
+        "target_max_seconds": 90.0,
+        "hard_min_seconds": 8.0,
+        "hard_max_seconds": 180.0,
+        "allow_story_exception": true
+      },
+      "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+      "historical_score": 0.238,
+      "old_queue_position": 20,
+      "new_queue_position": 5,
+      "canonical_evidence": [
+        {
+          "segment_id": "SEG_01206",
+          "start": 3333.08,
+          "end": 3337.8,
+          "speaker": "SPEAKER_01",
+          "text": "alguma entrevista que você ficou muito nervosa assim assim você ficou nervosa Nossa"
+        },
+        {
+          "segment_id": "SEG_01207",
+          "start": 3337.8,
+          "end": 3343.02,
+          "speaker": "SPEAKER_02",
+          "text": "várias eu sempre fico nervosa entrevista internacional sempre me dá um nervoso é mesmo eu falo segundo"
+        },
+        {
+          "segment_id": "SEG_01208",
+          "start": 3343.02,
+          "end": 3343.54,
+          "speaker": "SPEAKER_00",
+          "text": "idioma"
+        },
+        {
+          "segment_id": "SEG_01209",
+          "start": 3343.54,
+          "end": 3343.96,
+          "speaker": "SPEAKER_02",
+          "text": "né isso"
+        },
+        {
+          "segment_id": "SEG_01210",
+          "start": 3343.96,
+          "end": 3345.0,
+          "speaker": "SPEAKER_02",
+          "text": "é"
+        },
+        {
+          "segment_id": "SEG_01211",
+          "start": 3345.0,
+          "end": 3346.3,
+          "speaker": "SPEAKER_01",
+          "text": "engraçado e outro idioma"
+        },
+        {
+          "segment_id": "SEG_01212",
+          "start": 3346.3,
+          "end": 3346.68,
+          "speaker": null,
+          "text": "é"
+        },
+        {
+          "segment_id": "SEG_01213",
+          "start": 3346.68,
+          "end": 3358.7,
+          "speaker": "SPEAKER_02",
+          "text": "muito ter uma ter personalidade em outro dia o idioma entendeu é muito difícil para mim mas eu acho que a mais uma das mais nervosa só tem espanhol que foi que a pior meu espanhol e eu não falo espanhol entendeu e eu não tenho"
+        },
+        {
+          "segment_id": "SEG_01214",
+          "start": 3358.7,
+          "end": 3362.24,
+          "speaker": "SPEAKER_02",
+          "text": "personalidade espanhol eu fico triste, porque assim, eu não sou legal em espanhol."
+        },
+        {
+          "segment_id": "SEG_01215",
+          "start": 3362.36,
+          "end": 3362.66,
+          "speaker": "SPEAKER_00",
+          "text": "Em"
+        },
+        {
+          "segment_id": "SEG_01216",
+          "start": 3362.66,
+          "end": 3362.98,
+          "speaker": "SPEAKER_02",
+          "text": "espanhol,"
+        },
+        {
+          "segment_id": "SEG_01217",
+          "start": 3362.98,
+          "end": 3363.12,
+          "speaker": null,
+          "text": "é"
+        },
+        {
+          "segment_id": "SEG_01218",
+          "start": 3363.12,
+          "end": 3363.74,
+          "speaker": "SPEAKER_02",
+          "text": "esmui ratatá."
+        },
+        {
+          "segment_id": "SEG_01219",
+          "start": 3363.84,
+          "end": 3364.04,
+          "speaker": null,
+          "text": "Faz"
+        },
+        {
+          "segment_id": "SEG_01220",
+          "start": 3364.04,
+          "end": 3364.92,
+          "speaker": "SPEAKER_00",
+          "text": "igual a Cardi B, né?"
+        },
+        {
+          "segment_id": "SEG_01221",
+          "start": 3365.38,
+          "end": 3367.52,
+          "speaker": "SPEAKER_02",
+          "text": "Não, gente, eu não tenho personalidade."
+        },
+        {
+          "segment_id": "SEG_01222",
+          "start": 3367.52,
+          "end": 3370.04,
+          "speaker": "SPEAKER_02",
+          "text": "E aí, eu me sinto mal, porque eu sou uma pessoa meio tímida em espanhol."
+        },
+        {
+          "segment_id": "SEG_01223",
+          "start": 3370.1,
+          "end": 3370.88,
+          "speaker": "SPEAKER_02",
+          "text": "Eu fico meio, tipo..."
+        },
+        {
+          "segment_id": "SEG_01224",
+          "start": 3371.34,
+          "end": 3371.5,
+          "speaker": null,
+          "text": "Eu"
+        },
+        {
+          "segment_id": "SEG_01225",
+          "start": 3371.5,
+          "end": 3372.38,
+          "speaker": "SPEAKER_02",
+          "text": "sou básica, sabe?"
+        },
+        {
+          "segment_id": "SEG_01226",
+          "start": 3372.42,
+          "end": 3373.72,
+          "speaker": "SPEAKER_02",
+          "text": "Assim, muito básica em espanhol."
+        }
+      ],
+      "source_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00018_0002",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 3333.08,
+          "end": 3373.72
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=3333.08,3373.72"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=3333.08,3373.72"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "original_candidate_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00018_0002",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 3333.08,
+          "end": 3370.88
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=3333.08,3370.88"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=3333.08,3370.88"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "local_inspection_player": "review_players/MOMENT_00018_0002_inspection.html",
+      "recorded_editorial_blockers": [
+        "answer_or_payoff_unresolved",
+        "incomplete_sentence_or_handoff",
+        "question_answer_unit_incomplete"
+      ],
+      "recorded_gate_reasons": [
+        "answer_or_payoff_unresolved",
+        "automatic_shortlist_gate_not_passed",
+        "below_editorial_quality_floor",
+        "clean_ending:false",
+        "commercial_review_pending",
+        "incomplete_sentence_or_handoff",
+        "ineligible_by_quality_gate",
+        "missing_required_score:hook",
+        "missing_required_score:standalone_clarity",
+        "question_answer_unit_incomplete"
+      ],
+      "review_milestones": {
+        "interest_state": "INTERESTING_CANDIDATE",
+        "interest_is_hypothesis": true,
+        "eligibility_state": "ELIGIBLE_FOR_REVIEW",
+        "human_review_state": "HUMAN_REVIEW_PENDING",
+        "human_review_completed": false,
+        "preview_approved": false,
+        "publish_ready": false,
+        "narrative_quality_verified": null,
+        "acoustic_quality_verified": null,
+        "visual_quality_verified": null,
+        "speaker_identity_verified": null,
+        "crop_approved": false
+      },
+      "human_review_completed": false,
+      "audio_listened_by_human": false,
+      "preview_approved": false,
+      "publication_ready": false,
+      "proposed_limits_applied_to_candidate": false,
+      "semantic_completion_verified": null
+    },
+    {
+      "candidate_id": "MOMENT_00020_0000",
+      "start": 3688.94,
+      "end": 3744.38,
+      "title": "O perrengue que o glamour do evento esconde",
+      "hook": "O resultado constrangedor é dito na abertura; não depende de inventar um clímax posterior.",
+      "context": "SEG_01372 inicia o relato. Se usar o contraste “glamour”, ouvir também SEG_01369–01371 em 3681.62–3688.74.",
+      "development": "SEG_01373–01399: segurar a vontade, roupa, show, chuva, tentativa de banheiro e caminho ao hotel.",
+      "ending": "SEG_01400 comenta “foi perrengue chique”. Proposta para inspeção, não fechamento semanticamente confirmado. SEG_01401 termina em handoff; não anexar como conclusão limpa.",
+      "quality_hypothesis": "Promissor como relato e contraste com glamour, mas sensível e dependente do tom; humor não verificado.",
+      "risks": [
+        "Original termina antes da continuação do hotel",
+        "ASR “rock rico” e outras falas coloquiais precisam de escuta",
+        "Constrangimento pessoal exige cuidado editorial; não ampliar a exposição por sensacionalismo",
+        "O autoquestionamento dentro do relato não prova pergunta externa nem resposta independente"
+      ],
+      "human_tasks": [
+        "Confirmar o evento e a fala inicial pelo áudio",
+        "Rever o término em 3744.38 e o comentário seguinte",
+        "Avaliar tom, dignidade e necessidade do contexto sobre glamour"
+      ],
+      "proposal_kind": "human_inspection_only",
+      "original_interval": {
+        "start": 3688.94,
+        "end": 3729.8
+      },
+      "inspection_interval": {
+        "start": 3688.94,
+        "end": 3744.38,
+        "duration_seconds": 55.44
+      },
+      "duration_contract": {
+        "target_min_seconds": 30.0,
+        "target_max_seconds": 90.0,
+        "hard_min_seconds": 8.0,
+        "hard_max_seconds": 180.0,
+        "allow_story_exception": true
+      },
+      "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+      "historical_score": 0.23,
+      "old_queue_position": 22,
+      "new_queue_position": 6,
+      "canonical_evidence": [
+        {
+          "segment_id": "SEG_01372",
+          "start": 3688.94,
+          "end": 3696.5,
+          "speaker": "SPEAKER_02",
+          "text": "Tem uma história que eu já contei até, que é em Donos da Razão, principalmente, que teve um rock rico e eu xixi na calça no final, indo pro hotel."
+        },
+        {
+          "segment_id": "SEG_01373",
+          "start": 3696.8,
+          "end": 3698.44,
+          "speaker": "SPEAKER_02",
+          "text": "Porque eu fiquei..."
+        },
+        {
+          "segment_id": "SEG_01374",
+          "start": 3698.44,
+          "end": 3699.1,
+          "speaker": "SPEAKER_02",
+          "text": "Assim, né?"
+        },
+        {
+          "segment_id": "SEG_01375",
+          "start": 3699.16,
+          "end": 3700.08,
+          "speaker": "SPEAKER_02",
+          "text": "Eu, foi culpa minha."
+        },
+        {
+          "segment_id": "SEG_01376",
+          "start": 3700.66,
+          "end": 3701.06,
+          "speaker": null,
+          "text": "Eu"
+        },
+        {
+          "segment_id": "SEG_01377",
+          "start": 3701.06,
+          "end": 3703.92,
+          "speaker": "SPEAKER_02",
+          "text": "fiz uma coisa que não se deve fazer, que é segurar o xixi."
+        },
+        {
+          "segment_id": "SEG_01378",
+          "start": 3704.46,
+          "end": 3709.3,
+          "speaker": "SPEAKER_02",
+          "text": "E eu, naquela ânsia do primeiro dia de transmissão, Fui segurando."
+        },
+        {
+          "segment_id": "SEG_01379",
+          "start": 3709.34,
+          "end": 3711.74,
+          "speaker": "SPEAKER_02",
+          "text": "Era roupa complicada também, que a gente inventa?"
+        },
+        {
+          "segment_id": "SEG_01380",
+          "start": 3712.08,
+          "end": 3712.84,
+          "speaker": "SPEAKER_02",
+          "text": "Fui, fui segurando."
+        },
+        {
+          "segment_id": "SEG_01381",
+          "start": 3712.88,
+          "end": 3713.66,
+          "speaker": "SPEAKER_02",
+          "text": "segurando lookinho."
+        },
+        {
+          "segment_id": "SEG_01382",
+          "start": 3713.7,
+          "end": 3714.32,
+          "speaker": "SPEAKER_02",
+          "text": "Não, de boa, gente."
+        },
+        {
+          "segment_id": "SEG_01383",
+          "start": 3714.36,
+          "end": 3715.18,
+          "speaker": "SPEAKER_02",
+          "text": "Tá tranquilo."
+        },
+        {
+          "segment_id": "SEG_01384",
+          "start": 3715.24,
+          "end": 3715.8,
+          "speaker": "SPEAKER_02",
+          "text": "Vamos nessa."
+        },
+        {
+          "segment_id": "SEG_01385",
+          "start": 3716.52,
+          "end": 3718.08,
+          "speaker": "SPEAKER_02",
+          "text": "Acabou, eu fui embora pro hotel ou não?"
+        },
+        {
+          "segment_id": "SEG_01386",
+          "start": 3718.12,
+          "end": 3720.0,
+          "speaker": "SPEAKER_02",
+          "text": "Falei, vou terminar de ver o show, ficar mais um pouquinho."
+        },
+        {
+          "segment_id": "SEG_01387",
+          "start": 3720.28,
+          "end": 3721.02,
+          "speaker": "SPEAKER_02",
+          "text": "E não fui no banheiro."
+        },
+        {
+          "segment_id": "SEG_01388",
+          "start": 3721.7,
+          "end": 3722.68,
+          "speaker": "SPEAKER_02",
+          "text": "Caiu uma chuva."
+        },
+        {
+          "segment_id": "SEG_01389",
+          "start": 3722.96,
+          "end": 3723.32,
+          "speaker": "SPEAKER_02",
+          "text": "Nossa."
+        },
+        {
+          "segment_id": "SEG_01390",
+          "start": 3723.5,
+          "end": 3726.06,
+          "speaker": "SPEAKER_02",
+          "text": "E aí, a gente lá, correndo pra ir embora na chuva."
+        },
+        {
+          "segment_id": "SEG_01391",
+          "start": 3726.1,
+          "end": 3727.2,
+          "speaker": "SPEAKER_02",
+          "text": "E o xixi, gente."
+        },
+        {
+          "segment_id": "SEG_01392",
+          "start": 3727.48,
+          "end": 3727.84,
+          "speaker": "SPEAKER_02",
+          "text": "O xixi."
+        },
+        {
+          "segment_id": "SEG_01393",
+          "start": 3727.9,
+          "end": 3729.8,
+          "speaker": "SPEAKER_02",
+          "text": "Aí eu tentei em vários lugares, não dava."
+        },
+        {
+          "segment_id": "SEG_01394",
+          "start": 3730.22,
+          "end": 3733.32,
+          "speaker": "SPEAKER_02",
+          "text": "Aí o hotel era muito perto do festival."
+        },
+        {
+          "segment_id": "SEG_01395",
+          "start": 3733.46,
+          "end": 3734.68,
+          "speaker": "SPEAKER_02",
+          "text": "Então a gente foi a pé e tal."
+        },
+        {
+          "segment_id": "SEG_01396",
+          "start": 3734.94,
+          "end": 3736.54,
+          "speaker": "SPEAKER_02",
+          "text": "Tentei parar num hotel que vinha antes."
+        },
+        {
+          "segment_id": "SEG_01397",
+          "start": 3736.64,
+          "end": 3737.34,
+          "speaker": "SPEAKER_02",
+          "text": "Não me deixaram."
+        },
+        {
+          "segment_id": "SEG_01398",
+          "start": 3737.34,
+          "end": 3740.96,
+          "speaker": "SPEAKER_02",
+          "text": "ficaram aí tava chovendo eu falei bora nessa vamos com a chuva mesmo"
+        },
+        {
+          "segment_id": "SEG_01399",
+          "start": 3740.96,
+          "end": 3742.16,
+          "speaker": null,
+          "text": "já"
+        },
+        {
+          "segment_id": "SEG_01400",
+          "start": 3742.42,
+          "end": 3744.38,
+          "speaker": "SPEAKER_01",
+          "text": "foi perrengue chique"
+        }
+      ],
+      "source_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00020_0000",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 3688.94,
+          "end": 3744.38
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=3688.94,3744.38"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=3688.94,3744.38"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "original_candidate_media_references": {
+        "schema_version": "1.0",
+        "candidate_id": "MOMENT_00020_0000",
+        "source_sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b",
+        "source_interval": {
+          "start": 3688.94,
+          "end": 3729.8
+        },
+        "original_video": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "media_fragment": "#t=3688.94,3729.8"
+        },
+        "original_audio": {
+          "locator": {
+            "type": "source_sha256",
+            "sha256": "0231c20cfd8147d92926bda4f452777f3803c38b248064e65548f0b12a5fb98b"
+          },
+          "kind": "original_video_audio_stream",
+          "media_fragment": "#t=3688.94,3729.8"
+        },
+        "existing_previews": [],
+        "media_included": false,
+        "human_audio_verified": null,
+        "preview_approved": false,
+        "publication_ready": false
+      },
+      "local_inspection_player": "review_players/MOMENT_00020_0000_inspection.html",
+      "recorded_editorial_blockers": [
+        "answer_or_payoff_unresolved",
+        "humor_context_exceeds_topic_shot_or_duration",
+        "punchline_not_grounded",
+        "question_answer_unit_incomplete",
+        "question_without_complete_answer"
+      ],
+      "recorded_gate_reasons": [
+        "answer_or_payoff_unresolved",
+        "automatic_shortlist_gate_not_passed",
+        "below_editorial_quality_floor",
+        "clean_ending:false",
+        "commercial_review_pending",
+        "humor_context_exceeds_topic_shot_or_duration",
+        "humor_integrity:incomplete",
+        "ineligible_by_quality_gate",
+        "missing_required_score:standalone_clarity",
+        "punchline_not_grounded",
+        "question_answer_unit_incomplete",
+        "question_without_complete_answer"
+      ],
+      "review_milestones": {
+        "interest_state": "INTERESTING_CANDIDATE",
+        "interest_is_hypothesis": true,
+        "eligibility_state": "ELIGIBLE_FOR_REVIEW",
+        "human_review_state": "HUMAN_REVIEW_PENDING",
+        "human_review_completed": false,
+        "preview_approved": false,
+        "publish_ready": false,
+        "narrative_quality_verified": null,
+        "acoustic_quality_verified": null,
+        "visual_quality_verified": null,
+        "speaker_identity_verified": null,
+        "crop_approved": false
+      },
+      "human_review_completed": false,
+      "audio_listened_by_human": false,
+      "preview_approved": false,
+      "publication_ready": false,
+      "proposed_limits_applied_to_candidate": false,
+      "semantic_completion_verified": null
+    }
+  ],
+  "purpose": "five_editorial_inspection_proposals_not_official_shortlist",
+  "publication_ready": false
+}

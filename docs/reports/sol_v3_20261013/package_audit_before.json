@@ -1,0 +1,4950 @@
+{
+  "package": "pacotes_para_enviar/SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261013_035536_877801_09f678.zip",
+  "sha256": "843b5c05376f5c8a63845e225ad3069bd5778efd5afe888e1135ae63ecb7ac2d",
+  "member_count": 66,
+  "verified_files": [
+    {
+      "path": "audio/sound_events.json",
+      "bytes": 62,
+      "sha256": "80d7e08e84fbbcdc06f9b3101ad2460ec7ea7d5ecc4d410ca4336deb9f0220cf"
+    },
+    {
+      "path": "camera/camera_summary.json",
+      "bytes": 3460,
+      "sha256": "9b0dfe1fe9e11e0b90ca56119826276dede639a1bdc5fe3b4d51553f4fec1436"
+    },
+    {
+      "path": "camera/candidate_camera_plans.json",
+      "bytes": 4855,
+      "sha256": "9f3211884acf9ba3b266df79c0243565a61aa3b4677647ea2bc092c507559399"
+    },
+    {
+      "path": "candidates/MOMENT_00000_0000.json",
+      "bytes": 27865,
+      "sha256": "bdc412fb47ffe56218c0b65c47985f1040dd6a0a49ee9f623eade77e74dfd290"
+    },
+    {
+      "path": "candidates/MOMENT_00000_0001.json",
+      "bytes": 27465,
+      "sha256": "7b8ce4a4ed7af80ac6112c1c3da3ce1eab4b60442f8de0cad9d9fbd5d5bbdb7e"
+    },
+    {
+      "path": "candidates/MOMENT_00000_0002.json",
+      "bytes": 32361,
+      "sha256": "45751366ead3ef203718a55ed40808879f240888d48d966c131741371cc81346"
+    },
+    {
+      "path": "candidates/MOMENT_00000_0003.json",
+      "bytes": 29390,
+      "sha256": "9493eac21d17709194ba37288f452de4b24f0ebcb27c747225ade65ff4ad541a"
+    },
+    {
+      "path": "CURATION_INDEX.json",
+      "bytes": 24669,
+      "sha256": "e5aaddb3418a379f4f79522f9d742bb70ea4926d6751d91d84b7e647a264e081"
+    },
+    {
+      "path": "editorial/alternate_groups.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/audit_report.json",
+      "bytes": 5541,
+      "sha256": "fd09c87749bb53b5db89e192d273d368f69c83d1b4ad8a2b3888acb4d1c41f18"
+    },
+    {
+      "path": "editorial/candidate_catalog.json",
+      "bytes": 117124,
+      "sha256": "53cef1238fce96437726f5d159c9bfb9c5ff35ee3f89b608a17e03b4eeb68cf6"
+    },
+    {
+      "path": "editorial/commercial_blocks_s8.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/commercial_review_s8.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/default_shortlist.json",
+      "bytes": 56,
+      "sha256": "928bb4b28586413ca65988e4753a10fd5723f9f90df1a3e435a05544cca033ba"
+    },
+    {
+      "path": "editorial/entities.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/excluded_candidates.json",
+      "bytes": 492,
+      "sha256": "1bb7cca51d524bba0070609ead63152bef2472b37c8a5ec4b8cb0a437d1a994c"
+    },
+    {
+      "path": "editorial/excluded_commercials.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/final_gate_report.json",
+      "bytes": 451,
+      "sha256": "2e2d1cad24b92cd880563d44a2843ca24d3be1bb4139943ecd61b19ae6264413"
+    },
+    {
+      "path": "editorial/human_review_queue.json",
+      "bytes": 4394,
+      "sha256": "8f8b6f9395b74f1fb3a2b88a3680e60b9a82e38ac1a03e60875bce0d52f3c018"
+    },
+    {
+      "path": "editorial/program_sections.json",
+      "bytes": 1669,
+      "sha256": "c0d44cd53fc62ed8b7c79421e134c7fad81a2918838218ff5ca107000682cbe0"
+    },
+    {
+      "path": "editorial/provisional_review_queue.json",
+      "bytes": 159,
+      "sha256": "70a889efeb4e5665739816f0ec20b18f360a9f2ede77d3bb0c4db5058cffb605"
+    },
+    {
+      "path": "editorial/qa_pairs.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/selection_report_s3.json",
+      "bytes": 20670,
+      "sha256": "43d984f9c6f9a091c3d3ff44debb9c84dc7e436df42f62c0609bb066bde2f1cd"
+    },
+    {
+      "path": "editorial/story_arcs.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "editorial/topics.json",
+      "bytes": 3292,
+      "sha256": "8e0d19841e197762c9bcee8ad39c0b2d4c8e73d09586986359e863ad44ead80c"
+    },
+    {
+      "path": "people/participants.json",
+      "bytes": 842,
+      "sha256": "d0e333db967b71c7439718f60f862dca232256d9ea9e56c27db435f18f02d9f2"
+    },
+    {
+      "path": "people/person_identities.json",
+      "bytes": 245,
+      "sha256": "bd43335709a47f17dd8d7e0e7df41705d547118cb3d09f87fae73142a80d3344"
+    },
+    {
+      "path": "people/speaker_person_summary.json",
+      "bytes": 1489,
+      "sha256": "b195cc826c9e7daa50cff8833e4b1a162b72f0fb0db6e94ed33555ee59d4ae71"
+    },
+    {
+      "path": "people/speakers.json",
+      "bytes": 317,
+      "sha256": "c322aaddf2dc2807ba7e658eaeaa455ac5e986563284ba4bc0c9a17acb3da5cf"
+    },
+    {
+      "path": "quality/candidate_quality.json",
+      "bytes": 3372,
+      "sha256": "7ad13d795e14ff1fb2aad115cef768ec01b01ed24f5d1948536f10f3a539ede2"
+    },
+    {
+      "path": "README_FIRST.md",
+      "bytes": 909,
+      "sha256": "270dee06e4249d83aa30b6ddfe2a57040a82eb9afc045df82dc0968735f0a9f0"
+    },
+    {
+      "path": "schemas/second_curation_decisions.schema.json",
+      "bytes": 1496,
+      "sha256": "f4152a1252ba6debebca9052196c3d544f9b28fe5d01317cd0824dee6757a913"
+    },
+    {
+      "path": "SECOND_CURATION_DECISIONS.template.json",
+      "bytes": 147,
+      "sha256": "d2e7358274c591e2d0159970c032f8af43fd938833aece8de7f7a56ba9b0238e"
+    },
+    {
+      "path": "SECOND_CURATOR_BRIEF.json",
+      "bytes": 24875,
+      "sha256": "4fcfc2ffbd8df685a02cb53ad56ff73a0c973d8fc4e98f946aed9f92cf97909f"
+    },
+    {
+      "path": "social/caption_style_recommendations.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "social/render_profiles.json",
+      "bytes": 2407,
+      "sha256": "d1c31b7d4e38437db95ac6dbb80b45aaecabfa98a30013b00c7eb2b226fe8c64"
+    },
+    {
+      "path": "social/stories_candidates.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "social/stories_manifest.json",
+      "bytes": 4654,
+      "sha256": "39307f002ba2552f761cfd19eab6f5fd944ece98bca194df99ea15eeee735877"
+    },
+    {
+      "path": "social/title_suggestions.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "source/metadata.json",
+      "bytes": 341,
+      "sha256": "6f268eb9022bd724f20b6c7a0128c927c4908fd5bf225ffd2b0717d0822f3e3f"
+    },
+    {
+      "path": "subtitles/subtitle_review_s7.json",
+      "bytes": 1733,
+      "sha256": "f4e0a92443d43db893ad3ed09099b94ac5433b50ff5e65b8a6935ff70b01f093"
+    },
+    {
+      "path": "summary/analysis_summary.json",
+      "bytes": 44635,
+      "sha256": "e71d20e02af810a2d98b1c392d8f93ac5a6cf00ddf6ab6e69bf7b9445f01a806"
+    },
+    {
+      "path": "summary/final_quality_gate.json",
+      "bytes": 615,
+      "sha256": "33ea6f9a048e35492d017809cb192edb19d783895cc23faa3b4831b39cbc978f"
+    },
+    {
+      "path": "summary/performance_summary.json",
+      "bytes": 35339,
+      "sha256": "959f77c75f7a8700d8d0b89426d233144590890b9a39b03c6cc45a154a17a303"
+    },
+    {
+      "path": "summary/preview_validation.json",
+      "bytes": 120,
+      "sha256": "ea9d7917728358ac937852ab01a90a0d451e26c8c34c7b3128c6412a2eac53e1"
+    },
+    {
+      "path": "summary/privacy_redactions.json",
+      "bytes": 851,
+      "sha256": "e92f39f13932390fb2562750cb35e17fcbadb9f28165f3edde87218f302d438a"
+    },
+    {
+      "path": "summary/quality_summary.json",
+      "bytes": 72890,
+      "sha256": "fb5c0c19622b7dba87d807c88ea4df796434cdcc9faba21b77f1b2a2cad06566"
+    },
+    {
+      "path": "summary/upstream_contract_validation.json",
+      "bytes": 3049,
+      "sha256": "f1ca8f0659775830d60c4966f22815a8d963574be7c78ec000da51ef5c0dcfac"
+    },
+    {
+      "path": "transcript/language_hypotheses.json",
+      "bytes": 3842,
+      "sha256": "1415915617b4b423d0040ca8b02110c9171b2d890e6bf6d07d667c2dd80d0f34"
+    },
+    {
+      "path": "transcript/original_import_segments.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "transcript/relevant_low_confidence_words.json",
+      "bytes": 8404,
+      "sha256": "2cfa310d70e0483f54a6770fba4179c76cbc950268f6563c974acabf21001326"
+    },
+    {
+      "path": "transcript/relevant_segments.jsonl",
+      "bytes": 3460,
+      "sha256": "a4fb4d12c9ecdc3d730a21d7b4f2206330ae198374c079cc010e31d2bbd10dd4"
+    },
+    {
+      "path": "transcript/relevant_words.jsonl",
+      "bytes": 17624,
+      "sha256": "3bbd3cc646cd072c2595ee58207dd156f9735bd0166ea32e36c5092a169a212a"
+    },
+    {
+      "path": "transcript/review_budget.json",
+      "bytes": 119,
+      "sha256": "1b2d8f0b9f7ffece6e88100b9bb5ce9adf06040dd2d7b829c29178af9935cba0"
+    },
+    {
+      "path": "transcript/transcript.srt",
+      "bytes": 362,
+      "sha256": "3ce93e81c1693936c041810302ffcdb6196fd72e5d9248a91492cd20c7118ac4"
+    },
+    {
+      "path": "transcript/transcript.txt",
+      "bytes": 405,
+      "sha256": "be14c6b2b27a1be9e9377e354d8ccc882e95edf2435b19f04f903db6085d59a6"
+    },
+    {
+      "path": "transcript/transcription_alternatives.json",
+      "bytes": 28578,
+      "sha256": "215719583915a48c0c2f265dbb3c7780d61ac1c959c5bb601dfeb61fb302dd96"
+    },
+    {
+      "path": "transcript/transcription_provenance.json",
+      "bytes": 16699,
+      "sha256": "527c2bb5b780a8a51c1c8fa63a0dcdf80f1434df67e262213ce3508a4a5a95b0"
+    },
+    {
+      "path": "transcript/translations.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "visual/broadcast_graphics_s8.json",
+      "bytes": 910,
+      "sha256": "5a4ac32e3daf372f698b56cd17aa3d48895d261176bb44052e88729110a7c956"
+    },
+    {
+      "path": "visual/commercial_ocr_s8.json",
+      "bytes": 19777,
+      "sha256": "360fe2b15eef00a25994171ab29fec11bfd57363127b4532326a5c2702081bae"
+    },
+    {
+      "path": "visuals/MOMENT_00000_0000/contact_sheet.jpg",
+      "bytes": 82706,
+      "sha256": "3a3de9cf085a91217e3039bb5f873880c21a642035a240d6d59957594992b13e"
+    },
+    {
+      "path": "visuals/MOMENT_00000_0001/contact_sheet.jpg",
+      "bytes": 84042,
+      "sha256": "2b699196eaaf2ba3ded93bd9bcb4998167132599c6d52442825a90046111eec6"
+    },
+    {
+      "path": "visuals/MOMENT_00000_0002/contact_sheet.jpg",
+      "bytes": 83692,
+      "sha256": "83d4fd41a895c45d974ff219fb3611d96550913cf7929717743cae4ef04676c6"
+    },
+    {
+      "path": "visuals/MOMENT_00000_0003/contact_sheet.jpg",
+      "bytes": 82780,
+      "sha256": "766cb5314dd66ed7c84e32955435817248d73a09dd6009cd4251215f4718b48a"
+    }
+  ],
+  "path_checks_passed": true,
+  "crc_passed": true,
+  "before_requested_package_available": false,
+  "documents": {
+    "people/speaker_person_summary.json": [
+      {
+        "speaker_id": "SPEAKER_00",
+        "person_id": null,
+        "confidence": null,
+        "support_share": 0.0,
+        "evidence_windows": 0,
+        "evidence_count": 0,
+        "positive_windows": 0,
+        "negative_windows": 0,
+        "conflicting_windows": 0,
+        "visibility_coverage": 0.0,
+        "mouth_audio_score": null,
+        "temporal_consistency": null,
+        "support_seconds_weighted": 0.0,
+        "support_seconds": 0.0,
+        "alternatives": [],
+        "association_status": "UNRESOLVED",
+        "method": "insufficient_consensus",
+        "source": "diarization_and_independent_mouth_audio_windows",
+        "unresolved_reason": "insufficient_independent_evidence",
+        "evidence_refs": [],
+        "evidence": [],
+        "needs_review": true,
+        "confidence_is_calibrated": false,
+        "audio_video_sync": {
+          "status": "not_measured",
+          "independent_windows": 0,
+          "median_lag_seconds": null,
+          "spread_seconds": null,
+          "consistent": false
+        }
+      },
+      {
+        "speaker_id": "SPEAKER_01",
+        "person_id": null,
+        "confidence": null,
+        "support_share": 0.0,
+        "evidence_windows": 0,
+        "evidence_count": 0,
+        "positive_windows": 0,
+        "negative_windows": 0,
+        "conflicting_windows": 0,
+        "visibility_coverage": 0.0,
+        "mouth_audio_score": null,
+        "temporal_consistency": null,
+        "support_seconds_weighted": 0.0,
+        "support_seconds": 0.0,
+        "alternatives": [],
+        "association_status": "UNRESOLVED",
+        "method": "insufficient_consensus",
+        "source": "diarization_and_independent_mouth_audio_windows",
+        "unresolved_reason": "insufficient_independent_evidence",
+        "evidence_refs": [],
+        "evidence": [],
+        "needs_review": true,
+        "confidence_is_calibrated": false,
+        "audio_video_sync": {
+          "status": "not_measured",
+          "independent_windows": 0,
+          "median_lag_seconds": null,
+          "spread_seconds": null,
+          "consistent": false
+        }
+      }
+    ],
+    "summary/analysis_summary.json": {
+      "analysis_status": "partial",
+      "analyzer_version": "4.4.0",
+      "build_provenance": {
+        "schema_version": "1.0",
+        "analyzer_build": "R4.9-S4-TRACKING-FACIAL",
+        "code_fingerprint": "57a06f3f7e57250a33fa30245dbe1810474d0265607112fbd5d1c79937b46d9f",
+        "exporter": {
+          "analyzer_version": "4.4.0",
+          "analyzer_build": "R4.9-S4-TRACKING-FACIAL",
+          "code_fingerprint": "57a06f3f7e57250a33fa30245dbe1810474d0265607112fbd5d1c79937b46d9f",
+          "source_file_hashes": {
+            "__init__.py": "428d6b47347477e0c800f652b7b47da222c8bdea50c4a8babaab4e9ba7a531e6",
+            "active_speaker.py": "fbbaffce7e72abf52915ea9272aad9f22c867b1c092fc0fbeed4956b21c54fcd",
+            "analysis_quality.py": "00f688856e627e95e288be9d6563ff962a0e842e7fe630c757f4d65e10996932",
+            "asd_backend.py": "43c8a95b918a38b85a60d1415e526f080380fe2bca5ab4d563a8cb3f610fc10d",
+            "audio.py": "716dc223c0f6301b4f9c7a46102fb6f9909f7552e15f5c149fce0432fa7a2d12",
+            "baseline_audit.py": "fea801fd561f751756760960021603112947a4a18d8d8b71db86d619ac32264c",
+            "body_ab.py": "e88ec4c0cc56ea613580265195ba161b7827304fe0224f81dc1a4fadc4c5d378",
+            "broadcast_graphics.py": "4cf7c49b659a8d4f3588baa18b399a59d9750cffe6a9d68577db47d14012c1c0",
+            "build_provenance.py": "1daefdfe7f574ee8a5a4ba0d783990f0a016ff465ecd2ff4daeaebc193751c12",
+            "camera_director.py": "e164e9617e1271e4019977bc6bc781b149929a1f7b7f2f726491c58b21a0d392",
+            "camera_evidence.py": "bb19955574523041e94fecec2d5be1e3a7ddfac0921aa85f830509752c47539a",
+            "camera_geometry.py": "4cf6bc8bc5272207ca41d60cd7d7d79962b58160e4e4d2b29b5a248ec9f60a95",
+            "camera_motion.py": "a6eca282f2c11c9c99471f6e14b7d1b45d9e08a10ab23e9986e4c7ffb8d1ab0e",
+            "camera_preflight.py": "882a850b343634fbca33147feb5db76b97f53554346ad140108bbd62c6412c30",
+            "camera_timeline.py": "4a73360aa274160b637b7065e9d3f7dcc3c65016afd451b4d6d1833e3cb4f803",
+            "commercial_gate.py": "f090750fa414d14ff3b68263ce19cd176e790b526f5e466186b02d6b3f64bb2d",
+            "compact_artifacts.py": "25f3a04011d55c2bde135558e3dab434a54a00b9227ffe3c3aaac2138f294960",
+            "config.py": "c7641a407dec1beaeab1948ec7e42657dc5d927759b96c8b7900ab2920502385",
+            "core.py": "9a94ca2ebf069553c727f5f782eb56a6decffb0685e6a52ca504d29a4a06494f",
+            "curation_canary.py": "31120035b5292cced589b6b2f094ae79972c2f1566abcae28295aa8c6e594547",
+            "curation_recovery.py": "c6701769654bd6b89abd8933e5a4147b5e103461538bd640582d71702d0fa74b",
+            "curator_bridge.py": "e56781894519472ee8f5c2095849390ff6a521487a0234bf268240aa8d0aff02",
+            "curator_delivery.py": "f9a1ee6ea445ecbef9f19bcb3dfa19379d8c92ae344a9eb1e4e207e3f602b688",
+            "diagnostic_dashboard.py": "9fe768a356b5434100e4feb5e72c875596701d2132b6525d08ba501c4a896c52",
+            "diarization.py": "842175f4affc69dc0a6f97a49c135225afe3d92552d5c02f373274d52442331f",
+            "director_config.py": "137d7fa35ff538c389988a2a367e8cacbf95792e05543d42d375f511efd11d7d",
+            "director_integration.py": "fc7411ea65121e7cffe61fcbbf2a4136359b3926bf2742ffa284426291a6a4c1",
+            "editorial.py": "9d4e3944b84dc92551dc92ac2df1bf00aeca1631e56b16692f7fb8292cc5299d",
+            "editorial_handoff_audit.py": "adadc4b0b9d1d8f7122a78e096d7b7882f53e6e39dac871bd7d2e65f0122a204",
+            "editorial_intelligence.py": "b02c5e94bf83e5ce97022514ccb2280f0b1431fd8e54fba834f403b9ab335785",
+            "editorial_outcome.py": "64886e3992bf289309605faef856d65e1f4a3240fa0e0cd45a5ef107b41ca997",
+            "execution_receipts.py": "facfa2092ed1731c36245233e7702f69dbd93f0a3cb9852b99a87440005c312a",
+            "export_privacy.py": "c7c049e96a609f20e7ea2565ce54a10a5ec7161fa4eb16495fce5352c4c5a3cb",
+            "face_quality.py": "6ba5111b6ee1ec45b7f21a2a6203acd751cee0356e90f342296572b9946674f9",
+            "global_camera_planner.py": "a2cb30e8107a30332f7d3a4dc8adbead89968075b161e01347c0125ba7fc6f6b",
+            "gpu_runtime.py": "1e23ced03282c9ca768ebd5357a08f5a21ca451e8d8a8733fa830fc955f68d3e",
+            "handoff.py": "97c8157567ac4e299e69494f77c786d238a6146a1a3e4a02ebe8397b6123449c",
+            "homologation_audit.py": "a9987fe9879bb79ba4991844e6c16f45166e6a9c59d1be42a6fa3cecc92c1ff5",
+            "homologation_s11.py": "8bbe6fc7035563d26df39385e93b61d23691b3382fc82ffa3d427774d6abbd6c",
+            "identity_goldset.py": "55319506c86b6ccae5e99fb1d2e2b1778a7a2139a4e3f2a29cd10da8242e98ec",
+            "inference_smoke.py": "d9dde32918872dddbe62f3a93a0b72141fe8550bc86e5fedc3c96f56eb484d83",
+            "integrity_contracts.py": "156ee8aa933e00358b400a4e587bb263f6e6da3ea786414d0835827bbab2e5f0",
+            "interview_layout.py": "067c397975797c5edf4bae04c5fba94dec9f691418a7667bb5428c30bf748c55",
+            "legacy_review.py": "dfbf03ef3820064855fff3a75f381cee47d7d3c63c8b90f5780e96099a4c9081",
+            "master_timeline.py": "d226a4cce0fce2561a97c37c2a9304ef26ca9930ad6e3f72fa77b09e05713085",
+            "media.py": "88b0e14ba03f8a742e620f37939eac7ee0c724a04c82924d1b4d7a54aff0c126",
+            "media_runtime.py": "67d2433fb4015677a3f7cbdb252bd0adac2b6ebcebd21751385d23f5c76f8205",
+            "model_cache.py": "fcd0277eca2fa01cca33ea58bb482b53fe87c6bbdd2689b104bc1954ff906f52",
+            "ocr.py": "4c2bc4de833decebd855bdbe503455a5b97f8fc3572a8eaae94fdd00d4ca0d90",
+            "ocr_diagnostics.py": "4934f3df3ab8d331226b5b8bb376df7aa39ac89f8fa8f6a94ea0df524a0985f3",
+            "ocr_execution.py": "edbec73406ad7ffeb203a1e440d70910b9482643a585132f346c4e090f792b21",
+            "ocr_runtime.py": "8e775f2375ada0d744d3609ca327af736d097bf5868f279242a6407a454d8196",
+            "ollama_local.py": "5e3fe76c689fd58a5826ef0db83a560bc1dcc4ba99c214aa5d259485062bdae6",
+            "paths.py": "eccdac6fad2a387548d071e8e930f3b681ee6f6064e608f8473b0e66201396d2",
+            "perception_diagnostics.py": "7dfeb9c5b7dfd0f76d60e08f4d37ea9ca24e01213d82158b5ff67fdba3e30f5f",
+            "performance.py": "60780de02eb476cec88b12f6881b1fb721d897cef84f8aef64fbe162b7027906",
+            "performance_acceptance.py": "82aab04c6a3b596d88444b4be3e03d16d9f960651205e55bdad79b2f540a922d",
+            "person_motion.py": "833241aed57cf908ed877275e5f8485bb88edb7343e811231d0dc7f4f21ff71a",
+            "person_reid.py": "b081a5bb76dbc7fffceb264a81dbf2e9e75cbf965b7a24f032134b7665e4902f",
+            "pipeline.py": "7fe351a80de8ce5b8d0644fff99069a4778698b6817ee80d98075a509e808b16",
+            "preflight.py": "912b40027b7c853ff5d3327cc745e4254fd6851df6a78ab6254f9ee956a6f7e6",
+            "preview_integration.py": "6cfa76560f265f8821d87cf4bb610665dab290579dbcf5fb6a259990a7e73c80",
+            "preview_renderer.py": "73bc2ccb6030de84086c4055ae418f52877e260ca9a866cf903aaa1e1bdde86a",
+            "preview_verifier.py": "a44c53c92f4c85eeb3ae3a21a38cf15728c69cc4df201052b39e08dfad990f52",
+            "progress.py": "b754f32868efb0a269317b8e5b27652efcf37872e5834727ff7fcd789e0a1257",
+            "qa_audit.py": "2252911e50fa87aed38bc263d6b0eff929c0c4bf132949d38f312172bc1a2f95",
+            "replay.py": "0eae72952647a650be68851e34a4691603f059a3f81ba80632e048f84555434b",
+            "reports.py": "4a983bda23b5fb19dd78c233b3f8ed7f2c727a5d35e1d50cffef16b2abbfc40a",
+            "review_overrides.py": "a2057e18215dcb47d2837658e50eb73f78d10961c358a7ffda2b7e99e96deb12",
+            "round62_audit.py": "0c3219d038e0b6834977a8070e11576b10046b1e04bab2f8329975b7fe33ff2f",
+            "run_status.py": "bb311e574c6a6e70df5471aecff764953a6d16776c020655293232ad31ffd417",
+            "runtime_metrics.py": "18c1f5f46ab9bd4ac7069d052ce41bd79d77747dea6eefa0a23716b054ef5ff0",
+            "safe_area.py": "73e40f6f98a7084ce378f2e697ac6a63579f71602acdb1fcaf8638c43c3ecfb8",
+            "scenes.py": "228345a91a9581b4bfd5934d14fc7c4db10d115101cdbbd322f2119406571df2",
+            "second_curation.py": "11c169f32d11ea188259d60e9323b3efdc8779820fa8482bdb1d1ff27169371a",
+            "second_curation_decisions.py": "853b5915704f23e36a2d8a2d564960e67882a81e7849d2184ffe05e7cf42e9b1",
+            "second_curation_export.py": "e39ebb4be006a802a3556800e80e87c0690bc0fe17e6f1c6d554de0ff7cc18be",
+            "semantic.py": "1893661538d4793a6e6b3abf9a1eef31c6f00489922a28019d9284319a400e71",
+            "semantic_benchmark.py": "7637e5946a94d071cc94450af448599f32debab41f6cccceea47a4d76cbe5e42",
+            "shots.py": "f53e34601f465899dcdc32dbb5fcc4f92b7e2d014f859e407c7df233d25cb970",
+            "social_output.py": "3760c446f290aa98204f95ef655e8236343713682be8c072f29d5da57594ceb0",
+            "speaker_goldset.py": "325620b63d277f5980ddabc4e20cb90808e9b4d7d47e6c33f574e02bf9a46eda",
+            "speaker_roles.py": "4d3c3e982ef37d7b43638272cff9aa56b98aa12a575074c21d7f5b72f1a6790b",
+            "speaker_signals.py": "4f1e64a477675f1c107582f86679404b624429898ba8502b3527be25c8c4e9a0",
+            "storage.py": "1d343bcd3ca2b060b2bc6e6be7d99624022f942547a3771dfa2fee1bc1a161fa",
+            "storage_dialog.py": "10df8cebc5b5046d57094b90a8ccbd62eb4ad47ce92e1cb543d10cf6e771eb4a",
+            "story_recovery.py": "bb1703207bee22b8f0516d5132179b8775490518428c1fe952b3f5fc766fc60e",
+            "subtitle_review.py": "b3edbfbed4dca2a470e7a06d7d5c6bd10a1c387f413e519619e041a28efa902f",
+            "subtitle_style.py": "71fef2fc99798eab2f3ff3dba64b571e6738823a3761231a557f881bcd579eaf",
+            "targeted_asr.py": "780dcd54408b374d28aa98663dae155958f23ee1feea69d9cce9e87f772b95a7",
+            "temporal.py": "f1c637e879eadd8878edee530f93b980f8d699f2f26f76753841340651d29ca5",
+            "timeline.py": "e1e6bd9cfea50f72fdaf8ec228ee0a768e04fce4f29a167c418ebc90c89dc75c",
+            "transcription.py": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+            "uncertain_words_audit.py": "d1b6ae5546d76d5a9483bbfbd103db877a0337f5e765e454c81731fa9c07298e",
+            "understanding.py": "662c166986241d37d7de771c434348cc4aebab8b7e97deeb697ef59ce8d62dd9",
+            "vision.py": "81de934db3910a9f4e927823c5e95d29697c1c5a2c22c2dd0b8f625405939689",
+            "vision_checkpoint.py": "597c4cdfe2137437570dece0cb3d8c4eb324c33e43bb9ff4cddc9ac21c2fbb2d",
+            "visual_identity_audit.py": "a8b806fc12590199ada8b043695fc9093fd1b8821bba4bcfb6e9121e2691f2d5",
+            "visual_review.py": "b0abfe34d046c1b83e500edaedd2b8168497f090a3603c0a47641a905eebd37e",
+            "visual_sampling.py": "ac9930498b67e2fadf75f5082da6823947bac85bdc5964a6ebcd707b5c8875b0",
+            "zoom_delivery.py": "6fc201124e8c7f2310e494ef513fde71ba63ac046bdc35ff93b02165d80d3cbd"
+          }
+        },
+        "stages": {
+          "01_metadata": {
+            "status": "ok",
+            "checkpoint_key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "e6ace75a400130ade0916f7987d3329f5297bd1c1d0d2e6f5902e706b8164ac6",
+            "effective_module_fingerprint": "a7ff93abda52af3311854fbeafc4ecd446b4ac874b86ca21ce8e7a8ba1d48123"
+          },
+          "02_audio": {
+            "status": "ok",
+            "checkpoint_key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "fbd547ba21ec4c6eda0fcb279c8dff9ec976f9ab704216635aa30bf22bdca0bf",
+            "effective_module_fingerprint": "542b3f150a956553054d3e3ec5b7dd78e0bfd4bd6917aeb904cfb208ba646918"
+          },
+          "03_audio_quality": {
+            "status": "ok",
+            "checkpoint_key": "443f1a1ecc45d83146ef8c66a0cb8a2d671c37a4446e0676b2850868b01f3ea7",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "783153d757bd12994623847e187d8b5bc2b181b5938176f983356886a8f9a874",
+            "effective_module_fingerprint": "542b3f150a956553054d3e3ec5b7dd78e0bfd4bd6917aeb904cfb208ba646918"
+          },
+          "04_transcription": {
+            "status": "partial",
+            "checkpoint_key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "ac0b421d1a76fae6096ff5d987f49376c83e90197732edf154f5b8abdb98f5b3",
+            "effective_module_fingerprint": "d65994b94f238af849a8bb652647bcc826cd0f9db83cf4377c542bdca6a1fe2a"
+          },
+          "05_diarization": {
+            "status": "ok",
+            "checkpoint_key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "077c5eb322f562f340950f1e2ac69fb2d6ab85bd627015d2e6586382925b056b",
+            "effective_module_fingerprint": "cb97554ae0386d14a1486c5fe730cd8a351fd955db66136c0c3bb7436e6d6b22"
+          },
+          "06_scenes": {
+            "status": "ok",
+            "checkpoint_key": "511f401a144a81db72d58db13ac1d283b2593cf1766d79dd14971e62c25ff664",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "841c67508cbc3882a5a305affe2d3a9acf65129fe04a896c83dd13b8a00e0ed1",
+            "effective_module_fingerprint": "53f3ea85717764ee4aed31c93efe2252a2d3dfe296d8e8554c0d23f2f636f404"
+          },
+          "07_people_tracking": {
+            "status": "partial",
+            "checkpoint_key": "72ab0920e07a62f394d6dd5b44e86d850291f853f5aa01db37da577ec3944dcf",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "807222a43c7f992b5a0c7941f17ded1a936c1389c6ac24f7b495509f0009960e",
+            "effective_module_fingerprint": "98d862dee1a9851527c99bccfab253ebae2c7d826b7c974bc938c0e8f1768555"
+          },
+          "08_person_reid": {
+            "status": "ok",
+            "checkpoint_key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "a6ac0207e2ab4171439187541508911bab4a3b2613b060aad784f69508888c9f",
+            "effective_module_fingerprint": "bcf74d9c59052a8121949225a185a2dc7a52725eab836904a1be6fbeae6bfa8c"
+          },
+          "09_person_motion": {
+            "status": "ok",
+            "checkpoint_key": "6ca62f3a217e4c6080ea8136e9435834f027e582bb62242c76ef9211a98b8d81",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "4774065c62198f24eac9baeb2578e20e6e59a7b0fe4e005626e4c3a665b2fc1e",
+            "effective_module_fingerprint": "9879b276917e3ae4f04cbdf8a440975fba4b141623bee1f38e7657cd04cb6239"
+          },
+          "10_active_speaker": {
+            "status": "partial",
+            "checkpoint_key": "158a84cd998bf0cb24551389ff84147235de0f49b1d619259e18fc32d23cc0ac",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "fa20baa38c8d5ab12801e27f3b4966a26a6962bd121f11a6f1e74227610d5fc1",
+            "effective_module_fingerprint": "8fab295098b4cf7684ab20f4c56e65bcada74941357aaefee1f36a46ac3cc861"
+          },
+          "11_shots": {
+            "status": "ok",
+            "checkpoint_key": "88822c0e8fbdee0f8ba67c93894c69253f1ac812bc59dab5ea3108c5919b9125",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "83eca17d2d8a8a32aab4aa9da7f2caf705df59e5bc73545267325b74acacee63",
+            "effective_module_fingerprint": "077cfe8e45a991986bb70e92220ddf4e2b8f6ac009f7556bc03e64415841165d"
+          },
+          "12_camera_timeline": {
+            "status": "ok",
+            "checkpoint_key": "3a711cfa3fe50dd25b089db4b832ef77a94336fd99c5051fcc48eaafe07e2647",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "2eebcbab37b2ac3957f709c64cff96451757ffe5c9bcaa7376f1bd563c22f476",
+            "effective_module_fingerprint": "66abb737dbced5074ed4b645b1a12a984d90168895fbeb951c0dfb15867653f7"
+          },
+          "13_ocr": {
+            "status": "ok",
+            "checkpoint_key": "010817341696598df5fb5ff05f06696a692878269d5751c97b214e8b7f368961",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "1d24c0e9f51b6399881b71dc617ceb82a717b2712dcd6aba9ce4f6827f89ee6c",
+            "effective_module_fingerprint": "919d921ab0a87c94f04ae1b98b3cb0e0eb51ccad0f123ef38b75693faee7c05a"
+          },
+          "14_audio_events": {
+            "status": "skipped",
+            "checkpoint_key": "4e07ddb9b20e3a1c4abd4887ecb0fec6010f424023d9da5c9cd2673b9e05b7c0",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "4c3b7d6341960c71fc3e6be7830091f88a41f3e10dbd12d01c77d1e94423f08a",
+            "effective_module_fingerprint": "542b3f150a956553054d3e3ec5b7dd78e0bfd4bd6917aeb904cfb208ba646918"
+          },
+          "15_semantic": {
+            "status": "ok",
+            "checkpoint_key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "5590b68c3942a7dfc5edcc7d99000eb0c8620afef606c27b1bf0ea00ca288cc3",
+            "effective_module_fingerprint": "d52122f558efab554275873fb005199d612cda479d6085a85d1eab2352502be6"
+          },
+          "16_understanding": {
+            "status": "ok",
+            "checkpoint_key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "d8a536660ef4b8a5dca066cb2fd937b7cb209cdea21c67a9293278ad906d614d",
+            "effective_module_fingerprint": "acb08fb557063a542989f6d8fc1273f63852611722de853a4173e37d5b554577"
+          },
+          "17_master_timeline": {
+            "status": "ok",
+            "checkpoint_key": "129e9beb61da40cffc5b9d690c669fed57e7f8f089a8fdbe913c5c19d52fd5c1",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "856dcac5cf7fb12711b8448151d76dd3890f3962a0763049520afa6ad68c1e9f",
+            "effective_module_fingerprint": "ec1b1d457c8e87c7ad2f39734cec09e9cb8d3199276991dfa5ac38a58d04328e"
+          },
+          "17b_broadcast_graphics": {
+            "status": "ok",
+            "checkpoint_key": "97b8f47ca65f6421c1788a35a4587897d6968bac6edd4f3c95e6913bf2daf67d",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "36d60da6cc58d54cd2952a7899ab959ca995708fff0bb489a1b0af5bd683ee4f",
+            "effective_module_fingerprint": "a50356de5447433fd1b4641f4f745cb6f07fe0f3f697c35b743d2bea21ab828d"
+          },
+          "17c_commercial_visual": {
+            "status": "ok",
+            "checkpoint_key": "7e0d830f8746f115dbbc1c26f72fb42921c562d5821560511debab326b19d71d",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "3347e67c6b9266696df857afcb6f6afe5c822a93582e34edc0c0ee9e819fd87d",
+            "effective_module_fingerprint": "63d0bd69531ea81d6b404501c1e59e507fd0691b48bd1cf92890413141f3159d"
+          },
+          "17d_targeted_asr": {
+            "status": "ok",
+            "checkpoint_key": "23e7e154815b7b23860569516879199489c669bdaf8b144d65af9b4774f66762",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "9371fbdc9d6ae9b4603f7ddb7fcdd7ba5fccc07380c0e7b26a1a1fa1a95a3f38",
+            "effective_module_fingerprint": "38c1ebc9e45cfb1aa126357922e012d58033a88876fdffec4af91cb3030da559"
+          },
+          "17e_subtitle_review_s7": {
+            "status": "ok",
+            "checkpoint_key": "88fff4979d3f269bce72a68ffacb8fc2a785a699c59906de367e85aeeb4ef66e",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "0984e0a1fb22cbcc8645f4a5422e7c3b8cf8c85a330a3120e04e55d63bd10e7c",
+            "effective_module_fingerprint": "a6428df89f1b03ca44178f0752b99760a3cf2277f06ab7f6efc215e6786c9eb3"
+          },
+          "18_analysis_quality": {
+            "status": "partial",
+            "checkpoint_key": "e526b20d9a63e213e69432feb2a29b9b8a17bbd099ba9570d4d91ef8812c3abf",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "dc8125d6db327c027ef32bc501a74b8851439bef96a20293ed6ae1435c3e0f41",
+            "effective_module_fingerprint": "1d00b8d85757196e44da968a7e842eaa4c79e5c2d00f9f2dc02b2247a72fd609"
+          },
+          "18b_global_camera_planner": {
+            "status": "ok",
+            "checkpoint_key": "d46427bc80df2e70b5f18de22deab2b17fa488a69a0ec4715ef58a80071adf07",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "729f3e18ffea9729bb5f2ae5585b1cb9c1039a725007941ddbba890c844ddc76",
+            "effective_module_fingerprint": "a5205371c39a0f73f176afb687d381d3d32e4e73ccb0170036cf1054003b25a6"
+          },
+          "19_camera_director": {
+            "status": "partial",
+            "checkpoint_key": "d64204b8e5db9c63ef127d0183c631f6da531fecb3ef29296d475b2d427f12ce",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "5e31b697821f488a70e0a2f8d50e20e510dbcb116d943aec20ece66b21a0b19f",
+            "effective_module_fingerprint": "6ace2e679badbe5e14e9f1ca70270ef1bd653aa3cd198aefaea5c27f0515c766"
+          },
+          "19b_preview_verifier": {
+            "status": "ok",
+            "checkpoint_key": "765a9f5f6920a4772c1c688c6532cbf57104c6790419a759f4da2b6fa62052f0",
+            "origin": "executed",
+            "analyzer_build": null,
+            "code_fingerprint": null,
+            "checkpoint_sha256": "4d954e2db8523a5a0c4ade32bde8e952176b50c37e60ae8912e69ab3766ba5f8",
+            "effective_module_fingerprint": "46f163a78c1c02d0c00a7dd22917b797ad8732c79dcac2f509bc1a61084f5c1b"
+          },
+          "20_handoff": {
+            "status": "ok",
+            "checkpoint_key": null,
+            "origin": "executed",
+            "analyzer_build": "R4.9-S4-TRACKING-FACIAL",
+            "code_fingerprint": "57a06f3f7e57250a33fa30245dbe1810474d0265607112fbd5d1c79937b46d9f",
+            "checkpoint_sha256": null,
+            "effective_module_fingerprint": null
+          }
+        },
+        "build_mismatch": null,
+        "mismatch_reasons": [],
+        "unverified_stages": [
+          "04_transcription",
+          "07_people_tracking",
+          "10_active_speaker",
+          "18_analysis_quality",
+          "19_camera_director"
+        ],
+        "execution_complete": null,
+        "execution_evidence": "unknown",
+        "execution_attestation": null,
+        "completion_scope": "stage_status_only",
+        "execution_evidence_reason": "full_execution_not_attested"
+      },
+      "candidate_count": 4,
+      "candidate_metrics": {
+        "candidates_before_dedup": 4,
+        "candidates_after_dedup": 4,
+        "alternate_count": 0,
+        "excluded_commercial_count": 0,
+        "excluded_eligibility_count": 4,
+        "editorial_participant_count": 1,
+        "final_shortlist_count": 0,
+        "selection_report": {
+          "candidate_diagnostics": [
+            {
+              "moment_id": "MOMENT_00000_0000",
+              "selection_status": "rejected",
+              "selection_disposition": "excluded",
+              "diversity_features": {
+                "topic": "TOPIC_00000_000",
+                "temporal_segment": 0,
+                "participants": [
+                  "SPEAKER_00"
+                ],
+                "format": null
+              },
+              "selection_reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ],
+              "blockers": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "duration_default_eligible:false",
+                "ineligible_by_quality_gate",
+                "missing_required_score:hook",
+                "missing_required_score:standalone_clarity"
+              ],
+              "blocker_status": "recorded",
+              "editorial": {
+                "raw_score": 0.6982187544680535,
+                "raw_score_status": "recorded",
+                "final_score": 0.404,
+                "score_status": "observed",
+                "penalties": {
+                  "commercial": 0.0,
+                  "missing_evidence_uncertainty": 0.044,
+                  "incomplete_ending": 0.0,
+                  "context_dependency": 0.0,
+                  "unresolved_evidence": 0.0,
+                  "duplicate": 0.0,
+                  "editorial_incomplete": 0.25
+                },
+                "penalty_status": "recorded",
+                "score_is_probability": false
+              },
+              "score_evidence": {
+                "hook": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "literal_opening_hook_classification; lexical heuristic, not retention",
+                  "source_segment_ids": [
+                    "SEG_00000",
+                    "SEG_00001"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "standalone_clarity": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "recorded_standalone_class_with_boundary_and_context_blockers; not comprehension measurement",
+                  "source_segment_ids": [
+                    "SEG_00000",
+                    "SEG_00001"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "punchline": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "explicit_recorded_punchline_score_only; laughter_and_punctuation_do_not_measure_payoff",
+                  "source_segment_ids": [
+                    "SEG_00000",
+                    "SEG_00001"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "story_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "grounded_setup_development_payoff_ids_and_recorded_arc_rating",
+                  "source_segment_ids": [
+                    "SEG_00000",
+                    "SEG_00001"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "qa_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "linked_literal_answer_span_and_observed_sentence_closure; not_audio_verified",
+                  "source_segment_ids": [
+                    "SEG_00000",
+                    "SEG_00001"
+                  ],
+                  "semantic_quality_verified": null
+                }
+              },
+              "evidence": {
+                "segment_ids": [
+                  "SEG_00000",
+                  "SEG_00001"
+                ],
+                "status": "referenced_not_revalidated",
+                "coverage": 0.45,
+                "coverage_status": "recorded",
+                "confidence": "low",
+                "confidence_status": "recorded",
+                "missing_required_components": [
+                  "hook",
+                  "standalone_clarity"
+                ],
+                "component_status": "recorded"
+              },
+              "duration": {
+                "start": 0.94,
+                "end": 3.08,
+                "seconds": 2.14,
+                "status": "recorded_interval",
+                "default_eligible": false,
+                "gate_status": "recorded",
+                "exception": false,
+                "exception_status": "recorded",
+                "reason": "see_recorded_duration_gate"
+              },
+              "recovery": {
+                "status": "context_pending",
+                "origin": "candidate",
+                "candidate_preserved": true,
+                "absolute_blockers": [],
+                "recoverable_context": [
+                  "below_hard_min_without_complete_unit_proof"
+                ],
+                "reviewable_uncertainty": [
+                  "missing_required_score:hook",
+                  "missing_required_score:standalone_clarity"
+                ],
+                "evidence_gaps": [
+                  {
+                    "field": "score_components.hook",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.punchline",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.standalone_clarity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.story_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.qa_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.curiosity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.emotion",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.surprise",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.controversy",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.humor",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.audio_quality",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "payoff",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "no_narrative_obligation"
+                  },
+                  {
+                    "field": "context.below_hard_min_without_complete_unit_proof",
+                    "value": null,
+                    "status": "unresolved",
+                    "reason": "below_hard_min_without_complete_unit_proof"
+                  }
+                ],
+                "prior_editorial_score": 0.75,
+                "post_context_editorial_score": 0.404,
+                "editorial_evaluation": "ranked_after_grounded_context_attempt",
+                "action": "inspect_existing_context",
+                "attempt": {
+                  "original_interval": {
+                    "start": 0.94,
+                    "end": 3.08
+                  },
+                  "selected_interval": {
+                    "start": 0.94,
+                    "end": 3.08
+                  },
+                  "boundary_decision": "pending",
+                  "source_segment_ids": [
+                    "SEG_00000",
+                    "SEG_00001"
+                  ]
+                },
+                "requires_review": true,
+                "publish_ready": false
+              },
+              "render_readiness": {
+                "ready": null,
+                "status": "not_assessed_by_editorial_selection",
+                "reason": "requires_downstream_media_and_preview_validation"
+              },
+              "publish_ready": false
+            },
+            {
+              "moment_id": "MOMENT_00000_0001",
+              "selection_status": "rejected",
+              "selection_disposition": "excluded",
+              "diversity_features": {
+                "topic": "TOPIC_00000_001",
+                "temporal_segment": 0,
+                "participants": [
+                  "SPEAKER_00"
+                ],
+                "format": null
+              },
+              "selection_reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ],
+              "blockers": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "duration_default_eligible:false",
+                "ineligible_by_quality_gate",
+                "missing_required_score:hook",
+                "missing_required_score:standalone_clarity"
+              ],
+              "blocker_status": "recorded",
+              "editorial": {
+                "raw_score": 0.6759965322458312,
+                "raw_score_status": "recorded",
+                "final_score": 0.382,
+                "score_status": "observed",
+                "penalties": {
+                  "commercial": 0.0,
+                  "missing_evidence_uncertainty": 0.044,
+                  "incomplete_ending": 0.0,
+                  "context_dependency": 0.0,
+                  "unresolved_evidence": 0.0,
+                  "duplicate": 0.0,
+                  "editorial_incomplete": 0.25
+                },
+                "penalty_status": "recorded",
+                "score_is_probability": false
+              },
+              "score_evidence": {
+                "hook": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "literal_opening_hook_classification; lexical heuristic, not retention",
+                  "source_segment_ids": [
+                    "SEG_00002"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "standalone_clarity": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "recorded_standalone_class_with_boundary_and_context_blockers; not comprehension measurement",
+                  "source_segment_ids": [
+                    "SEG_00002"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "punchline": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "explicit_recorded_punchline_score_only; laughter_and_punctuation_do_not_measure_payoff",
+                  "source_segment_ids": [
+                    "SEG_00002"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "story_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "grounded_setup_development_payoff_ids_and_recorded_arc_rating",
+                  "source_segment_ids": [
+                    "SEG_00002"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "qa_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "linked_literal_answer_span_and_observed_sentence_closure; not_audio_verified",
+                  "source_segment_ids": [
+                    "SEG_00002"
+                  ],
+                  "semantic_quality_verified": null
+                }
+              },
+              "evidence": {
+                "segment_ids": [
+                  "SEG_00002"
+                ],
+                "status": "referenced_not_revalidated",
+                "coverage": 0.45,
+                "coverage_status": "recorded",
+                "confidence": "low",
+                "confidence_status": "recorded",
+                "missing_required_components": [
+                  "hook",
+                  "standalone_clarity"
+                ],
+                "component_status": "recorded"
+              },
+              "duration": {
+                "start": 4.6,
+                "end": 12.32,
+                "seconds": 7.72,
+                "status": "recorded_interval",
+                "default_eligible": false,
+                "gate_status": "recorded",
+                "exception": false,
+                "exception_status": "recorded",
+                "reason": "see_recorded_duration_gate"
+              },
+              "recovery": {
+                "status": "context_pending",
+                "origin": "candidate",
+                "candidate_preserved": true,
+                "absolute_blockers": [],
+                "recoverable_context": [
+                  "below_hard_min_without_complete_unit_proof"
+                ],
+                "reviewable_uncertainty": [
+                  "missing_required_score:hook",
+                  "missing_required_score:standalone_clarity"
+                ],
+                "evidence_gaps": [
+                  {
+                    "field": "score_components.hook",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.punchline",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.standalone_clarity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.story_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.qa_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.curiosity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.emotion",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.surprise",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.controversy",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.humor",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.audio_quality",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "payoff",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "no_narrative_obligation"
+                  },
+                  {
+                    "field": "context.below_hard_min_without_complete_unit_proof",
+                    "value": null,
+                    "status": "unresolved",
+                    "reason": "below_hard_min_without_complete_unit_proof"
+                  }
+                ],
+                "prior_editorial_score": 0.65,
+                "post_context_editorial_score": 0.382,
+                "editorial_evaluation": "ranked_after_grounded_context_attempt",
+                "action": "inspect_existing_context",
+                "attempt": {
+                  "original_interval": {
+                    "start": 4.6,
+                    "end": 12.32
+                  },
+                  "selected_interval": {
+                    "start": 4.6,
+                    "end": 12.32
+                  },
+                  "boundary_decision": "pending",
+                  "source_segment_ids": [
+                    "SEG_00002"
+                  ]
+                },
+                "requires_review": true,
+                "publish_ready": false
+              },
+              "render_readiness": {
+                "ready": null,
+                "status": "not_assessed_by_editorial_selection",
+                "reason": "requires_downstream_media_and_preview_validation"
+              },
+              "publish_ready": false
+            },
+            {
+              "moment_id": "MOMENT_00000_0002",
+              "selection_status": "rejected",
+              "selection_disposition": "excluded",
+              "diversity_features": {
+                "topic": "TOPIC_00000_002",
+                "temporal_segment": 0,
+                "participants": [
+                  "SPEAKER_00"
+                ],
+                "format": null
+              },
+              "selection_reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ],
+              "blockers": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "duration_default_eligible:false",
+                "ineligible_by_quality_gate",
+                "missing_required_score:hook",
+                "missing_required_score:standalone_clarity"
+              ],
+              "blocker_status": "recorded",
+              "editorial": {
+                "raw_score": 0.653774310023609,
+                "raw_score_status": "recorded",
+                "final_score": 0.36,
+                "score_status": "observed",
+                "penalties": {
+                  "commercial": 0.0,
+                  "missing_evidence_uncertainty": 0.044,
+                  "incomplete_ending": 0.0,
+                  "context_dependency": 0.0,
+                  "unresolved_evidence": 0.0,
+                  "duplicate": 0.0,
+                  "editorial_incomplete": 0.25
+                },
+                "penalty_status": "recorded",
+                "score_is_probability": false
+              },
+              "score_evidence": {
+                "hook": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "literal_opening_hook_classification; lexical heuristic, not retention",
+                  "source_segment_ids": [
+                    "SEG_00003"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "standalone_clarity": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "recorded_standalone_class_with_boundary_and_context_blockers; not comprehension measurement",
+                  "source_segment_ids": [
+                    "SEG_00003"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "punchline": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "explicit_recorded_punchline_score_only; laughter_and_punctuation_do_not_measure_payoff",
+                  "source_segment_ids": [
+                    "SEG_00003"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "story_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "grounded_setup_development_payoff_ids_and_recorded_arc_rating",
+                  "source_segment_ids": [
+                    "SEG_00003"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "qa_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "linked_literal_answer_span_and_observed_sentence_closure; not_audio_verified",
+                  "source_segment_ids": [
+                    "SEG_00003"
+                  ],
+                  "semantic_quality_verified": null
+                }
+              },
+              "evidence": {
+                "segment_ids": [
+                  "SEG_00003"
+                ],
+                "status": "referenced_not_revalidated",
+                "coverage": 0.45,
+                "coverage_status": "recorded",
+                "confidence": "low",
+                "confidence_status": "recorded",
+                "missing_required_components": [
+                  "hook",
+                  "standalone_clarity"
+                ],
+                "component_status": "recorded"
+              },
+              "duration": {
+                "start": 12.42,
+                "end": 13.5,
+                "seconds": 1.08,
+                "status": "recorded_interval",
+                "default_eligible": false,
+                "gate_status": "recorded",
+                "exception": false,
+                "exception_status": "recorded",
+                "reason": "see_recorded_duration_gate"
+              },
+              "recovery": {
+                "status": "context_pending",
+                "origin": "candidate",
+                "candidate_preserved": true,
+                "absolute_blockers": [],
+                "recoverable_context": [
+                  "below_hard_min_without_complete_unit_proof"
+                ],
+                "reviewable_uncertainty": [
+                  "missing_required_score:hook",
+                  "missing_required_score:standalone_clarity"
+                ],
+                "evidence_gaps": [
+                  {
+                    "field": "score_components.hook",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.punchline",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.standalone_clarity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.story_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.qa_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.curiosity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.emotion",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.surprise",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.controversy",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.humor",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.audio_quality",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "payoff",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "no_narrative_obligation"
+                  },
+                  {
+                    "field": "context.below_hard_min_without_complete_unit_proof",
+                    "value": null,
+                    "status": "unresolved",
+                    "reason": "below_hard_min_without_complete_unit_proof"
+                  }
+                ],
+                "prior_editorial_score": 0.3,
+                "post_context_editorial_score": 0.36,
+                "editorial_evaluation": "ranked_after_grounded_context_attempt",
+                "action": "inspect_existing_context",
+                "attempt": {
+                  "original_interval": {
+                    "start": 12.42,
+                    "end": 13.5
+                  },
+                  "selected_interval": {
+                    "start": 12.42,
+                    "end": 13.5
+                  },
+                  "boundary_decision": "pending",
+                  "source_segment_ids": [
+                    "SEG_00003"
+                  ]
+                },
+                "requires_review": true,
+                "publish_ready": false
+              },
+              "render_readiness": {
+                "ready": null,
+                "status": "not_assessed_by_editorial_selection",
+                "reason": "requires_downstream_media_and_preview_validation"
+              },
+              "publish_ready": false
+            },
+            {
+              "moment_id": "MOMENT_00000_0003",
+              "selection_status": "rejected",
+              "selection_disposition": "excluded",
+              "diversity_features": {
+                "topic": "TOPIC_00000_003",
+                "temporal_segment": 0,
+                "participants": [
+                  "SPEAKER_00"
+                ],
+                "format": null
+              },
+              "selection_reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ],
+              "blockers": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "duration_default_eligible:false",
+                "ineligible_by_quality_gate",
+                "missing_required_score:hook",
+                "missing_required_score:standalone_clarity"
+              ],
+              "blocker_status": "recorded",
+              "editorial": {
+                "raw_score": 0.6315520878013867,
+                "raw_score_status": "recorded",
+                "final_score": 0.338,
+                "score_status": "observed",
+                "penalties": {
+                  "commercial": 0.0,
+                  "missing_evidence_uncertainty": 0.044,
+                  "incomplete_ending": 0.0,
+                  "context_dependency": 0.0,
+                  "unresolved_evidence": 0.0,
+                  "duplicate": 0.0,
+                  "editorial_incomplete": 0.25
+                },
+                "penalty_status": "recorded",
+                "score_is_probability": false
+              },
+              "score_evidence": {
+                "hook": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "literal_opening_hook_classification; lexical heuristic, not retention",
+                  "source_segment_ids": [
+                    "SEG_00004"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "standalone_clarity": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "recorded_standalone_class_with_boundary_and_context_blockers; not comprehension measurement",
+                  "source_segment_ids": [
+                    "SEG_00004"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "punchline": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "explicit_recorded_punchline_score_only; laughter_and_punctuation_do_not_measure_payoff",
+                  "source_segment_ids": [
+                    "SEG_00004"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "story_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "grounded_setup_development_payoff_ids_and_recorded_arc_rating",
+                  "source_segment_ids": [
+                    "SEG_00004"
+                  ],
+                  "semantic_quality_verified": null
+                },
+                "qa_completeness": {
+                  "value": null,
+                  "status": "unmeasured",
+                  "criterion": "linked_literal_answer_span_and_observed_sentence_closure; not_audio_verified",
+                  "source_segment_ids": [
+                    "SEG_00004"
+                  ],
+                  "semantic_quality_verified": null
+                }
+              },
+              "evidence": {
+                "segment_ids": [
+                  "SEG_00004"
+                ],
+                "status": "referenced_not_revalidated",
+                "coverage": 0.45,
+                "coverage_status": "recorded",
+                "confidence": "low",
+                "confidence_status": "recorded",
+                "missing_required_components": [
+                  "hook",
+                  "standalone_clarity"
+                ],
+                "component_status": "recorded"
+              },
+              "duration": {
+                "start": 16.48,
+                "end": 18.34,
+                "seconds": 1.86,
+                "status": "recorded_interval",
+                "default_eligible": false,
+                "gate_status": "recorded",
+                "exception": false,
+                "exception_status": "recorded",
+                "reason": "see_recorded_duration_gate"
+              },
+              "recovery": {
+                "status": "context_pending",
+                "origin": "candidate",
+                "candidate_preserved": true,
+                "absolute_blockers": [],
+                "recoverable_context": [
+                  "below_hard_min_without_complete_unit_proof"
+                ],
+                "reviewable_uncertainty": [
+                  "missing_required_score:hook",
+                  "missing_required_score:standalone_clarity"
+                ],
+                "evidence_gaps": [
+                  {
+                    "field": "score_components.hook",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.punchline",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.standalone_clarity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.story_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.qa_completeness",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "not_required_for_this_unit"
+                  },
+                  {
+                    "field": "score_components.curiosity",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.emotion",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.surprise",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.controversy",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.humor",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "score_components.audio_quality",
+                    "value": null,
+                    "status": "missing",
+                    "reason": "no_observed_score"
+                  },
+                  {
+                    "field": "payoff",
+                    "value": null,
+                    "status": "not_applicable",
+                    "reason": "no_narrative_obligation"
+                  },
+                  {
+                    "field": "context.below_hard_min_without_complete_unit_proof",
+                    "value": null,
+                    "status": "unresolved",
+                    "reason": "below_hard_min_without_complete_unit_proof"
+                  }
+                ],
+                "prior_editorial_score": 0.2285714285714286,
+                "post_context_editorial_score": 0.338,
+                "editorial_evaluation": "ranked_after_grounded_context_attempt",
+                "action": "inspect_existing_context",
+                "attempt": {
+                  "original_interval": {
+                    "start": 16.48,
+                    "end": 18.34
+                  },
+                  "selected_interval": {
+                    "start": 16.48,
+                    "end": 18.34
+                  },
+                  "boundary_decision": "pending",
+                  "source_segment_ids": [
+                    "SEG_00004"
+                  ]
+                },
+                "requires_review": true,
+                "publish_ready": false
+              },
+              "render_readiness": {
+                "ready": null,
+                "status": "not_assessed_by_editorial_selection",
+                "reason": "requires_downstream_media_and_preview_validation"
+              },
+              "publish_ready": false
+            }
+          ],
+          "exclusion_counts_multilabel": {
+            "below_editorial_quality_floor": 4,
+            "below_hard_min_without_complete_unit_proof": 4,
+            "duration_default_eligible:false": 4,
+            "ineligible_by_quality_gate": 4,
+            "missing_required_score:hook": 4,
+            "missing_required_score:standalone_clarity": 4
+          },
+          "unique_rejected_candidates": 4,
+          "counting_method": "one_per_candidate_per_label_labels_overlap_do_not_sum",
+          "diagnostic_version": "stage13_v1",
+          "candidates_evaluated": 4,
+          "shortlist_count": 0,
+          "rejected": [
+            {
+              "moment_id": "MOMENT_00000_0000",
+              "reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ]
+            },
+            {
+              "moment_id": "MOMENT_00000_0001",
+              "reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ]
+            },
+            {
+              "moment_id": "MOMENT_00000_0002",
+              "reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ]
+            },
+            {
+              "moment_id": "MOMENT_00000_0003",
+              "reasons": [
+                "below_editorial_quality_floor",
+                "below_hard_min_without_complete_unit_proof",
+                "ineligible_by_quality_gate"
+              ]
+            }
+          ],
+          "min_score": 0.5,
+          "max_per_topic": 2,
+          "fixed_quota": false,
+          "method": "absolute_gates_quality_band_four_dimension_diversity",
+          "diversity_policy": {
+            "version": "16.1",
+            "score_band": 0.08,
+            "temporal_window_seconds": 600,
+            "dimensions": [
+              "topic",
+              "temporal_segment",
+              "participants",
+              "format"
+            ]
+          },
+          "unfilled_slots_are_intentional": true
+        },
+        "complete_story_arc_count": 0,
+        "partial_story_arc_count": 0,
+        "discussion_block_count": 0,
+        "qa_arc_count": 0,
+        "story_payoff_coverage": 0.0,
+        "duration_violation_count": 4,
+        "commercial_review_count": 0,
+        "commercial_block_count": 0,
+        "commercial_gate_reasons": {
+          "eligible": 4
+        },
+        "commercial_risk_states": {
+          "measured_no_ad_evidence": 4
+        },
+        "commercial_visual_coverage_by_candidate": {
+          "MOMENT_00000_0000": {
+            "scope": "candidate_window",
+            "state": "sampled",
+            "start": 0.94,
+            "end": 3.08,
+            "requested_frames": 3,
+            "measured_frames": 3,
+            "failed_frames_or_ocr": 0,
+            "observed_at": [
+              1.1968,
+              2.8232
+            ],
+            "sampling_coverage": 1.0,
+            "continuous_visual_coverage": null,
+            "continuity_established": false,
+            "modality_scopes": {
+              "ocr": "sampled",
+              "asr": "transcribed",
+              "broadcast_gc": "sampled"
+            },
+            "gc_sampled_window_count": 1
+          },
+          "MOMENT_00000_0001": {
+            "scope": "candidate_window",
+            "state": "sampled",
+            "start": 4.6,
+            "end": 12.32,
+            "requested_frames": 3,
+            "measured_frames": 3,
+            "failed_frames_or_ocr": 0,
+            "observed_at": [
+              8.46
+            ],
+            "sampling_coverage": 1.0,
+            "continuous_visual_coverage": null,
+            "continuity_established": false,
+            "modality_scopes": {
+              "ocr": "sampled",
+              "asr": "transcribed",
+              "broadcast_gc": "sampled"
+            },
+            "gc_sampled_window_count": 1
+          },
+          "MOMENT_00000_0002": {
+            "scope": "candidate_window",
+            "state": "sampled",
+            "start": 12.42,
+            "end": 13.5,
+            "requested_frames": 3,
+            "measured_frames": 3,
+            "failed_frames_or_ocr": 0,
+            "observed_at": [
+              12.5496,
+              12.96,
+              13.3704
+            ],
+            "sampling_coverage": 1.0,
+            "continuous_visual_coverage": null,
+            "continuity_established": false,
+            "modality_scopes": {
+              "ocr": "sampled",
+              "asr": "transcribed",
+              "broadcast_gc": "sampled"
+            },
+            "gc_sampled_window_count": 1
+          },
+          "MOMENT_00000_0003": {
+            "scope": "candidate_window",
+            "state": "sampled",
+            "start": 16.48,
+            "end": 18.34,
+            "requested_frames": 3,
+            "measured_frames": 3,
+            "failed_frames_or_ocr": 0,
+            "observed_at": [
+              17.41,
+              18.1168
+            ],
+            "sampling_coverage": 1.0,
+            "continuous_visual_coverage": null,
+            "continuity_established": false,
+            "modality_scopes": {
+              "ocr": "sampled",
+              "asr": "transcribed",
+              "broadcast_gc": "sampled"
+            },
+            "gc_sampled_window_count": 1
+          }
+        },
+        "commercial_false_negative_candidates": null,
+        "commercial_suspects_requiring_human": [],
+        "benchmark_scope": "not_measured",
+        "precision": null,
+        "recall": null,
+        "final_candidate_count": 4,
+        "discovered": 4,
+        "review_queue": 4,
+        "shortlist": 0,
+        "approved": 0,
+        "rendered": null,
+        "final_story_count": 0
+      },
+      "subtitle_review_metrics": {
+        "selected_candidate_count": 0,
+        "total_words": 37,
+        "originally_flagged_for_review": 36,
+        "words_flagged_for_review": 36,
+        "audio_verification_performed": false,
+        "scope": "subtitle_review_s7_episode_words_and_reviewed_ranges"
+      },
+      "episode_summary": {
+        "text": "Programa com blocos sobre: Característica dos elefantes; Introdução ao contexto do vídeo; Conclusão do comentário sobre os elefantes; Reforço da característica mencionada.",
+        "primary_sections": [
+          {
+            "topic_id": "TOPIC_00000_001",
+            "topic": "Característica dos elefantes",
+            "summary": "O locutor destaca que uma característica notável dos elefantes é o comprimento de seus trombas.",
+            "start": 4.6,
+            "end": 12.32,
+            "evidence_segment_ids": [
+              "SEG_00002"
+            ]
+          },
+          {
+            "topic_id": "TOPIC_00000_000",
+            "topic": "Introdução ao contexto do vídeo",
+            "summary": "O locutor começa com a frase 'Alright,' e menciona que está diante dos elefantes.",
+            "start": 0.94,
+            "end": 3.08,
+            "evidence_segment_ids": [
+              "SEG_00000",
+              "SEG_00001"
+            ]
+          },
+          {
+            "topic_id": "TOPIC_00000_003",
+            "topic": "Conclusão do comentário sobre os elefantes",
+            "summary": "O locutor afirma que não há muito mais a dizer sobre o assunto.",
+            "start": 16.48,
+            "end": 18.34,
+            "evidence_segment_ids": [
+              "SEG_00004"
+            ]
+          },
+          {
+            "topic_id": "TOPIC_00000_002",
+            "topic": "Reforço da característica mencionada",
+            "summary": "O locutor reforça que a característica mencionada anteriormente é 'cool'.",
+            "start": 12.42,
+            "end": 13.5,
+            "evidence_segment_ids": [
+              "SEG_00003"
+            ]
+          }
+        ],
+        "main_guest_or_theme": {
+          "participant_id": "PARTICIPANT_0000",
+          "possible_name": null,
+          "method": "observed_speech_duration"
+        },
+        "secondary_topics": [
+          "Introdução ao contexto do vídeo",
+          "Conclusão do comentário sobre os elefantes",
+          "Reforço da característica mencionada"
+        ],
+        "method": "grounded_multisection_aggregation_requires_review"
+      },
+      "editorial_result": {
+        "schema_version": "1.0",
+        "state": "video_too_short",
+        "message": "Video curto demais para a duracao alvo da shortlist configurada.",
+        "reason_codes": [
+          "candidate_evidence_or_score_unresolved",
+          "source_below_configured_target_minimum",
+          "all_recorded_scores_below_quality_floor"
+        ],
+        "candidate_count": 4,
+        "shortlist_count": 0,
+        "duration_seconds": 19.014,
+        "duration_contract": {
+          "target_min_seconds": 30.0,
+          "target_max_seconds": 90.0,
+          "hard_min_seconds": 8.0,
+          "hard_max_seconds": 180.0,
+          "allow_story_exception": true
+        },
+        "quality_floor": 0.5,
+        "technical_failure_stages": [],
+        "unresolved_candidate_ids": [
+          "MOMENT_00000_0000",
+          "MOMENT_00000_0001",
+          "MOMENT_00000_0002",
+          "MOMENT_00000_0003"
+        ],
+        "recorded_rejection_counts": {
+          "below_editorial_quality_floor": 4,
+          "below_hard_min_without_complete_unit_proof": 4,
+          "ineligible_by_quality_gate": 4
+        },
+        "diagnostic_only": true,
+        "selection_policy_changed": false,
+        "publication_ready": false
+      }
+    },
+    "summary/final_quality_gate.json": {
+      "status": "P1_DEGRADED",
+      "editorial_integrity_ready": true,
+      "excluded_commercial_count": 0,
+      "final_shortlist_count": 0,
+      "final_story_count": 0,
+      "commercial_review_count": 0,
+      "subtitle_review_metrics": {
+        "selected_candidate_count": 0,
+        "total_words": 37,
+        "originally_flagged_for_review": 36,
+        "words_flagged_for_review": 36,
+        "audio_verification_performed": false,
+        "scope": "subtitle_review_s7_episode_words_and_reviewed_ranges"
+      },
+      "issues": [
+        {
+          "code": "active_speaker_unavailable",
+          "severity": "medium"
+        },
+        {
+          "code": "unresolved_camera_focus",
+          "severity": "medium"
+        }
+      ],
+      "root_cause_stage": "04_transcription",
+      "preview_approved": false,
+      "publication_ready": false
+    },
+    "summary/performance_summary.json": {
+      "stage_runtime": {
+        "01_metadata": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.36,
+          "process_cpu_seconds": 5.296875,
+          "working_set_bytes": 1229615104,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 1299451904,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 35241213952,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+          "dependency_keys": {},
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "code": "a7ff93abda52af3311854fbeafc4ecd446b4ac874b86ca21ce8e7a8ba1d48123",
+            "dependencies": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.015625,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "02_audio": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.157,
+          "process_cpu_seconds": 5.40625,
+          "working_set_bytes": 1231282176,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 1299451904,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 35337142272,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+          "dependency_keys": {
+            "01_metadata": {
+              "key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "bf11b0f8e264861c3d689332938ee427c9cd3f13c8aef2c34f45e10982e29a7f",
+            "code": "542b3f150a956553054d3e3ec5b7dd78e0bfd4bd6917aeb904cfb208ba646918",
+            "dependencies": "a61e7c16d52d048c76d3765a396673fb8bbfe32768dc09f230cd4d6ed146fba7",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.078125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "03_audio_quality": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.063,
+          "process_cpu_seconds": 5.5,
+          "working_set_bytes": 1231572992,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 1299451904,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 35339120640,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "443f1a1ecc45d83146ef8c66a0cb8a2d671c37a4446e0676b2850868b01f3ea7",
+          "dependency_keys": {
+            "01_metadata": {
+              "key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+              "status": "ok"
+            },
+            "02_audio": {
+              "key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "89c0508d14ff3c602585f85b7fc7285d388c517deb7a355dc2575c67b798a289",
+            "code": "542b3f150a956553054d3e3ec5b7dd78e0bfd4bd6917aeb904cfb208ba646918",
+            "dependencies": "aa592d328c666b7001654225db17c4e340740082a70a0b5a1236b463b2256a01",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.046875,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "04_transcription": {
+          "cache_hit": false,
+          "elapsed_seconds": 17.297,
+          "process_cpu_seconds": 22.109375,
+          "working_set_bytes": 1660284928,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34917789696,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+          "dependency_keys": {
+            "01_metadata": {
+              "key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+              "status": "ok"
+            },
+            "02_audio": {
+              "key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+              "status": "ok"
+            },
+            "03_audio_quality": {
+              "key": "443f1a1ecc45d83146ef8c66a0cb8a2d671c37a4446e0676b2850868b01f3ea7",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "208e89b1c5ff7000256e048503ffccda64bed483ca2e3b286563aa9abff53b63",
+            "code": "d65994b94f238af849a8bb652647bcc826cd0f9db83cf4377c542bdca6a1fe2a",
+            "dependencies": "a7b9cb6db2b728e848c80b0caac880ca1069e906500c3b4260cd96f667808d08",
+            "versions": "3060b4940d7de32c645aace1e5fab0089d544aec6548cb1d5351b95c488c4b2f",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 16.578125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified_partial"
+        },
+        "05_diarization": {
+          "cache_hit": false,
+          "elapsed_seconds": 2.141,
+          "process_cpu_seconds": 23.546875,
+          "working_set_bytes": 2494656512,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34136473600,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+          "dependency_keys": {
+            "01_metadata": {
+              "key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+              "status": "ok"
+            },
+            "02_audio": {
+              "key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "da91a7e65c06ddfb3927a281cf00f16e82e3cacd039119a89fb73bfe9047c980",
+            "code": "cb97554ae0386d14a1486c5fe730cd8a351fd955db66136c0c3bb7436e6d6b22",
+            "dependencies": "aa592d328c666b7001654225db17c4e340740082a70a0b5a1236b463b2256a01",
+            "versions": "9cff3db27894c028ee1588804ac92ec0a9245affe211f618ce21fd5dec76329e",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 1.328125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "06_scenes": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.625,
+          "process_cpu_seconds": 24.46875,
+          "working_set_bytes": 2509557760,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34103816192,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "511f401a144a81db72d58db13ac1d283b2593cf1766d79dd14971e62c25ff664",
+          "dependency_keys": {
+            "01_metadata": {
+              "key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "341c41dc24f732c49b5555b78019ca2cc0bb1cc6684ae1149356e9a848465933",
+            "code": "53f3ea85717764ee4aed31c93efe2252a2d3dfe296d8e8554c0d23f2f636f404",
+            "dependencies": "a61e7c16d52d048c76d3765a396673fb8bbfe32768dc09f230cd4d6ed146fba7",
+            "versions": "ea2e54101adc03bed628a6b0f8a40e3882d9197ceae77ccb5ebadb05790d9395",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.890625,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "07_people_tracking": {
+          "cache_hit": false,
+          "elapsed_seconds": 5.531,
+          "process_cpu_seconds": 30.625,
+          "working_set_bytes": 2519416832,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34146885632,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "72ab0920e07a62f394d6dd5b44e86d850291f853f5aa01db37da577ec3944dcf",
+          "dependency_keys": {
+            "01_metadata": {
+              "key": "30eaf4b5619f6533a87bbf67a12004d9919974ae8dca6098f3745c376fff553b",
+              "status": "ok"
+            },
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "06_scenes": {
+              "key": "511f401a144a81db72d58db13ac1d283b2593cf1766d79dd14971e62c25ff664",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "947b0b34a828c775ed8b6be576f001c50f6c9bfb226bea63a7f62ae317319e0f",
+            "code": "98d862dee1a9851527c99bccfab253ebae2c7d826b7c974bc938c0e8f1768555",
+            "dependencies": "6252840467969a263dcf6a027ddc063a571338ebae1ffda93ccdde4ab6f1d582",
+            "versions": "7928ff9ca153da01b11c070bd7cb1cd27032ef84d8d40793eb3a1c3afb1adc9b",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 6.140625,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified_partial"
+        },
+        "08_person_reid": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.015,
+          "process_cpu_seconds": 30.921875,
+          "working_set_bytes": 2526199808,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34122162176,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+          "dependency_keys": {
+            "07_people_tracking": {
+              "key": "72ab0920e07a62f394d6dd5b44e86d850291f853f5aa01db37da577ec3944dcf",
+              "status": "partial"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "e708c4ac41fe4c2a106b6d302e615576c579c928e9bc62db73137f3da3628902",
+            "code": "bcf74d9c59052a8121949225a185a2dc7a52725eab836904a1be6fbeae6bfa8c",
+            "dependencies": "72f60c8b17d86e0e0d1127ae1548db618bbd26733f202597dd97e5207c915353",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.078125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "09_person_motion": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 30.953125,
+          "working_set_bytes": 2526208000,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34120134656,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "6ca62f3a217e4c6080ea8136e9435834f027e582bb62242c76ef9211a98b8d81",
+          "dependency_keys": {
+            "08_person_reid": {
+              "key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "150da370fa5cc41f1b13e49224bc90f72c2505035caff895a19bbed404030ee1",
+            "code": "9879b276917e3ae4f04cbdf8a440975fba4b141623bee1f38e7657cd04cb6239",
+            "dependencies": "38704dc62ba0707196b12db9a5f71089f489d6fca503b8592c36854617fb2e1f",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.03125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "10_active_speaker": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.031,
+          "process_cpu_seconds": 31.140625,
+          "working_set_bytes": 2527154176,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34116866048,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "158a84cd998bf0cb24551389ff84147235de0f49b1d619259e18fc32d23cc0ac",
+          "dependency_keys": {
+            "02_audio": {
+              "key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+              "status": "ok"
+            },
+            "05_diarization": {
+              "key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+              "status": "ok"
+            },
+            "08_person_reid": {
+              "key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "3426d535c593c651881c58336ce2fb9257020cd54cab3093eaeed75f120865c3",
+            "code": "8fab295098b4cf7684ab20f4c56e65bcada74941357aaefee1f36a46ac3cc861",
+            "dependencies": "ab2ffe27a1b08714904943abeb1653160f9900e159d3a3eaab94468033a0da18",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.15625,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified_partial"
+        },
+        "11_shots": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 31.375,
+          "working_set_bytes": 2528153600,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34123665408,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "88822c0e8fbdee0f8ba67c93894c69253f1ac812bc59dab5ea3108c5919b9125",
+          "dependency_keys": {
+            "06_scenes": {
+              "key": "511f401a144a81db72d58db13ac1d283b2593cf1766d79dd14971e62c25ff664",
+              "status": "ok"
+            },
+            "08_person_reid": {
+              "key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "2bb8086ff5958f32260873c76daa618eb6329d8375d4328ec119acd8414d6b45",
+            "code": "077cfe8e45a991986bb70e92220ddf4e2b8f6ac009f7556bc03e64415841165d",
+            "dependencies": "fb831bdc85db72aacc81495cb00c8a30bcbbe99ccc213d7e3ebcb56c8a074fd0",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.03125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "12_camera_timeline": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.015,
+          "process_cpu_seconds": 31.640625,
+          "working_set_bytes": 2528837632,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34123333632,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "3a711cfa3fe50dd25b089db4b832ef77a94336fd99c5051fcc48eaafe07e2647",
+          "dependency_keys": {
+            "08_person_reid": {
+              "key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+              "status": "ok"
+            },
+            "09_person_motion": {
+              "key": "6ca62f3a217e4c6080ea8136e9435834f027e582bb62242c76ef9211a98b8d81",
+              "status": "ok"
+            },
+            "10_active_speaker": {
+              "key": "158a84cd998bf0cb24551389ff84147235de0f49b1d619259e18fc32d23cc0ac",
+              "status": "partial"
+            },
+            "11_shots": {
+              "key": "88822c0e8fbdee0f8ba67c93894c69253f1ac812bc59dab5ea3108c5919b9125",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "133fbd817c52fa0f14ed979a2703fbfa1adeed725e82313e03e180a94419fd89",
+            "code": "66abb737dbced5074ed4b645b1a12a984d90168895fbeb951c0dfb15867653f7",
+            "dependencies": "b0f495835ffe0f7fce19fe734c8f890dc4fe736d45885df09329bd41ce031b88",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.09375,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "13_ocr": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.453,
+          "process_cpu_seconds": 31.9375,
+          "working_set_bytes": 2531110912,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34103500800,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "010817341696598df5fb5ff05f06696a692878269d5751c97b214e8b7f368961",
+          "dependency_keys": {
+            "07_people_tracking": {
+              "key": "72ab0920e07a62f394d6dd5b44e86d850291f853f5aa01db37da577ec3944dcf",
+              "status": "partial"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "f2a6c01d086d2cc483403142c7a641d7ec19de37027148230c722ed88334fb0a",
+            "code": "919d921ab0a87c94f04ae1b98b3cb0e0eb51ccad0f123ef38b75693faee7c05a",
+            "dependencies": "72f60c8b17d86e0e0d1127ae1548db618bbd26733f202597dd97e5207c915353",
+            "versions": "a06003b3804efee9338fd26db518fdcebf66a6ab4242474ba8a67752caef4882",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.15625,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "14_audio_events": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 32.046875,
+          "working_set_bytes": 2531131392,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 34108706816,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "4e07ddb9b20e3a1c4abd4887ecb0fec6010f424023d9da5c9cd2673b9e05b7c0",
+          "dependency_keys": {
+            "02_audio": {
+              "key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+              "status": "ok"
+            },
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "b1c25d71a220c001a3cc45eae36be7ba86da02b09c99bbe35b7bbf48f90c1a7d",
+            "code": "542b3f150a956553054d3e3ec5b7dd78e0bfd4bd6917aeb904cfb208ba646918",
+            "dependencies": "cb6782a4e9169c5d5180920a944495049369a79f799d7b91b41b9081d7b55e16",
+            "versions": "a612a1d65614db77dd60ecfe158b413287b89d1269fb60cfcf81926b8fe781a9",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.046875,
+          "execution_mode": "skipped",
+          "receipt_evidence": "verified_skipped"
+        },
+        "15_semantic": {
+          "cache_hit": false,
+          "elapsed_seconds": 253.047,
+          "process_cpu_seconds": 32.765625,
+          "working_set_bytes": 2824642560,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27876409344,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+          "dependency_keys": {
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "05_diarization": {
+              "key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "7c3d0b3300f0c4d5a167366b6ff121dc4a68aa8e46a33a5e96471f19d44dee53",
+            "code": "d52122f558efab554275873fb005199d612cda479d6085a85d1eab2352502be6",
+            "dependencies": "8dbaa0c89d3958279ac1308969f9af888424249716951e999dcd141c8acbd627",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.65625,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "16_understanding": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.032,
+          "process_cpu_seconds": 33.078125,
+          "working_set_bytes": 2824810496,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27857719296,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+          "dependency_keys": {
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "05_diarization": {
+              "key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+              "status": "ok"
+            },
+            "08_person_reid": {
+              "key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+              "status": "ok"
+            },
+            "10_active_speaker": {
+              "key": "158a84cd998bf0cb24551389ff84147235de0f49b1d619259e18fc32d23cc0ac",
+              "status": "partial"
+            },
+            "11_shots": {
+              "key": "88822c0e8fbdee0f8ba67c93894c69253f1ac812bc59dab5ea3108c5919b9125",
+              "status": "ok"
+            },
+            "15_semantic": {
+              "key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "453be9be148b67f6806913b389051bb452fd8ff3f8ad705878045a25e8abd8a9",
+            "code": "acb08fb557063a542989f6d8fc1273f63852611722de853a4173e37d5b554577",
+            "dependencies": "b37ba9641966e384fa74b78727c9ed8d72cee7744304bcf0348d25fb9df83241",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.1875,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "17_master_timeline": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 33.28125,
+          "working_set_bytes": 2824966144,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27867447296,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "129e9beb61da40cffc5b9d690c669fed57e7f8f089a8fdbe913c5c19d52fd5c1",
+          "dependency_keys": {
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "05_diarization": {
+              "key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+              "status": "ok"
+            },
+            "12_camera_timeline": {
+              "key": "3a711cfa3fe50dd25b089db4b832ef77a94336fd99c5051fcc48eaafe07e2647",
+              "status": "ok"
+            },
+            "15_semantic": {
+              "key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+              "status": "ok"
+            },
+            "16_understanding": {
+              "key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "3d619dfa98e9a1db9a8c7f348ed919c4ec45b934f8715db9b9c6961f2eb943c5",
+            "code": "ec1b1d457c8e87c7ad2f39734cec09e9cb8d3199276991dfa5ac38a58d04328e",
+            "dependencies": "efc58e42aeb6bd7029ab25811d9f31a25f2cc7365460187dcfd98adb8cc8e738",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.078125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "17b_broadcast_graphics": {
+          "cache_hit": false,
+          "elapsed_seconds": 3.156,
+          "process_cpu_seconds": 39.234375,
+          "working_set_bytes": 2839740416,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27811033088,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "97b8f47ca65f6421c1788a35a4587897d6968bac6edd4f3c95e6913bf2daf67d",
+          "dependency_keys": {
+            "16_understanding": {
+              "key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "7341d30c417587ce3d1b9d07f5febb5e28cf3e3d148a73d02fb9786a71bbedb2",
+            "code": "a50356de5447433fd1b4641f4f745cb6f07fe0f3f697c35b743d2bea21ab828d",
+            "dependencies": "d9bedc51034014848bb265f865860aad5518e9751f98ece75b46d1c56256808b",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 5.875,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "17c_commercial_visual": {
+          "cache_hit": false,
+          "elapsed_seconds": 3.578,
+          "process_cpu_seconds": 42.0,
+          "working_set_bytes": 2840760320,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27796729856,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "7e0d830f8746f115dbbc1c26f72fb42921c562d5821560511debab326b19d71d",
+          "dependency_keys": {
+            "16_understanding": {
+              "key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "9320eccb0b760b2164e83560699af9b6523dc37c670dc514855e30e2914ee801",
+            "code": "63d0bd69531ea81d6b404501c1e59e507fd0691b48bd1cf92890413141f3159d",
+            "dependencies": "d9bedc51034014848bb265f865860aad5518e9751f98ece75b46d1c56256808b",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 2.6875,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "17d_targeted_asr": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 42.203125,
+          "working_set_bytes": 2841513984,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27758030848,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "23e7e154815b7b23860569516879199489c669bdaf8b144d65af9b4774f66762",
+          "dependency_keys": {
+            "02_audio": {
+              "key": "a3e6899d55e52eaaac519fbed0b384e68d02bfe6c14ce152f8f39fb395603e87",
+              "status": "ok"
+            },
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "05_diarization": {
+              "key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+              "status": "ok"
+            },
+            "14_audio_events": {
+              "key": "4e07ddb9b20e3a1c4abd4887ecb0fec6010f424023d9da5c9cd2673b9e05b7c0",
+              "status": "skipped"
+            },
+            "15_semantic": {
+              "key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+              "status": "ok"
+            },
+            "16_understanding": {
+              "key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+              "status": "ok"
+            },
+            "17c_commercial_visual": {
+              "key": "7e0d830f8746f115dbbc1c26f72fb42921c562d5821560511debab326b19d71d",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "03103b90376989e0e7f08f32c10f7e6e592eb5d0088f8e10766b12345d19af19",
+            "code": "38c1ebc9e45cfb1aa126357922e012d58033a88876fdffec4af91cb3030da559",
+            "dependencies": "f1021061e0a42c44de16e777499e6ff39c038d5eefd6ba71a7a7ff6019994d41",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.09375,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "17e_subtitle_review_s7": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 42.328125,
+          "working_set_bytes": 2841722880,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27745964032,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "88fff4979d3f269bce72a68ffacb8fc2a785a699c59906de367e85aeeb4ef66e",
+          "dependency_keys": {
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "14_audio_events": {
+              "key": "4e07ddb9b20e3a1c4abd4887ecb0fec6010f424023d9da5c9cd2673b9e05b7c0",
+              "status": "skipped"
+            },
+            "16_understanding": {
+              "key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+              "status": "ok"
+            },
+            "17c_commercial_visual": {
+              "key": "7e0d830f8746f115dbbc1c26f72fb42921c562d5821560511debab326b19d71d",
+              "status": "ok"
+            },
+            "17d_targeted_asr": {
+              "key": "23e7e154815b7b23860569516879199489c669bdaf8b144d65af9b4774f66762",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "02aace4b05b948eccb8a6b547f1d40ec9fa3bb9d0b309efd9f9bc57da53aa215",
+            "code": "a6428df89f1b03ca44178f0752b99760a3cf2277f06ab7f6efc215e6786c9eb3",
+            "dependencies": "66b2cefbebe502e8f0c10beea0c0df3d439328769ad5d90d0202b3c7936eff4c",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.03125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "18_analysis_quality": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.0,
+          "process_cpu_seconds": 42.59375,
+          "working_set_bytes": 2842492928,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27765977088,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "e526b20d9a63e213e69432feb2a29b9b8a17bbd099ba9570d4d91ef8812c3abf",
+          "dependency_keys": {
+            "04_transcription": {
+              "key": "8c0c7bab14592aa743327f7cc3a41b80076ec9c8441c1790f686b05003e310b6",
+              "status": "partial"
+            },
+            "05_diarization": {
+              "key": "ac668fa2e3c00153628d6e747fa245dbb97e20f10a93e35f6b31e3e02f69aad5",
+              "status": "ok"
+            },
+            "08_person_reid": {
+              "key": "4516a8598295445a706426d81ca92d3b4d7bf584b9d2a6563dfeff2b68b274a0",
+              "status": "ok"
+            },
+            "10_active_speaker": {
+              "key": "158a84cd998bf0cb24551389ff84147235de0f49b1d619259e18fc32d23cc0ac",
+              "status": "partial"
+            },
+            "11_shots": {
+              "key": "88822c0e8fbdee0f8ba67c93894c69253f1ac812bc59dab5ea3108c5919b9125",
+              "status": "ok"
+            },
+            "12_camera_timeline": {
+              "key": "3a711cfa3fe50dd25b089db4b832ef77a94336fd99c5051fcc48eaafe07e2647",
+              "status": "ok"
+            },
+            "15_semantic": {
+              "key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "3d619dfa98e9a1db9a8c7f348ed919c4ec45b934f8715db9b9c6961f2eb943c5",
+            "code": "1d00b8d85757196e44da968a7e842eaa4c79e5c2d00f9f2dc02b2247a72fd609",
+            "dependencies": "2ee6e04949e779c690ca8a670e081fd8ac3ddffac749bce956eee068345223c7",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "2.0"
+          },
+          "process_cpu_seconds_delta": 0.171875,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified_partial"
+        },
+        "18b_global_camera_planner": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.016,
+          "process_cpu_seconds": 42.828125,
+          "working_set_bytes": 2843262976,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27770720256,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "d46427bc80df2e70b5f18de22deab2b17fa488a69a0ec4715ef58a80071adf07",
+          "dependency_keys": {
+            "12_camera_timeline": {
+              "key": "3a711cfa3fe50dd25b089db4b832ef77a94336fd99c5051fcc48eaafe07e2647",
+              "status": "ok"
+            },
+            "15_semantic": {
+              "key": "c4e5f8adb2840611d88dcdff5031543f19059f9b4cb216f2c7e03b162be1eb20",
+              "status": "ok"
+            },
+            "16_understanding": {
+              "key": "5c43bc9dbdc1b0cc47f9119ce4f8460c93714db2a510c11c5a9dfcccc31362f5",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "0be9107ba0f5a33d9110aa33d9df4f4cec8ba0836a59755cab63a77727350b88",
+            "code": "a5205371c39a0f73f176afb687d381d3d32e4e73ccb0170036cf1054003b25a6",
+            "dependencies": "5a9bd810dfe0eb2926129447a33f4dea29a0fedbf578264bd30af796dcbcb18c",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "4.0"
+          },
+          "process_cpu_seconds_delta": 0.078125,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        },
+        "19_camera_director": {
+          "cache_hit": false,
+          "elapsed_seconds": 0.031,
+          "process_cpu_seconds": 43.109375,
+          "working_set_bytes": 2843602944,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27775369216,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "d64204b8e5db9c63ef127d0183c631f6da531fecb3ef29296d475b2d427f12ce",
+          "dependency_keys": {
+            "18b_global_camera_planner": {
+              "key": "d46427bc80df2e70b5f18de22deab2b17fa488a69a0ec4715ef58a80071adf07",
+              "status": "ok"
+            },
+            "12_camera_timeline": {
+              "key": "3a711cfa3fe50dd25b089db4b832ef77a94336fd99c5051fcc48eaafe07e2647",
+              "status": "ok"
+            },
+            "09_person_motion": {
+              "key": "6ca62f3a217e4c6080ea8136e9435834f027e582bb62242c76ef9211a98b8d81",
+              "status": "ok"
+            },
+            "17b_broadcast_graphics": {
+              "key": "97b8f47ca65f6421c1788a35a4587897d6968bac6edd4f3c95e6913bf2daf67d",
+              "status": "ok"
+            },
+            "17c_commercial_visual": {
+              "key": "7e0d830f8746f115dbbc1c26f72fb42921c562d5821560511debab326b19d71d",
+              "status": "ok"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "3152c9392c79e31b4e6e6041d996541d431d376ebb11dfd77f95ebe1dca4fdc4",
+            "code": "6ace2e679badbe5e14e9f1ca70270ef1bd653aa3cd198aefaea5c27f0515c766",
+            "dependencies": "0e85416d21f0514cd34d5f43eb6a1a94862f0f646734fa7f6cf0fe284c4e31f5",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "3.0"
+          },
+          "process_cpu_seconds_delta": 0.09375,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified_partial"
+        },
+        "19b_preview_verifier": {
+          "cache_hit": false,
+          "elapsed_seconds": 3.313,
+          "process_cpu_seconds": 53.71875,
+          "working_set_bytes": 2859147264,
+          "gpu_vram_used_bytes": null,
+          "gpu_utilization_percent": null,
+          "peak_process_memory_bytes": 4603015168,
+          "system_ram_bytes": null,
+          "available_ram_bytes": 27621421056,
+          "memory_measurement": "windows_process_peak_working_set_not_gpu_vram",
+          "cache_hits": 0,
+          "cache_misses": 1,
+          "cache_key": "765a9f5f6920a4772c1c688c6532cbf57104c6790419a759f4da2b6fa62052f0",
+          "dependency_keys": {
+            "19_camera_director": {
+              "key": "d64204b8e5db9c63ef127d0183c631f6da531fecb3ef29296d475b2d427f12ce",
+              "status": "partial"
+            }
+          },
+          "invalidators": [],
+          "cache_lookup_reason": "absent",
+          "cache_manifest": {
+            "input": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+            "params": "197305096047ae534f7b7e85b7c46b73000c3f729c3cf0f71ad90c2e9bd68081",
+            "code": "46f163a78c1c02d0c00a7dd22917b797ad8732c79dcac2f509bc1a61084f5c1b",
+            "dependencies": "634eef35f819f69654c00ed268c741b53e0aa7c9e1c4620874dacda218824487",
+            "versions": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "output_version": "1.0"
+          },
+          "process_cpu_seconds_delta": 10.5,
+          "execution_mode": "executed",
+          "receipt_evidence": "verified"
+        }
+      },
+      "semantic_metrics": {
+        "semantic_valid_chunk_ratio": 1.0,
+        "semantic_initial_valid_ratio": 1.0,
+        "semantic_repair_attempt_ratio": 0.0,
+        "semantic_repair_success_ratio": null,
+        "semantic_fallback_ratio": 0.0,
+        "semantic_cache_hit_ratio": 0.0,
+        "semantic_seconds": 253.047,
+        "global_review_seconds": 97.094,
+        "semantic_call_budget": 4,
+        "semantic_inference_call_count": 1,
+        "model_fingerprint": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "global_review_status": "ok",
+        "semantic_call_p50_seconds": 155.89,
+        "semantic_call_p90_seconds": 155.89,
+        "semantic_call_p95_seconds": 155.89,
+        "semantic_repair_cost_seconds": 0,
+        "slowest_semantic_calls": [
+          {
+            "chunk_id": "SEMANTIC_00000",
+            "duration_seconds": 155.89
+          }
+        ],
+        "chunk_cache_hits": 0,
+        "chunk_cache_misses": 1,
+        "fallback_cost_seconds": 0,
+        "fallback_cost_scope": "entire_failed_chunk_including_inference_repair_and_recovery",
+        "chunk_cache_rewrites_avoided": 0,
+        "prompt_mode": "legacy_embedded_schema",
+        "global_review_cache_hit": false,
+        "total_inference_call_count": 2,
+        "semantic_generated_tokens": 1731,
+        "semantic_prompt_tokens": 4408,
+        "semantic_tokens_per_second": 8.376738525904333,
+        "semantic_prompt_tokens_per_second": 128.79696852608814,
+        "semantic_generation_seconds": 206.64367099999998,
+        "semantic_prompt_seconds": 34.224408000000004,
+        "semantic_load_seconds": 11.866379,
+        "semantic_server_seconds": 252.9203278,
+        "semantic_request_bytes": 19247,
+        "inference_metadata_record_count": 2,
+        "generation_throughput_measured_call_count": 2,
+        "prompt_throughput_measured_call_count": 2,
+        "semantic_cost_measurement_scope": "observed_calls_only_cached_original_costs_excluded",
+        "ollama_running_models_at_start": []
+      },
+      "execution_scope": null,
+      "execution_complete": null
+    },
+    "transcript/review_budget.json": {
+      "max_regions": 100,
+      "max_calls": 16,
+      "max_audio_seconds": 180,
+      "asr_calls": 2,
+      "processed_audio_seconds": 18.334,
+      "deferred": []
+    },
+    "transcript/transcription_provenance.json": {
+      "engine": "faster-whisper",
+      "model": "large-v3",
+      "device": "cuda",
+      "compute_type": "int8_float16",
+      "source": "original",
+      "source_comparisons": [
+        {
+          "start": 0.0,
+          "end": 12.0,
+          "hypotheses": {
+            "original": {
+              "text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they have really, really, really long...",
+              "mean_model_probability": 0.9157994588216146,
+              "word_count": 24,
+              "hypothesis_id": "ASR_00452fe546d39a44637a2508",
+              "task": "transcribe",
+              "text_kind": "original_asr_hypothesis",
+              "configured_language": "auto",
+              "language_mode": "automatic_multilingual",
+              "language_hint": "en",
+              "language_detection_scope": "chunk_initial_hint",
+              "language_probability": 0.96630859375,
+              "language_candidates": [
+                [
+                  "en",
+                  0.96630859375
+                ],
+                [
+                  "nn",
+                  0.0152587890625
+                ],
+                [
+                  "ja",
+                  0.004547119140625
+                ],
+                [
+                  "es",
+                  0.0015468597412109375
+                ],
+                [
+                  "pt",
+                  0.0012722015380859375
+                ],
+                [
+                  "la",
+                  0.0012140274047851562
+                ],
+                [
+                  "haw",
+                  0.0009603500366210938
+                ],
+                [
+                  "cy",
+                  0.0009531974792480469
+                ],
+                [
+                  "ru",
+                  0.00093841552734375
+                ],
+                [
+                  "fr",
+                  0.0007305145263671875
+                ],
+                [
+                  "jw",
+                  0.0007081031799316406
+                ],
+                [
+                  "zh",
+                  0.0006198883056640625
+                ],
+                [
+                  "ko",
+                  0.0005559921264648438
+                ],
+                [
+                  "ar",
+                  0.0004906654357910156
+                ],
+                [
+                  "de",
+                  0.00045371055603027344
+                ],
+                [
+                  "tr",
+                  0.00037026405334472656
+                ],
+                [
+                  "nl",
+                  0.0002906322479248047
+                ],
+                [
+                  "it",
+                  0.0002772808074951172
+                ],
+                [
+                  "vi",
+                  0.0002543926239013672
+                ],
+                [
+                  "pl",
+                  0.00023353099822998047
+                ],
+                [
+                  "br",
+                  0.0002110004425048828
+                ],
+                [
+                  "sv",
+                  0.00016558170318603516
+                ],
+                [
+                  "mi",
+                  0.00015807151794433594
+                ],
+                [
+                  "ms",
+                  0.00014162063598632812
+                ],
+                [
+                  "km",
+                  0.00014162063598632812
+                ],
+                [
+                  "el",
+                  0.00010693073272705078
+                ],
+                [
+                  "th",
+                  8.26120376586914e-05
+                ],
+                [
+                  "hu",
+                  8.13603401184082e-05
+                ],
+                [
+                  "cs",
+                  7.349252700805664e-05
+                ],
+                [
+                  "sn",
+                  6.902217864990234e-05
+                ],
+                [
+                  "fi",
+                  6.091594696044922e-05
+                ],
+                [
+                  "ro",
+                  5.906820297241211e-05
+                ],
+                [
+                  "id",
+                  4.857778549194336e-05
+                ],
+                [
+                  "tl",
+                  4.601478576660156e-05
+                ],
+                [
+                  "da",
+                  4.184246063232422e-05
+                ],
+                [
+                  "hi",
+                  3.814697265625e-05
+                ],
+                [
+                  "fa",
+                  2.866983413696289e-05
+                ],
+                [
+                  "ta",
+                  2.4139881134033203e-05
+                ],
+                [
+                  "no",
+                  2.2649765014648438e-05
+                ],
+                [
+                  "ur",
+                  2.2351741790771484e-05
+                ],
+                [
+                  "gl",
+                  2.205371856689453e-05
+                ],
+                [
+                  "si",
+                  1.4066696166992188e-05
+                ],
+                [
+                  "he",
+                  1.2695789337158203e-05
+                ],
+                [
+                  "uk",
+                  1.2636184692382812e-05
+                ],
+                [
+                  "bg",
+                  9.417533874511719e-06
+                ],
+                [
+                  "ca",
+                  8.940696716308594e-06
+                ],
+                [
+                  "bs",
+                  7.927417755126953e-06
+                ],
+                [
+                  "sa",
+                  7.092952728271484e-06
+                ],
+                [
+                  "sl",
+                  7.033348083496094e-06
+                ],
+                [
+                  "yo",
+                  5.304813385009766e-06
+                ],
+                [
+                  "ml",
+                  4.649162292480469e-06
+                ],
+                [
+                  "hr",
+                  4.649162292480469e-06
+                ],
+                [
+                  "te",
+                  3.933906555175781e-06
+                ],
+                [
+                  "is",
+                  3.6954879760742188e-06
+                ],
+                [
+                  "sk",
+                  3.516674041748047e-06
+                ],
+                [
+                  "bn",
+                  2.9802322387695312e-06
+                ],
+                [
+                  "eu",
+                  2.6226043701171875e-06
+                ],
+                [
+                  "sw",
+                  2.205371856689453e-06
+                ],
+                [
+                  "fo",
+                  2.1457672119140625e-06
+                ],
+                [
+                  "lt",
+                  2.0265579223632812e-06
+                ],
+                [
+                  "my",
+                  2.0265579223632812e-06
+                ],
+                [
+                  "ht",
+                  1.9669532775878906e-06
+                ],
+                [
+                  "mn",
+                  1.8477439880371094e-06
+                ],
+                [
+                  "oc",
+                  1.7285346984863281e-06
+                ],
+                [
+                  "lv",
+                  1.6093254089355469e-06
+                ],
+                [
+                  "yi",
+                  1.4901161193847656e-06
+                ],
+                [
+                  "az",
+                  1.430511474609375e-06
+                ],
+                [
+                  "ne",
+                  1.3113021850585938e-06
+                ],
+                [
+                  "af",
+                  1.0132789611816406e-06
+                ],
+                [
+                  "yue",
+                  1.0132789611816406e-06
+                ],
+                [
+                  "hy",
+                  1.0132789611816406e-06
+                ],
+                [
+                  "sd",
+                  9.5367431640625e-07
+                ],
+                [
+                  "be",
+                  7.152557373046875e-07
+                ],
+                [
+                  "et",
+                  6.556510925292969e-07
+                ],
+                [
+                  "bo",
+                  5.364418029785156e-07
+                ],
+                [
+                  "mr",
+                  4.76837158203125e-07
+                ],
+                [
+                  "lo",
+                  4.76837158203125e-07
+                ],
+                [
+                  "sr",
+                  4.172325134277344e-07
+                ],
+                [
+                  "pa",
+                  4.172325134277344e-07
+                ],
+                [
+                  "kk",
+                  4.172325134277344e-07
+                ],
+                [
+                  "ps",
+                  4.172325134277344e-07
+                ],
+                [
+                  "sq",
+                  1.1920928955078125e-07
+                ],
+                [
+                  "kn",
+                  1.1920928955078125e-07
+                ],
+                [
+                  "ka",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mt",
+                  5.960464477539063e-08
+                ],
+                [
+                  "gu",
+                  5.960464477539063e-08
+                ],
+                [
+                  "ln",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mk",
+                  5.960464477539063e-08
+                ],
+                [
+                  "uz",
+                  0.0
+                ],
+                [
+                  "so",
+                  0.0
+                ],
+                [
+                  "mg",
+                  0.0
+                ],
+                [
+                  "as",
+                  0.0
+                ],
+                [
+                  "tt",
+                  0.0
+                ],
+                [
+                  "tg",
+                  0.0
+                ],
+                [
+                  "lb",
+                  0.0
+                ],
+                [
+                  "ha",
+                  0.0
+                ],
+                [
+                  "ba",
+                  0.0
+                ],
+                [
+                  "tk",
+                  0.0
+                ],
+                [
+                  "su",
+                  0.0
+                ],
+                [
+                  "am",
+                  0.0
+                ]
+              ],
+              "provenance": {
+                "engine": "faster-whisper",
+                "model": "large-v3",
+                "task": "transcribe",
+                "configured_language": "auto",
+                "multilingual": true,
+                "audio_sha256": "e1fe316c3a4acd56dd8b92ea1d9fd612ae8b44f37e065df23b0d44de57d7c219",
+                "offset_seconds": 0.0,
+                "initial_prompt_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+                "device": "cuda",
+                "compute_type": "int8_float16",
+                "decoding": {
+                  "beam_size": 5,
+                  "vad_filter": true,
+                  "word_timestamps": true,
+                  "condition_on_previous_text": false,
+                  "temperature": 0,
+                  "vad_parameters": {
+                    "min_silence_duration_ms": 500
+                  }
+                },
+                "model_fingerprint": null,
+                "code_sha256": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+                "backend_versions": {
+                  "faster-whisper": "1.2.1",
+                  "ctranslate2": "4.8.2"
+                },
+                "contract": "original_speech_v1",
+                "independent_audio_verification": false
+              }
+            },
+            "speech_clean": {
+              "text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they have really, really, really long...",
+              "mean_model_probability": 0.9118754069010416,
+              "word_count": 24,
+              "hypothesis_id": "ASR_18fffdddd21d4ff0fb198117",
+              "task": "transcribe",
+              "text_kind": "original_asr_hypothesis",
+              "configured_language": "auto",
+              "language_mode": "automatic_multilingual",
+              "language_hint": "en",
+              "language_detection_scope": "chunk_initial_hint",
+              "language_probability": 0.96826171875,
+              "language_candidates": [
+                [
+                  "en",
+                  0.96826171875
+                ],
+                [
+                  "nn",
+                  0.00762939453125
+                ],
+                [
+                  "ja",
+                  0.0055389404296875
+                ],
+                [
+                  "pt",
+                  0.0019588470458984375
+                ],
+                [
+                  "es",
+                  0.0016374588012695312
+                ],
+                [
+                  "ru",
+                  0.0013360977172851562
+                ],
+                [
+                  "fr",
+                  0.0012845993041992188
+                ],
+                [
+                  "ko",
+                  0.0012645721435546875
+                ],
+                [
+                  "la",
+                  0.0011606216430664062
+                ],
+                [
+                  "zh",
+                  0.001049041748046875
+                ],
+                [
+                  "cy",
+                  0.0009698867797851562
+                ],
+                [
+                  "haw",
+                  0.0008625984191894531
+                ],
+                [
+                  "jw",
+                  0.0008358955383300781
+                ],
+                [
+                  "ar",
+                  0.0006561279296875
+                ],
+                [
+                  "tr",
+                  0.000640869140625
+                ],
+                [
+                  "de",
+                  0.0006361007690429688
+                ],
+                [
+                  "nl",
+                  0.00055694580078125
+                ],
+                [
+                  "it",
+                  0.00042366981506347656
+                ],
+                [
+                  "pl",
+                  0.000362396240234375
+                ],
+                [
+                  "br",
+                  0.00029587745666503906
+                ],
+                [
+                  "vi",
+                  0.0002911090850830078
+                ],
+                [
+                  "mi",
+                  0.00020647048950195312
+                ],
+                [
+                  "sv",
+                  0.00018227100372314453
+                ],
+                [
+                  "el",
+                  0.00017523765563964844
+                ],
+                [
+                  "km",
+                  0.0001621246337890625
+                ],
+                [
+                  "ms",
+                  0.0001596212387084961
+                ],
+                [
+                  "th",
+                  0.0001323223114013672
+                ],
+                [
+                  "hu",
+                  0.00012433528900146484
+                ],
+                [
+                  "tl",
+                  0.0001131296157836914
+                ],
+                [
+                  "sn",
+                  9.828805923461914e-05
+                ],
+                [
+                  "fi",
+                  8.541345596313477e-05
+                ],
+                [
+                  "cs",
+                  8.344650268554688e-05
+                ],
+                [
+                  "id",
+                  7.30752944946289e-05
+                ],
+                [
+                  "ro",
+                  7.134675979614258e-05
+                ],
+                [
+                  "da",
+                  5.602836608886719e-05
+                ],
+                [
+                  "hi",
+                  5.4717063903808594e-05
+                ],
+                [
+                  "fa",
+                  3.790855407714844e-05
+                ],
+                [
+                  "ta",
+                  3.331899642944336e-05
+                ],
+                [
+                  "gl",
+                  3.069639205932617e-05
+                ],
+                [
+                  "ur",
+                  3.0338764190673828e-05
+                ],
+                [
+                  "no",
+                  2.7835369110107422e-05
+                ],
+                [
+                  "uk",
+                  2.4259090423583984e-05
+                ],
+                [
+                  "he",
+                  2.1338462829589844e-05
+                ],
+                [
+                  "si",
+                  1.3649463653564453e-05
+                ],
+                [
+                  "bs",
+                  1.1742115020751953e-05
+                ],
+                [
+                  "bg",
+                  1.1265277862548828e-05
+                ],
+                [
+                  "ca",
+                  1.1205673217773438e-05
+                ],
+                [
+                  "sl",
+                  1.043081283569336e-05
+                ],
+                [
+                  "sa",
+                  8.940696716308594e-06
+                ],
+                [
+                  "hr",
+                  7.808208465576172e-06
+                ],
+                [
+                  "ml",
+                  6.854534149169922e-06
+                ],
+                [
+                  "yo",
+                  6.258487701416016e-06
+                ],
+                [
+                  "te",
+                  5.125999450683594e-06
+                ],
+                [
+                  "is",
+                  4.887580871582031e-06
+                ],
+                [
+                  "sk",
+                  4.351139068603516e-06
+                ],
+                [
+                  "lt",
+                  4.0531158447265625e-06
+                ],
+                [
+                  "bn",
+                  3.7550926208496094e-06
+                ],
+                [
+                  "eu",
+                  3.516674041748047e-06
+                ],
+                [
+                  "my",
+                  3.516674041748047e-06
+                ],
+                [
+                  "sw",
+                  3.2782554626464844e-06
+                ],
+                [
+                  "oc",
+                  3.2186508178710938e-06
+                ],
+                [
+                  "ht",
+                  3.159046173095703e-06
+                ],
+                [
+                  "fo",
+                  3.039836883544922e-06
+                ],
+                [
+                  "yi",
+                  2.9206275939941406e-06
+                ],
+                [
+                  "mn",
+                  2.86102294921875e-06
+                ],
+                [
+                  "az",
+                  2.6226043701171875e-06
+                ],
+                [
+                  "ne",
+                  2.5033950805664062e-06
+                ],
+                [
+                  "lv",
+                  2.384185791015625e-06
+                ],
+                [
+                  "yue",
+                  1.6689300537109375e-06
+                ],
+                [
+                  "be",
+                  1.5497207641601562e-06
+                ],
+                [
+                  "hy",
+                  1.5497207641601562e-06
+                ],
+                [
+                  "af",
+                  1.430511474609375e-06
+                ],
+                [
+                  "sd",
+                  1.3709068298339844e-06
+                ],
+                [
+                  "bo",
+                  1.0728836059570312e-06
+                ],
+                [
+                  "lo",
+                  9.5367431640625e-07
+                ],
+                [
+                  "kk",
+                  9.5367431640625e-07
+                ],
+                [
+                  "et",
+                  9.5367431640625e-07
+                ],
+                [
+                  "sr",
+                  7.152557373046875e-07
+                ],
+                [
+                  "mr",
+                  7.152557373046875e-07
+                ],
+                [
+                  "ps",
+                  5.960464477539062e-07
+                ],
+                [
+                  "pa",
+                  5.364418029785156e-07
+                ],
+                [
+                  "sq",
+                  2.384185791015625e-07
+                ],
+                [
+                  "ka",
+                  1.1920928955078125e-07
+                ],
+                [
+                  "mk",
+                  1.1920928955078125e-07
+                ],
+                [
+                  "kn",
+                  1.1920928955078125e-07
+                ],
+                [
+                  "gu",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mt",
+                  5.960464477539063e-08
+                ],
+                [
+                  "as",
+                  5.960464477539063e-08
+                ],
+                [
+                  "ln",
+                  5.960464477539063e-08
+                ],
+                [
+                  "tg",
+                  0.0
+                ],
+                [
+                  "uz",
+                  0.0
+                ],
+                [
+                  "tk",
+                  0.0
+                ],
+                [
+                  "so",
+                  0.0
+                ],
+                [
+                  "lb",
+                  0.0
+                ],
+                [
+                  "mg",
+                  0.0
+                ],
+                [
+                  "tt",
+                  0.0
+                ],
+                [
+                  "ha",
+                  0.0
+                ],
+                [
+                  "ba",
+                  0.0
+                ],
+                [
+                  "su",
+                  0.0
+                ],
+                [
+                  "am",
+                  0.0
+                ]
+              ],
+              "provenance": {
+                "engine": "faster-whisper",
+                "model": "large-v3",
+                "task": "transcribe",
+                "configured_language": "auto",
+                "multilingual": true,
+                "audio_sha256": "9aa0ee1b1279d28e17c42234147609c4354c81d7d704648b90d428f50482aff7",
+                "offset_seconds": 0.0,
+                "initial_prompt_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+                "device": "cuda",
+                "compute_type": "int8_float16",
+                "decoding": {
+                  "beam_size": 5,
+                  "vad_filter": true,
+                  "word_timestamps": true,
+                  "condition_on_previous_text": false,
+                  "temperature": 0,
+                  "vad_parameters": {
+                    "min_silence_duration_ms": 500
+                  }
+                },
+                "model_fingerprint": null,
+                "code_sha256": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+                "backend_versions": {
+                  "faster-whisper": "1.2.1",
+                  "ctranslate2": "4.8.2"
+                },
+                "contract": "original_speech_v1",
+                "independent_audio_verification": false
+              }
+            }
+          },
+          "hypotheses_disagree": false,
+          "language_disagreement": false,
+          "needs_review": false
+        },
+        {
+          "start": 10.0,
+          "end": 19.014,
+          "hypotheses": {
+            "original": {
+              "text": "And that's pretty much all there is to say.",
+              "mean_model_probability": 0.8419731987847222,
+              "word_count": 9,
+              "hypothesis_id": "ASR_0f18b2ba430138f48ac86cec",
+              "task": "transcribe",
+              "text_kind": "original_asr_hypothesis",
+              "configured_language": "auto",
+              "language_mode": "automatic_multilingual",
+              "language_hint": "en",
+              "language_detection_scope": "chunk_initial_hint",
+              "language_probability": 0.984375,
+              "language_candidates": [
+                [
+                  "en",
+                  0.984375
+                ],
+                [
+                  "ja",
+                  0.0034961700439453125
+                ],
+                [
+                  "nn",
+                  0.0028533935546875
+                ],
+                [
+                  "zh",
+                  0.0011529922485351562
+                ],
+                [
+                  "cy",
+                  0.0010747909545898438
+                ],
+                [
+                  "ru",
+                  0.0006365776062011719
+                ],
+                [
+                  "haw",
+                  0.0006074905395507812
+                ],
+                [
+                  "pt",
+                  0.0005931854248046875
+                ],
+                [
+                  "la",
+                  0.0005488395690917969
+                ],
+                [
+                  "es",
+                  0.0005402565002441406
+                ],
+                [
+                  "fr",
+                  0.0003921985626220703
+                ],
+                [
+                  "ko",
+                  0.0003859996795654297
+                ],
+                [
+                  "vi",
+                  0.00034618377685546875
+                ],
+                [
+                  "mi",
+                  0.00034332275390625
+                ],
+                [
+                  "jw",
+                  0.0003380775451660156
+                ],
+                [
+                  "nl",
+                  0.00025916099548339844
+                ],
+                [
+                  "it",
+                  0.00020825862884521484
+                ],
+                [
+                  "sv",
+                  0.00019419193267822266
+                ],
+                [
+                  "de",
+                  0.0001882314682006836
+                ],
+                [
+                  "ar",
+                  0.0001882314682006836
+                ],
+                [
+                  "ms",
+                  0.00012540817260742188
+                ],
+                [
+                  "pl",
+                  0.00010639429092407227
+                ],
+                [
+                  "tr",
+                  9.173154830932617e-05
+                ],
+                [
+                  "br",
+                  8.612871170043945e-05
+                ],
+                [
+                  "fi",
+                  7.486343383789062e-05
+                ],
+                [
+                  "tl",
+                  7.253885269165039e-05
+                ],
+                [
+                  "th",
+                  6.502866744995117e-05
+                ],
+                [
+                  "id",
+                  6.401538848876953e-05
+                ],
+                [
+                  "km",
+                  5.829334259033203e-05
+                ],
+                [
+                  "sn",
+                  5.4776668548583984e-05
+                ],
+                [
+                  "el",
+                  4.214048385620117e-05
+                ],
+                [
+                  "da",
+                  3.594160079956055e-05
+                ],
+                [
+                  "ta",
+                  3.349781036376953e-05
+                ],
+                [
+                  "ro",
+                  3.159046173095703e-05
+                ],
+                [
+                  "hi",
+                  2.47955322265625e-05
+                ],
+                [
+                  "no",
+                  2.300739288330078e-05
+                ],
+                [
+                  "cs",
+                  2.2232532501220703e-05
+                ],
+                [
+                  "hu",
+                  1.8715858459472656e-05
+                ],
+                [
+                  "ur",
+                  1.4066696166992188e-05
+                ],
+                [
+                  "fa",
+                  1.1622905731201172e-05
+                ],
+                [
+                  "ca",
+                  1.049041748046875e-05
+                ],
+                [
+                  "uk",
+                  9.5367431640625e-06
+                ],
+                [
+                  "he",
+                  9.357929229736328e-06
+                ],
+                [
+                  "si",
+                  9.179115295410156e-06
+                ],
+                [
+                  "gl",
+                  8.821487426757812e-06
+                ],
+                [
+                  "bg",
+                  5.662441253662109e-06
+                ],
+                [
+                  "bs",
+                  5.662441253662109e-06
+                ],
+                [
+                  "hr",
+                  5.4836273193359375e-06
+                ],
+                [
+                  "yo",
+                  4.887580871582031e-06
+                ],
+                [
+                  "ml",
+                  4.827976226806641e-06
+                ],
+                [
+                  "sa",
+                  3.814697265625e-06
+                ],
+                [
+                  "sw",
+                  3.7550926208496094e-06
+                ],
+                [
+                  "is",
+                  3.6954879760742188e-06
+                ],
+                [
+                  "sl",
+                  3.159046173095703e-06
+                ],
+                [
+                  "bn",
+                  2.9802322387695312e-06
+                ],
+                [
+                  "my",
+                  2.9206275939941406e-06
+                ],
+                [
+                  "te",
+                  2.562999725341797e-06
+                ],
+                [
+                  "sk",
+                  1.9669532775878906e-06
+                ],
+                [
+                  "fo",
+                  1.7285346984863281e-06
+                ],
+                [
+                  "yue",
+                  1.6093254089355469e-06
+                ],
+                [
+                  "eu",
+                  1.430511474609375e-06
+                ],
+                [
+                  "ht",
+                  1.430511474609375e-06
+                ],
+                [
+                  "af",
+                  1.3709068298339844e-06
+                ],
+                [
+                  "lv",
+                  1.2516975402832031e-06
+                ],
+                [
+                  "yi",
+                  1.2516975402832031e-06
+                ],
+                [
+                  "mn",
+                  1.1920928955078125e-06
+                ],
+                [
+                  "ne",
+                  1.0728836059570312e-06
+                ],
+                [
+                  "oc",
+                  9.5367431640625e-07
+                ],
+                [
+                  "lt",
+                  8.344650268554688e-07
+                ],
+                [
+                  "bo",
+                  8.344650268554688e-07
+                ],
+                [
+                  "be",
+                  7.152557373046875e-07
+                ],
+                [
+                  "az",
+                  5.960464477539062e-07
+                ],
+                [
+                  "sd",
+                  5.960464477539062e-07
+                ],
+                [
+                  "lo",
+                  5.960464477539062e-07
+                ],
+                [
+                  "hy",
+                  4.76837158203125e-07
+                ],
+                [
+                  "ps",
+                  4.172325134277344e-07
+                ],
+                [
+                  "kk",
+                  4.172325134277344e-07
+                ],
+                [
+                  "et",
+                  4.172325134277344e-07
+                ],
+                [
+                  "sr",
+                  3.5762786865234375e-07
+                ],
+                [
+                  "pa",
+                  3.5762786865234375e-07
+                ],
+                [
+                  "mr",
+                  2.980232238769531e-07
+                ],
+                [
+                  "sq",
+                  5.960464477539063e-08
+                ],
+                [
+                  "ka",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mk",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mt",
+                  5.960464477539063e-08
+                ],
+                [
+                  "gu",
+                  5.960464477539063e-08
+                ],
+                [
+                  "as",
+                  5.960464477539063e-08
+                ],
+                [
+                  "ln",
+                  5.960464477539063e-08
+                ],
+                [
+                  "kn",
+                  5.960464477539063e-08
+                ],
+                [
+                  "so",
+                  0.0
+                ],
+                [
+                  "uz",
+                  0.0
+                ],
+                [
+                  "tk",
+                  0.0
+                ],
+                [
+                  "lb",
+                  0.0
+                ],
+                [
+                  "tg",
+                  0.0
+                ],
+                [
+                  "mg",
+                  0.0
+                ],
+                [
+                  "tt",
+                  0.0
+                ],
+                [
+                  "ha",
+                  0.0
+                ],
+                [
+                  "ba",
+                  0.0
+                ],
+                [
+                  "su",
+                  0.0
+                ],
+                [
+                  "am",
+                  0.0
+                ]
+              ],
+              "provenance": {
+                "engine": "faster-whisper",
+                "model": "large-v3",
+                "task": "transcribe",
+                "configured_language": "auto",
+                "multilingual": true,
+                "audio_sha256": "83c453d4a485a6fef946f8d1631bd17bd9dcf3c7f1e3233aae9a2efda24efd89",
+                "offset_seconds": 10.0,
+                "initial_prompt_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+                "device": "cuda",
+                "compute_type": "int8_float16",
+                "decoding": {
+                  "beam_size": 5,
+                  "vad_filter": true,
+                  "word_timestamps": true,
+                  "condition_on_previous_text": false,
+                  "temperature": 0,
+                  "vad_parameters": {
+                    "min_silence_duration_ms": 500
+                  }
+                },
+                "model_fingerprint": null,
+                "code_sha256": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+                "backend_versions": {
+                  "faster-whisper": "1.2.1",
+                  "ctranslate2": "4.8.2"
+                },
+                "contract": "original_speech_v1",
+                "independent_audio_verification": false
+              }
+            },
+            "speech_clean": {
+              "text": "long, um, front. And that's, that's cool. And that's pretty much all there is to say.",
+              "mean_model_probability": 0.891845703125,
+              "word_count": 16,
+              "hypothesis_id": "ASR_1031fe9ecd563ba6debbc21f",
+              "task": "transcribe",
+              "text_kind": "original_asr_hypothesis",
+              "configured_language": "auto",
+              "language_mode": "automatic_multilingual",
+              "language_hint": "en",
+              "language_detection_scope": "chunk_initial_hint",
+              "language_probability": 0.9853515625,
+              "language_candidates": [
+                [
+                  "en",
+                  0.9853515625
+                ],
+                [
+                  "ja",
+                  0.0029010772705078125
+                ],
+                [
+                  "nn",
+                  0.0017452239990234375
+                ],
+                [
+                  "zh",
+                  0.0013380050659179688
+                ],
+                [
+                  "cy",
+                  0.0010023117065429688
+                ],
+                [
+                  "pt",
+                  0.0007219314575195312
+                ],
+                [
+                  "vi",
+                  0.0007162094116210938
+                ],
+                [
+                  "haw",
+                  0.0006780624389648438
+                ],
+                [
+                  "es",
+                  0.0006728172302246094
+                ],
+                [
+                  "ru",
+                  0.0006079673767089844
+                ],
+                [
+                  "jw",
+                  0.00054931640625
+                ],
+                [
+                  "ko",
+                  0.0004963874816894531
+                ],
+                [
+                  "la",
+                  0.0003924369812011719
+                ],
+                [
+                  "mi",
+                  0.0003833770751953125
+                ],
+                [
+                  "fr",
+                  0.00036597251892089844
+                ],
+                [
+                  "nl",
+                  0.00022900104522705078
+                ],
+                [
+                  "ar",
+                  0.00017559528350830078
+                ],
+                [
+                  "it",
+                  0.00016880035400390625
+                ],
+                [
+                  "ms",
+                  0.00015735626220703125
+                ],
+                [
+                  "de",
+                  0.00012350082397460938
+                ],
+                [
+                  "br",
+                  0.00012159347534179688
+                ],
+                [
+                  "pl",
+                  0.00011879205703735352
+                ],
+                [
+                  "tl",
+                  0.00010901689529418945
+                ],
+                [
+                  "km",
+                  0.00010401010513305664
+                ],
+                [
+                  "sv",
+                  9.769201278686523e-05
+                ],
+                [
+                  "sn",
+                  8.755922317504883e-05
+                ],
+                [
+                  "th",
+                  8.553266525268555e-05
+                ],
+                [
+                  "id",
+                  7.551908493041992e-05
+                ],
+                [
+                  "tr",
+                  7.092952728271484e-05
+                ],
+                [
+                  "fi",
+                  4.184246063232422e-05
+                ],
+                [
+                  "ta",
+                  3.7550926208496094e-05
+                ],
+                [
+                  "da",
+                  3.1828880310058594e-05
+                ],
+                [
+                  "el",
+                  3.0159950256347656e-05
+                ],
+                [
+                  "ro",
+                  2.8967857360839844e-05
+                ],
+                [
+                  "hi",
+                  2.8312206268310547e-05
+                ],
+                [
+                  "cs",
+                  2.7000904083251953e-05
+                ],
+                [
+                  "hu",
+                  2.09808349609375e-05
+                ],
+                [
+                  "ur",
+                  1.633167266845703e-05
+                ],
+                [
+                  "no",
+                  1.2159347534179688e-05
+                ],
+                [
+                  "gl",
+                  1.1920928955078125e-05
+                ],
+                [
+                  "fa",
+                  1.1742115020751953e-05
+                ],
+                [
+                  "uk",
+                  1.0848045349121094e-05
+                ],
+                [
+                  "si",
+                  9.894371032714844e-06
+                ],
+                [
+                  "ca",
+                  9.775161743164062e-06
+                ],
+                [
+                  "he",
+                  7.748603820800781e-06
+                ],
+                [
+                  "yo",
+                  6.258487701416016e-06
+                ],
+                [
+                  "my",
+                  4.947185516357422e-06
+                ],
+                [
+                  "bs",
+                  4.76837158203125e-06
+                ],
+                [
+                  "bg",
+                  4.470348358154297e-06
+                ],
+                [
+                  "ml",
+                  4.410743713378906e-06
+                ],
+                [
+                  "hr",
+                  4.291534423828125e-06
+                ],
+                [
+                  "sa",
+                  4.0531158447265625e-06
+                ],
+                [
+                  "sw",
+                  3.516674041748047e-06
+                ],
+                [
+                  "bn",
+                  3.2782554626464844e-06
+                ],
+                [
+                  "sl",
+                  3.0994415283203125e-06
+                ],
+                [
+                  "is",
+                  2.9802322387695312e-06
+                ],
+                [
+                  "te",
+                  2.5033950805664062e-06
+                ],
+                [
+                  "sk",
+                  2.1457672119140625e-06
+                ],
+                [
+                  "yue",
+                  1.9669532775878906e-06
+                ],
+                [
+                  "ht",
+                  1.7285346984863281e-06
+                ],
+                [
+                  "eu",
+                  1.6093254089355469e-06
+                ],
+                [
+                  "ne",
+                  1.6093254089355469e-06
+                ],
+                [
+                  "fo",
+                  1.5497207641601562e-06
+                ],
+                [
+                  "yi",
+                  1.430511474609375e-06
+                ],
+                [
+                  "af",
+                  1.2516975402832031e-06
+                ],
+                [
+                  "oc",
+                  1.2516975402832031e-06
+                ],
+                [
+                  "lv",
+                  1.2516975402832031e-06
+                ],
+                [
+                  "mn",
+                  1.1324882507324219e-06
+                ],
+                [
+                  "be",
+                  1.0132789611816406e-06
+                ],
+                [
+                  "bo",
+                  1.0132789611816406e-06
+                ],
+                [
+                  "lo",
+                  9.5367431640625e-07
+                ],
+                [
+                  "lt",
+                  7.748603820800781e-07
+                ],
+                [
+                  "sd",
+                  7.748603820800781e-07
+                ],
+                [
+                  "az",
+                  5.960464477539062e-07
+                ],
+                [
+                  "hy",
+                  5.364418029785156e-07
+                ],
+                [
+                  "ps",
+                  4.76837158203125e-07
+                ],
+                [
+                  "pa",
+                  4.172325134277344e-07
+                ],
+                [
+                  "kk",
+                  4.172325134277344e-07
+                ],
+                [
+                  "sr",
+                  2.980232238769531e-07
+                ],
+                [
+                  "mr",
+                  2.980232238769531e-07
+                ],
+                [
+                  "et",
+                  2.980232238769531e-07
+                ],
+                [
+                  "sq",
+                  5.960464477539063e-08
+                ],
+                [
+                  "ka",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mk",
+                  5.960464477539063e-08
+                ],
+                [
+                  "mt",
+                  5.960464477539063e-08
+                ],
+                [
+                  "gu",
+                  5.960464477539063e-08
+                ],
+                [
+                  "as",
+                  5.960464477539063e-08
+                ],
+                [
+                  "ln",
+                  5.960464477539063e-08
+                ],
+                [
+                  "kn",
+                  5.960464477539063e-08
+                ],
+                [
+                  "so",
+                  0.0
+                ],
+                [
+                  "tg",
+                  0.0
+                ],
+                [
+                  "tk",
+                  0.0
+                ],
+                [
+                  "lb",
+                  0.0
+                ],
+                [
+                  "uz",
+                  0.0
+                ],
+                [
+                  "mg",
+                  0.0
+                ],
+                [
+                  "tt",
+                  0.0
+                ],
+                [
+                  "ha",
+                  0.0
+                ],
+                [
+                  "ba",
+                  0.0
+                ],
+                [
+                  "su",
+                  0.0
+                ],
+                [
+                  "am",
+                  0.0
+                ]
+              ],
+              "provenance": {
+                "engine": "faster-whisper",
+                "model": "large-v3",
+                "task": "transcribe",
+                "configured_language": "auto",
+                "multilingual": true,
+                "audio_sha256": "ff4a7ee0965067f722908bd20097467b1305b7ce4824bb70a7cdfd78cdfd47a9",
+                "offset_seconds": 10.0,
+                "initial_prompt_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+                "device": "cuda",
+                "compute_type": "int8_float16",
+                "decoding": {
+                  "beam_size": 5,
+                  "vad_filter": true,
+                  "word_timestamps": true,
+                  "condition_on_previous_text": false,
+                  "temperature": 0,
+                  "vad_parameters": {
+                    "min_silence_duration_ms": 500
+                  }
+                },
+                "model_fingerprint": null,
+                "code_sha256": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+                "backend_versions": {
+                  "faster-whisper": "1.2.1",
+                  "ctranslate2": "4.8.2"
+                },
+                "contract": "original_speech_v1",
+                "independent_audio_verification": false
+              }
+            }
+          },
+          "hypotheses_disagree": true,
+          "language_disagreement": false,
+          "needs_review": true
+        }
+      ],
+      "task": "transcribe",
+      "text_kind": "original_asr_hypothesis",
+      "configured_language": "auto",
+      "language_mode": "automatic_multilingual",
+      "raw_hypotheses_ref": [
+        {
+          "path": "cache/e25bcad888afc039/asr_chunks/a2ce69f878adef2c_00000.json",
+          "sha256": "f7c571e18f23a2453c55601c43afd2dca172a5b41f7e1b74254c815287a7380a"
+        }
+      ],
+      "import_provenance": null,
+      "timestamp_method": "whisper_attention_alignment",
+      "confidence_is_calibrated": false,
+      "word_timestamps_are_estimates": true
+    }
+  }
+}

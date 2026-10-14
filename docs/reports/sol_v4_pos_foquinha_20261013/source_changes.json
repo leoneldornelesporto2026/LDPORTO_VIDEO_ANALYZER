@@ -1,0 +1,52 @@
+[
+  {
+    "path": "app.py",
+    "state": "modified",
+    "sha256": "ebe6cb94ffffa53d9743e2bdff750f08e09b2b38a602414ffd1a393f1dd04aaf"
+  },
+  {
+    "path": "src/ldporto/editorial_outcome.py",
+    "state": "modified",
+    "sha256": "f6ad191e4829a057b538e60579d911b38a1d34a044173337986440ee0b26e226"
+  },
+  {
+    "path": "src/ldporto/integrity_contracts.py",
+    "state": "modified",
+    "sha256": "39812e9283ab96b91f4dba0fe1b252ed3edca4f005d0c0f80f953d55aacaecdc"
+  },
+  {
+    "path": "src/ldporto/pipeline.py",
+    "state": "modified",
+    "sha256": "d58b6802380cc5a28abaf4e66a28c3156951858c667a283a0f909a5a9c4a5a50"
+  },
+  {
+    "path": "src/ldporto/second_curation.py",
+    "state": "modified",
+    "sha256": "04f6a86d039ea15c97d99164efb5b44f5b06aa256370fea8f143ba248b654909"
+  },
+  {
+    "path": "src/ldporto/second_curation_export.py",
+    "state": "modified",
+    "sha256": "b540ff1abe75c09ac7a292d1ddb59123c410c8455d6fc97564dd9debaba48e90"
+  },
+  {
+    "path": "src/ldporto/understanding.py",
+    "state": "modified",
+    "sha256": "c2872463eb5234310a9777ad7862fc24519b93e15f7933d1a23abdcc1371f33b"
+  },
+  {
+    "path": "src/tests/test_sol_v4_post_editorial.py",
+    "state": "new",
+    "sha256": "bed9eab24a75e9fa5c82a3d39e655f6c8b756f4b47fb4ff2be2142649c935fe7"
+  },
+  {
+    "path": "src/tests/test_sol_v4_post_dialogue.py",
+    "state": "new",
+    "sha256": "6261dc56ce6b4fb064c08ec007ef86b0787264a760c84428979d7fec33045588"
+  },
+  {
+    "path": "src/tests/test_sol_v4_post_integration.py",
+    "state": "new",
+    "sha256": "d04e6aaf5f1b25947caef5705dc25fc386cf90261750ecedf380cd8090e6650c"
+  }
+]

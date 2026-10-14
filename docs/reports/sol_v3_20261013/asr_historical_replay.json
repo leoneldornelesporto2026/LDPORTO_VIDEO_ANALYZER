@@ -1,0 +1,3176 @@
+{
+  "schema_version": "1.0",
+  "validation_kind": "integration_local_historical_json_reclassification",
+  "source_package": "SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261013_035536_877801_09f678.zip",
+  "source_sha256": "843b5c05376f5c8a63845e225ad3069bd5778efd5afe888e1135ae63ecb7ac2d",
+  "internal_hashes_verified": 65,
+  "source_duration_seconds": 19.014,
+  "before": {
+    "flagged_word_count": 36,
+    "word_count": 37,
+    "flagged_fraction": 0.972972972972973,
+    "exclusive_reason_signatures": [
+      {
+        "reasons": [
+          "acoustic_hypotheses_disagree"
+        ],
+        "word_count": 20
+      },
+      {
+        "reasons": [
+          "acoustic_hypotheses_disagree",
+          "missing_or_low_model_probability"
+        ],
+        "word_count": 2
+      },
+      {
+        "reasons": [
+          "acoustic_hypotheses_disagree",
+          "source_hypotheses_disagree"
+        ],
+        "word_count": 14
+      }
+    ],
+    "overlapping_reason_counts": {
+      "acoustic_hypotheses_disagree": 36,
+      "missing_or_low_model_probability": 2,
+      "source_hypotheses_disagree": 14
+    },
+    "observed_condition_counts": {
+      "overlapping_speech": 0,
+      "timestamp_suspect_or_repaired": 0
+    },
+    "flag_rate_is_error_rate": false,
+    "word_error_rate": null,
+    "verified_correct_word_count": null,
+    "human_audio_verification_performed": false
+  },
+  "after": {
+    "flagged_word_count": 6,
+    "word_count": 37,
+    "flagged_fraction": 0.16216216216216217,
+    "exclusive_reason_signatures": [
+      {
+        "reasons": [
+          "acoustic_hypotheses_disagree"
+        ],
+        "word_count": 3
+      },
+      {
+        "reasons": [
+          "comparison_clip_boundary"
+        ],
+        "word_count": 1
+      },
+      {
+        "reasons": [
+          "missing_or_low_model_probability"
+        ],
+        "word_count": 2
+      }
+    ],
+    "overlapping_reason_counts": {
+      "acoustic_hypotheses_disagree": 3,
+      "comparison_clip_boundary": 1,
+      "missing_or_low_model_probability": 2
+    },
+    "observed_condition_counts": {
+      "overlapping_speech": 0,
+      "timestamp_suspect_or_repaired": 0
+    },
+    "flag_rate_is_error_rate": false,
+    "word_error_rate": null,
+    "verified_correct_word_count": null,
+    "human_audio_verification_performed": false
+  },
+  "original_transcript": "[00:00:00.940 - 00:00:01.380] UNKNOWN: Alright,\n[00:00:01.440 - 00:00:03.080] SPEAKER_00: so here we are in front of the elephants.\n[00:00:04.600 - 00:00:12.320] SPEAKER_00: The cool thing about these guys is that they have really, really, really long trunks.\n[00:00:12.420 - 00:00:13.500] SPEAKER_00: And that's cool.\n[00:00:16.480 - 00:00:18.340] SPEAKER_00: And that's pretty much all there is to say.\n",
+  "canonical_text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they have really, really, really long trunks. And that's cool. And that's pretty much all there is to say.",
+  "translations": [],
+  "original_word_text_timing_probability_preserved": true,
+  "new_model_inference_calls": 0,
+  "historical_multipass": {
+    "max_regions": 100,
+    "max_calls": 16,
+    "max_audio_seconds": 180,
+    "asr_calls": 2,
+    "processed_audio_seconds": 18.334,
+    "deferred": []
+  },
+  "source_audio_review": {
+    "schema_version": "1.0",
+    "scope": "source_uncertainty_independent_of_shortlist",
+    "selection_source": "observed_asr_uncertainty",
+    "status": "pending_human_audio_review",
+    "windows": [
+      {
+        "start": 0.0,
+        "end": 19.014,
+        "word_ids": [
+          "WORD_0000000",
+          "WORD_0000010",
+          "WORD_0000018",
+          "WORD_0000024",
+          "WORD_0000026",
+          "WORD_0000027"
+        ],
+        "reasons": [
+          "acoustic_hypotheses_disagree",
+          "comparison_clip_boundary",
+          "missing_or_low_model_probability",
+          "source_hypotheses_disagree"
+        ],
+        "window_id": "SOURCE_REVIEW_00000",
+        "candidate_id": null,
+        "ORIGINAL": [
+          {
+            "word_id": "WORD_0000000",
+            "segment_id": "SEG_00000",
+            "word": "Alright,",
+            "raw": " Alright,",
+            "start": 0.94,
+            "end": 1.38,
+            "speaker": null,
+            "confidence": 0.541015625,
+            "needs_review": true,
+            "review_reasons": [
+              "missing_or_low_model_probability"
+            ],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.541015625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000001",
+            "segment_id": "SEG_00001",
+            "word": "so",
+            "raw": " so",
+            "start": 1.44,
+            "end": 1.52,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.96826171875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.96826171875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000002",
+            "segment_id": "SEG_00001",
+            "word": "here",
+            "raw": " here",
+            "start": 1.52,
+            "end": 1.66,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.98486328125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.98486328125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000003",
+            "segment_id": "SEG_00001",
+            "word": "we",
+            "raw": " we",
+            "start": 1.66,
+            "end": 1.78,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.99560546875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.99560546875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000004",
+            "segment_id": "SEG_00001",
+            "word": "are",
+            "raw": " are",
+            "start": 1.78,
+            "end": 2.02,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.998046875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.998046875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000005",
+            "segment_id": "SEG_00001",
+            "word": "in",
+            "raw": " in",
+            "start": 2.02,
+            "end": 2.18,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.8642578125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.8642578125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000006",
+            "segment_id": "SEG_00001",
+            "word": "front",
+            "raw": " front",
+            "start": 2.18,
+            "end": 2.4,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9990234375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9990234375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000007",
+            "segment_id": "SEG_00001",
+            "word": "of",
+            "raw": " of",
+            "start": 2.4,
+            "end": 2.5,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.99755859375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.99755859375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000008",
+            "segment_id": "SEG_00001",
+            "word": "the",
+            "raw": " the",
+            "start": 2.5,
+            "end": 2.58,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.97509765625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.97509765625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000009",
+            "segment_id": "SEG_00001",
+            "word": "elephants.",
+            "raw": " elephants.",
+            "start": 2.58,
+            "end": 3.08,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.86083984375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.86083984375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000010",
+            "segment_id": "SEG_00002",
+            "word": "The",
+            "raw": " The",
+            "start": 4.6,
+            "end": 5.04,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.57861328125,
+            "needs_review": true,
+            "review_reasons": [
+              "missing_or_low_model_probability"
+            ],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.57861328125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000011",
+            "segment_id": "SEG_00002",
+            "word": "cool",
+            "raw": " cool",
+            "start": 5.04,
+            "end": 5.3,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9951171875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9951171875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000012",
+            "segment_id": "SEG_00002",
+            "word": "thing",
+            "raw": " thing",
+            "start": 5.3,
+            "end": 5.5,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.98681640625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.98681640625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000013",
+            "segment_id": "SEG_00002",
+            "word": "about",
+            "raw": " about",
+            "start": 5.5,
+            "end": 5.82,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9873046875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9873046875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000014",
+            "segment_id": "SEG_00002",
+            "word": "these",
+            "raw": " these",
+            "start": 5.82,
+            "end": 6.1,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9833984375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9833984375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000015",
+            "segment_id": "SEG_00002",
+            "word": "guys",
+            "raw": " guys",
+            "start": 6.1,
+            "end": 6.32,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.98291015625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.98291015625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000016",
+            "segment_id": "SEG_00002",
+            "word": "is",
+            "raw": " is",
+            "start": 6.32,
+            "end": 6.54,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.95654296875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.95654296875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000017",
+            "segment_id": "SEG_00002",
+            "word": "that",
+            "raw": " that",
+            "start": 6.54,
+            "end": 6.68,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.91552734375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.91552734375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000018",
+            "segment_id": "SEG_00002",
+            "word": "they",
+            "raw": " they",
+            "start": 6.68,
+            "end": 7.26,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.974609375,
+            "needs_review": true,
+            "review_reasons": [
+              "comparison_clip_boundary"
+            ],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.974609375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000019",
+            "segment_id": "SEG_00002",
+            "word": "have",
+            "raw": " have",
+            "start": 7.26,
+            "end": 7.42,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.97265625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "text_confidence": 0.97265625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000020",
+            "segment_id": "SEG_00002",
+            "word": "really,",
+            "raw": " really,",
+            "start": 7.42,
+            "end": 8.04,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.974609375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.974609375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000021",
+            "segment_id": "SEG_00002",
+            "word": "really,",
+            "raw": " really,",
+            "start": 8.24,
+            "end": 9.32,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.98779296875,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.98779296875,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000022",
+            "segment_id": "SEG_00002",
+            "word": "really",
+            "raw": " really",
+            "start": 9.38,
+            "end": 9.72,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.97412109375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.97412109375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000023",
+            "segment_id": "SEG_00002",
+            "word": "long",
+            "raw": " long",
+            "start": 9.72,
+            "end": 10.24,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.94287109375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.94287109375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000024",
+            "segment_id": "SEG_00002",
+            "word": "trunks.",
+            "raw": " trunks.",
+            "start": 10.24,
+            "end": 12.32,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.6593017578125,
+            "needs_review": true,
+            "review_reasons": [
+              "acoustic_hypotheses_disagree"
+            ],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": true,
+            "text_confidence": 0.6593017578125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000025",
+            "segment_id": "SEG_00003",
+            "word": "And",
+            "raw": " And",
+            "start": 12.42,
+            "end": 12.86,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.8359375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.8359375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000026",
+            "segment_id": "SEG_00003",
+            "word": "that's",
+            "raw": " that's",
+            "start": 12.86,
+            "end": 13.12,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.978515625,
+            "needs_review": true,
+            "review_reasons": [
+              "acoustic_hypotheses_disagree"
+            ],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": true,
+            "text_confidence": 0.978515625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000027",
+            "segment_id": "SEG_00003",
+            "word": "cool.",
+            "raw": " cool.",
+            "start": 13.12,
+            "end": 13.5,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.84814453125,
+            "needs_review": true,
+            "review_reasons": [
+              "acoustic_hypotheses_disagree"
+            ],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": true,
+            "text_confidence": 0.84814453125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000028",
+            "segment_id": "SEG_00004",
+            "word": "And",
+            "raw": " And",
+            "start": 16.48,
+            "end": 16.92,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.94189453125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.94189453125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000029",
+            "segment_id": "SEG_00004",
+            "word": "that's",
+            "raw": " that's",
+            "start": 16.92,
+            "end": 17.26,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.991455078125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.991455078125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000030",
+            "segment_id": "SEG_00004",
+            "word": "pretty",
+            "raw": " pretty",
+            "start": 17.26,
+            "end": 17.36,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.98486328125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.98486328125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000031",
+            "segment_id": "SEG_00004",
+            "word": "much",
+            "raw": " much",
+            "start": 17.36,
+            "end": 17.54,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9990234375,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9990234375,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000032",
+            "segment_id": "SEG_00004",
+            "word": "all",
+            "raw": " all",
+            "start": 17.54,
+            "end": 17.74,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9970703125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9970703125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000033",
+            "segment_id": "SEG_00004",
+            "word": "there",
+            "raw": " there",
+            "start": 17.74,
+            "end": 17.92,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.95751953125,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.95751953125,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000034",
+            "segment_id": "SEG_00004",
+            "word": "is",
+            "raw": " is",
+            "start": 17.92,
+            "end": 18.04,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.994140625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.994140625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000035",
+            "segment_id": "SEG_00004",
+            "word": "to",
+            "raw": " to",
+            "start": 18.04,
+            "end": 18.12,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.99853515625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.99853515625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          },
+          {
+            "word_id": "WORD_0000036",
+            "segment_id": "SEG_00004",
+            "word": "say.",
+            "raw": " say.",
+            "start": 18.12,
+            "end": 18.34,
+            "speaker": "SPEAKER_00",
+            "confidence": 0.9697265625,
+            "needs_review": false,
+            "review_reasons": [],
+            "timestamp_suspect": null,
+            "text_kind": "original_asr_hypothesis",
+            "asr_task": "transcribe",
+            "source": "original",
+            "hypothesis_id": "ASR_7307ad7e487297352114993c",
+            "language": null,
+            "language_hint": "en",
+            "language_detection_scope": "chunk_initial_hint",
+            "asr_discrepancy": false,
+            "text_confidence": 0.9697265625,
+            "timestamp_confidence": null,
+            "timestamp_confidence_method": "model_alignment_not_independently_calibrated",
+            "suspected_hallucination": false
+          }
+        ],
+        "prior_alternatives": [
+          {
+            "start": 0,
+            "end": 7.04,
+            "selected_source": "original",
+            "selected_text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they",
+            "alternatives": [
+              {
+                "source": "speech_clean",
+                "words": [
+                  {
+                    "word": "Alright,",
+                    "raw": " Alright,",
+                    "start": 0.94,
+                    "end": 1.38,
+                    "confidence": 0.420654296875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "so",
+                    "raw": " so",
+                    "start": 1.44,
+                    "end": 1.52,
+                    "confidence": 0.9580078125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "here",
+                    "raw": " here",
+                    "start": 1.52,
+                    "end": 1.68,
+                    "confidence": 0.98291015625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "we",
+                    "raw": " we",
+                    "start": 1.68,
+                    "end": 1.78,
+                    "confidence": 0.99462890625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "are",
+                    "raw": " are",
+                    "start": 1.78,
+                    "end": 2.02,
+                    "confidence": 0.998046875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "in",
+                    "raw": " in",
+                    "start": 2.02,
+                    "end": 2.18,
+                    "confidence": 0.830078125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "front",
+                    "raw": " front",
+                    "start": 2.18,
+                    "end": 2.42,
+                    "confidence": 0.99853515625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "of",
+                    "raw": " of",
+                    "start": 2.42,
+                    "end": 2.5,
+                    "confidence": 0.99658203125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "the",
+                    "raw": " the",
+                    "start": 2.5,
+                    "end": 2.58,
+                    "confidence": 0.94384765625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "elephants.",
+                    "raw": " elephants.",
+                    "start": 2.58,
+                    "end": 3.08,
+                    "confidence": 0.8388671875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 0.94,
+                    "raw_segment_end": 3.08
+                  },
+                  {
+                    "word": "The",
+                    "raw": " The",
+                    "start": 4.42,
+                    "end": 4.86,
+                    "confidence": 0.364013671875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "cool",
+                    "raw": " cool",
+                    "start": 4.86,
+                    "end": 5.3,
+                    "confidence": 0.9921875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "thing",
+                    "raw": " thing",
+                    "start": 5.3,
+                    "end": 5.5,
+                    "confidence": 0.98681640625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "about",
+                    "raw": " about",
+                    "start": 5.5,
+                    "end": 5.72,
+                    "confidence": 0.98876953125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "these",
+                    "raw": " these",
+                    "start": 5.72,
+                    "end": 6.1,
+                    "confidence": 0.9833984375,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "guys",
+                    "raw": " guys",
+                    "start": 6.1,
+                    "end": 6.32,
+                    "confidence": 0.98828125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "is",
+                    "raw": " is",
+                    "start": 6.32,
+                    "end": 6.5,
+                    "confidence": 0.90478515625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  },
+                  {
+                    "word": "that...",
+                    "raw": " that...",
+                    "start": 6.5,
+                    "end": 6.78,
+                    "confidence": 0.572998046875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                    "no_speech_prob": 0.1319580078125,
+                    "avg_logprob": -0.33954327496198505,
+                    "raw_segment_start": 4.42,
+                    "raw_segment_end": 6.78
+                  }
+                ],
+                "text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that...",
+                "hypothesis_id": "ASR_ef7c5c6cb775e33ec6284035",
+                "task": "transcribe",
+                "text_kind": "original_asr_hypothesis",
+                "configured_language": "auto",
+                "language_mode": "automatic_multilingual",
+                "language_hint": "en",
+                "language_detection_scope": "chunk_initial_hint",
+                "language_probability": 0.97021484375,
+                "language_candidates": [
+                  [
+                    "en",
+                    0.97021484375
+                  ],
+                  [
+                    "nn",
+                    0.007122039794921875
+                  ],
+                  [
+                    "ja",
+                    0.0029010772705078125
+                  ],
+                  [
+                    "cy",
+                    0.00274658203125
+                  ],
+                  [
+                    "es",
+                    0.0022945404052734375
+                  ],
+                  [
+                    "pt",
+                    0.001873016357421875
+                  ],
+                  [
+                    "ru",
+                    0.0013589859008789062
+                  ],
+                  [
+                    "fr",
+                    0.00107574462890625
+                  ],
+                  [
+                    "zh",
+                    0.000926971435546875
+                  ],
+                  [
+                    "nl",
+                    0.0008707046508789062
+                  ],
+                  [
+                    "la",
+                    0.0008440017700195312
+                  ],
+                  [
+                    "ar",
+                    0.0008244514465332031
+                  ],
+                  [
+                    "de",
+                    0.0007567405700683594
+                  ],
+                  [
+                    "tr",
+                    0.0006470680236816406
+                  ],
+                  [
+                    "ko",
+                    0.0006031990051269531
+                  ],
+                  [
+                    "jw",
+                    0.0006031990051269531
+                  ],
+                  [
+                    "haw",
+                    0.0005621910095214844
+                  ],
+                  [
+                    "vi",
+                    0.0004734992980957031
+                  ],
+                  [
+                    "pl",
+                    0.0004553794860839844
+                  ],
+                  [
+                    "it",
+                    0.0004277229309082031
+                  ],
+                  [
+                    "br",
+                    0.0002827644348144531
+                  ],
+                  [
+                    "km",
+                    0.00023257732391357422
+                  ],
+                  [
+                    "mi",
+                    0.00021338462829589844
+                  ],
+                  [
+                    "sv",
+                    0.00018393993377685547
+                  ],
+                  [
+                    "el",
+                    0.00017559528350830078
+                  ],
+                  [
+                    "ms",
+                    0.00015497207641601562
+                  ],
+                  [
+                    "sn",
+                    0.00011879205703735352
+                  ],
+                  [
+                    "hu",
+                    0.0001169443130493164
+                  ],
+                  [
+                    "th",
+                    0.00010561943054199219
+                  ],
+                  [
+                    "cs",
+                    9.924173355102539e-05
+                  ],
+                  [
+                    "tl",
+                    9.393692016601562e-05
+                  ],
+                  [
+                    "id",
+                    8.165836334228516e-05
+                  ],
+                  [
+                    "ro",
+                    8.100271224975586e-05
+                  ],
+                  [
+                    "fi",
+                    7.319450378417969e-05
+                  ],
+                  [
+                    "da",
+                    6.848573684692383e-05
+                  ],
+                  [
+                    "hi",
+                    5.418062210083008e-05
+                  ],
+                  [
+                    "fa",
+                    4.6312808990478516e-05
+                  ],
+                  [
+                    "gl",
+                    4.369020462036133e-05
+                  ],
+                  [
+                    "ta",
+                    4.184246063232422e-05
+                  ],
+                  [
+                    "ur",
+                    3.606081008911133e-05
+                  ],
+                  [
+                    "he",
+                    2.9325485229492188e-05
+                  ],
+                  [
+                    "no",
+                    2.6106834411621094e-05
+                  ],
+                  [
+                    "uk",
+                    2.4020671844482422e-05
+                  ],
+                  [
+                    "ca",
+                    1.7404556274414062e-05
+                  ],
+                  [
+                    "si",
+                    1.531839370727539e-05
+                  ],
+                  [
+                    "bs",
+                    1.5079975128173828e-05
+                  ],
+                  [
+                    "sl",
+                    1.4543533325195312e-05
+                  ],
+                  [
+                    "bg",
+                    1.1980533599853516e-05
+                  ],
+                  [
+                    "sa",
+                    9.953975677490234e-06
+                  ],
+                  [
+                    "yo",
+                    9.059906005859375e-06
+                  ],
+                  [
+                    "hr",
+                    8.940696716308594e-06
+                  ],
+                  [
+                    "is",
+                    8.64267349243164e-06
+                  ],
+                  [
+                    "ml",
+                    5.424022674560547e-06
+                  ],
+                  [
+                    "sk",
+                    5.245208740234375e-06
+                  ],
+                  [
+                    "te",
+                    4.351139068603516e-06
+                  ],
+                  [
+                    "eu",
+                    4.291534423828125e-06
+                  ],
+                  [
+                    "lv",
+                    4.291534423828125e-06
+                  ],
+                  [
+                    "lt",
+                    4.231929779052734e-06
+                  ],
+                  [
+                    "yi",
+                    4.231929779052734e-06
+                  ],
+                  [
+                    "sw",
+                    4.112720489501953e-06
+                  ],
+                  [
+                    "my",
+                    3.874301910400391e-06
+                  ],
+                  [
+                    "ht",
+                    3.814697265625e-06
+                  ],
+                  [
+                    "af",
+                    3.814697265625e-06
+                  ],
+                  [
+                    "az",
+                    3.6954879760742188e-06
+                  ],
+                  [
+                    "fo",
+                    3.5762786865234375e-06
+                  ],
+                  [
+                    "oc",
+                    3.337860107421875e-06
+                  ],
+                  [
+                    "bn",
+                    3.2186508178710938e-06
+                  ],
+                  [
+                    "ne",
+                    2.384185791015625e-06
+                  ],
+                  [
+                    "mn",
+                    2.3245811462402344e-06
+                  ],
+                  [
+                    "be",
+                    2.205371856689453e-06
+                  ],
+                  [
+                    "yue",
+                    2.0265579223632812e-06
+                  ],
+                  [
+                    "hy",
+                    1.7881393432617188e-06
+                  ],
+                  [
+                    "sd",
+                    1.2516975402832031e-06
+                  ],
+                  [
+                    "et",
+                    1.2516975402832031e-06
+                  ],
+                  [
+                    "ps",
+                    1.1920928955078125e-06
+                  ],
+                  [
+                    "kk",
+                    1.1324882507324219e-06
+                  ],
+                  [
+                    "lo",
+                    9.5367431640625e-07
+                  ],
+                  [
+                    "bo",
+                    8.940696716308594e-07
+                  ],
+                  [
+                    "pa",
+                    8.344650268554688e-07
+                  ],
+                  [
+                    "mr",
+                    7.748603820800781e-07
+                  ],
+                  [
+                    "sr",
+                    4.76837158203125e-07
+                  ],
+                  [
+                    "sq",
+                    4.172325134277344e-07
+                  ],
+                  [
+                    "mt",
+                    1.7881393432617188e-07
+                  ],
+                  [
+                    "kn",
+                    1.7881393432617188e-07
+                  ],
+                  [
+                    "mk",
+                    1.1920928955078125e-07
+                  ],
+                  [
+                    "ka",
+                    1.1920928955078125e-07
+                  ],
+                  [
+                    "ln",
+                    1.1920928955078125e-07
+                  ],
+                  [
+                    "gu",
+                    1.1920928955078125e-07
+                  ],
+                  [
+                    "as",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "uz",
+                    0.0
+                  ],
+                  [
+                    "so",
+                    0.0
+                  ],
+                  [
+                    "mg",
+                    0.0
+                  ],
+                  [
+                    "tt",
+                    0.0
+                  ],
+                  [
+                    "tg",
+                    0.0
+                  ],
+                  [
+                    "lb",
+                    0.0
+                  ],
+                  [
+                    "ha",
+                    0.0
+                  ],
+                  [
+                    "ba",
+                    0.0
+                  ],
+                  [
+                    "tk",
+                    0.0
+                  ],
+                  [
+                    "su",
+                    0.0
+                  ],
+                  [
+                    "am",
+                    0.0
+                  ]
+                ],
+                "provenance": {
+                  "engine": "faster-whisper",
+                  "model": "large-v3",
+                  "task": "transcribe",
+                  "configured_language": "auto",
+                  "multilingual": true,
+                  "audio_sha256": "f19941e89666736d168c5e57ce27bf9927702263063639d20376563f59d344d0",
+                  "offset_seconds": 0,
+                  "initial_prompt_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+                  "device": "cuda",
+                  "compute_type": "int8_float16",
+                  "decoding": {
+                    "beam_size": 5,
+                    "vad_filter": true,
+                    "word_timestamps": true,
+                    "condition_on_previous_text": false,
+                    "temperature": 0,
+                    "vad_parameters": {
+                      "min_silence_duration_ms": 500
+                    }
+                  },
+                  "model_fingerprint": null,
+                  "code_sha256": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+                  "backend_versions": {
+                    "faster-whisper": "1.2.1",
+                    "ctranslate2": "4.8.2"
+                  },
+                  "contract": "original_speech_v1",
+                  "independent_audio_verification": false
+                },
+                "comparison": {
+                  "word_count": 18,
+                  "mean_model_probability": 0.8746337890625,
+                  "timestamps_contained": true,
+                  "calibrated_correctness_probability": false,
+                  "independent_audio_verification": false,
+                  "replacement_permitted": false
+                }
+              }
+            ],
+            "replacement_applied": false,
+            "replacement_decision": "unresolved_no_independent_audio_verification",
+            "needs_human_review": true,
+            "hypotheses_disagree": false,
+            "local_comparison": [
+              {
+                "schema_version": "1.0",
+                "method": "monotonic_word_time_alignment",
+                "start": 0,
+                "end": 7.04,
+                "status": "clip_boundary_unresolved",
+                "lexical_difference_count": 0,
+                "cosmetic_difference_count": 1,
+                "timestamp_difference_count": 0,
+                "affected_word_ids": [],
+                "affected_intervals": [],
+                "boundary_word_ids": [
+                  "WORD_0000018"
+                ],
+                "boundary_intervals": [
+                  {
+                    "start": 6.68,
+                    "end": 7.26
+                  }
+                ],
+                "unresolved_regions": [],
+                "events": [
+                  {
+                    "kind": "clip_boundary_not_comparable",
+                    "original_word": "they",
+                    "alternative_word": null,
+                    "word_ids": [
+                      "WORD_0000018"
+                    ],
+                    "start": 6.68,
+                    "end": 7.04,
+                    "clip_boundary": true
+                  }
+                ],
+                "independent_audio_verification": false,
+                "replacement_permitted": false
+              }
+            ],
+            "text_differs": true,
+            "affected_word_ids": [],
+            "boundary_word_ids": [
+              "WORD_0000018"
+            ]
+          },
+          {
+            "start": 7.720000000000001,
+            "end": 19.014,
+            "selected_source": "original",
+            "selected_text": "really, really, really long trunks. And that's cool. And that's pretty much all there is to say.",
+            "alternatives": [
+              {
+                "source": "speech_clean",
+                "words": [
+                  {
+                    "word": "really,",
+                    "raw": " really,",
+                    "start": 7.720000000000001,
+                    "end": 8.200000000000001,
+                    "confidence": 0.40185546875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "really,",
+                    "raw": " really,",
+                    "start": 8.200000000000001,
+                    "end": 9.22,
+                    "confidence": 0.98583984375,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "really",
+                    "raw": " really",
+                    "start": 9.360000000000001,
+                    "end": 9.72,
+                    "confidence": 0.98095703125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "long",
+                    "raw": " long",
+                    "start": 9.72,
+                    "end": 10.24,
+                    "confidence": 0.9091796875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "front,",
+                    "raw": " front,",
+                    "start": 10.24,
+                    "end": 11.96,
+                    "confidence": 0.277587890625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "and",
+                    "raw": " and",
+                    "start": 12.32,
+                    "end": 12.88,
+                    "confidence": 0.97998046875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "that's,",
+                    "raw": " that's,",
+                    "start": 12.88,
+                    "end": 13.18,
+                    "confidence": 0.986572265625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "that's",
+                    "raw": " that's",
+                    "start": 13.18,
+                    "end": 13.46,
+                    "confidence": 0.995361328125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "cool.",
+                    "raw": " cool.",
+                    "start": 13.46,
+                    "end": 13.52,
+                    "confidence": 0.998046875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 7.720000000000001,
+                    "raw_segment_end": 13.52
+                  },
+                  {
+                    "word": "And",
+                    "raw": " And",
+                    "start": 16.380000000000003,
+                    "end": 16.9,
+                    "confidence": 0.9560546875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "that's",
+                    "raw": " that's",
+                    "start": 16.9,
+                    "end": 17.259999999999998,
+                    "confidence": 0.985107421875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "pretty",
+                    "raw": " pretty",
+                    "start": 17.259999999999998,
+                    "end": 17.36,
+                    "confidence": 0.9931640625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "much",
+                    "raw": " much",
+                    "start": 17.36,
+                    "end": 17.560000000000002,
+                    "confidence": 0.9990234375,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "all",
+                    "raw": " all",
+                    "start": 17.560000000000002,
+                    "end": 17.740000000000002,
+                    "confidence": 0.99755859375,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "there",
+                    "raw": " there",
+                    "start": 17.740000000000002,
+                    "end": 17.9,
+                    "confidence": 0.89501953125,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "is",
+                    "raw": " is",
+                    "start": 17.9,
+                    "end": 18.060000000000002,
+                    "confidence": 0.99169921875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "to",
+                    "raw": " to",
+                    "start": 18.060000000000002,
+                    "end": 18.12,
+                    "confidence": 0.99853515625,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  },
+                  {
+                    "word": "say.",
+                    "raw": " say.",
+                    "start": 18.12,
+                    "end": 18.32,
+                    "confidence": 0.96435546875,
+                    "speaker": null,
+                    "segment_id": null,
+                    "timestamp_method": "whisper_attention_alignment",
+                    "language": null,
+                    "language_hint": "en",
+                    "language_detection_scope": "chunk_initial_hint",
+                    "language_probability": null,
+                    "language_needs_review": false,
+                    "asr_task": "transcribe",
+                    "text_kind": "original_asr_hypothesis",
+                    "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                    "no_speech_prob": 0.019805908203125,
+                    "avg_logprob": -0.4582519419491291,
+                    "raw_segment_start": 16.380000000000003,
+                    "raw_segment_end": 18.32
+                  }
+                ],
+                "text": "really, really, really long front, and that's, that's cool. And that's pretty much all there is to say.",
+                "hypothesis_id": "ASR_f9c88a3e77776ab133d1272d",
+                "task": "transcribe",
+                "text_kind": "original_asr_hypothesis",
+                "configured_language": "auto",
+                "language_mode": "automatic_multilingual",
+                "language_hint": "en",
+                "language_detection_scope": "chunk_initial_hint",
+                "language_probability": 0.98974609375,
+                "language_candidates": [
+                  [
+                    "en",
+                    0.98974609375
+                  ],
+                  [
+                    "ja",
+                    0.0022678375244140625
+                  ],
+                  [
+                    "nn",
+                    0.001499176025390625
+                  ],
+                  [
+                    "zh",
+                    0.0006203651428222656
+                  ],
+                  [
+                    "ru",
+                    0.0005517005920410156
+                  ],
+                  [
+                    "haw",
+                    0.0004906654357910156
+                  ],
+                  [
+                    "jw",
+                    0.0004830360412597656
+                  ],
+                  [
+                    "cy",
+                    0.00046443939208984375
+                  ],
+                  [
+                    "pt",
+                    0.00045013427734375
+                  ],
+                  [
+                    "es",
+                    0.0004329681396484375
+                  ],
+                  [
+                    "fr",
+                    0.0004329681396484375
+                  ],
+                  [
+                    "la",
+                    0.00040984153747558594
+                  ],
+                  [
+                    "ko",
+                    0.00038814544677734375
+                  ],
+                  [
+                    "vi",
+                    0.0002486705780029297
+                  ],
+                  [
+                    "mi",
+                    0.0001709461212158203
+                  ],
+                  [
+                    "nl",
+                    0.00014507770538330078
+                  ],
+                  [
+                    "ar",
+                    0.00011652708053588867
+                  ],
+                  [
+                    "br",
+                    0.00011563301086425781
+                  ],
+                  [
+                    "de",
+                    0.00011032819747924805
+                  ],
+                  [
+                    "pl",
+                    0.0001004338264465332
+                  ],
+                  [
+                    "it",
+                    9.584426879882812e-05
+                  ],
+                  [
+                    "km",
+                    9.006261825561523e-05
+                  ],
+                  [
+                    "ms",
+                    8.863210678100586e-05
+                  ],
+                  [
+                    "sn",
+                    7.826089859008789e-05
+                  ],
+                  [
+                    "tl",
+                    7.408857345581055e-05
+                  ],
+                  [
+                    "th",
+                    6.139278411865234e-05
+                  ],
+                  [
+                    "tr",
+                    5.811452865600586e-05
+                  ],
+                  [
+                    "id",
+                    4.458427429199219e-05
+                  ],
+                  [
+                    "sv",
+                    4.088878631591797e-05
+                  ],
+                  [
+                    "fi",
+                    3.135204315185547e-05
+                  ],
+                  [
+                    "el",
+                    2.4437904357910156e-05
+                  ],
+                  [
+                    "ta",
+                    2.1278858184814453e-05
+                  ],
+                  [
+                    "hi",
+                    1.6868114471435547e-05
+                  ],
+                  [
+                    "ro",
+                    1.6450881958007812e-05
+                  ],
+                  [
+                    "hu",
+                    1.4960765838623047e-05
+                  ],
+                  [
+                    "cs",
+                    1.2993812561035156e-05
+                  ],
+                  [
+                    "da",
+                    1.1563301086425781e-05
+                  ],
+                  [
+                    "si",
+                    1.0251998901367188e-05
+                  ],
+                  [
+                    "ur",
+                    8.285045623779297e-06
+                  ],
+                  [
+                    "fa",
+                    6.556510925292969e-06
+                  ],
+                  [
+                    "he",
+                    6.079673767089844e-06
+                  ],
+                  [
+                    "no",
+                    5.662441253662109e-06
+                  ],
+                  [
+                    "gl",
+                    4.887580871582031e-06
+                  ],
+                  [
+                    "sa",
+                    4.708766937255859e-06
+                  ],
+                  [
+                    "uk",
+                    4.589557647705078e-06
+                  ],
+                  [
+                    "yo",
+                    4.291534423828125e-06
+                  ],
+                  [
+                    "ca",
+                    3.814697265625e-06
+                  ],
+                  [
+                    "ml",
+                    3.5762786865234375e-06
+                  ],
+                  [
+                    "bs",
+                    3.159046173095703e-06
+                  ],
+                  [
+                    "hr",
+                    2.86102294921875e-06
+                  ],
+                  [
+                    "bg",
+                    2.7418136596679688e-06
+                  ],
+                  [
+                    "sw",
+                    2.7418136596679688e-06
+                  ],
+                  [
+                    "my",
+                    2.6226043701171875e-06
+                  ],
+                  [
+                    "bn",
+                    2.2649765014648438e-06
+                  ],
+                  [
+                    "te",
+                    1.9073486328125e-06
+                  ],
+                  [
+                    "sl",
+                    1.9073486328125e-06
+                  ],
+                  [
+                    "ht",
+                    1.1920928955078125e-06
+                  ],
+                  [
+                    "sk",
+                    1.1324882507324219e-06
+                  ],
+                  [
+                    "ne",
+                    1.0728836059570312e-06
+                  ],
+                  [
+                    "fo",
+                    1.0728836059570312e-06
+                  ],
+                  [
+                    "yi",
+                    1.0728836059570312e-06
+                  ],
+                  [
+                    "mn",
+                    1.0132789611816406e-06
+                  ],
+                  [
+                    "is",
+                    1.0132789611816406e-06
+                  ],
+                  [
+                    "oc",
+                    1.0132789611816406e-06
+                  ],
+                  [
+                    "eu",
+                    1.0132789611816406e-06
+                  ],
+                  [
+                    "yue",
+                    8.344650268554688e-07
+                  ],
+                  [
+                    "lo",
+                    7.748603820800781e-07
+                  ],
+                  [
+                    "bo",
+                    7.748603820800781e-07
+                  ],
+                  [
+                    "lv",
+                    5.960464477539062e-07
+                  ],
+                  [
+                    "sd",
+                    5.364418029785156e-07
+                  ],
+                  [
+                    "lt",
+                    4.76837158203125e-07
+                  ],
+                  [
+                    "af",
+                    4.172325134277344e-07
+                  ],
+                  [
+                    "be",
+                    4.172325134277344e-07
+                  ],
+                  [
+                    "hy",
+                    3.5762786865234375e-07
+                  ],
+                  [
+                    "kk",
+                    2.980232238769531e-07
+                  ],
+                  [
+                    "az",
+                    2.980232238769531e-07
+                  ],
+                  [
+                    "sr",
+                    2.384185791015625e-07
+                  ],
+                  [
+                    "mr",
+                    2.384185791015625e-07
+                  ],
+                  [
+                    "ps",
+                    2.384185791015625e-07
+                  ],
+                  [
+                    "pa",
+                    1.7881393432617188e-07
+                  ],
+                  [
+                    "et",
+                    1.7881393432617188e-07
+                  ],
+                  [
+                    "mk",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "sq",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "gu",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "as",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "ln",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "kn",
+                    5.960464477539063e-08
+                  ],
+                  [
+                    "so",
+                    0.0
+                  ],
+                  [
+                    "ka",
+                    0.0
+                  ],
+                  [
+                    "tk",
+                    0.0
+                  ],
+                  [
+                    "mt",
+                    0.0
+                  ],
+                  [
+                    "uz",
+                    0.0
+                  ],
+                  [
+                    "lb",
+                    0.0
+                  ],
+                  [
+                    "tg",
+                    0.0
+                  ],
+                  [
+                    "mg",
+                    0.0
+                  ],
+                  [
+                    "tt",
+                    0.0
+                  ],
+                  [
+                    "ha",
+                    0.0
+                  ],
+                  [
+                    "ba",
+                    0.0
+                  ],
+                  [
+                    "su",
+                    0.0
+                  ],
+                  [
+                    "am",
+                    0.0
+                  ]
+                ],
+                "provenance": {
+                  "engine": "faster-whisper",
+                  "model": "large-v3",
+                  "task": "transcribe",
+                  "configured_language": "auto",
+                  "multilingual": true,
+                  "audio_sha256": "e50771f9c28d5e0a2440d343d4331ebeb5db82bfde5125d40d6d1f8db47500a3",
+                  "offset_seconds": 7.720000000000001,
+                  "initial_prompt_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+                  "device": "cuda",
+                  "compute_type": "int8_float16",
+                  "decoding": {
+                    "beam_size": 5,
+                    "vad_filter": true,
+                    "word_timestamps": true,
+                    "condition_on_previous_text": false,
+                    "temperature": 0,
+                    "vad_parameters": {
+                      "min_silence_duration_ms": 500
+                    }
+                  },
+                  "model_fingerprint": null,
+                  "code_sha256": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+                  "backend_versions": {
+                    "faster-whisper": "1.2.1",
+                    "ctranslate2": "4.8.2"
+                  },
+                  "contract": "original_speech_v1",
+                  "independent_audio_verification": false
+                },
+                "comparison": {
+                  "word_count": 18,
+                  "mean_model_probability": 0.9053276909722222,
+                  "timestamps_contained": true,
+                  "calibrated_correctness_probability": false,
+                  "independent_audio_verification": false,
+                  "replacement_permitted": false
+                }
+              }
+            ],
+            "replacement_applied": false,
+            "replacement_decision": "unresolved_no_independent_audio_verification",
+            "needs_human_review": true,
+            "hypotheses_disagree": true,
+            "local_comparison": [
+              {
+                "schema_version": "1.0",
+                "method": "monotonic_word_time_alignment",
+                "start": 7.720000000000001,
+                "end": 19.014,
+                "status": "localized_lexical_difference",
+                "lexical_difference_count": 2,
+                "cosmetic_difference_count": 2,
+                "timestamp_difference_count": 0,
+                "affected_word_ids": [
+                  "WORD_0000024",
+                  "WORD_0000026",
+                  "WORD_0000027"
+                ],
+                "affected_intervals": [
+                  {
+                    "start": 10.24,
+                    "end": 12.32
+                  },
+                  {
+                    "start": 12.86,
+                    "end": 13.12
+                  },
+                  {
+                    "start": 13.12,
+                    "end": 13.5
+                  },
+                  {
+                    "start": 13.18,
+                    "end": 13.46
+                  }
+                ],
+                "boundary_word_ids": [],
+                "boundary_intervals": [],
+                "unresolved_regions": [],
+                "events": [
+                  {
+                    "kind": "replace",
+                    "original_word": "trunks.",
+                    "alternative_word": "front,",
+                    "word_ids": [
+                      "WORD_0000024"
+                    ],
+                    "start": 10.24,
+                    "end": 12.32,
+                    "clip_boundary": false
+                  },
+                  {
+                    "kind": "insert",
+                    "original_word": null,
+                    "alternative_word": "that's",
+                    "word_ids": [
+                      "WORD_0000026",
+                      "WORD_0000027"
+                    ],
+                    "start": 13.18,
+                    "end": 13.46,
+                    "clip_boundary": false
+                  }
+                ],
+                "independent_audio_verification": false,
+                "replacement_permitted": false
+              }
+            ],
+            "text_differs": true,
+            "affected_word_ids": [
+              "WORD_0000024",
+              "WORD_0000026",
+              "WORD_0000027"
+            ],
+            "boundary_word_ids": []
+          }
+        ],
+        "verified_by_audio": null,
+        "reviewer": null,
+        "correction_approved": false
+      }
+    ],
+    "deferred": [],
+    "requires_editorial_shortlist": false,
+    "metrics": {
+      "flagged_word_count": 6,
+      "word_count": 37,
+      "flagged_fraction": 0.16216216216216217,
+      "exclusive_reason_signatures": [
+        {
+          "reasons": [
+            "acoustic_hypotheses_disagree"
+          ],
+          "word_count": 3
+        },
+        {
+          "reasons": [
+            "comparison_clip_boundary"
+          ],
+          "word_count": 1
+        },
+        {
+          "reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "word_count": 2
+        }
+      ],
+      "overlapping_reason_counts": {
+        "acoustic_hypotheses_disagree": 3,
+        "comparison_clip_boundary": 1,
+        "missing_or_low_model_probability": 2
+      },
+      "observed_condition_counts": {
+        "overlapping_speech": 0,
+        "timestamp_suspect_or_repaired": 0
+      },
+      "flag_rate_is_error_rate": false,
+      "word_error_rate": null,
+      "verified_correct_word_count": null,
+      "human_audio_verification_performed": false
+    },
+    "listening_budget": {
+      "max_regions": 16,
+      "max_audio_seconds": 180,
+      "planned_audio_seconds": 19.014
+    },
+    "acoustic_multipass": {
+      "status": "executed",
+      "asr_calls": 2,
+      "processed_audio_seconds": 18.334,
+      "human_audio_review": false
+    },
+    "new_asr_calls": 0,
+    "audio_verification_performed": false,
+    "subtitle_publish_ready": false,
+    "publication_ready": false
+  },
+  "hypothesis_comparison": {
+    "schema_version": "1.0",
+    "method": "localized_word_time_comparison",
+    "comparison_count": 4,
+    "affected_word_ids": [
+      "WORD_0000024",
+      "WORD_0000026",
+      "WORD_0000027"
+    ],
+    "unresolved_regions": [
+      {
+        "start": 10.0,
+        "end": 19.014,
+        "reason": "source_hypotheses_disagree",
+        "comparison_reason": "word_timestamps_unavailable"
+      }
+    ],
+    "recomputed_automatic_flags": true,
+    "flag_rate_is_error_rate": false,
+    "human_audio_verification_performed": false,
+    "replacement_applied": false
+  },
+  "flagged_after": [
+    {
+      "word_id": "WORD_0000000",
+      "word": "Alright,",
+      "start": 0.94,
+      "end": 1.38,
+      "review_reasons": [
+        "missing_or_low_model_probability"
+      ]
+    },
+    {
+      "word_id": "WORD_0000010",
+      "word": "The",
+      "start": 4.6,
+      "end": 5.04,
+      "review_reasons": [
+        "missing_or_low_model_probability"
+      ]
+    },
+    {
+      "word_id": "WORD_0000018",
+      "word": "they",
+      "start": 6.68,
+      "end": 7.26,
+      "review_reasons": [
+        "comparison_clip_boundary"
+      ]
+    },
+    {
+      "word_id": "WORD_0000024",
+      "word": "trunks.",
+      "start": 10.24,
+      "end": 12.32,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ]
+    },
+    {
+      "word_id": "WORD_0000026",
+      "word": "that's",
+      "start": 12.86,
+      "end": 13.12,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ]
+    },
+    {
+      "word_id": "WORD_0000027",
+      "word": "cool.",
+      "start": 13.12,
+      "end": 13.5,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "start": 0,
+      "end": 7.04,
+      "hypotheses_disagree": false,
+      "text_differs": true,
+      "affected_word_ids": [],
+      "boundary_word_ids": [
+        "WORD_0000018"
+      ],
+      "local_comparison": [
+        {
+          "schema_version": "1.0",
+          "method": "monotonic_word_time_alignment",
+          "start": 0,
+          "end": 7.04,
+          "status": "clip_boundary_unresolved",
+          "lexical_difference_count": 0,
+          "cosmetic_difference_count": 1,
+          "timestamp_difference_count": 0,
+          "affected_word_ids": [],
+          "affected_intervals": [],
+          "boundary_word_ids": [
+            "WORD_0000018"
+          ],
+          "boundary_intervals": [
+            {
+              "start": 6.68,
+              "end": 7.26
+            }
+          ],
+          "unresolved_regions": [],
+          "events": [
+            {
+              "kind": "clip_boundary_not_comparable",
+              "original_word": "they",
+              "alternative_word": null,
+              "word_ids": [
+                "WORD_0000018"
+              ],
+              "start": 6.68,
+              "end": 7.04,
+              "clip_boundary": true
+            }
+          ],
+          "independent_audio_verification": false,
+          "replacement_permitted": false
+        }
+      ]
+    },
+    {
+      "start": 7.720000000000001,
+      "end": 19.014,
+      "hypotheses_disagree": true,
+      "text_differs": true,
+      "affected_word_ids": [
+        "WORD_0000024",
+        "WORD_0000026",
+        "WORD_0000027"
+      ],
+      "boundary_word_ids": [],
+      "local_comparison": [
+        {
+          "schema_version": "1.0",
+          "method": "monotonic_word_time_alignment",
+          "start": 7.720000000000001,
+          "end": 19.014,
+          "status": "localized_lexical_difference",
+          "lexical_difference_count": 2,
+          "cosmetic_difference_count": 2,
+          "timestamp_difference_count": 0,
+          "affected_word_ids": [
+            "WORD_0000024",
+            "WORD_0000026",
+            "WORD_0000027"
+          ],
+          "affected_intervals": [
+            {
+              "start": 10.24,
+              "end": 12.32
+            },
+            {
+              "start": 12.86,
+              "end": 13.12
+            },
+            {
+              "start": 13.12,
+              "end": 13.5
+            },
+            {
+              "start": 13.18,
+              "end": 13.46
+            }
+          ],
+          "boundary_word_ids": [],
+          "boundary_intervals": [],
+          "unresolved_regions": [],
+          "events": [
+            {
+              "kind": "replace",
+              "original_word": "trunks.",
+              "alternative_word": "front,",
+              "word_ids": [
+                "WORD_0000024"
+              ],
+              "start": 10.24,
+              "end": 12.32,
+              "clip_boundary": false
+            },
+            {
+              "kind": "insert",
+              "original_word": null,
+              "alternative_word": "that's",
+              "word_ids": [
+                "WORD_0000026",
+                "WORD_0000027"
+              ],
+              "start": 13.18,
+              "end": 13.46,
+              "clip_boundary": false
+            }
+          ],
+          "independent_audio_verification": false,
+          "replacement_permitted": false
+        }
+      ]
+    }
+  ],
+  "human_review": false,
+  "verified_correct_word_count": null,
+  "word_error_rate": null,
+  "publication_ready": false,
+  "before_package_available_at_expected_location": true
+}

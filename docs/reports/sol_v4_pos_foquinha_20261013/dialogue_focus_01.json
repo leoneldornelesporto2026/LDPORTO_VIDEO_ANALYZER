@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "src/tests/test_sol_v4_post_dialogue.py",
+    "src/tests/test_stage09_story_arcs.py",
+    "src/tests/test_understanding_session1.py",
+    "src/tests/test_v44_semantic_story.py",
+    "src/tests/test_stage07_qa_audit.py",
+    "src/tests/test_qa_reference_handoff.py",
+    "--junitxml=docs\\reports\\sol_v4_pos_foquinha_20261013\\dialogue_focus_01.junit.xml"
+  ],
+  "exit_code": 0,
+  "seconds": 5.5636374950408936,
+  "sources_sha256": {
+    "src\\ldporto\\understanding.py": "68e877205181ee8853dfad3dbeec9cf68e1a4c4dfa7145dae3e8c61b4fa54d9f",
+    "src\\tests\\test_sol_v4_post_dialogue.py": "ce1e16dd1ac39d0992ca4fbe44169070ae6eec59fc36fc0a6b057fa1c0b43bb8"
+  }
+}

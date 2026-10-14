@@ -1,0 +1,39 @@
+{
+  "original_flagged_word_count": 710,
+  "subtitle_flagged_word_count": 1966,
+  "total_words": 13082,
+  "subtitle_global_reason_counts": {
+    "asr_text_uncertain": 710,
+    "overlapping_speech": 1408,
+    "interrupted_or_incomplete_word": 16,
+    "word_timestamp_unreliable": 6,
+    "suspected_hallucination": 2
+  },
+  "newly_flagged_union_difference": 1256,
+  "flag_rate_is_wer": false,
+  "human_audio_review_status": "pending",
+  "source_review_preserved_despite_zero_shortlist": true,
+  "source_review_window_count": 16,
+  "existing_asr_calls": 16,
+  "additional_asr_calls": 0,
+  "queue_unit_commercial_review_pending": 62,
+  "inspected_candidate_ids": 16,
+  "commercial_visual_requested": 77,
+  "commercial_visual_uninspected": 61,
+  "source_human_deferred_count": 254,
+  "source_listening_budget": {
+    "max_regions": 16,
+    "max_audio_seconds": 180,
+    "planned_audio_seconds": 177.35999999999996
+  },
+  "original_contact_sheet_members": 12,
+  "inspected_outside_primary_queue": [],
+  "inspected_but_not_commercially_verified": [
+    {
+      "candidate_id": "MOMENT_00003_0001",
+      "state": "measured_ok",
+      "review_state": "requires_review",
+      "gate_reason": "confirmed_commercial"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="32" time="0.162" timestamp="2026-10-14T10:25:29.029938-03:00" hostname="leonelporto"><testcase classname="src.tests.test_r5_narrative_handoff" name="test_builder_is_deterministic_and_does_not_mutate_canonical_inputs" time="0.018" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_units_preserve_literal_individual_source_intervals_and_candidate_gates" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_missing_video_and_active_speaker_do_not_prevent_source_bound_review" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_empty_arcs_produce_legitimate_zero_units_without_forcing_a_story" time="0.001"><failure message="AssertionError: assert 'ANALYZER_REPAIR_REQUIRED' == 'SECOND_CURATION_PARTIAL'&#10;  &#10;  - SECOND_CURATION_PARTIAL&#10;  + ANALYZER_REPAIR_REQUIRED">def test_empty_arcs_produce_legitimate_zero_units_without_forcing_a_story():
+        analysis, candidates = narrative_fixture()
+        analysis['story_arcs'] = []
+        bundle = narrative.build_narrative_handoff(analysis, candidates)
+        assert artifact(bundle, 'units')['units'] == []
+        assert artifact(bundle, 'sequences')['sequences'] == []
+        assert artifact(bundle, 'titles')['titles'] == []
+        assert artifact(bundle, 'quality')['unit_count'] == 0
+&gt;       assert bundle['handoff']['status'] == 'SECOND_CURATION_PARTIAL'
+E       AssertionError: assert 'ANALYZER_REPAIR_REQUIRED' == 'SECOND_CURATION_PARTIAL'
+E         
+E         - SECOND_CURATION_PARTIAL
+E         + ANALYZER_REPAIR_REQUIRED
+
+src\tests\test_r5_narrative_handoff.py:135: AssertionError</failure></testcase><testcase classname="src.tests.test_r5_narrative_handoff" name="test_private_path_prefix_keeps_title_offsets_tied_to_sanitized_literal" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_discussion_keeps_review_units_without_claiming_narrative_completion" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_nonadjacent_source_ids_are_split_instead_of_implying_a_contiguous_cut" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[source_id]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[candidate_id]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[context_id]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[literal]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[span_start]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[span_end]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_corrupted_source_unit_provenance[span_bool]" time="0.001"><failure message="AssertionError: {'schema_version': '1.0', 'stage': 'SECOND_CURATION_HANDOFF_VALIDATION', 'status': 'valid', 'errors': [], ...}&#10;assert 'valid' == 'failed'&#10;  &#10;  - failed&#10;  + valid">kind = 'span_bool'
+
+    @pytest.mark.parametrize('kind', ['source_id', 'candidate_id', 'context_id', 'literal',
+                                      'span_start', 'span_end', 'span_bool'])
+    def test_validator_rejects_corrupted_source_unit_provenance(kind):
+        analysis, candidates, bundle = build_fixture()
+        unit = artifact(bundle, 'units')['units'][0]
+        if kind == 'source_id':
+            unit['source_segment_ids'][0] = 'ABSENT_SOURCE'
+        elif kind == 'candidate_id':
+            unit['candidate_ids'].append('ABSENT_CANDIDATE')
+        elif kind == 'context_id':
+            unit['required_context_unit_ids'].append('ABSENT_UNIT')
+        elif kind == 'literal':
+            unit['literal_text'] = 'A ponte caiu e deixou cem vítimas.'
+        elif kind == 'span_start':
+            unit['source_intervals'][0]['start'] += .25
+        elif kind == 'span_end':
+            unit['source_intervals'][0]['end'] += .25
+        elif kind == 'span_bool':
+            unit['source_intervals'][0]['start'] = False
+&gt;       assert_invalid(bundle, analysis, candidates)
+
+src\tests\test_r5_narrative_handoff.py:210: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+bundle = {'handoff': {'schema_version': '1.0', 'contract': 'ldporto.narrative_handoff', 'project_id': 'SYNTHETIC_ONLY', 'run_id...UNIT_c9ed373431de51aa'], 'required_context_unit_ids': ['UNIT_470bd4a09039dfa1', 'UNIT_6b6cbb71d01c95f1'], ...}]}, ...}}
+analysis = {'metadata': {'duration': 60, 'sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'source': ...ker': 'SP0', ...}], 'story_arcs': [{'story_arc_id': 'ARC0', 'kind': 'partial_story', 'start': 0, 'end': 38, ...}], ...}
+candidates = [{'candidate_id': 'C0', 'start': 8, 'end': 28, 'segment_ids': ['S1', 'S2'], ...}]
+
+    def assert_invalid(bundle, analysis, candidates):
+        result = validate(bundle, analysis, candidates)
+&gt;       assert result['status'] == 'failed', result
+E       AssertionError: {'schema_version': '1.0', 'stage': 'SECOND_CURATION_HANDOFF_VALIDATION', 'status': 'valid', 'errors': [], ...}
+E       assert 'valid' == 'failed'
+E         
+E         - failed
+E         + valid
+
+src\tests\test_r5_narrative_handoff.py:75: AssertionError</failure></testcase><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_dangling_graph_edges[source_id]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_dangling_graph_edges[target_id]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_cutting_required_context_out_of_a_sequence" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_erasing_sequence_context_declaration" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_rewriting_source_presentation_order" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_untraceable_title_or_hook_claims[title]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_untraceable_title_or_hook_claims[factual_claims]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_untraceable_title_or_hook_claims[hook_text]" time="0.001"><failure message="AssertionError: {'schema_version': '1.0', 'stage': 'SECOND_CURATION_HANDOFF_VALIDATION', 'status': 'valid', 'errors': [], ...}&#10;assert 'valid' == 'failed'&#10;  &#10;  - failed&#10;  + valid">part = 'hook_text'
+
+    @pytest.mark.parametrize('part', ['title', 'factual_claims', 'hook_text'])
+    def test_validator_rejects_untraceable_title_or_hook_claims(part):
+        analysis, candidates, bundle = build_fixture()
+        title = artifact(bundle, 'titles')['titles'][0]
+        invented = 'A ponte caiu e deixou cem vítimas.'
+        if part == 'hook_text':
+            title['hook_text'] = invented
+        else:
+            title['suggested_titles'][0][part] = [invented] if part == 'factual_claims' else invented
+&gt;       assert_invalid(bundle, analysis, candidates)
+
+src\tests\test_r5_narrative_handoff.py:259: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+bundle = {'handoff': {'schema_version': '1.0', 'contract': 'ldporto.narrative_handoff', 'project_id': 'SYNTHETIC_ONLY', 'run_id...UNIT_c9ed373431de51aa'], 'required_context_unit_ids': ['UNIT_470bd4a09039dfa1', 'UNIT_6b6cbb71d01c95f1'], ...}]}, ...}}
+analysis = {'metadata': {'duration': 60, 'sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'source': ...ker': 'SP0', ...}], 'story_arcs': [{'story_arc_id': 'ARC0', 'kind': 'partial_story', 'start': 0, 'end': 38, ...}], ...}
+candidates = [{'candidate_id': 'C0', 'start': 8, 'end': 28, 'segment_ids': ['S1', 'S2'], ...}]
+
+    def assert_invalid(bundle, analysis, candidates):
+        result = validate(bundle, analysis, candidates)
+&gt;       assert result['status'] == 'failed', result
+E       AssertionError: {'schema_version': '1.0', 'stage': 'SECOND_CURATION_HANDOFF_VALIDATION', 'status': 'valid', 'errors': [], ...}
+E       assert 'valid' == 'failed'
+E         
+E         - failed
+E         + valid
+
+src\tests\test_r5_narrative_handoff.py:75: AssertionError</failure></testcase><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[handoff-publication_ready-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[handoff-preview_approved-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[handoff-requires_curator_review-False]" time="0.001"><failure message="AssertionError: {'schema_version': '1.0', 'stage': 'SECOND_CURATION_HANDOFF_VALIDATION', 'status': 'valid', 'errors': [], ...}&#10;assert 'valid' == 'failed'&#10;  &#10;  - failed&#10;  + valid">target = 'handoff', field = 'requires_curator_review', value = False
+
+    @pytest.mark.parametrize('target,field,value', [
+        ('handoff', 'publication_ready', True),
+        ('handoff', 'preview_approved', True),
+        ('handoff', 'requires_curator_review', False),
+        ('unit', 'publication_ready', True),
+        ('unit', 'human_review_completed', True),
+        ('unit', 'requires_curator_review', False),
+        ('sequence', 'publication_ready', True),
+        ('sequence', 'preview_approved', True),
+        ('sequence', 'complete_supported', True),
+        ('title', 'publication_ready', True),
+    ])
+    def test_validator_rejects_injected_approvals_and_unproven_completeness(target, field, value):
+        analysis, candidates, bundle = build_fixture()
+        record = {'handoff': bundle['handoff'],
+                  'unit': artifact(bundle, 'units')['units'][0],
+                  'sequence': artifact(bundle, 'sequences')['sequences'][0],
+                  'title': artifact(bundle, 'titles')['titles'][0]}[target]
+        record[field] = value
+&gt;       assert_invalid(bundle, analysis, candidates)
+
+src\tests\test_r5_narrative_handoff.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+bundle = {'handoff': {'schema_version': '1.0', 'contract': 'ldporto.narrative_handoff', 'project_id': 'SYNTHETIC_ONLY', 'run_id...UNIT_c9ed373431de51aa'], 'required_context_unit_ids': ['UNIT_470bd4a09039dfa1', 'UNIT_6b6cbb71d01c95f1'], ...}]}, ...}}
+analysis = {'metadata': {'duration': 60, 'sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'source': ...ker': 'SP0', ...}], 'story_arcs': [{'story_arc_id': 'ARC0', 'kind': 'partial_story', 'start': 0, 'end': 38, ...}], ...}
+candidates = [{'candidate_id': 'C0', 'start': 8, 'end': 28, 'segment_ids': ['S1', 'S2'], ...}]
+
+    def assert_invalid(bundle, analysis, candidates):
+        result = validate(bundle, analysis, candidates)
+&gt;       assert result['status'] == 'failed', result
+E       AssertionError: {'schema_version': '1.0', 'stage': 'SECOND_CURATION_HANDOFF_VALIDATION', 'status': 'valid', 'errors': [], ...}
+E       assert 'valid' == 'failed'
+E         
+E         - failed
+E         + valid
+
+src\tests\test_r5_narrative_handoff.py:75: AssertionError</failure></testcase><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[unit-publication_ready-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[unit-human_review_completed-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[unit-requires_curator_review-False]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[sequence-publication_ready-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[sequence-preview_approved-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[sequence-complete_supported-True]" time="0.001" /><testcase classname="src.tests.test_r5_narrative_handoff" name="test_validator_rejects_injected_approvals_and_unproven_completeness[title-publication_ready-True]" time="0.001" /></testsuite></testsuites>

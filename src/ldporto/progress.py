@@ -33,6 +33,7 @@ STAGE_LABELS = {
     '20_handoff': 'Artefatos de analise', '21_second_curation_handoff': 'Pacote segunda curadoria',
 }
 TERMINAL = {'ok', 'partial', 'degraded', 'skipped', 'unavailable', 'failed', 'blocked', 'cancelled', 'complete'}
+FINALIZATION_RESERVE = .05
 
 
 def emit_event(event):
@@ -82,6 +83,10 @@ class WeightedProgress:
         self.weights.setdefault(stage, 1.)
         state = {**self.states.get(stage, {}), **event}
         state.setdefault('started_at', self.clock())
+        if event.get('substage') and event['substage'] != self.states.get(stage, {}).get('substage'):
+            # Chunk throughput does not estimate a later single inference/export.
+            self.samples.pop(stage, None)
+            self.last_units.pop(stage, None)
         self.states[stage] = state
         self.current_stage = stage
         current, elapsed = state.get('current'), state.get('elapsed_seconds')
@@ -105,15 +110,19 @@ class WeightedProgress:
         total, current = state.get('total'), state.get('current')
         valid = lambda value: isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0
         stage_fraction = min(1., max(0., current / total)) if valid(total) and total > 0 and valid(current) else None
+        if valid(state.get('progress_fraction')):
+            stage_fraction = min(1., state['progress_fraction'])
         completed = sum(self.weights[name] for name, value in self.states.items() if value.get('status') in TERMINAL)
         partial = self.weights.get(stage, 0) * (stage_fraction or 0) if state.get('status') not in TERMINAL else 0.
         fraction = (completed + partial) / max(1e-9, sum(self.weights.values()))
-        self.last_fraction = max(self.last_fraction, min(.999 if not self.finished else 1., fraction))
+        # Only a successful run completion confirms final files/checksums exist.
+        self.last_fraction = max(self.last_fraction, min(1. - FINALIZATION_RESERVE, fraction))
         if self.finished and self.succeeded:
             self.last_fraction = 1.
         samples = list(self.samples.get(stage, []))
         stage_eta = eta_range = None
-        if not self.finished and state.get('status') == 'running' and len(samples) >= 3 and stage_fraction is not None and total > current:
+        if (not self.finished and state.get('status') == 'running' and len(samples) >= 3
+                and valid(total) and valid(current) and total > current):
             center = median(samples)
             ordered = sorted(samples)
             lower, upper = ordered[int((len(ordered) - 1) * .1)], ordered[int((len(ordered) - 1) * .9)]
@@ -138,6 +147,10 @@ class WeightedProgress:
                 'historical_stage_count': len(self.historical),
                 'eta_sample_count': len(samples),
                 'future_eta_basis': 'matching_runtime_history' if all(name in self.historical for name in remaining) else 'baseline_weights_unvalidated_on_current_hardware',
+                'progress_basis': 'empirical_runtime_weights' if self.historical else 'baseline_runtime_weights',
+                'completion_reserved_fraction': FINALIZATION_RESERVE,
+                'remaining_stage_count': sum(self.states.get(name, {}).get('status') not in TERMINAL for name in ordered_stages),
+                'finalization_pending': not self.finished and bool(self.states) and all(self.states.get(name, {}).get('status') in TERMINAL for name in ordered_stages),
                 'blocking_reason': state.get('cause') if state.get('status') in {'blocked', 'failed', 'unavailable', 'cancelled'} else None,
                 'eta_basis': 'rolling_unit_median_and_empirical_range' if stage_eta is not None else 'calculating',
                 'next_stage': next_stage, 'next_stage_label': STAGE_LABELS.get(next_stage),

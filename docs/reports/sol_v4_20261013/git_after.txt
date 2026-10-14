@@ -1,0 +1,96 @@
+ M .package/PROJECT_EXPORT_MANIFEST.json
+ M .package/PROJECT_EXPORT_README.txt
+ M .package/PROJECT_EXPORT_TREE.txt
+ M AGENTS.md
+ D FINAL_HOMOLOGACAO.md
+ M README.md
+ M app.py
+ D automacao/prompts/ETAPA_01.txt
+ M config/config.yaml
+ M docs/BODY_AB_58.md
+ M docs/ETAPA64_RECUPERACAO.md
+ M docs/REPOSITORY_STRUCTURE.md
+ M docs/S9_S11_REAL_TEST.md
+ M docs/VALIDACAO.md
+ D orquestrador.py
+ M scripts/dev/audit_camera_s6.py
+ M scripts/dev/audit_qa.py
+ M scripts/dev/audit_second_curation64.py
+ M scripts/dev/audit_speaker_s5.py
+ D scripts/dev/baseline_etapa01.py
+ D scripts/dev/verificar_liberacao_etapa66.py
+ M scripts/export/exportar_ldporto.py
+ M src/ldporto/active_speaker.py
+ M src/ldporto/analysis_quality.py
+ M src/ldporto/camera_director.py
+ M src/ldporto/camera_evidence.py
+ M src/ldporto/compact_artifacts.py
+ M src/ldporto/config.py
+ M src/ldporto/core.py
+ M src/ldporto/curation_recovery.py
+ M src/ldporto/diarization.py
+ M src/ldporto/execution_receipts.py
+ M src/ldporto/face_quality.py
+ M src/ldporto/handoff.py
+ M src/ldporto/inference_smoke.py
+ M src/ldporto/ollama_local.py
+ M src/ldporto/perception_diagnostics.py
+ M src/ldporto/person_reid.py
+ M src/ldporto/pipeline.py
+ M src/ldporto/progress.py
+ M src/ldporto/reports.py
+ M src/ldporto/round62_audit.py
+ M src/ldporto/run_status.py
+ M src/ldporto/runtime_metrics.py
+ M src/ldporto/scenes.py
+ M src/ldporto/second_curation_export.py
+ M src/ldporto/semantic.py
+ M src/ldporto/subtitle_review.py
+ M src/ldporto/targeted_asr.py
+ M src/ldporto/transcription.py
+ M src/ldporto/understanding.py
+ M src/ldporto/vision.py
+ M src/ldporto/vision_checkpoint.py
+ M src/tests/fixtures/autopilot_historico/README.md
+ D src/tests/test_autopilot_orquestrador.py
+ M src/tests/test_stage13_explainability.py
+ M src/tests/test_stage17_editorial_replay.py
+ M src/tests/test_stage18_handoff_audit.py
+ M src/tests/test_stage19_uncertain_words.py
+ M src/tests/test_v43_runtime.py
+?? docs/README.md
+?? docs/archive/
+?? docs/briefings/
+?? docs/reports/restructuring_20261012/
+?? docs/reports/sol_v3_20261013/
+?? docs/reports/sol_v4_20261013/
+?? scripts/dev/benchmark_semantic_sol_v3.py
+?? scripts/dev/benchmark_speaker_windows_sol_v4.py
+?? scripts/dev/diagnose_body_model.py
+?? scripts/dev/sample_local_resources.py
+?? scripts/dev/smoke_body_detector.py
+?? scripts/dev/smoke_source_asr.py
+?? scripts/dev/sol_v3_camera_canary.py
+?? src/ldporto/asr_comparison.py
+?? src/ldporto/audiovisual_diagnostics.py
+?? src/ldporto/body_model_paths.py
+?? src/ldporto/causal_diagnostics.py
+?? src/ldporto/checkpoint_storage.py
+?? src/ldporto/editorial_outcome.py
+?? src/ldporto/speaker_windows.py
+?? src/ldporto/transcript_dossier.py
+?? src/tests/fixtures/historical_evidence/
+?? src/tests/fixtures/sol_v3_asr_historical.json
+?? src/tests/test_historical_fixture_provenance.py
+?? src/tests/test_runtime_fidelity_contracts.py
+?? src/tests/test_sol_v3_asr_review.py
+?? src/tests/test_sol_v3_gui_review.py
+?? src/tests/test_sol_v3_integration.py
+?? src/tests/test_sol_v3_runtime_editorial.py
+?? src/tests/test_sol_v3_visual_diagnostics.py
+?? src/tests/test_sol_v4_checkpoint_storage.py
+?? src/tests/test_sol_v4_identity.py
+?? src/tests/test_sol_v4_visual.py
+?? src/tests/test_transcription_fidelity.py
+?? src/tests/test_transcription_report_integrity.py
+?? src/tests/test_vision_decision_integrity.py

@@ -110,7 +110,7 @@ def test_rehashed_tampering_is_rejected(tmp_path, mutation):
 def test_real_historical_fixture_hashes_links_and_contact_sheets():
     import cv2
     import numpy as np
-    path = Path(__file__).resolve().parents[2] / 'automacao/evidencias/SECOND_CURATION_READY.zip'
+    path = Path(__file__).resolve().parent / 'fixtures/historical_evidence/SECOND_CURATION_READY.zip'
     assert hashlib.sha256(path.read_bytes()).hexdigest() == '8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349'
     with zipfile.ZipFile(path) as archive:
         manifest = json.loads(archive.read('SECOND_CURATION_MANIFEST.json'))

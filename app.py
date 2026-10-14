@@ -8,6 +8,7 @@ import sys
 import threading
 import json
 import time
+import uuid
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, colorchooser
 import webbrowser
@@ -16,6 +17,56 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT/"src"))
 from ldporto.progress import WeightedProgress, STAGE_WEIGHTS, STAGE_LABELS, EVENT_PREFIX, human_duration
 from ldporto.core import scrub
+
+
+def body_diagnostic_text(report):
+    reason = report.get('model_validation_reason')
+    return ('Solicitado: ' + str(report.get('configured_model')) +
+            '\nResolvido: ' + str(report.get('resolved_model_path')) +
+            '\nUltralytics: ' + str(report.get('ultralytics_version') or 'nao instalado') +
+            '\nArquivo: ' + str(reason or 'presente; carregamento ainda nao testado') +
+            '\nNOT_READY | modelo nao carregado | inferencia nao executada')
+
+
+def body_execution_text(report):
+    measured = lambda value: 'sim' if value is True else 'nao' if value is False else 'nao medido'
+    return ('Corpos: backend real=' + str(report.get('actually_executed_backend') or 'nao medido') +
+            ' | qualidade=' + str(report.get('quality') or 'nao medida') +
+            ' | chamadas=' + str(report.get('inference_calls') or 'nao medidas') +
+            ' | YOLO carregado=' + measured(report.get('model_loaded')) +
+            ', inferencia=' + measured(report.get('inference_executed')) +
+            ' | ' + str(report.get('readiness') or 'NOT_READY') +
+            (' | motivo=' + str(report.get('fallback_reason') or report.get('body_limit_reason'))
+             if report.get('fallback_reason') or report.get('body_limit_reason') else ''))
+
+
+def editorial_triage_text(editorial):
+    """Human triage and automatic selection have separate, recorded denominators."""
+    summary = editorial.get('human_review_summary') if isinstance(editorial, dict) else None
+    if not isinstance(summary, dict):
+        return None
+    def count(value):
+        return str(value) if type(value) is int and value >= 0 else 'nao medido'
+    text = ('Triagem humana: ' + count(summary.get('human_review_queue_count')) +
+            ' candidatos | revisao editorial provisoria: ' + count(summary.get('provisional_human_review_count')) +
+            '\nShortlist automatica: ' + count(editorial.get('shortlist_count')) +
+            ' | triagem nao aprova cortes, previa ou publicacao.')
+    reasons = summary.get('recorded_local_gate_counts')
+    if isinstance(reasons, dict):
+        labels = {'duration_outside_target_without_exception': 'duracao fora do alvo sem excecao comprovada',
+                  'below_editorial_quality_floor': 'score abaixo do piso editorial',
+                  'missing_required_score:hook': 'hook nao medido',
+                  'missing_required_score:standalone_clarity': 'clareza independente nao medida',
+                  'answer_or_payoff_unresolved': 'resposta ou conclusao pendente',
+                  'topic_boundary_crossed': 'fronteira de topico cruzada'}
+        measured = sorted(((key, value) for key, value in reasons.items()
+                           if isinstance(key, str) and type(value) is int and value > 0),
+                          key=lambda item: (-item[1], item[0]))[:3]
+        if measured:
+            text += '\nGates locais (contagens se sobrepoem): ' + '; '.join(
+                labels.get(key, key) + ': ' + str(value) for key, value in measured)
+    text += '\nFila com texto, contexto, audio e tarefas: editorial/human_review_queue.json'
+    return text
 
 
 class App:
@@ -229,12 +280,18 @@ class App:
 
     def body_settings(self):
         from ldporto.config import load_config, save_body_options
+        from ldporto.body_model_paths import body_model_diagnostics
         cfg = load_config(ROOT/'config'/'config.yaml')['vision']
         dialog = tk.Toplevel(self.window)
         dialog.title('Detector corporal opcional — arquivo local')
         backend = tk.StringVar(value=cfg['body_backend'])
         model = tk.StringVar(value=cfg['yolo_model'])
         device = tk.StringVar(value=cfg['yolo_device'])
+        diagnostic = ttk.Label(dialog, text=body_diagnostic_text(body_model_diagnostics(cfg, root=ROOT)), wraplength=650)
+        diagnostic.pack(anchor='w', pady=8)
+        def refresh_diagnostic():
+            options = {**cfg, 'body_backend': backend.get(), 'yolo_model': model.get(), 'yolo_device': device.get()}
+            diagnostic.configure(text=body_diagnostic_text(body_model_diagnostics(options, root=ROOT)))
         ttk.Label(dialog, text='Backend').pack(anchor='w')
         ttk.Combobox(dialog, textvariable=backend, values=['auto', 'hog', 'yolo'], state='readonly').pack(fill='x')
         ttk.Entry(dialog, textvariable=model, state='readonly', width=70).pack(fill='x')
@@ -242,12 +299,19 @@ class App:
             path = filedialog.askopenfilename(parent=dialog, filetypes=[('Pesos locais confiáveis', '*.pt')])
             if path:
                 model.set(path)
+                refresh_diagnostic()
         ttk.Button(dialog, text='Selecionar arquivo .pt local', command=select_model).pack()
         ttk.Label(dialog, text='Device: CPU padrão; CUDA exige VRAM livre e não reserva GPU.').pack()
         ttk.Combobox(dialog, textvariable=device, values=['cpu', 'cuda'], state='readonly').pack()
+        ttk.Button(dialog, text='Atualizar diagnostico passivo', command=refresh_diagnostic).pack()
+        ttk.Button(dialog, text='Testar 4 quadros de video local',
+                   command=lambda: self.run_body_smoke(model.get(), device.get(), parent=dialog)).pack()
         ttk.Label(dialog, text='Sem instalação/download. Leia docs/YOLO_LOCAL_57.md e requirements/yolo.txt.\n'
             'YOLO não comprova identidade/active speaker; produção exige revisão de licença.', wraplength=560).pack()
         def save():
+            if self.runtime_busy():
+                messagebox.showinfo('Em execucao', 'Aguarde o processamento atual para salvar escolhas.', parent=dialog)
+                return
             try:
                 result = save_body_options(ROOT/'config'/'config.yaml', {
                     'body_backend': backend.get(), 'yolo_model': model.get(), 'yolo_device': device.get()})
@@ -259,6 +323,97 @@ class App:
                 messagebox.showerror('Configuração corporal', str(exc), parent=dialog)
         ttk.Button(dialog, text='Salvar escolhas', command=save).pack()
         ttk.Button(dialog, text='Cancelar', command=dialog.destroy).pack()
+
+    def runtime_busy(self):
+        proc = getattr(self, 'proc', None)
+        return bool(getattr(self, 'smoke_busy', False) or getattr(self, 'ocr_busy', False) or proc and proc.poll() is None)
+
+    def run_body_smoke(self, model=None, device=None, parent=None):
+        """Explicit four-frame subprocess; no pipeline, download or GUI model import."""
+        if self.runtime_busy():
+            messagebox.showinfo('Em execucao', 'Aguarde o processamento atual antes do teste corporal.', parent=parent)
+            return
+        from ldporto.config import load_config
+        from ldporto.body_model_paths import body_model_diagnostics
+        cfg = load_config(ROOT/'config'/'config.yaml')['vision']
+        cfg.update(yolo_model=model or cfg['yolo_model'], yolo_device=device or cfg['yolo_device'])
+        diagnostic = body_model_diagnostics(cfg, root=ROOT)
+        if diagnostic.get('model_validation_reason') or not diagnostic.get('ultralytics_available'):
+            self.body_status.set(body_diagnostic_text(diagnostic))
+            messagebox.showinfo('Detector corporal NOT_READY', body_diagnostic_text(diagnostic), parent=parent)
+            return
+        selected = filedialog.askopenfilename(parent=parent, title='Video local para teste corporal curto (4 quadros)',
+                                              filetypes=[('Videos locais', '*.mp4 *.mkv *.webm *.mov *.avi')])
+        if not selected:
+            return
+        video = Path(selected).resolve()
+        if not video.is_file():
+            messagebox.showerror('Teste corporal', 'Selecione um arquivo de video local existente.', parent=parent)
+            return
+        if self.runtime_busy():
+            return
+        output = ROOT/'.cache'/'body_smoke'/uuid.uuid4().hex
+        command = [sys.executable, '-u', str(ROOT/'scripts/dev/smoke_body_detector.py'),
+                   '--video', str(video), '--output', str(output), '--config', str(ROOT/'config/config.yaml'),
+                   '--model', cfg['yolo_model'], '--device', cfg['yolo_device']]
+        self.body_smoke_busy = self.smoke_busy = True
+        self.body_smoke_cancel = threading.Event()
+        self.body_smoke_proc = None
+        self.start_button.configure(state='disabled')
+        self.body_status.set('Teste corporal explicito em andamento: 4 quadros; qualidade ainda nao homologada.')
+        self.status.set('Testando detector corporal em video local...')
+        def worker():
+            result = {'output': str(output), 'report': {}, 'exit_code': None}
+            process = None
+            try:
+                if self.body_smoke_cancel.is_set():
+                    raise InterruptedError('body_smoke_cancelled')
+                process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    text=True, encoding='utf-8', errors='replace',
+                    env=dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUNBUFFERED='1', YOLO_AUTOINSTALL='false', YOLO_OFFLINE='true'),
+                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+                self.body_smoke_proc = process
+                if self.body_smoke_cancel.is_set():
+                    process.terminate()
+                stdout, _ = process.communicate(timeout=180)
+                result.update(exit_code=process.returncode, log=scrub(stdout or ''))
+                report_path = output/'result.json'
+                if report_path.is_file():
+                    report = json.loads(report_path.read_text(encoding='utf-8'))
+                    if not isinstance(report, dict):
+                        raise ValueError('Relatorio corporal deve ser objeto JSON.')
+                    result.update(report=report, report_file_available=True)
+            except Exception as exc:
+                try:
+                    if process is not None and process.poll() is None:
+                        process.kill()
+                        process.communicate()
+                except OSError:
+                    pass
+                result['error'] = scrub(str(exc))
+            result['cancelled'] = self.body_smoke_cancel.is_set()
+            self.messages.put(('body_smoke_result', result))
+        threading.Thread(target=worker, daemon=True).start()
+
+    def handle_body_smoke_result(self, result):
+        self.body_smoke_busy = self.smoke_busy = False
+        self.body_smoke_proc = None
+        self.start_button.configure(state='normal')
+        report = result.get('report') if isinstance(result.get('report'), dict) else {}
+        backend = report.get('backend') if isinstance(report.get('backend'), dict) else {}
+        frames = report.get('frames') if isinstance(report.get('frames'), list) else []
+        verified = (result.get('exit_code') == 0 and not result.get('cancelled') and backend.get('model_loaded') is True and
+                    backend.get('inference_executed') is True and backend.get('inference_successful') is True and
+                    backend.get('local_smoke_validated') is True and len(frames) == 4)
+        status = 'INFERENCE_EXECUTED' if verified else 'NOT_READY'
+        message = (status + ' | teste curto: ' + str(len(frames)) + ' quadros; qualidade nao homologada' +
+                   (' | evidencia: ' + str(Path(result['output'])/'result.json') if result.get('report_file_available') else
+                    ' | relatorio nao gerado; saida solicitada: ' + str(result.get('output'))))
+        if not verified:
+            message += ' | motivo: ' + str('interrompido' if result.get('cancelled') else result.get('error') or
+                                          backend.get('fallback_reason') or report.get('error') or 'inferência nao comprovada')
+        self.body_status.set(message)
+        self.status.set('Teste corporal concluido: ' + status)
 
     def select(self):
         path = filedialog.askopenfilename(filetypes=[("Vídeos", "*.mp4 *.mkv *.webm *.mov *.avi"), ("Todos", "*.*")])
@@ -322,6 +477,7 @@ class App:
         ttk.Button(final_buttons, text='Copiar caminho', command=self.copy_package_path).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Ver resumo', command=self.open_results).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Gerar plano Curator S9', command=self.prepare_curator_s9).pack(side='left', padx=8)
+        ttk.Button(final_buttons, text='Ouvir/ver fila', command=self.open_review_queue).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Nova analise', command=self.new_analysis).pack(side='right')
 
     def show_execution(self):
@@ -373,7 +529,9 @@ class App:
             return
         snapshot = self.progress_model.snapshot()
         self.overall_bar['value'] = snapshot['overall_fraction'] * 100
-        self.overall_text.set('Progresso geral: ' + f"{snapshot['overall_fraction'] * 100:.1f}%")
+        detail = (' | finalizando artefatos e verificacoes' if snapshot['finalization_pending'] else
+                  ' | etapas pendentes: ' + str(snapshot['remaining_stage_count']) if not snapshot['finished'] else '')
+        self.overall_text.set('Progresso geral: ' + f"{snapshot['overall_fraction'] * 100:.1f}%" + detail)
         if snapshot['stage_fraction'] is None and snapshot['status'] == 'running':
             if str(self.stage_bar.cget('mode')) != 'indeterminate':
                 self.stage_bar.configure(mode='indeterminate')
@@ -383,7 +541,9 @@ class App:
             self.stage_bar.configure(mode='determinate')
             self.stage_bar['value'] = (snapshot['stage_fraction'] or 0) * 100
         units = '' if snapshot['total'] is None else f" | {snapshot['current']} / {snapshot['total']}"
-        self.stage_text.set(str(snapshot['stage_label'] or 'Preparando') + units + (' | ' + snapshot['substage'] if snapshot['substage'] else ''))
+        substage = {'local_grounded_extraction': 'Analisando fala original', 'global_review': 'Revisao editorial global',
+                    'semantic_validation': 'Validando evidencias semanticas'}.get(snapshot['substage'], snapshot['substage'])
+        self.stage_text.set(str(snapshot['stage_label'] or 'Preparando') + units + (' | ' + substage if substage else ''))
         eta_range = snapshot['stage_eta_range_seconds']
         stage_eta = human_duration(snapshot['stage_eta_seconds'], True) if not eta_range else human_duration(eta_range[0], True) + ' - ' + human_duration(eta_range[1], True)
         total_range = snapshot.get('total_eta_range_seconds')
@@ -421,22 +581,84 @@ class App:
         self.execution_frame.pack_forget()
         self.configuration_frame.pack_forget()
         self.final_frame.pack(fill='both', expand=True)
-        package, quality, manifest = {}, {}, {}
+        package, quality, manifest, gate, video, review, provenance = {}, {}, {}, {}, {}, {}, {}
+        translations = None
         if self.output_folder:
-            for name, target in (('second_curation_export.json', package), ('analysis_quality.json', quality), ('run_manifest.json', manifest)):
+            folder = Path(self.output_folder)
+            for name, target in (('second_curation_export.json', package), ('analysis_quality.json', quality), ('run_manifest.json', manifest),
+                                 ('quality_gate.json', gate), ('video_analysis.json', video), ('source_audio_review.json', review),
+                                 ('transcription_provenance.json', provenance)):
                 try:
                     if name != 'second_curation_export.json' or code == 0:
-                        target.update(json.loads((self.output_folder / name).read_text(encoding='utf-8')))
+                        document = json.loads((folder / name).read_text(encoding='utf-8'))
+                        if isinstance(document, dict):
+                            target.update(document)
                 except (OSError, ValueError):
                     pass
+            try:
+                document = json.loads((folder/'translations.json').read_text(encoding='utf-8'))
+                translations = document if isinstance(document, list) else None
+            except (OSError, ValueError):
+                pass
         self.package_path = Path(package['path']) if package.get('path') else None
         self.final_heading.set('Execucao interrompida' if code == 130 else 'Analise finalizada' if code == 0 else 'Analise terminou com erro')
         self.final_summary.set('Tempo: ' + human_duration(self.progress_model.snapshot()['elapsed_seconds']) + '\nStatus: ' + str(manifest.get('analysis_status', 'unavailable')) +
             '\nCandidatos: ' + str(package.get('candidate_count', 'n/d')) + ' | Shortlist: ' + str(package.get('shortlist_count', 'n/d')) +
             '\nSmart Camera: ' + str(quality.get('smart_camera_decision_count', 'n/d')) + ' decisoes | Smart Zoom: ' + str(quality.get('zoom_event_count', 'n/d')) + ' eventos')
+        editorial = package.get('editorial_result') or {}
+        if editorial.get('message'):
+            self.final_summary.set(self.final_summary.get() + '\nResultado editorial: ' + editorial['message'])
+        triage = editorial_triage_text(editorial)
+        if triage:
+            self.final_summary.set(self.final_summary.get() + '\n' + triage)
+        detail = '\nQualidade: ' + str(gate.get('status') or quality.get('quality_status') or 'nao medida')
+        detail += '\nTranscricao: ' + ('fala original (transcribe)' if provenance.get('task') == 'transcribe' else 'origem nao registrada')
+        detail += ' | traducoes separadas: ' + (str(len(translations)) if translations is not None else 'nao registradas')
+        if review:
+            detail += '\nRevisao por fonte: ' + str(review.get('status') or 'nao registrada')
+            if review.get('audio_verification_performed') is False or review.get('status') == 'pending_human_audio_review':
+                detail += ' | revisao humana do audio: pendente'
+            else:
+                detail += ' | verificacao de audio: ' + ('registrada' if review.get('audio_verification_performed') is True else 'nao medida')
+            acoustic = review.get('acoustic_multipass') if isinstance(review.get('acoustic_multipass'), dict) else {}
+            if acoustic.get('asr_calls') is not None:
+                detail += ' | multipass ASR: ' + str(acoustic['asr_calls']) + ' chamadas'
+        causal_document = gate.get('causal_diagnostics') if isinstance(gate.get('causal_diagnostics'), dict) else {}
+        causal = gate.get('root_causes') or causal_document.get('root_causes') or []
+        causal = causal if isinstance(causal, list) else []
+        categories = {'source_limitation': 'limitacao da fonte', 'dependency_unavailable': 'dependencia indisponivel',
+                      'insufficient_evidence': 'evidencia insuficiente', 'logic': 'logica',
+                      'configuration': 'configuracao', 'not_validated': 'nao homologado',
+                      'availability_cause_unknown': 'causa da indisponibilidade nao medida', 'interrupted': 'interrompido',
+                      'blocked_reason_unknown': 'bloqueio sem causa confirmada', 'technical_error': 'erro tecnico'}
+        for cause in causal:
+            if isinstance(cause, dict):
+                category = str(cause.get('category') or 'nao classificada')
+                detail += '\nCausa: ' + str(cause.get('stage') or 'nao registrada') + ' | ' + categories.get(category, str(category)) + ' | ' + str(cause.get('reason_code') or cause.get('code') or 'consulte qualidade')
+        visual_quality = video.get('quality') if isinstance(video.get('quality'), dict) else {}
+        backend = visual_quality.get('body_detection') if isinstance(visual_quality.get('body_detection'), dict) else {}
+        if not backend and isinstance(video.get('body_backend_execution'), dict):
+            backend = video['body_backend_execution']
+        if not backend and self.output_folder:
+            try:
+                analysis_path = Path(self.output_folder)/'analysis.json'
+                if analysis_path.stat().st_size <= 4 * 1024 ** 2:
+                    analysis = json.loads(analysis_path.read_text(encoding='utf-8'))
+                    performance = analysis.get('vision_performance') or {}
+                    if isinstance(performance.get('body_backend_execution'), dict):
+                        backend = performance['body_backend_execution']
+            except (OSError, ValueError, AttributeError):
+                pass
+        if backend:
+            detail += '\n' + body_execution_text(backend)
+            self.body_status.set(body_execution_text(backend))
+        self.final_summary.set(self.final_summary.get() + detail)
         labels = {'editorial_ready':'Editorial', 'transcript_ready':'Transcricao', 'visual_ready':'Visual',
                   'speaker_person_ready':'Speaker/person', 'camera_ready':'Camera', 'preview_ready':'Preview'}
-        self.final_readiness.set('\n'.join(label + ': ' + ('pronta' if package.get('readiness', {}).get(key) else 'indisponivel/degradada') for key, label in labels.items()) +
+        self.final_readiness.set('\n'.join(label + ': ' + ('pronta para revisao' if package.get('readiness', {}).get(key) is True else
+            'nao medida' if package.get('readiness', {}).get(key) is None else 'indisponivel/degradada') for key, label in labels.items()) +
+            '\nPreview aprovado: ' + ('sim' if gate.get('preview_approved') is True else 'nao' if gate.get('preview_approved') is False else 'nao registrado') +
+            '\nPublicacao pronta: ' + ('sim' if gate.get('publication_ready') is True else 'nao' if gate.get('publication_ready') is False else 'nao registrada') +
             ('\nCamera preservando source: speaker/person ou crop ainda insuficiente.' if not package.get('readiness', {}).get('camera_ready') else ''))
         self.final_package.set(str(self.package_path) + '\n' + f"{package.get('bytes', 0) / 1024 ** 2:.2f} MB | {package.get('state', 'FAILED')}" if self.package_path else 'Pacote indisponivel; artifacts locais foram preservados para diagnostico/resume.')
 
@@ -463,6 +685,83 @@ class App:
             except Exception as exc:
                 self.window.after(0, lambda error=str(exc): messagebox.showerror('Recursos S10', error))
         threading.Thread(target=task, daemon=True).start()
+
+    def open_review_queue(self):
+        """Inspect original media or a verified preview without changing approvals."""
+        package = self.package_path
+        if not package or not Path(package).is_file():
+            package = filedialog.askopenfilename(title='Pacote de segunda curadoria', filetypes=[('ZIP', '*.zip')])
+        if not package:
+            return
+        def load():
+            try:
+                import zipfile
+                from ldporto.second_curation_export import validate_core_package
+                from ldporto.review_media import build_source_media_references
+                validation = validate_core_package(Path(package))
+                if validation['status'] != 'valid':
+                    raise ValueError('Pacote inválido: ' + '; '.join(validation.get('errors', [])[:3]))
+                with zipfile.ZipFile(package) as archive:
+                    queue = json.loads(archive.read('editorial/human_review_queue.json'))
+                    metadata = json.loads(archive.read('source/metadata.json'))
+                entries = queue['entries']
+                for row in entries:
+                    row.setdefault('source_media_references', build_source_media_references(metadata, row))
+                self.window.after(0, lambda: show(entries))
+            except Exception as exc:
+                self.window.after(0, lambda error=str(exc): messagebox.showerror('Fila de revisão', error))
+        def show(entries):
+            if not entries:
+                messagebox.showinfo('Fila de revisão', 'Não há candidatos elegíveis para revisão neste pacote.')
+                return
+            dialog = tk.Toplevel(self.window)
+            dialog.title('Revisão editorial — nenhuma aprovação automática')
+            labels = [f'{row["candidate_id"]} | {row["start"]:.2f}–{row["end"]:.2f}s' for row in entries]
+            selected = ttk.Combobox(dialog, values=labels, state='readonly', width=80)
+            selected.pack(padx=12, pady=12)
+            selected.current(0)
+            ttk.Label(dialog, text='Selecione a mídia local. O SHA-256 será conferido antes de abrir.\n'
+                      'Assistir não conclui revisão nem aprova prévia ou publicação.').pack(padx=12, pady=8)
+            local_paths = {}
+            def play(kind):
+                refs = entries[selected.current()].get('source_media_references')
+                if not refs:
+                    messagebox.showerror('Mídia', 'Referência verificável indisponível.')
+                    return
+                if kind == 'preview':
+                    if not refs.get('existing_previews'):
+                        messagebox.showinfo('Mídia', 'Não existe prévia vinculada por hash a este intervalo.')
+                        return
+                    key = 'preview_root'
+                    path = local_paths.get(key) or filedialog.askdirectory(parent=dialog,
+                        title='Pasta que contém source_previews')
+                else:
+                    key = 'original_path'
+                    path = local_paths.get(key) or filedialog.askopenfilename(parent=dialog,
+                        title='Vídeo ORIGINAL (o áudio será o da própria fonte)',
+                        filetypes=[('Vídeo', '*.mp4 *.mkv *.webm *.mov *.avi'), ('Todos', '*.*')])
+                if not path:
+                    return
+                local_paths[key] = path
+                def verify_and_open():
+                    try:
+                        import tempfile
+                        from ldporto.review_media import resolve_review_media, review_player_html
+                        resolved = resolve_review_media(refs, kind=kind, **{key: path})
+                        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', suffix='.html',
+                                                         prefix='ldporto_review_', delete=False) as handle:
+                            handle.write(review_player_html(resolved))
+                            target = Path(handle.name)
+                        webbrowser.open(target.as_uri())
+                    except Exception as exc:
+                        local_paths.pop(key, None)
+                        self.window.after(0, lambda error=str(exc): messagebox.showerror('Mídia', error))
+                threading.Thread(target=verify_and_open, daemon=True).start()
+            buttons = ttk.Frame(dialog)
+            buttons.pack(pady=12)
+            for label, kind in [('Vídeo original', 'video'), ('Áudio original', 'audio'), ('Prévia existente', 'preview')]:
+                ttk.Button(buttons, text=label, command=lambda k=kind: play(k)).pack(side='left', padx=5)
+        threading.Thread(target=load, daemon=True).start()
 
     def prepare_curator_s9(self):
         """Create a reviewed render plan; no render, publication or automatic approval."""
@@ -577,7 +876,7 @@ class App:
         self.change_ocr('tesseract_cmd')
 
     def verify_ocr(self, smoke=False, start_after=False):
-        if self.ocr_busy or (self.proc and self.proc.poll() is None):
+        if self.runtime_busy():
             return
         options = self.ocr_options()
         generation = self.ocr_generation
@@ -627,7 +926,7 @@ class App:
             self._start_checked()
 
     def start(self):
-        if self.ocr_busy or (self.proc and self.proc.poll() is None):
+        if self.runtime_busy():
             return
         if not self.source.get().strip():
             messagebox.showinfo('Entrada', 'Selecione um vídeo ou cole um link.')
@@ -635,7 +934,7 @@ class App:
         self.verify_ocr(start_after=True)
 
     def _start_checked(self):
-        if self.proc and self.proc.poll() is None:
+        if self.runtime_busy():
             return
         source = self.source.get().strip()
         if not source:
@@ -892,6 +1191,11 @@ class App:
                     self.handle_stage_event(value)
                 elif kind == 'ocr_result':
                     self.handle_ocr_result(value)
+                elif kind == 'body_smoke_result':
+                    self.handle_body_smoke_result(value)
+                    if self.closing_requested:
+                        self.window.destroy()
+                        return
                 elif kind == "line":
                     if 'execução de backend de corpos:' in value and hasattr(self, 'body_status'):
                         self.body_status.set(value.strip())
@@ -928,6 +1232,16 @@ class App:
         self.window.after(150, self.poll)
 
     def stop(self):
+        if getattr(self, 'body_smoke_busy', False):
+            self.body_smoke_cancel.set()
+            process = getattr(self, 'body_smoke_proc', None)
+            if process is not None and process.poll() is None:
+                try:
+                    process.terminate()
+                except OSError:
+                    pass
+            self.status.set('Interrompendo teste corporal curto; evidencia parcial permanece na pasta nova.')
+            return
         if self.proc and self.proc.poll() is None:
             if self.output_folder:
                 self.output_folder.mkdir(parents=True, exist_ok=True)
@@ -980,6 +1294,11 @@ class App:
         show_cleanup(self.window, folder)
 
     def close(self):
+        if getattr(self, 'body_smoke_busy', False):
+            if messagebox.askyesno('Fechar', 'Teste corporal em curso. Interromper e fechar?'):
+                self.closing_requested = True
+                self.stop()
+            return
         if self.proc and self.proc.poll() is None:
             if not messagebox.askyesno("Fechar", "Há processamento em curso. Interromper e fechar?"):
                 return

@@ -1,0 +1,58 @@
+[
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\benchmark_perception.py",
+      "after_visual"
+    ],
+    "returncode": 0,
+    "wrapper_seconds": 137.77062730002217
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\benchmark_perception.py",
+      "after_pyav_slice",
+      "--scenes-only",
+      "--backend",
+      "pyav",
+      "--threading",
+      "SLICE"
+    ],
+    "returncode": 0,
+    "wrapper_seconds": 12.937012600013986
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\benchmark_perception.py",
+      "after_pyav_auto",
+      "--scenes-only",
+      "--backend",
+      "pyav",
+      "--threading",
+      "AUTO"
+    ],
+    "returncode": 0,
+    "wrapper_seconds": 12.831210799980909
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\benchmark_decoder_eof.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\compare_perception.py"
+    ],
+    "returncode": 0
+  }
+]

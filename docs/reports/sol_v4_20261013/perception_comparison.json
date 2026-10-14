@@ -1,0 +1,70 @@
+{
+  "same_source_and_configuration": true,
+  "legacy_visual_fields": {
+    "people": {
+      "legacy_sha256": "a65317648efa12aff080133f7c3a8e88d953b3ca3ea5218fba04f91ea99e705c",
+      "after_projected_sha256": "a65317648efa12aff080133f7c3a8e88d953b3ca3ea5218fba04f91ea99e705c",
+      "identical": true,
+      "count": 11
+    },
+    "observations": {
+      "legacy_sha256": "eb1ceb03c116d4be1437718e98985d83509fae8912f81910c1cf644a26b1c75f",
+      "after_projected_sha256": "eb1ceb03c116d4be1437718e98985d83509fae8912f81910c1cf644a26b1c75f",
+      "identical": true,
+      "count": 1231
+    },
+    "frames": {
+      "legacy_sha256": "c5142e9d294aa167118fea4b4db0c5654bd048493ca2bd1a58b60d299f0760ce",
+      "after_projected_sha256": "c5142e9d294aa167118fea4b4db0c5654bd048493ca2bd1a58b60d299f0760ce",
+      "identical": true,
+      "count": 691
+    },
+    "thumbnails": {
+      "legacy_sha256": "bc139dd6c8162e7cbb89a71d9175d33a45191fce5694af5294a748ca9fbd1bca",
+      "after_projected_sha256": "bc139dd6c8162e7cbb89a71d9175d33a45191fce5694af5294a748ca9fbd1bca",
+      "identical": true,
+      "count": 11
+    },
+    "scene_intervals": {
+      "legacy_sha256": "f7eed4907681e33fc6bedb4c23b6e9b22152273816e3422fa189d200bac4143f",
+      "after_projected_sha256": "f7eed4907681e33fc6bedb4c23b6e9b22152273816e3422fa189d200bac4143f",
+      "identical": true,
+      "count": 7
+    },
+    "sample_fps": {
+      "legacy_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "after_projected_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "identical": true,
+      "count": null
+    },
+    "speech_sample_fps": {
+      "legacy_sha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+      "after_projected_sha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+      "identical": true,
+      "count": null
+    }
+  },
+  "errors": [],
+  "scene_boundaries_identical": true,
+  "scene_seconds_before": 49.76715830003377,
+  "scene_seconds_after": 48.716652199975215,
+  "vision_seconds_before": 98.4806967000477,
+  "vision_seconds_after": 85.15124979999382,
+  "vision_speedup_x": 1.1565384763155273,
+  "peak_ram_bytes_before": 1958043648,
+  "peak_ram_bytes_after": 1944231936,
+  "precision_recall": "NOT_MEASURED_no_human_identity_or_speaker_ground_truth",
+  "excluded_variable_backend_fields": [
+    "benchmark_frame_seconds",
+    "body_inference_seconds",
+    "peak_vram_mb",
+    "vram_free_max_mb",
+    "vram_free_min_mb"
+  ],
+  "excluded_variable_preflight_fields": [
+    "free_vram_mb",
+    "measured_at_utc",
+    "query_seconds"
+  ],
+  "scope": "One cold-process pair. All legacy geometry/IDs/embeddings/landmarks/quality gates compared. Only timings, sampled free memory and query timestamps excluded; human correctness not asserted."
+}

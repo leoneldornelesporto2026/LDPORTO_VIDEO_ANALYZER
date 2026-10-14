@@ -1,0 +1,19 @@
+{
+  "scope": "read_only_current_builder_preflight_no_model",
+  "validation": {
+    "schema_version": "1.0",
+    "stage": "SECOND_CURATION_HANDOFF_VALIDATION",
+    "status": "valid",
+    "errors": [],
+    "publication_ready": false,
+    "validation_scope": "source_references_and_planning_contract_not_human_quality"
+  },
+  "counts": {
+    "unit_count": 117,
+    "sequence_count": 50,
+    "complete_supported_sequence_count": 0,
+    "question_answer_link_count": 2,
+    "cross_section_entity_context_candidates": 2,
+    "title_seed_count": 178
+  }
+}

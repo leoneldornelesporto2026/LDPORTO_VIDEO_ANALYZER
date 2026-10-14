@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "src/tests/test_r5_narrative_handoff.py",
+    "-q",
+    "--junitxml=docs\\reports\\r5_20261014\\handoff_junit.xml"
+  ],
+  "started_at_utc": "2026-10-14T13:25:28.765934+00:00",
+  "exit_code": 1,
+  "elapsed_seconds": 0.483116
+}

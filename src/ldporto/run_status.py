@@ -34,7 +34,7 @@ DEPENDENCIES = {
 STAGE_PACKAGES = {
     '04_transcription': {'numpy', 'faster-whisper', 'ctranslate2'},
     '05_diarization': {'numpy', 'pyannote.audio', 'torch', 'torchaudio', 'torchcodec'},
-    '06_scenes': {'scenedetect', 'opencv-contrib-python', 'opencv-python'},
+    '06_scenes': {'scenedetect', 'opencv-contrib-python', 'opencv-python', 'av'},
     '07_people_tracking': {'numpy', 'scipy', 'opencv-contrib-python', 'opencv-python', 'mediapipe', 'ultralytics'},
     '13_ocr': {'pytesseract'}, '14_audio_events': {'panns-inference', 'torch'},
 }

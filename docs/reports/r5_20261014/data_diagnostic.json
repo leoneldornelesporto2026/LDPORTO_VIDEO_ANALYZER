@@ -1,0 +1,1467 @@
+{
+  "schema_version": "1.0",
+  "task": "R5 recorded-artifact diagnosis",
+  "generated_at_utc": "2026-10-14T13:18:09.986802+00:00",
+  "execution": {
+    "interpreter": ".venv/Scripts/python.exe -B -",
+    "source_edits": false,
+    "original_artifact_writes": false,
+    "model_inference_calls": 0,
+    "gpu_calls": 0,
+    "tests_executed": false,
+    "media_inspected": false,
+    "network_access": false,
+    "scope": "Read existing JSON/ZIP and source code; write only this new diagnostic file."
+  },
+  "source_analysis": "analysis/video_5198fcdaef38",
+  "source_identity": {
+    "filename": "zd_wjssZ7mc.mp4",
+    "sha256": "b2958122415980a8afff4f77c23ead3c31c00345e5df0ab460995eb731efb00f",
+    "duration": 2234.574,
+    "width": 1920,
+    "height": 1080,
+    "fps": 23.976023976023978,
+    "analyzer_version": "4.4.0",
+    "analyzer_build": null
+  },
+  "package": {
+    "path": "pacotes_para_enviar/SECOND_CURATION_PARTIAL_zd_wjssZ7mc_20261014_001849_795742_c0795c.zip",
+    "bytes": 2419419,
+    "sha256": "6c5da0b276ad5330ae81f678f0856c402b41d2783841096dd99ccbfa32e1a51f",
+    "member_count": 120,
+    "members_read": [
+      "editorial/candidate_catalog.json",
+      "editorial/selection_report_s3.json",
+      "editorial/human_review_queue.json"
+    ]
+  },
+  "artifact_counts": {
+    "speakers": 5,
+    "speaker_turns": 81,
+    "people": 48,
+    "people_observations": 11244,
+    "scenes": 432,
+    "topics": 90,
+    "words": 5643,
+    "transcript_segments": 383,
+    "transcript_translations": 0,
+    "transcript_original_import_segments": 0,
+    "transcription_language_hypotheses": 10,
+    "speaker_person_mapping": 45478,
+    "speech_overlaps": 0,
+    "questions_answers": 34,
+    "question_candidates": 29,
+    "question_answer_pairs": 0,
+    "question_diagnostics": 5,
+    "program_sections": 90,
+    "secondary_editorial_themes": 89,
+    "semantic_chunk_profile": 13,
+    "editorial_moments": 46,
+    "candidate_hooks": 15,
+    "candidate_endings": 303,
+    "silences": 15,
+    "audio_events": 0,
+    "ocr_text": 18,
+    "timeline": 46187,
+    "commercial_blocks": 0,
+    "low_confidence_words": 116,
+    "transcription_alternatives": 75,
+    "unaligned_segments": 0,
+    "person_identities": 48,
+    "raw_tracks": 456,
+    "raw_people": 356,
+    "tracklet_observations": 11353,
+    "reid_merge_decisions": 8817,
+    "person_motion": 48,
+    "speaker_person_summary": 5,
+    "speaker_person_diagnostics": 5,
+    "speaker_person_affinity": 1,
+    "active_speaker_evidence": 1368,
+    "active_speaker": 45478,
+    "shots": 432,
+    "camera_timeline": 46013,
+    "preview_canaries": 4,
+    "participants": 5,
+    "participant_catalog": 52,
+    "entities": 13,
+    "story_arcs": 50,
+    "main_moments": 45,
+    "editorial_shortlist": 0,
+    "thumbnail_candidates": 80,
+    "moment_frames": 0,
+    "master_timeline": 46013,
+    "issues": 24,
+    "camera_director_timeline": 672,
+    "camera_director_focus_window_audit": 50200,
+    "smart_zoom_events": 0
+  },
+  "analysis_quality": {
+    "persistent_person_count": 48,
+    "raw_track_count": 456,
+    "micro_track_count": 63,
+    "speaker_person_mapping_coverage": 0.9556599837847625,
+    "active_speaker_coverage": 0.0,
+    "resolved_focus_coverage": 0.0577202046490005,
+    "source_preservation_fraction": 0.9422797953509995,
+    "zoom_event_count": 0,
+    "semantic_fallback_ratio": 0.0
+  },
+  "editorial_result": {
+    "schema_version": "1.1",
+    "state": "insufficient_evidence",
+    "message": "Evidencia insuficiente para aprovar uma shortlist.",
+    "reason_codes": [
+      "candidate_evidence_or_score_unresolved"
+    ],
+    "candidate_count": 46,
+    "shortlist_count": 0,
+    "duration_seconds": 2234.574,
+    "duration_contract": {
+      "target_min_seconds": 30.0,
+      "target_max_seconds": 90.0,
+      "hard_min_seconds": 8.0,
+      "hard_max_seconds": 180.0,
+      "allow_story_exception": true
+    },
+    "quality_floor": 0.5,
+    "technical_failure_stages": [],
+    "unresolved_candidate_ids": [
+      "MOMENT_00002_0001",
+      "MOMENT_00004_0002",
+      "MOMENT_00004_0003",
+      "MOMENT_00006_0002",
+      "MOMENT_00010_0006",
+      "MOMENT_00010_0000",
+      "MOMENT_00011_0001",
+      "MOMENT_00003_0001",
+      "MOMENT_00006_0003",
+      "MOMENT_00010_0003",
+      "MOMENT_00001_0001",
+      "MOMENT_00001_0000",
+      "MOMENT_00002_0000",
+      "MOMENT_00006_0001",
+      "MOMENT_00005_0000",
+      "MOMENT_00011_0002",
+      "MOMENT_00007_0000",
+      "MOMENT_00003_0003",
+      "MOMENT_00006_0000",
+      "MOMENT_00005_0003",
+      "MOMENT_00003_0002",
+      "MOMENT_00000_0001",
+      "MOMENT_00011_0000",
+      "MOMENT_00000_0000",
+      "MOMENT_00010_0001",
+      "MOMENT_00005_0001",
+      "MOMENT_00010_0005",
+      "MOMENT_00004_0001",
+      "MOMENT_00008_0000",
+      "MOMENT_00010_0002",
+      "MOMENT_00008_0001",
+      "MOMENT_00011_0004",
+      "MOMENT_00002_0002",
+      "MOMENT_00001_0002",
+      "MOMENT_00005_0004",
+      "MOMENT_00007_0001",
+      "MOMENT_00009_0000",
+      "MOMENT_00010_0007",
+      "MOMENT_00003_0000",
+      "MOMENT_00004_0000",
+      "MOMENT_00010_0004",
+      "MOMENT_00005_0002",
+      "MOMENT_00007_0002",
+      "MOMENT_00012_0000",
+      "MOMENT_00012_0001"
+    ],
+    "recorded_rejection_counts": {
+      "answer_or_payoff_unresolved": 17,
+      "below_editorial_quality_floor": 31,
+      "clean_ending:false": 19,
+      "clean_opening:false": 13,
+      "context_gap_requires_review": 4,
+      "context_requirement_unresolved": 1,
+      "incomplete_sentence_or_handoff": 4,
+      "ineligible_by_quality_gate": 45,
+      "mid_sentence": 4,
+      "missing_antecedent_or_continuation": 9,
+      "missing_story_development": 8,
+      "missing_story_setup": 6,
+      "narrative_integrity:incomplete": 20,
+      "question_answer_unit_incomplete": 17,
+      "question_without_complete_answer": 16,
+      "story_payoff_not_grounded": 20,
+      "topic_boundary_crossed": 13
+    },
+    "diagnostic_only": true,
+    "selection_policy_changed": false,
+    "human_review_summary": {
+      "schema_version": "1.0",
+      "queue_schema_version": "1.2",
+      "human_review_queue_count": 45,
+      "provisional_human_review_count": 45,
+      "automatic_shortlist_eligible_count": 0,
+      "recorded_local_gate_counts": {
+        "answer_or_payoff_unresolved": 17,
+        "automatic_shortlist_gate_not_passed": 45,
+        "below_editorial_quality_floor": 31,
+        "clean_ending:false": 19,
+        "clean_opening:false": 13,
+        "commercial_review_pending": 29,
+        "context_gap_requires_review": 4,
+        "context_requirement_unresolved": 1,
+        "incomplete_sentence_or_handoff": 4,
+        "ineligible_by_quality_gate": 45,
+        "mid_sentence": 4,
+        "missing_antecedent_or_continuation": 9,
+        "missing_required_score:hook": 34,
+        "missing_required_score:standalone_clarity": 34,
+        "missing_story_development": 8,
+        "missing_story_setup": 6,
+        "narrative_integrity:incomplete": 20,
+        "outside_target_duration": 26,
+        "question_answer_unit_incomplete": 17,
+        "question_without_complete_answer": 16,
+        "story_payoff_not_grounded": 20,
+        "topic_boundary_crossed": 13
+      },
+      "priority_sample_candidate_ids": [
+        "MOMENT_00011_0002",
+        "MOMENT_00000_0000",
+        "MOMENT_00010_0001",
+        "MOMENT_00009_0000",
+        "MOMENT_00012_0000"
+      ],
+      "review_priority_method": "content_interest_before_cta_then_recorded_score",
+      "editorial_potential_counts": {
+        "CONTENT_REVIEW": 5,
+        "UNRESOLVED": 40
+      },
+      "queue_ref": "editorial/human_review_queue.json",
+      "official_shortlist_unchanged": true,
+      "publication_ready": false
+    },
+    "human_review_available": true,
+    "full_source_review": null,
+    "publication_ready": false
+  },
+  "catalog_vs_selection": {
+    "catalog_count": 46,
+    "main_moments_count": 45,
+    "s3_evaluated": 45,
+    "s3_shortlist_count": 0,
+    "s3_unique_rejected": 45,
+    "human_review_queue_schema": "1.2",
+    "human_review_queue_count": 45,
+    "catalog_only_candidate_ids": [
+      "MOMENT_00001_0000"
+    ],
+    "catalog_only_records": [
+      {
+        "candidate_id": "MOMENT_00001_0000",
+        "alternate_of": "MOMENT_00001_0001",
+        "duplicate_group_id": "MOMENT_00001_0001",
+        "start": 178.56,
+        "end": 238.72,
+        "editorial_score_final": 0.666
+      }
+    ],
+    "explanation": "46 catalog records comprise 45 primary review units plus one alternate. Main moment MOMENT_00001_0001 lists MOMENT_00001_0000 in alternates. This count difference does not prove loss during S3.",
+    "all_primary_ids_present_in_queue": true,
+    "s3_exclusion_counts_multilabel": {
+      "answer_or_payoff_unresolved": 17,
+      "below_editorial_quality_floor": 31,
+      "clean_ending:false": 19,
+      "clean_opening:false": 13,
+      "context_gap_requires_review": 4,
+      "context_requirement_unresolved": 1,
+      "duration_default_eligible:false": 26,
+      "incomplete_sentence_or_handoff": 4,
+      "ineligible_by_quality_gate": 45,
+      "mid_sentence": 4,
+      "missing_antecedent_or_continuation": 9,
+      "missing_required_score:hook": 34,
+      "missing_required_score:standalone_clarity": 34,
+      "missing_story_development": 8,
+      "missing_story_setup": 6,
+      "narrative_integrity:incomplete": 20,
+      "question_answer_unit_incomplete": 17,
+      "question_without_complete_answer": 16,
+      "story_payoff_not_grounded": 20,
+      "topic_boundary_crossed": 13
+    }
+  },
+  "story_diagnostics": {
+    "count": 50,
+    "kind_counts": {
+      "discussion_segment": 28,
+      "anecdote": 14,
+      "partial_story": 8
+    },
+    "narrative_supported_count": 0,
+    "nonempty_structure_development_but_canonical_null_count": 28,
+    "nonempty_structure_development_but_canonical_null_ids": [
+      "STORY_0000",
+      "STORY_0004",
+      "STORY_0005",
+      "STORY_0006",
+      "STORY_0007",
+      "STORY_0008",
+      "STORY_0009",
+      "STORY_0011",
+      "STORY_0014",
+      "STORY_0015",
+      "STORY_0019",
+      "STORY_0020",
+      "STORY_0021",
+      "STORY_0023",
+      "STORY_0025",
+      "STORY_0026",
+      "STORY_0027",
+      "STORY_0028",
+      "STORY_0029",
+      "STORY_0030",
+      "STORY_0032",
+      "STORY_0033",
+      "STORY_0035",
+      "STORY_0036",
+      "STORY_0038",
+      "STORY_0040",
+      "STORY_0043",
+      "STORY_0045"
+    ],
+    "canonical_interval_conflict_count": 8,
+    "examples": [
+      {
+        "story_arc_id": "STORY_0000",
+        "topic_id": "TOPIC_00000_001",
+        "kind": "discussion_segment",
+        "start": 10.54,
+        "end": 25.44,
+        "narrative_supported": false,
+        "narrative_structure": {
+          "introduction": [],
+          "development": [
+            "SEG_00003",
+            "SEG_00004",
+            "SEG_00005"
+          ],
+          "climax": [],
+          "resolution": [],
+          "ending": [
+            "SEG_00006"
+          ]
+        },
+        "development": null,
+        "support_diagnostics": {
+          "schema_version": "1.0",
+          "components": {
+            "setup": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            },
+            "development": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            },
+            "payoff": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            }
+          },
+          "ordered_setup_development_payoff": false,
+          "canonical_interval_conflicts": [],
+          "empty_source_text_segment_ids": [],
+          "missing_support_reasons": [
+            "no_setup",
+            "no_development",
+            "no_payoff"
+          ],
+          "context_incomplete": true,
+          "scope": "canonical_segment_components; no_human_narrative_validation"
+        },
+        "development_source_segments": [
+          {
+            "segment_id": "SEG_00003",
+            "start": 13.96,
+            "end": 14.86,
+            "speaker": "SPEAKER_00",
+            "text": "Como a gente lê?"
+          },
+          {
+            "segment_id": "SEG_00004",
+            "start": 14.94,
+            "end": 15.52,
+            "speaker": "SPEAKER_00",
+            "text": "270."
+          },
+          {
+            "segment_id": "SEG_00005",
+            "start": 16.54,
+            "end": 18.6,
+            "speaker": "SPEAKER_00",
+            "text": "Ignorando aquele zerinho à esquerda."
+          }
+        ]
+      },
+      {
+        "story_arc_id": "STORY_0036",
+        "topic_id": "TOPIC_00008_003",
+        "kind": "discussion_segment",
+        "start": 1518.32,
+        "end": 1581.8,
+        "narrative_supported": false,
+        "narrative_structure": {
+          "introduction": [],
+          "development": [
+            "SEG_00282",
+            "SEG_00283",
+            "SEG_00284",
+            "SEG_00285",
+            "SEG_00286",
+            "SEG_00287",
+            "SEG_00288",
+            "SEG_00289",
+            "SEG_00290",
+            "SEG_00291"
+          ],
+          "climax": [],
+          "resolution": [],
+          "ending": [
+            "SEG_00292"
+          ]
+        },
+        "development": null,
+        "support_diagnostics": {
+          "schema_version": "1.0",
+          "components": {
+            "setup": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            },
+            "development": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            },
+            "payoff": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            }
+          },
+          "ordered_setup_development_payoff": false,
+          "canonical_interval_conflicts": [],
+          "empty_source_text_segment_ids": [],
+          "missing_support_reasons": [
+            "no_setup",
+            "no_development",
+            "no_payoff"
+          ],
+          "context_incomplete": true,
+          "scope": "canonical_segment_components; no_human_narrative_validation"
+        },
+        "development_source_segments": [
+          {
+            "segment_id": "SEG_00282",
+            "start": 1519.52,
+            "end": 1522.0,
+            "speaker": "SPEAKER_02",
+            "text": "Você não tá vendo as agulhas apontarem pra Belém adiante?"
+          },
+          {
+            "segment_id": "SEG_00283",
+            "start": 1522.16,
+            "end": 1524.0,
+            "speaker": "SPEAKER_02",
+            "text": "Belém só pode estar na frente O"
+          },
+          {
+            "segment_id": "SEG_00284",
+            "start": 1524.0,
+            "end": 1531.3,
+            "speaker": "SPEAKER_00",
+            "text": "Zilli desistiu de debater, simplesmente não havia mais comunicação entre os pilotos, totalmente contrário do que o CRM prega."
+          },
+          {
+            "segment_id": "SEG_00285",
+            "start": 1531.34,
+            "end": 1535.78,
+            "speaker": "SPEAKER_00",
+            "text": "O avião completou 2 horas e 10 de voo, já era por volta de 19h45."
+          },
+          {
+            "segment_id": "SEG_00286",
+            "start": 1536.42,
+            "end": 1540.78,
+            "speaker": "SPEAKER_00",
+            "text": "O voo entre Marabá e Belém era curtinho, só 50 minutos no máximo."
+          },
+          {
+            "segment_id": "SEG_00287",
+            "start": 1541.04,
+            "end": 1544.44,
+            "speaker": "SPEAKER_00",
+            "text": "O Zilli abriu a carta de aproximação de Belém e se assustou."
+          },
+          {
+            "segment_id": "SEG_00288",
+            "start": 1544.54,
+            "end": 1552.42,
+            "speaker": "SPEAKER_00",
+            "text": "Ele viu o arco DME na carta e leu ali que a proa que deveriam ter seguido era 027 e não 270."
+          },
+          {
+            "segment_id": "SEG_00289",
+            "start": 1552.42,
+            "end": 1556.7,
+            "speaker": "SPEAKER_00",
+            "text": "Ele se virou para o comandante e apontando a carta disse Olha"
+          },
+          {
+            "segment_id": "SEG_00290",
+            "start": 1556.7,
+            "end": 1558.34,
+            "speaker": "SPEAKER_02",
+            "text": "a merda que você fez O"
+          },
+          {
+            "segment_id": "SEG_00291",
+            "start": 1558.34,
+            "end": 1566.82,
+            "speaker": "SPEAKER_00",
+            "text": "comandante não falou nada, só fez sinal de silêncio e apontou para cima Querendo indicar o gravador de voz da cabine Naquela hora, o Zilli"
+          }
+        ]
+      },
+      {
+        "story_arc_id": "STORY_0002",
+        "topic_id": "TOPIC_00000_003",
+        "kind": "partial_story",
+        "start": 106.94,
+        "end": 178.24,
+        "narrative_supported": false,
+        "narrative_structure": {
+          "introduction": [
+            "SEG_00019"
+          ],
+          "development": [
+            "SEG_00018",
+            "SEG_00019",
+            "SEG_00020",
+            "SEG_00021",
+            "SEG_00022",
+            "SEG_00023",
+            "SEG_00024",
+            "SEG_00025"
+          ],
+          "climax": [],
+          "resolution": [],
+          "ending": [
+            "SEG_00026"
+          ]
+        },
+        "development": {
+          "text": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo. Por exemplo, até aquela data, quando você precisava voar para leste, O plano de voo trazia a informação que os pilotos precisariam voar no rumo 090, de acordo com a bússola. Só que com o novo software da Varig, essa indicação mudava. E a partir de 12 de junho, o voo para o leste estava indicado como 0900. Até aí não tinha problema, afinal de contas a bússola só vai de 0 até 359. Quando o piloto visse a indicação 0900, ele sabia que não tinha um grau 900 para ele ir Então ficava claro que era para ir para 090 ou leste O problema era quando tinha números menores, como por exemplo 0150 Se os pilotos não prestassem atenção, a indicação de 15 graus, que é o rumo nor-nordeste Poderia ser interpretada como 150, que é sudeste E aí alguns pilotos criaram o hábito de riscar o último zero, o zero lá da direita, para evitar confusão.",
+          "segment_ids": [
+            "SEG_00018",
+            "SEG_00019",
+            "SEG_00020",
+            "SEG_00021",
+            "SEG_00022",
+            "SEG_00023",
+            "SEG_00024",
+            "SEG_00025"
+          ],
+          "start": 100.68,
+          "end": 168.78
+        },
+        "support_diagnostics": {
+          "schema_version": "1.0",
+          "components": {
+            "setup": {
+              "status": "grounded_references",
+              "segment_ids": [
+                "SEG_00019"
+              ],
+              "missing_segment_ids": [],
+              "source_text_available": true,
+              "start": 106.94,
+              "end": 118.5
+            },
+            "development": {
+              "status": "grounded_references",
+              "segment_ids": [
+                "SEG_00018",
+                "SEG_00019",
+                "SEG_00020",
+                "SEG_00021",
+                "SEG_00022",
+                "SEG_00023",
+                "SEG_00024",
+                "SEG_00025"
+              ],
+              "missing_segment_ids": [],
+              "source_text_available": true,
+              "start": 100.68,
+              "end": 168.78
+            },
+            "payoff": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            }
+          },
+          "ordered_setup_development_payoff": false,
+          "canonical_interval_conflicts": [
+            {
+              "segment_ids": [
+                "SEG_00019",
+                "SEG_00018"
+              ],
+              "reason": "overlapping_or_reversed_components"
+            }
+          ],
+          "empty_source_text_segment_ids": [],
+          "missing_support_reasons": [
+            "no_payoff",
+            "canonical_interval_conflict"
+          ],
+          "context_incomplete": true,
+          "scope": "canonical_segment_components; no_human_narrative_validation"
+        },
+        "development_source_segments": [
+          {
+            "segment_id": "SEG_00018",
+            "start": 100.68,
+            "end": 106.88,
+            "speaker": "SPEAKER_00",
+            "text": "Em 12 de junho de 1989, a Varig mudou a indicação dos rumos nos planos de voo."
+          },
+          {
+            "segment_id": "SEG_00019",
+            "start": 106.94,
+            "end": 118.5,
+            "speaker": "SPEAKER_00",
+            "text": "Por exemplo, até aquela data, quando você precisava voar para leste, O plano de voo trazia a informação que os pilotos precisariam voar no rumo 090, de acordo com a bússola."
+          },
+          {
+            "segment_id": "SEG_00020",
+            "start": 118.6,
+            "end": 123.18,
+            "speaker": "SPEAKER_00",
+            "text": "Só que com o novo software da Varig, essa indicação mudava."
+          },
+          {
+            "segment_id": "SEG_00021",
+            "start": 123.28,
+            "end": 128.4,
+            "speaker": "SPEAKER_00",
+            "text": "E a partir de 12 de junho, o voo para o leste estava indicado como 0900."
+          },
+          {
+            "segment_id": "SEG_00022",
+            "start": 129.08,
+            "end": 135.06,
+            "speaker": "SPEAKER_00",
+            "text": "Até aí não tinha problema, afinal de contas a bússola só vai de 0 até 359."
+          },
+          {
+            "segment_id": "SEG_00023",
+            "start": 135.06,
+            "end": 149.72,
+            "speaker": "SPEAKER_00",
+            "text": "Quando o piloto visse a indicação 0900, ele sabia que não tinha um grau 900 para ele ir Então ficava claro que era para ir para 090 ou leste O problema era quando tinha números menores, como por"
+          },
+          {
+            "segment_id": "SEG_00024",
+            "start": 149.72,
+            "end": 164.72,
+            "speaker": "SPEAKER_00",
+            "text": "exemplo 0150 Se os pilotos não prestassem atenção, a indicação de 15 graus, que é o rumo nor-nordeste Poderia ser interpretada como 150, que é sudeste E aí alguns pilotos criaram o hábito"
+          },
+          {
+            "segment_id": "SEG_00025",
+            "start": 164.72,
+            "end": 168.78,
+            "speaker": "SPEAKER_00",
+            "text": "de riscar o último zero, o zero lá da direita, para evitar confusão."
+          }
+        ]
+      },
+      {
+        "story_arc_id": "STORY_0013",
+        "topic_id": "TOPIC_00003_000",
+        "kind": "anecdote",
+        "start": 533.62,
+        "end": 595.0,
+        "narrative_supported": false,
+        "narrative_structure": {
+          "introduction": [
+            "SEG_00091"
+          ],
+          "development": [
+            "SEG_00092",
+            "SEG_00093",
+            "SEG_00094",
+            "SEG_00095",
+            "SEG_00096",
+            "SEG_00097",
+            "SEG_00098",
+            "SEG_00099",
+            "SEG_00100"
+          ],
+          "climax": [],
+          "resolution": [],
+          "ending": [
+            "SEG_00101"
+          ]
+        },
+        "development": {
+          "text": "De acordo com o plano de voo, o avião deveria seguir no rumo 027. No automatismo, ele ajustou o Horizontal Situation Indicator, que era o HSI, o instrumento do avião, para a proa 270. Afinal, o zero à esquerda sempre é ignorado, não é mesmo? Então ele foi no PMS, o Performance Management System, e colocou a distância entre Marabá e Belém, 187 milhas náuticas, ou cerca de 346 quilômetros. O PMS é um antecessor, um antigão lá, dos computadores que gerenciam a navegação hoje em dia. Quando os pilotos colocavam os dados do voo, ele indicava apenas a razão de subida, de cruzeiro e a descida. E ele também indica quantas milhas faltam até o ponto que o avião deve começar a descer. Nos aviões modernos é muito diferente. Onde até a rota que vai ser feita é visível.",
+          "segment_ids": [
+            "SEG_00092",
+            "SEG_00093",
+            "SEG_00094",
+            "SEG_00095",
+            "SEG_00096",
+            "SEG_00097",
+            "SEG_00098",
+            "SEG_00099",
+            "SEG_00100"
+          ],
+          "start": 538.68,
+          "end": 593.52
+        },
+        "support_diagnostics": {
+          "schema_version": "1.0",
+          "components": {
+            "setup": {
+              "status": "grounded_references",
+              "segment_ids": [
+                "SEG_00091"
+              ],
+              "missing_segment_ids": [],
+              "source_text_available": true,
+              "start": 533.62,
+              "end": 538.58
+            },
+            "development": {
+              "status": "grounded_references",
+              "segment_ids": [
+                "SEG_00092",
+                "SEG_00093",
+                "SEG_00094",
+                "SEG_00095",
+                "SEG_00096",
+                "SEG_00097",
+                "SEG_00098",
+                "SEG_00099",
+                "SEG_00100"
+              ],
+              "missing_segment_ids": [],
+              "source_text_available": true,
+              "start": 538.68,
+              "end": 593.52
+            },
+            "payoff": {
+              "status": "missing_component",
+              "segment_ids": [],
+              "missing_segment_ids": [],
+              "source_text_available": false,
+              "start": null,
+              "end": null
+            }
+          },
+          "ordered_setup_development_payoff": false,
+          "canonical_interval_conflicts": [],
+          "empty_source_text_segment_ids": [],
+          "missing_support_reasons": [
+            "no_payoff"
+          ],
+          "context_incomplete": true,
+          "scope": "canonical_segment_components; no_human_narrative_validation"
+        },
+        "development_source_segments": [
+          {
+            "segment_id": "SEG_00092",
+            "start": 538.68,
+            "end": 542.92,
+            "speaker": "SPEAKER_00",
+            "text": "De acordo com o plano de voo, o avião deveria seguir no rumo 027."
+          },
+          {
+            "segment_id": "SEG_00093",
+            "start": 543.12,
+            "end": 551.22,
+            "speaker": "SPEAKER_00",
+            "text": "No automatismo, ele ajustou o Horizontal Situation Indicator, que era o HSI, o instrumento do avião, para a proa 270."
+          },
+          {
+            "segment_id": "SEG_00094",
+            "start": 552.08,
+            "end": 555.2,
+            "speaker": "SPEAKER_00",
+            "text": "Afinal, o zero à esquerda sempre é ignorado, não é mesmo?"
+          },
+          {
+            "segment_id": "SEG_00095",
+            "start": 555.2,
+            "end": 566.84,
+            "speaker": "SPEAKER_00",
+            "text": "Então ele foi no PMS, o Performance Management System, e colocou a distância entre Marabá e Belém, 187 milhas náuticas, ou cerca de 346 quilômetros."
+          },
+          {
+            "segment_id": "SEG_00096",
+            "start": 567.06,
+            "end": 574.04,
+            "speaker": "SPEAKER_00",
+            "text": "O PMS é um antecessor, um antigão lá, dos computadores que gerenciam a navegação hoje em dia."
+          },
+          {
+            "segment_id": "SEG_00097",
+            "start": 574.1800000000001,
+            "end": 581.04,
+            "speaker": "SPEAKER_00",
+            "text": "Quando os pilotos colocavam os dados do voo, ele indicava apenas a razão de subida, de cruzeiro e a descida."
+          },
+          {
+            "segment_id": "SEG_00098",
+            "start": 581.04,
+            "end": 586.74,
+            "speaker": "SPEAKER_00",
+            "text": "E ele também indica quantas milhas faltam até o ponto que o avião deve começar a descer."
+          },
+          {
+            "segment_id": "SEG_00099",
+            "start": 586.8199999999999,
+            "end": 589.44,
+            "speaker": "SPEAKER_00",
+            "text": "Nos aviões modernos é muito diferente."
+          },
+          {
+            "segment_id": "SEG_00100",
+            "start": 589.84,
+            "end": 593.52,
+            "speaker": "SPEAKER_00",
+            "text": "Onde até a rota que vai ser feita é visível."
+          }
+        ]
+      }
+    ],
+    "limitation": "IDs and existing text establish component availability only. Causality, payoff and publication suitability remain unverified by a human.",
+    "cause_observed_before_parallel_r5_source_edits": {
+      "path": "src/ldporto/understanding.py",
+      "function": "build_story_arcs / run_understanding",
+      "observed_development_condition": "if kind != \"discussion_segment\" else None",
+      "observed_narrative_structure_projection": "development: [s[\"segment_id\"] for s in middle]",
+      "observed_construction_call": "build_story_arcs(transcript, semantic[\"topics\"], qas)",
+      "facts": "build_story_arcs preserves middle IDs in narrative_structure for discussion_segment while setting canonical development=None. STORY_0002 also starts development earlier than setup and includes the setup ID. Both require explicit diagnostic distinctions; neither warrants automatic narrative approval.",
+      "line_reference_scope": "Initial read only. Parallel R5 work changed the source during diagnosis; current source line numbers must not be treated as source-execution provenance."
+    }
+  },
+  "semantic_evidence": {
+    "checkpoint": "analysis/video_5198fcdaef38/cache/b2958122415980a8/15_semantic.json",
+    "checkpoint_bytes": 560058,
+    "counts": {
+      "topics": 90,
+      "moments": 46,
+      "program_sections": 90,
+      "questions_answers": 34
+    },
+    "moment_fields": [
+      "categories",
+      "commercial_classification",
+      "commercial_score",
+      "complete_sentence",
+      "confidence",
+      "confidence_method",
+      "content_type",
+      "context_reason",
+      "context_required",
+      "context_requirement",
+      "context_seconds_after",
+      "context_seconds_before",
+      "editorial",
+      "end",
+      "evidence_segment_ids",
+      "inference",
+      "legacy_context_required",
+      "metadata_locale",
+      "method",
+      "moment_id",
+      "needs_review",
+      "possible_end",
+      "possible_start",
+      "reason",
+      "source_transcript_needs_review",
+      "standalone_class",
+      "start",
+      "text",
+      "uncertain_segment_ids"
+    ],
+    "structured_causality_resolution_fields_present": false,
+    "existing_causal_moment_examples": [
+      {
+        "moment_id": "MOMENT_00000_0001",
+        "start": 91.68,
+        "end": 178.24,
+        "reason": "O locutor explica uma mudança técnica na Varig e como ela causou confusões entre os pilotos, usando exemplos claros para ilustrar o problema.",
+        "categories": [
+          "educational",
+          "storytelling"
+        ],
+        "evidence_segment_ids": [
+          "SEG_00017",
+          "SEG_00018",
+          "SEG_00019",
+          "SEG_00020",
+          "SEG_00021",
+          "SEG_00022",
+          "SEG_00023",
+          "SEG_00024",
+          "SEG_00025",
+          "SEG_00026"
+        ]
+      }
+    ],
+    "existing_causal_topic_examples": [
+      {
+        "topic_id": "TOPIC_00008_003",
+        "start": 1518.32,
+        "end": 1581.8,
+        "topic": "Descoberta do erro de rumo e reação do comandante",
+        "summary": "O Zilli descobriu que o avião estava seguindo uma proa errada (270 ao invés de 027) e tentou alertar o comandante, mas foi ignorado. O comandante não reagiu e apontou para o gravador de voz da cabine.",
+        "evidence_segment_ids": [
+          "SEG_00281",
+          "SEG_00282",
+          "SEG_00283",
+          "SEG_00284",
+          "SEG_00285",
+          "SEG_00286",
+          "SEG_00287",
+          "SEG_00288",
+          "SEG_00289",
+          "SEG_00290",
+          "SEG_00291",
+          "SEG_00292"
+        ]
+      }
+    ],
+    "interpretation": "Existing reasons/topic summaries contain causal descriptions that can seed review. They are model-generated hypotheses tied to segment IDs, not grounded payoff annotations. Current build_story_arcs consumes topics and QA, not semantic moment reasons directly.",
+    "recorded_metrics": {
+      "semantic_valid_chunk_ratio": 1.0,
+      "semantic_initial_valid_ratio": 0.7692307692307693,
+      "semantic_repair_attempt_ratio": 0.23076923076923078,
+      "semantic_repair_success_ratio": 1.0,
+      "semantic_fallback_ratio": 0.0,
+      "semantic_cache_hit_ratio": 0.0,
+      "semantic_seconds": 1941.594,
+      "global_review_seconds": 479.25,
+      "semantic_call_budget": 50,
+      "semantic_inference_call_count": 16,
+      "model_fingerprint": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+      "global_review_status": "ok",
+      "semantic_call_p50_seconds": 116.266,
+      "semantic_call_p90_seconds": 133.25,
+      "semantic_call_p95_seconds": 136.578,
+      "semantic_repair_cost_seconds": 16.984000000054948,
+      "slowest_semantic_calls": [
+        {
+          "chunk_id": "SEMANTIC_00010",
+          "duration_seconds": 175.0
+        },
+        {
+          "chunk_id": "SEMANTIC_00003",
+          "duration_seconds": 136.578
+        },
+        {
+          "chunk_id": "SEMANTIC_00007",
+          "duration_seconds": 133.25
+        },
+        {
+          "chunk_id": "SEMANTIC_00009",
+          "duration_seconds": 129.141
+        },
+        {
+          "chunk_id": "SEMANTIC_00001",
+          "duration_seconds": 128.25
+        }
+      ],
+      "chunk_cache_hits": 0,
+      "chunk_cache_misses": 13,
+      "fallback_cost_seconds": 0,
+      "fallback_cost_scope": "entire_failed_chunk_including_inference_repair_and_recovery",
+      "chunk_cache_rewrites_avoided": 0,
+      "prompt_mode": "legacy_embedded_schema",
+      "global_review_cache_hit": false,
+      "total_inference_call_count": 17,
+      "semantic_generated_tokens": 22251,
+      "semantic_prompt_tokens": 130526,
+      "semantic_tokens_per_second": 12.090643080071459,
+      "semantic_prompt_tokens_per_second": 1568.4410709399224,
+      "semantic_generation_seconds": 1840.348759999,
+      "semantic_prompt_seconds": 83.220212999,
+      "semantic_load_seconds": 10.732746100000002,
+      "semantic_server_seconds": 1940.8705657999997,
+      "semantic_request_bytes": 469578,
+      "inference_metadata_record_count": 17,
+      "generation_throughput_measured_call_count": 17,
+      "prompt_throughput_measured_call_count": 17,
+      "semantic_cost_measurement_scope": "observed_calls_only_cached_original_costs_excluded",
+      "ollama_running_models_at_start": []
+    },
+    "llm_insights_bytes": 206560888,
+    "llm_insights_read_scope": "First 1800 characters only; avoided full parse of 206 MB. video_understanding and original semantic checkpoint supplied the inspected structured evidence."
+  },
+  "qa_diagnostics": {
+    "metrics": {
+      "question_candidate_count": 29,
+      "answered_question_count": 0,
+      "non_answer_question_count": 5,
+      "unresolved_question_count": 29,
+      "complete_qa_count": 0,
+      "partial_linked_qa_count": 0,
+      "requires_review_qa_count": 29,
+      "verified_complete_qa_count": null,
+      "qa_coverage": 0.0,
+      "median_answer_duration": null
+    },
+    "answer_status_counts": {
+      "unresolved": 29,
+      "not_expected": 5
+    },
+    "unresolved_reason_counts": {
+      "intervention_relevance_unresolved": 21,
+      "new_question_before_answer": 4,
+      "missing_speaker_evidence": 1,
+      "answer_relevance_unresolved": 3
+    },
+    "examples": [
+      {
+        "question_id": "Q_0000",
+        "question_type": "direct_question",
+        "answer_expected": true,
+        "question": "Como a gente lê?",
+        "question_start": 13.96,
+        "question_end": 14.86,
+        "question_speaker": "SPEAKER_00",
+        "question_segment_ids": [
+          "SEG_00003"
+        ],
+        "answer_status": "unresolved",
+        "answer_segment_ids": [],
+        "question_answer_complete": false,
+        "unresolved_reason": "intervention_relevance_unresolved"
+      },
+      {
+        "question_id": "Q_0001",
+        "question_type": "direct_question",
+        "answer_expected": true,
+        "question": "Saudações aeronáuticas, tudo bem com vocês?",
+        "question_start": 40.37,
+        "question_end": 42.27,
+        "question_speaker": "SPEAKER_01",
+        "question_segment_ids": [
+          "SEG_00008"
+        ],
+        "answer_status": "unresolved",
+        "answer_segment_ids": [],
+        "question_answer_complete": false,
+        "unresolved_reason": "new_question_before_answer"
+      },
+      {
+        "question_id": "Q_0005",
+        "question_type": "direct_question",
+        "answer_expected": true,
+        "question": "Quando o piloto visse a indicação 0900, ele sabia que não tinha um grau 900 para ele ir Então ficava claro que era para ir para 090 ou leste O problema era quando tinha números menores, como por exemplo 0150 Se os pilotos não prestassem atenção, a indicação de 15 graus, que é o rumo nor-nordeste Poderia ser interpretada como 150, que é sudeste E aí alguns pilotos criaram o hábito",
+        "question_start": 135.06,
+        "question_end": 164.72,
+        "question_speaker": "SPEAKER_00",
+        "question_segment_ids": [
+          "SEG_00023",
+          "SEG_00024"
+        ],
+        "answer_status": "unresolved",
+        "answer_segment_ids": [],
+        "question_answer_complete": false,
+        "unresolved_reason": "intervention_relevance_unresolved"
+      }
+    ],
+    "adjacent_narrated_answer_example": [
+      {
+        "segment_id": "SEG_00003",
+        "start": 13.96,
+        "end": 14.86,
+        "speaker": "SPEAKER_00",
+        "text": "Como a gente lê?"
+      },
+      {
+        "segment_id": "SEG_00004",
+        "start": 14.94,
+        "end": 15.52,
+        "speaker": "SPEAKER_00",
+        "text": "270."
+      },
+      {
+        "segment_id": "SEG_00005",
+        "start": 16.54,
+        "end": 18.6,
+        "speaker": "SPEAKER_00",
+        "text": "Ignorando aquele zerinho à esquerda."
+      }
+    ],
+    "interpretation": "Text-level evidence suggests greeting/rhetorical/self-answered narration enters a dialogue expectation. Q_0005 is a declarative multi-segment text beginning Quando with no question mark. None is claimed human-verified QA."
+  },
+  "commercial_diagnostics": {
+    "eligibility_counts": {
+      "eligible": 16,
+      "review": 30
+    },
+    "evidence_state_counts": {
+      "measured_ok": 16,
+      "unavailable_dependency": 30
+    },
+    "signal_counts_multilabel": {
+      "price": 4,
+      "product": 1,
+      "domain": 2,
+      "contact": 1,
+      "installment": 1,
+      "discount": 1,
+      "store": 1
+    },
+    "false_lexical_signal_examples": [
+      {
+        "candidate_id": "MOMENT_00007_0000",
+        "start": 1242.84,
+        "end": 1271.62,
+        "classification": {
+          "content_type": "editorial_product_discussion",
+          "commercial_score": 0.0,
+          "commercial_kind": "neutral_mention",
+          "payment_confirmed": null,
+          "signals": [
+            "price"
+          ],
+          "evidence_spans": [
+            {
+              "signal": "price",
+              "start_char": 264,
+              "end_char": 270,
+              "text": "20 mil",
+              "segment_ids": [
+                "SEG_00222",
+                "SEG_00223",
+                "SEG_00224",
+                "SEG_00225",
+                "SEG_00226",
+                "SEG_00227"
+              ]
+            }
+          ],
+          "eligibility": "review",
+          "reason_codes": [
+            "asr_price",
+            "visual_not_measured"
+          ],
+          "review_reason": "commercial_visual_unavailable_dependency",
+          "visual_capability_state": "unavailable_dependency",
+          "commercial_risk_state": "not_measured"
+        },
+        "commercial_evidence_state": "unavailable_dependency",
+        "signal_source_segments": [
+          {
+            "segment_id": "SEG_00225",
+            "start": 1257.34,
+            "end": 1261.2,
+            "text": "O avião continuou rumando para o oeste a 20 mil pés.",
+            "signals": [
+              "price"
+            ]
+          }
+        ]
+      },
+      {
+        "candidate_id": "MOMENT_00012_0000",
+        "start": 2110.58,
+        "end": 2202.66,
+        "classification": {
+          "content_type": "editorial_content",
+          "commercial_score": 0.0,
+          "commercial_kind": "neutral_mention",
+          "payment_confirmed": null,
+          "signals": [
+            "installment"
+          ],
+          "evidence_spans": [
+            {
+              "signal": "installment",
+              "start_char": 1127,
+              "end_char": 1134,
+              "text": "9 vezes",
+              "segment_ids": [
+                "SEG_00366",
+                "SEG_00367",
+                "SEG_00368",
+                "SEG_00369",
+                "SEG_00370",
+                "SEG_00371",
+                "SEG_00372",
+                "SEG_00373",
+                "SEG_00374",
+                "SEG_00375",
+                "SEG_00376"
+              ]
+            }
+          ],
+          "eligibility": "review",
+          "reason_codes": [
+            "asr_installment",
+            "visual_not_measured"
+          ],
+          "review_reason": "commercial_visual_unavailable_dependency",
+          "visual_capability_state": "unavailable_dependency",
+          "commercial_risk_state": "not_measured"
+        },
+        "commercial_evidence_state": "unavailable_dependency",
+        "signal_source_segments": [
+          {
+            "segment_id": "SEG_00375",
+            "start": 2174.94,
+            "end": 2189.56,
+            "text": "de 9 G's que é 9 vezes a força da gravidade hoje eles aguentam até 30 G's e gente, esse acidente aconteceu em uma época que a aviação era quase pré-histórica Hoje os aviões tem tantos equipamentos de geolocalização que é",
+            "signals": [
+              "installment"
+            ]
+          }
+        ]
+      }
+    ],
+    "interpretation": "20 mil is an aircraft altitude and 9 vezes is a physical-force multiple in the recorded literal text. They are false price/installment lexical cues. Their review state also independently cites unavailable visual evidence; commercial score remains 0 and payment_confirmed null.",
+    "genuine_promotion_guard_examples": [
+      {
+        "candidate_id": "MOMENT_00001_0000",
+        "start": 178.56,
+        "end": 238.72,
+        "classification": {
+          "content_type": "editorial_content",
+          "commercial_score": 0.0,
+          "commercial_kind": "neutral_mention",
+          "payment_confirmed": null,
+          "signals": [
+            "domain"
+          ],
+          "evidence_spans": [
+            {
+              "signal": "domain",
+              "start_char": 723,
+              "end_char": 740,
+              "text": "medodevoar.com.br",
+              "segment_ids": [
+                "SEG_00027",
+                "SEG_00028",
+                "SEG_00029",
+                "SEG_00030",
+                "SEG_00031",
+                "SEG_00032",
+                "SEG_00033",
+                "SEG_00034",
+                "SEG_00035",
+                "SEG_00036"
+              ]
+            }
+          ],
+          "eligibility": "review",
+          "reason_codes": null,
+          "review_reason": "commercial_visual_unavailable_dependency",
+          "visual_capability_state": "unavailable_dependency",
+          "commercial_risk_state": null
+        },
+        "commercial_evidence_state": "unavailable_dependency",
+        "signal_source_segments": []
+      },
+      {
+        "candidate_id": "MOMENT_00012_0001",
+        "start": 2204.56,
+        "end": 2234.02,
+        "classification": {
+          "content_type": "editorial_content",
+          "commercial_score": 0.0,
+          "commercial_kind": "neutral_mention",
+          "payment_confirmed": null,
+          "signals": [
+            "discount",
+            "store"
+          ],
+          "evidence_spans": [
+            {
+              "signal": "discount",
+              "start_char": 316,
+              "end_char": 324,
+              "text": "desconto",
+              "segment_ids": [
+                "SEG_00379",
+                "SEG_00380",
+                "SEG_00381",
+                "SEG_00382"
+              ]
+            },
+            {
+              "signal": "discount",
+              "start_char": 340,
+              "end_char": 348,
+              "text": "desconto",
+              "segment_ids": [
+                "SEG_00379",
+                "SEG_00380",
+                "SEG_00381",
+                "SEG_00382"
+              ]
+            },
+            {
+              "signal": "store",
+              "start_char": 328,
+              "end_char": 332,
+              "text": "loja",
+              "segment_ids": [
+                "SEG_00379",
+                "SEG_00380",
+                "SEG_00381",
+                "SEG_00382"
+              ]
+            }
+          ],
+          "eligibility": "review",
+          "reason_codes": [
+            "asr_discount",
+            "asr_store",
+            "visual_not_measured"
+          ],
+          "review_reason": "commercial_visual_unavailable_dependency",
+          "visual_capability_state": "unavailable_dependency",
+          "commercial_risk_state": "not_measured"
+        },
+        "commercial_evidence_state": "unavailable_dependency",
+        "signal_source_segments": [
+          {
+            "segment_id": "SEG_00380",
+            "start": 2219.36,
+            "end": 2223.26,
+            "text": "conteúdo exclusivo e erros de gravação e desconto na loja.",
+            "signals": [
+              "discount",
+              "store"
+            ]
+          },
+          {
+            "segment_id": "SEG_00381",
+            "start": 2223.28,
+            "end": 2230.76,
+            "text": "Só um desconto de uma camiseta que você comprar é 5%, já é muito mais que os R,99 que você vai contribuir com o canal, tá bom?",
+            "signals": [
+              "discount"
+            ]
+          }
+        ]
+      }
+    ],
+    "promotion_guard": "Domain registration and channel-membership/store/discount CTAs are present in these literals; do not remove their promotional evidence or relabel them paid sponsorship without evidence."
+  },
+  "source_fingerprints": [
+    {
+      "path": "analysis/video_5198fcdaef38/analysis_summary.json",
+      "bytes": 819044,
+      "sha256": "985bf98cd85b64f435665d2a0d9b7a241e2ca24d3c2393c9b64911564f3ed4af"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/analysis_quality.json",
+      "bytes": 357929,
+      "sha256": "7a34f2be194f9cc7b1f89d83db2567a3aa9acbad8825b9c2ed3924928f7334f9"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/story_arcs.json",
+      "bytes": 138578,
+      "sha256": "8db104c919078ec1a8ac1315101327df1e6114cc64e81d1c9d5eecfaab9a8cfe"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/main_moments.json",
+      "bytes": 2038033,
+      "sha256": "4a8f9f12f1b7547052e500d812c645586b130cb45bada116610c9365aa73f826"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/questions_answers.json",
+      "bytes": 36984,
+      "sha256": "a0c6746f96ab0df7f36d0b0491d345dcd801325d1dbb4c099f2ba8200b75829c"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/qa_summary.json",
+      "bytes": 282,
+      "sha256": "9c13369a07da0109b3ab01576673ec50f045d804e7151e8aec60fd6805560262"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/transcript_segments.json",
+      "bytes": 309769,
+      "sha256": "0fcb05d630ca318f814220839b9ddaa0b9cef81b6fef0ed7ce33088678496d08"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/topics.json",
+      "bytes": 90704,
+      "sha256": "3ed34161ea5634164e4bb5c02c917b419faf0a654016386c3f9e908333ddf581"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/video_understanding.json",
+      "bytes": 674773,
+      "sha256": "13f064d92e2f5426aedc577ef9caafc122fb289a3feca44e8d87ab4dfabeac83"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/understanding_contract_diagnostics.json",
+      "bytes": 311,
+      "sha256": "d1b01eac287353fdca29ad3cc813708b2eff87084e17fb56257a9a0c718212a3"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/editorial_result.json",
+      "bytes": 3385,
+      "sha256": "813002d500ff5e3005128fadbe6deffbeace052eed4b1b65c688b2949e95eb43"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/semantic_chunk_profile.json",
+      "bytes": 23532,
+      "sha256": "d5d8d991d79b4238adeab9aa4420cd490172e60814f32ad42853dc5d1a705334"
+    },
+    {
+      "path": "analysis/video_5198fcdaef38/cache/b2958122415980a8/15_semantic.json",
+      "bytes": 560058,
+      "sha256": "7213a87fbc7b33eae38169ff900d18e40606fbb6ae87a0226c358f73d7f63e48"
+    }
+  ],
+  "limits": [
+    "No new analysis/inference or human accuracy measurement.",
+    "Stored metrics describe the source execution; they do not certify updated-code execution.",
+    "No source checkpoints, media, models or package members were modified.",
+    "A positive list of segment IDs does not establish a complete narrative or an answer."
+  ]
+}

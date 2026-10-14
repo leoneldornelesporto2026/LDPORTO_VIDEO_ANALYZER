@@ -1,0 +1,10 @@
+{
+  "scope": "final static source audit; no heavyweight imports or inference",
+  "parsed": 273,
+  "syntax_failures": [],
+  "missing_relative_modules": [],
+  "identical_function_groups": [],
+  "large_existing_tracked_files": [],
+  "docs_scripts_fixtures_duplicate_content_groups": [],
+  "cleanup_policy": "unknown/dynamic consumers preserved; public compatibility wrappers intentionally retained"
+}

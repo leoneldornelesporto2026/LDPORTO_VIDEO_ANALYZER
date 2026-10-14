@@ -6,7 +6,8 @@ from importlib.metadata import version, PackageNotFoundError
 import math
 from .core import digest, file_hash, read_json, write_json
 from .audio import ffmpeg_audio
-from .transcription import TranscriptionEngine, alternative_evidence, word_text
+from .transcription import TranscriptionEngine, alternative_evidence, word_text, hypothesis_metadata
+from .asr_comparison import source_review_dossier
 
 
 def _candidate_range(candidate):
@@ -237,7 +238,8 @@ def run_targeted_repair(ctx, audio, transcript, candidates, arcs, questions, dur
                       'audio_source': 'original_mono', 'selected_source': 'canonical_raw_preserved',
                       'selected_text': word_text([w for w in transcript.get('words', []) if row['start'] <= w['start'] < row['end']]),
                       'alternatives': [{'source': 'original_targeted', 'words': hypothesis['words'],
-                                        'text': word_text(hypothesis['words']), 'comparison': alternative_evidence(hypothesis, row['start'], row['end'])}],
+                                        'text': word_text(hypothesis['words']), **hypothesis_metadata(hypothesis),
+                                        'comparison': alternative_evidence(hypothesis, row['start'], row['end'])}],
                       'replacement_applied': False, 'replacement_decision': 'human_audio_verification_required', 'needs_human_review': True}
             write_json(record, {'key': key, 'checksum': digest(result), 'data': result})
             results.append(result)
@@ -366,4 +368,11 @@ def run_on_demand_review(ctx, audio, transcript, candidates, arcs, questions, du
             reason_durations.setdefault(reason, []).append(row['interval']['end'] - row['interval']['start'])
     report['manual_review']['reason_window_seconds_p95'] = {
         reason: sorted(values)[math.ceil(.95 * len(values)) - 1] for reason, values in reason_durations.items()}
+    # A source listening dossier exists even with no eligible/selected clip.
+    # Existing multipass evidence is reused; candidate queue opt-in remains
+    # separate and never claims that a human has listened to the audio.
+    report['source_audio_review'] = source_review_dossier(transcript, duration,
+        max_regions=cfg.get('targeted_max_regions', 16), max_audio_seconds=cfg.get('targeted_max_audio_seconds', 180))
+    report['acoustic_review_scope'] = 'explicit_candidate_queue'
+    report['human_audio_review_status'] = 'pending'
     return report

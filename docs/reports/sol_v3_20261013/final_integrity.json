@@ -1,0 +1,235 @@
+{
+  "schema_version": "1.0",
+  "branch": "baseline/ldporto-20261012-prompt01",
+  "head": "2f4634f202f976c135c4bd28db590e289ce72156",
+  "branch_and_head_unchanged": true,
+  "protected_package_files": {
+    ".package/PROJECT_EXPORT_MANIFEST.json": {
+      "before": "348a88f140d74e3e30bf6536e4934b0d12f9f0f5dc3c443c958ad0f7f3c9128f",
+      "after": "348a88f140d74e3e30bf6536e4934b0d12f9f0f5dc3c443c958ad0f7f3c9128f",
+      "unchanged": true
+    },
+    ".package/PROJECT_EXPORT_README.txt": {
+      "before": "2349e96177883dd8faf2ceff67f5b48e29fa2a45a804787510d4cd6327910e1a",
+      "after": "2349e96177883dd8faf2ceff67f5b48e29fa2a45a804787510d4cd6327910e1a",
+      "unchanged": true
+    },
+    ".package/PROJECT_EXPORT_TREE.txt": {
+      "before": "443880fa7ad2dd8c275cb379df4345fc9200b931befecdfc66b2483f3c637afc",
+      "after": "443880fa7ad2dd8c275cb379df4345fc9200b931befecdfc66b2483f3c637afc",
+      "unchanged": true
+    }
+  },
+  "reference_packages": {
+    "SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261012_232326_642182_7f5d97.zip": {
+      "before": "15f4fed54ad6279bb16d92b44e976bbec598cb5aea398c44e13edba565225dcf",
+      "after": "15f4fed54ad6279bb16d92b44e976bbec598cb5aea398c44e13edba565225dcf",
+      "unchanged": true
+    },
+    "SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261013_035536_877801_09f678.zip": {
+      "before": "843b5c05376f5c8a63845e225ad3069bd5778efd5afe888e1135ae63ecb7ac2d",
+      "after": "843b5c05376f5c8a63845e225ad3069bd5778efd5afe888e1135ae63ecb7ac2d",
+      "unchanged": true
+    }
+  },
+  "source_video_sha256": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+  "source_matches_reference": true,
+  "source_drift_since_final_test_freeze": [],
+  "source_deltas_from_sol_v3_inventory": {
+    "app.py": {
+      "before": "1eedb6206b1628ec873a9c388e39df3a56b0a50e7927b32cade86b7bf456c798",
+      "after": "f66692630e75b9f3e4e1e2661c114fce4a68049c5a359a1b5849fb5270c66d5a"
+    },
+    "config/config.yaml": {
+      "before": "a9a75eb8b8ddaf0039a979fc29959841ac89d62af11b04c923a0e7e6725221ca",
+      "after": "29b769cfe152b3e00c878b2990ef742a981684ffec41cc5ce87b0c738555167e"
+    },
+    "scripts/dev/audit_camera_s6.py": {
+      "before": "bc3e663f0b887bd74e2b25d00dbf75f3cd31caba313a8049e4c0d1d9b97ff63b",
+      "after": "e5f51a3c01a328c079bd784e500af8e41be88875180730c905b1ce46b87c6218"
+    },
+    "scripts/dev/benchmark_semantic_sol_v3.py": {
+      "before": null,
+      "after": "084a3e465b1d7ff5ff4897dd2f4106797688f71430a593123d31ba821eddbd33"
+    },
+    "scripts/dev/diagnose_body_model.py": {
+      "before": null,
+      "after": "5f4adb93080b13ab0eb60d8409999f8bc0b3b41dcd93b49e43d27d9a6c39aa53"
+    },
+    "scripts/dev/sample_local_resources.py": {
+      "before": null,
+      "after": "504504ea7b49addf4d486ce366ae2209a60d3e4baa9a88c7309ea6d585ba8362"
+    },
+    "scripts/dev/smoke_body_detector.py": {
+      "before": null,
+      "after": "cc9aa6559b34a2a2f3d19492184694a82f49b21b85805236eb50cfbe5b556430"
+    },
+    "scripts/dev/smoke_source_asr.py": {
+      "before": null,
+      "after": "b153403c65ae8e13a70923efce205be9e45668ee00301d85d9b9c98f1ac5ef66"
+    },
+    "scripts/dev/sol_v3_camera_canary.py": {
+      "before": null,
+      "after": "799b7a977ea166790caa792be0d27eac947aa821366a046a5ecc15b46d62e075"
+    },
+    "src/ldporto/active_speaker.py": {
+      "before": "fbbaffce7e72abf52915ea9272aad9f22c867b1c092fc0fbeed4956b21c54fcd",
+      "after": "f606968314a2d09393203041ebf571b69ca98ed450866435b73c237b8423e8c5"
+    },
+    "src/ldporto/analysis_quality.py": {
+      "before": "00f688856e627e95e288be9d6563ff962a0e842e7fe630c757f4d65e10996932",
+      "after": "4cd0e8f7fe33ceb8e0b2a44cf87fe1d09cc207e5a06bdd182148e8be68049b2e"
+    },
+    "src/ldporto/asr_comparison.py": {
+      "before": null,
+      "after": "8de545231eb286f7ef97a0dda9c9070afa86527b33ec2303e2e58b766a2986ab"
+    },
+    "src/ldporto/audiovisual_diagnostics.py": {
+      "before": null,
+      "after": "4b4cdadf6613e08751666eedfa93918329ab9a61452185ef571370d12fe7416e"
+    },
+    "src/ldporto/body_model_paths.py": {
+      "before": null,
+      "after": "9fad38724fd4197b0594b7dc3dd17fc77db49d4706913ceb102f2082f68c98ed"
+    },
+    "src/ldporto/camera_director.py": {
+      "before": "e164e9617e1271e4019977bc6bc781b149929a1f7b7f2f726491c58b21a0d392",
+      "after": "bbebd7b8bbeb531f26fe93b9fb6348efbc03a2301d5746c88a38c45e46ece5b6"
+    },
+    "src/ldporto/camera_evidence.py": {
+      "before": "bb19955574523041e94fecec2d5be1e3a7ddfac0921aa85f830509752c47539a",
+      "after": "5a501cc755d1b2a14001f424afe13ee8646418b2f8a1769c9c5ae9fe03829e84"
+    },
+    "src/ldporto/causal_diagnostics.py": {
+      "before": null,
+      "after": "1b70e124d69a7c48762b4bf9566343d5de53d5d135f3066f65714420e779e3f3"
+    },
+    "src/ldporto/compact_artifacts.py": {
+      "before": "25f3a04011d55c2bde135558e3dab434a54a00b9227ffe3c3aaac2138f294960",
+      "after": "d0d6dfa17797049397e1b25beca637a6ec705976deaedee39a958dade38ed677"
+    },
+    "src/ldporto/config.py": {
+      "before": "c7641a407dec1beaeab1948ec7e42657dc5d927759b96c8b7900ab2920502385",
+      "after": "0480e914408a02a5872603f184e46a09df916af75b06419c574f50c65c115cdd"
+    },
+    "src/ldporto/core.py": {
+      "before": "9a94ca2ebf069553c727f5f782eb56a6decffb0685e6a52ca504d29a4a06494f",
+      "after": "8be8e2464b93ce7d4d5de0b038551b9a24c0d6e3b2384f2744662054dbca8963"
+    },
+    "src/ldporto/diarization.py": {
+      "before": "842175f4affc69dc0a6f97a49c135225afe3d92552d5c02f373274d52442331f",
+      "after": "3500380d31f949d82fdd399b9eb2d21267a53e5a8378f2fe11585bf188049075"
+    },
+    "src/ldporto/editorial_outcome.py": {
+      "before": "64886e3992bf289309605faef856d65e1f4a3240fa0e0cd45a5ef107b41ca997",
+      "after": "7b45da29ef21fcb7d9c6706798bb0f702d15dd2659bf67141d06d74b63cf524d"
+    },
+    "src/ldporto/handoff.py": {
+      "before": "97c8157567ac4e299e69494f77c786d238a6146a1a3e4a02ebe8397b6123449c",
+      "after": "4d678758fcfc4a1c7b204542c62024219fbc8331b83fb66446206972b0cd61d2"
+    },
+    "src/ldporto/perception_diagnostics.py": {
+      "before": "7dfeb9c5b7dfd0f76d60e08f4d37ea9ca24e01213d82158b5ff67fdba3e30f5f",
+      "after": "7f61c78bf60a3047409a3f5c55508d5e9edb4c55c6625a42c199413c01fa4921"
+    },
+    "src/ldporto/pipeline.py": {
+      "before": "7fe351a80de8ce5b8d0644fff99069a4778698b6817ee80d98075a509e808b16",
+      "after": "def746cf7b500a3d41b21f30c738cc65bf19ec1f2680c0c8afd00ee0b6e67628"
+    },
+    "src/ldporto/reports.py": {
+      "before": "4a983bda23b5fb19dd78c233b3f8ed7f2c727a5d35e1d50cffef16b2abbfc40a",
+      "after": "fe9e4142304c946991ea7dcf336fb74a1c951b90cdbb4c35a2e15036489a4654"
+    },
+    "src/ldporto/second_curation_export.py": {
+      "before": "e39ebb4be006a802a3556800e80e87c0690bc0fe17e6f1c6d554de0ff7cc18be",
+      "after": "e68242ea5fd1de3ea6887e98520743bd426194019e4115c5aa7d5545630e8531"
+    },
+    "src/ldporto/semantic.py": {
+      "before": "1893661538d4793a6e6b3abf9a1eef31c6f00489922a28019d9284319a400e71",
+      "after": "24c661a09cce7e65422a035006e300f1230e2b41b406efb34533ce1c157631a5"
+    },
+    "src/ldporto/subtitle_review.py": {
+      "before": "b3edbfbed4dca2a470e7a06d7d5c6bd10a1c387f413e519619e041a28efa902f",
+      "after": "e9e4f3205bbcfc76fb8842b6a653d3a67be7d6c475a36b79082e9b2ad1443310"
+    },
+    "src/ldporto/targeted_asr.py": {
+      "before": "780dcd54408b374d28aa98663dae155958f23ee1feea69d9cce9e87f772b95a7",
+      "after": "8f9e2e6a5f0a23324ecfb619cf4f3bfea53cf3a118e610e903c03eb54a20804f"
+    },
+    "src/ldporto/transcript_dossier.py": {
+      "before": null,
+      "after": "2c2b9f4b23d60438385b99d7915c226d39a12f54aebea8d31b1abac60e73352f"
+    },
+    "src/ldporto/transcription.py": {
+      "before": "5c2e5c524aef3476b6a4df9078b1dc6ed41438dba07e9b6cbc0b1e20418377b4",
+      "after": "e9759a6969a9fdb9700e8611365aaa718a6cf19a66f9a5ac08cff5278a17c567"
+    },
+    "src/ldporto/vision.py": {
+      "before": "81de934db3910a9f4e927823c5e95d29697c1c5a2c22c2dd0b8f625405939689",
+      "after": "5d0fa999251a7da7e30ae8412e79758cd68eab4ae6b3ee99692c2de9392a6716"
+    },
+    "src/ldporto/vision_checkpoint.py": {
+      "before": "597c4cdfe2137437570dece0cb3d8c4eb324c33e43bb9ff4cddc9ac21c2fbb2d",
+      "after": "9c403b3686d085e6aa6d139c65b47cf7a743f7b3a8743342731d858fcf51c3d7"
+    },
+    "src/tests/fixtures/sol_v3_asr_historical.json": {
+      "before": null,
+      "after": "1e7c2840e54d4d28906e9ffff2ad4696bd6c331ffda90a728be33a72efe19b0a"
+    },
+    "src/tests/test_sol_v3_asr_review.py": {
+      "before": null,
+      "after": "2b8154253acd9475533b127660d667ef410f635020a7a7ad210264e1dba7ec53"
+    },
+    "src/tests/test_sol_v3_gui_review.py": {
+      "before": null,
+      "after": "a50fda641905d3e995ba1b80971a0ac092862356502ff9e89b5f7cb2507be374"
+    },
+    "src/tests/test_sol_v3_integration.py": {
+      "before": null,
+      "after": "77ae4d5289314c94cf0723145b13584db9ad9af5b57a56d6182bf1b9683af660"
+    },
+    "src/tests/test_sol_v3_runtime_editorial.py": {
+      "before": null,
+      "after": "419b81278803d63e2adceaa26cfca1c4255929e194a9af8f29d7debed5a4acf4"
+    },
+    "src/tests/test_sol_v3_visual_diagnostics.py": {
+      "before": null,
+      "after": "24f93354c1dac1543d2b1fd0f33f4d745391850c281e2ff9207f9bb484b5e882"
+    }
+  },
+  "files_removed_this_round": [],
+  "introduced_code_paths": [
+    "src/ldporto/asr_comparison.py",
+    "src/ldporto/audiovisual_diagnostics.py",
+    "src/ldporto/body_model_paths.py",
+    "src/ldporto/causal_diagnostics.py",
+    "src/ldporto/transcript_dossier.py",
+    "src/tests/test_sol_v3_asr_review.py",
+    "src/tests/test_sol_v3_gui_review.py",
+    "src/tests/test_sol_v3_integration.py",
+    "src/tests/test_sol_v3_runtime_editorial.py",
+    "src/tests/test_sol_v3_visual_diagnostics.py",
+    "scripts/dev/benchmark_semantic_sol_v3.py",
+    "scripts/dev/diagnose_body_model.py",
+    "scripts/dev/sample_local_resources.py",
+    "scripts/dev/smoke_body_detector.py",
+    "scripts/dev/smoke_source_asr.py",
+    "scripts/dev/sol_v3_camera_canary.py"
+  ],
+  "installed_package_versions": {
+    "torch": "2.8.0+cu128",
+    "torchaudio": "2.8.0+cu128",
+    "torchvision": "0.23.0+cu128",
+    "ultralytics": "8.3.200",
+    "opencv-python": "5.0.0.93",
+    "opencv-contrib-python": "4.11.0.86",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.8.2",
+    "psutil": "7.1.3",
+    "polars": "1.35.2",
+    "ultralytics-thop": "2.0.18"
+  },
+  "retired_orchestrator_absent": true,
+  "retired_automation_absent": true,
+  "scope": "hashed known protected artifacts and frozen code; does not claim a before hash for unrecorded directories"
+}

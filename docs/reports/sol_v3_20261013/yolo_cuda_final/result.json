@@ -1,0 +1,217 @@
+{
+  "schema_version": "1.0",
+  "scope": "four_frame_local_inference",
+  "video_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\jNQXAC9IVRw\\jNQXAC9IVRw.mp4",
+  "video_sha256": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+  "requested_device": "cuda",
+  "backend": {
+    "requested": "yolo",
+    "initialized": "yolo",
+    "fallback_reason": null,
+    "exception_type": null,
+    "device": "cuda:0",
+    "diagnostic_reason": null,
+    "model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "model_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "configured_model": "models/body/yolo11n.pt",
+    "resolved_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "expected_model_format": ".pt",
+    "expected_model_task": "detect",
+    "expected_person_class": {
+      "id": 0,
+      "name": "person"
+    },
+    "model_validation_reason": null,
+    "allow_model_downloads": false,
+    "allow_dependency_install": false,
+    "model_loaded": true,
+    "inference_executed": true,
+    "inference_successful": true,
+    "local_smoke_validated": true,
+    "device_requested": "cuda",
+    "device_actually_used": "cuda:0",
+    "benchmark_frame_seconds": null,
+    "readiness": "INFERENCE_EXECUTED",
+    "configured_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "preferred_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "path_resolution": "configured_path",
+    "legacy_compatibility_used": false,
+    "device_preflight": {
+      "requested": "cuda",
+      "selected": "cuda:0",
+      "free_vram_mb": 11035.0,
+      "minimum_free_vram_mb": 2048,
+      "reason": null,
+      "stage": "07_people_tracking",
+      "measured_at_utc": "2026-10-13T10:10:36.396076+00:00",
+      "reserve_vram_mb": 1024,
+      "policy": "cpu_fallback",
+      "gpu_parallelism": false,
+      "peak_vram_mb": null,
+      "total_vram_mb": 12226.5625,
+      "query_seconds": 0.08730869996361434,
+      "measurement_scope": "device_0_snapshot_not_reserved",
+      "concurrent_consumers": "Ollama/Whisper/pyannote/other_processes_not_attributed",
+      "variability": "may_change_after_query"
+    },
+    "privacy": {
+      "telemetry_enabled": false,
+      "offline_model_policy": true,
+      "settings_scope": "temporary_process_private_directory",
+      "user_settings_modified": false
+    }
+  },
+  "load_seconds": 0.22409400006290525,
+  "frames": [
+    {
+      "requested_time": 2.0,
+      "decoded_time": 2.0,
+      "inference_seconds": 0.5361942999297753,
+      "device_actually_used": "cuda:0",
+      "frame_pixels_sha256": "30a661d8b3eab748656470d893f4f159497923cc701b95783a4b73d381af9d3c",
+      "laplacian_variance": 581.7497252927991,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.8917628526687622,
+          "xyxy_pixels": [
+            37.3919677734375,
+            35.89105224609375,
+            302.10980224609375,
+            239.65994262695312
+          ],
+          "bbox_normalized": {
+            "x": 0.11684989929199219,
+            "y": 0.14954605102539062,
+            "width": 0.8272432327270508,
+            "height": 0.8490370432535808
+          }
+        }
+      ],
+      "evidence_path": "frame_00.png",
+      "evidence_sha256": "78d257bcf7534a3fa5f8e3b8a669896e27bf5cc48654c94e4d1940f012cf2150",
+      "process_rss_bytes": 1387393024
+    },
+    {
+      "requested_time": 6.0,
+      "decoded_time": 6.0,
+      "inference_seconds": 0.016809699940495193,
+      "device_actually_used": "cuda:0",
+      "frame_pixels_sha256": "3e23457b659a5a312e21469e6514ef6c8756c23986db8d8b3b87a2bb06df16c5",
+      "laplacian_variance": 547.7991571450128,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.9053638577461243,
+          "xyxy_pixels": [
+            47.34649658203125,
+            43.79059600830078,
+            286.20013427734375,
+            239.78558349609375
+          ],
+          "bbox_normalized": {
+            "x": 0.14795780181884766,
+            "y": 0.18246081670125325,
+            "width": 0.7464176177978515,
+            "height": 0.8166457811991373
+          }
+        }
+      ],
+      "evidence_path": "frame_01.png",
+      "evidence_sha256": "fd3be6e38509dcb9177d8a2cab954909ba44cb749291e66f50d7fef403e4827a",
+      "process_rss_bytes": 1388793856
+    },
+    {
+      "requested_time": 12.0,
+      "decoded_time": 12.0,
+      "inference_seconds": 0.007907800027169287,
+      "device_actually_used": "cuda:0",
+      "frame_pixels_sha256": "6fdb293df23617678004ca899511e1f34d031c90bde5fce04066ac40347e9337",
+      "laplacian_variance": 601.961701812066,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.8609275817871094,
+          "xyxy_pixels": [
+            31.796630859375,
+            36.21546936035156,
+            302.30023193359375,
+            239.8821563720703
+          ],
+          "bbox_normalized": {
+            "x": 0.09936447143554687,
+            "y": 0.15089778900146483,
+            "width": 0.8453237533569335,
+            "height": 0.8486111958821615
+          }
+        }
+      ],
+      "evidence_path": "frame_02.png",
+      "evidence_sha256": "9245ced082fa64a57c3f95999d30e6c4768a004d68093bda4e4b4c3bd219ffdc",
+      "process_rss_bytes": 1389019136
+    },
+    {
+      "requested_time": 18.0,
+      "decoded_time": 18.0,
+      "inference_seconds": 0.007957299938425422,
+      "device_actually_used": "cuda:0",
+      "frame_pixels_sha256": "4c61f3d07ee3734a3af44be05b7228bcf44e86cd9b52b6a9aaa99c251d861d1f",
+      "laplacian_variance": 620.6206989990233,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.9225532412528992,
+          "xyxy_pixels": [
+            52.533447265625,
+            41.7449951171875,
+            270.6690368652344,
+            239.70513916015625
+          ],
+          "bbox_normalized": {
+            "x": 0.16416702270507813,
+            "y": 0.1739374796549479,
+            "width": 0.6816737174987793,
+            "height": 0.8248339335123698
+          }
+        }
+      ],
+      "evidence_path": "frame_03.png",
+      "evidence_sha256": "9e40b3427b4cb08d458b9cbbcecbb9bcf4b106fc0e804413251d6aa5b8344231",
+      "process_rss_bytes": 1389236224
+    }
+  ],
+  "human_detection_accuracy": null,
+  "speaker_identity_validated": false,
+  "two_seated_people_recall": "PENDING_GROUND_TRUTH",
+  "model_downloads": 0,
+  "dependency_installs": 0,
+  "publication_ready": false,
+  "code_sha256": {
+    "vision.py": "5d0fa999251a7da7e30ae8412e79758cd68eab4ae6b3ee99692c2de9392a6716",
+    "body_model_paths.py": "9fad38724fd4197b0594b7dc3dd17fc77db49d4706913ceb102f2082f68c98ed",
+    "config.py": "0480e914408a02a5872603f184e46a09df916af75b06419c574f50c65c115cdd"
+  },
+  "source": {
+    "duration": 18.933333333333334,
+    "width": 320.0,
+    "height": 240.0,
+    "fps": 15.0
+  },
+  "inference_call_count": 4,
+  "measured_peak_torch_vram_bytes": 72978944,
+  "wall_seconds": 1.2318808999843895,
+  "exit_code": 0,
+  "command": [
+    "scripts/dev/smoke_body_detector.py",
+    "--video",
+    "input/youtube/jNQXAC9IVRw/jNQXAC9IVRw.mp4",
+    "--output",
+    "docs/reports/sol_v3_20261013/yolo_cuda_final",
+    "--device",
+    "cuda"
+  ]
+}

@@ -223,7 +223,8 @@ def _infer(name, cfg, folder):
                 compute = 'int8_float16' if device == 'cuda' else 'int8'
             model = WhisperModel(str(local), device=device, compute_type=compute, local_files_only=True)
             result.update(model_load_verified=True, device=device)
-            segments, info = model.transcribe(str(wav), language=cfg['language'], beam_size=1,
+            from .transcription import recognition_options
+            segments, info = model.transcribe(str(wav), **recognition_options(cfg), beam_size=1,
                                              vad_filter=False, condition_on_previous_text=False)
             rows = list(segments)  # generator must be consumed to execute CTranslate2
             result['inference_executed'] = True

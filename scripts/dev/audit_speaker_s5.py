@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'src'))
 from ldporto.config import DEFAULTS
 from ldporto.active_speaker import build_active_speaker
+from ldporto.core import read_json
+from ldporto.checkpoint_storage import decode_checkpoint
 from ldporto.speaker_goldset import (choose_review_windows, export_csv,
                                      load_csv, evaluate_goldset)
 
@@ -28,12 +30,12 @@ def load(source, *names):
         if source.is_dir():
             matching = sorted(source.rglob(name), key=lambda p: (len(p.parts), str(p)))
             if matching:
-                return json.loads(matching[0].read_text(encoding='utf-8-sig'))
+                return read_json(matching[0])
         elif source.suffix.lower() == '.zip':
             with zipfile.ZipFile(source) as z:
                 matching = sorted([n for n in z.namelist() if n == name or n.endswith('/'+name)], key=lambda n: (n.count('/'), n))
                 if matching:
-                    return json.loads(z.read(matching[0]).decode('utf-8-sig'))
+                    return decode_checkpoint(json.loads(z.read(matching[0]).decode('utf-8-sig')))
     return None
 
 

@@ -1,0 +1,1044 @@
+{
+  "scope": "offline_historical_artifact_replay_no_new_inference",
+  "actual_inference_executed": false,
+  "recorded_runs": [
+    {
+      "archive": "SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261012_232326_642182_7f5d97.zip",
+      "archive_sha256": "15f4fed54ad6279bb16d92b44e976bbec598cb5aea398c44e13edba565225dcf",
+      "source_sha256": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+      "duration_seconds": 19.014,
+      "semantic_metrics": {
+        "semantic_valid_chunk_ratio": 1.0,
+        "semantic_initial_valid_ratio": 1.0,
+        "semantic_repair_attempt_ratio": 0.0,
+        "semantic_repair_success_ratio": null,
+        "semantic_fallback_ratio": 0.0,
+        "semantic_cache_hit_ratio": 0.0,
+        "semantic_seconds": 289.36,
+        "global_review_seconds": 140.141,
+        "semantic_call_budget": 4,
+        "semantic_inference_call_count": 1,
+        "model_fingerprint": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "global_review_status": "ok",
+        "semantic_call_p50_seconds": 149.187,
+        "semantic_call_p90_seconds": 149.187,
+        "semantic_call_p95_seconds": 149.187,
+        "semantic_repair_cost_seconds": 0,
+        "slowest_semantic_calls": [
+          {
+            "chunk_id": "SEMANTIC_00000",
+            "duration_seconds": 149.187
+          }
+        ],
+        "chunk_cache_hits": 0,
+        "chunk_cache_misses": 1,
+        "fallback_cost_seconds": 0,
+        "fallback_cost_scope": "entire_failed_chunk_including_inference_repair_and_recovery",
+        "chunk_cache_rewrites_avoided": 0,
+        "prompt_mode": "legacy_embedded_schema",
+        "global_review_cache_hit": false,
+        "total_inference_call_count": 2,
+        "semantic_tokens_per_second": 8.320527052504403,
+        "semantic_generated_tokens": 2113
+      },
+      "current_reader_validation": {
+        "status": "valid",
+        "errors": [],
+        "dangling_references": 0,
+        "question_reference_validation": {
+          "status": "resolved",
+          "errors": [],
+          "unresolved": []
+        },
+        "audit_report": {
+          "contract_version": "18.1",
+          "candidate_count": 4,
+          "candidates": [
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "segment_ids",
+                  "id": "SEG_00000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "segment_ids",
+                  "id": "SEG_00001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "context_before",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "context_after",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "context_after",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "segment_ids",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_before",
+                  "id": "SEG_00000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_before",
+                  "id": "SEG_00001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_after",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_after",
+                  "id": "SEG_00004",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "segment_ids",
+                  "id": "SEG_00004",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "context_before",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "context_before",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "context_after",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "segment_ids",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "context_before",
+                  "id": "SEG_00001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "context_before",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "context_after",
+                  "id": "SEG_00004",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            }
+          ],
+          "missing": [],
+          "unresolved": [],
+          "blockers": [],
+          "references_ready": true,
+          "coverage_score": 1.0,
+          "coverage_counts": {
+            "resolved": 28,
+            "applicable": 28
+          },
+          "coverage_method": "resolved_applicable_evidence_checks_not_editorial_quality",
+          "publication_ready": false
+        },
+        "checksums_valid": true,
+        "visual_count": 4,
+        "candidate_count": 4,
+        "file_count": 60,
+        "readiness": {
+          "editorial_ready": true,
+          "transcript_ready": true,
+          "commercial_ready": true,
+          "visual_ready": false,
+          "speaker_person_ready": false,
+          "camera_ready": false,
+          "preview_ready": null
+        }
+      }
+    },
+    {
+      "archive": "SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261013_035536_877801_09f678.zip",
+      "archive_sha256": "843b5c05376f5c8a63845e225ad3069bd5778efd5afe888e1135ae63ecb7ac2d",
+      "source_sha256": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+      "duration_seconds": 19.014,
+      "semantic_metrics": {
+        "semantic_valid_chunk_ratio": 1.0,
+        "semantic_initial_valid_ratio": 1.0,
+        "semantic_repair_attempt_ratio": 0.0,
+        "semantic_repair_success_ratio": null,
+        "semantic_fallback_ratio": 0.0,
+        "semantic_cache_hit_ratio": 0.0,
+        "semantic_seconds": 253.047,
+        "global_review_seconds": 97.094,
+        "semantic_call_budget": 4,
+        "semantic_inference_call_count": 1,
+        "model_fingerprint": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "global_review_status": "ok",
+        "semantic_call_p50_seconds": 155.89,
+        "semantic_call_p90_seconds": 155.89,
+        "semantic_call_p95_seconds": 155.89,
+        "semantic_repair_cost_seconds": 0,
+        "slowest_semantic_calls": [
+          {
+            "chunk_id": "SEMANTIC_00000",
+            "duration_seconds": 155.89
+          }
+        ],
+        "chunk_cache_hits": 0,
+        "chunk_cache_misses": 1,
+        "fallback_cost_seconds": 0,
+        "fallback_cost_scope": "entire_failed_chunk_including_inference_repair_and_recovery",
+        "chunk_cache_rewrites_avoided": 0,
+        "prompt_mode": "legacy_embedded_schema",
+        "global_review_cache_hit": false,
+        "total_inference_call_count": 2,
+        "semantic_generated_tokens": 1731,
+        "semantic_prompt_tokens": 4408,
+        "semantic_tokens_per_second": 8.376738525904333,
+        "semantic_prompt_tokens_per_second": 128.79696852608814,
+        "semantic_generation_seconds": 206.64367099999998,
+        "semantic_prompt_seconds": 34.224408000000004,
+        "semantic_load_seconds": 11.866379,
+        "semantic_server_seconds": 252.9203278,
+        "semantic_request_bytes": 19247,
+        "inference_metadata_record_count": 2,
+        "generation_throughput_measured_call_count": 2,
+        "prompt_throughput_measured_call_count": 2,
+        "semantic_cost_measurement_scope": "observed_calls_only_cached_original_costs_excluded",
+        "ollama_running_models_at_start": []
+      },
+      "current_reader_validation": {
+        "status": "valid",
+        "errors": [],
+        "dangling_references": 0,
+        "question_reference_validation": {
+          "status": "resolved",
+          "errors": [],
+          "unresolved": []
+        },
+        "audit_report": {
+          "contract_version": "18.1",
+          "candidate_count": 4,
+          "candidates": [
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "segment_ids",
+                  "id": "SEG_00000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "segment_ids",
+                  "id": "SEG_00001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "context_before",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "context_after",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0000",
+                  "field": "context_after",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "segment_ids",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_before",
+                  "id": "SEG_00000",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_before",
+                  "id": "SEG_00001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_after",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0001",
+                  "field": "context_after",
+                  "id": "SEG_00004",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "segment_ids",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "context_before",
+                  "id": "SEG_00001",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "context_before",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0002",
+                  "field": "context_after",
+                  "id": "SEG_00004",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "checks": [
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "candidate_id",
+                  "id": "MOMENT_00000_0003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "segment_ids",
+                  "id": "SEG_00004",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "speaker_ids",
+                  "id": "SPEAKER_00",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "question_answer_linkage",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "topic_ids",
+                  "id": "TOPIC_00000_003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "alternate_ref",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "context_before",
+                  "id": "SEG_00002",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "context_before",
+                  "id": "SEG_00003",
+                  "status": "resolved",
+                  "reason": null,
+                  "blocking": false
+                },
+                {
+                  "candidate_id": "MOMENT_00000_0003",
+                  "field": "context_after",
+                  "id": null,
+                  "status": "not_applicable",
+                  "reason": null,
+                  "blocking": false
+                }
+              ],
+              "coverage_score": 1.0
+            }
+          ],
+          "missing": [],
+          "unresolved": [],
+          "blockers": [],
+          "references_ready": true,
+          "coverage_score": 1.0,
+          "coverage_counts": {
+            "resolved": 28,
+            "applicable": 28
+          },
+          "coverage_method": "resolved_applicable_evidence_checks_not_editorial_quality",
+          "publication_ready": false
+        },
+        "checksums_valid": true,
+        "visual_count": 4,
+        "candidate_count": 4,
+        "file_count": 66,
+        "readiness": {
+          "editorial_ready": true,
+          "transcript_ready": true,
+          "commercial_ready": true,
+          "visual_ready": false,
+          "speaker_person_ready": false,
+          "camera_ready": false,
+          "preview_ready": null
+        }
+      }
+    }
+  ],
+  "same_source": true,
+  "section_replay": {
+    "schema_version": "1.0",
+    "original_major_section_count": 4,
+    "major_section_count": 1,
+    "decisions": [
+      {
+        "section_id": "SECTION_0000",
+        "decision": "keep_separate",
+        "method": "source_referential_continuation_not_new_story",
+        "evidence_segment_ids": [
+          "SEG_00000",
+          "SEG_00001"
+        ],
+        "continuation_cue": null
+      },
+      {
+        "section_id": "SECTION_0001",
+        "decision": "group_contextual_continuation",
+        "method": "source_referential_continuation_not_new_story",
+        "evidence_segment_ids": [
+          "SEG_00002"
+        ],
+        "continuation_cue": "these guys",
+        "previous_section_id": "SECTION_0000",
+        "source_speaker_continuity": true,
+        "source_segments_adjacent": true,
+        "gap_seconds": 1.5199999999999996,
+        "explicit_topic_change": false
+      },
+      {
+        "section_id": "SECTION_0002",
+        "decision": "group_contextual_continuation",
+        "method": "source_referential_continuation_not_new_story",
+        "evidence_segment_ids": [
+          "SEG_00003"
+        ],
+        "continuation_cue": "and that's",
+        "previous_section_id": "SECTION_0000",
+        "source_speaker_continuity": true,
+        "source_segments_adjacent": true,
+        "gap_seconds": 0.09999999999999964,
+        "explicit_topic_change": false
+      },
+      {
+        "section_id": "SECTION_0003",
+        "decision": "group_contextual_continuation",
+        "method": "source_referential_continuation_not_new_story",
+        "evidence_segment_ids": [
+          "SEG_00004"
+        ],
+        "continuation_cue": "and that's",
+        "previous_section_id": "SECTION_0000",
+        "source_speaker_continuity": true,
+        "source_segments_adjacent": true,
+        "gap_seconds": 2.9800000000000004,
+        "explicit_topic_change": false
+      }
+    ],
+    "topic_rows_preserved": true,
+    "story_inference_created": false
+  },
+  "grouped_sections": [
+    {
+      "section_id": "SECTION_0000",
+      "start": 0.94,
+      "end": 18.34,
+      "parent_episode_id": "EPISODE",
+      "level": "major_section",
+      "title": "Característica dos elefantes",
+      "topic_ids": [
+        "TOPIC_00000_000",
+        "TOPIC_00000_001",
+        "TOPIC_00000_002",
+        "TOPIC_00000_003"
+      ],
+      "evidence_segment_ids": [
+        "SEG_00000",
+        "SEG_00001",
+        "SEG_00002",
+        "SEG_00003",
+        "SEG_00004"
+      ],
+      "content_type": "editorial_content",
+      "method": "adjacent_source_referential_continuity_grouping_v1",
+      "needs_review": true,
+      "source_transcript_needs_review": true,
+      "uncertain_segment_ids": [
+        "SEG_00000",
+        "SEG_00001"
+      ],
+      "source_section_ids": [
+        "SECTION_0000",
+        "SECTION_0001",
+        "SECTION_0002",
+        "SECTION_0003"
+      ],
+      "contextual_continuity_requires_review": true
+    }
+  ],
+  "original_segments_unchanged": true,
+  "editorial_outcome_replay": {
+    "schema_version": "1.1",
+    "state": "video_too_short",
+    "message": "Video curto demais para a duracao alvo da shortlist configurada.",
+    "reason_codes": [
+      "candidate_evidence_or_score_unresolved",
+      "source_below_configured_target_minimum",
+      "all_recorded_scores_below_quality_floor"
+    ],
+    "candidate_count": 4,
+    "shortlist_count": 0,
+    "duration_seconds": 19.014,
+    "duration_contract": {
+      "target_min_seconds": 30.0,
+      "target_max_seconds": 90.0,
+      "hard_min_seconds": 8.0,
+      "hard_max_seconds": 180.0,
+      "allow_story_exception": true
+    },
+    "quality_floor": 0.5,
+    "technical_failure_stages": [],
+    "unresolved_candidate_ids": [
+      "MOMENT_00000_0000",
+      "MOMENT_00000_0001",
+      "MOMENT_00000_0002",
+      "MOMENT_00000_0003"
+    ],
+    "recorded_rejection_counts": {},
+    "diagnostic_only": true,
+    "selection_policy_changed": false,
+    "full_source_review": {
+      "schema_version": "1.0",
+      "mode": "full_source_review",
+      "state": "DIAGNOSTIC_ONLY",
+      "reason_codes": [
+        "source_below_configured_target_minimum"
+      ],
+      "source_interval": {
+        "start": 0.0,
+        "end": 19.014
+      },
+      "segment_ids": [
+        "SEG_00000",
+        "SEG_00001",
+        "SEG_00002",
+        "SEG_00003",
+        "SEG_00004"
+      ],
+      "word_ids": [
+        "WORD_0000000",
+        "WORD_0000001",
+        "WORD_0000002",
+        "WORD_0000003",
+        "WORD_0000004",
+        "WORD_0000005",
+        "WORD_0000006",
+        "WORD_0000007",
+        "WORD_0000008",
+        "WORD_0000009",
+        "WORD_0000010",
+        "WORD_0000011",
+        "WORD_0000012",
+        "WORD_0000013",
+        "WORD_0000014",
+        "WORD_0000015",
+        "WORD_0000016",
+        "WORD_0000017",
+        "WORD_0000018",
+        "WORD_0000019",
+        "WORD_0000020",
+        "WORD_0000021",
+        "WORD_0000022",
+        "WORD_0000023",
+        "WORD_0000024",
+        "WORD_0000025",
+        "WORD_0000026",
+        "WORD_0000027",
+        "WORD_0000028",
+        "WORD_0000029",
+        "WORD_0000030",
+        "WORD_0000031",
+        "WORD_0000032",
+        "WORD_0000033",
+        "WORD_0000034",
+        "WORD_0000035",
+        "WORD_0000036"
+      ],
+      "duration_contract": {
+        "target_min_seconds": 30.0,
+        "target_max_seconds": 90.0,
+        "hard_min_seconds": 8.0,
+        "hard_max_seconds": 180.0,
+        "allow_story_exception": true
+      },
+      "editorial_score": null,
+      "requires_human_review": true,
+      "eligible_for_shortlist": false,
+      "preview_approved": false,
+      "publication_ready": false,
+      "source_media_included": false,
+      "review_scope": "original_source_evidence_only"
+    },
+    "publication_ready": false
+  },
+  "comparison_limitations": [
+    "Single historical executions, not repeated benchmark.",
+    "Canonical semantic input changed from translated Portuguese to original English.",
+    "Current artifact replay validates grouping/references only; no new audiovisual inference or human review."
+  ]
+}

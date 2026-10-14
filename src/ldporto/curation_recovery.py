@@ -9,8 +9,9 @@ from .core import digest, file_hash
 from .export_privacy import safe_path, privacy_findings
 from .run_status import DEPENDENCIES
 
-# Pinned to the approved orchestrator snapshot, not a caller-supplied manifest.
-HISTORICAL_SNAPSHOT = Path(__file__).resolve().parents[2] / 'automacao/execucao/snapshots/LDPORTO_STAGE_63.zip'
+# Pinned historical contract evidence, independent of any development executor.
+# Absence remains a blocked historical compatibility check, never an approval.
+HISTORICAL_SNAPSHOT = Path(__file__).resolve().parents[2] / 'docs/archive/automation_20261012/execucao/snapshots/LDPORTO_STAGE_63.zip'
 HISTORICAL_SNAPSHOT_SHA256 = '8b814c4501eb1441f3025ca635ddd8163de25bbdbab99974a6e4e3d90581d23b'
 HISTORICAL_FINGERPRINT = 'f13cb5d27e9b280592247f2d5bd9fc5c10e8debebb359430da6be3f9bf52902f'
 

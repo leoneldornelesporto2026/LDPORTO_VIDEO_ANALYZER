@@ -1,0 +1,52 @@
+[
+  {
+    "test": "src.tests.test_director_integration.test_full_pipeline_cache_and_director_only_without_media",
+    "before_seconds": 11.409,
+    "after_seconds": 15.214
+  },
+  {
+    "test": "src.tests.test_stage65_execution_receipts.test_new_full_synthetic_chain_can_be_reviewed_without_historical_backfill",
+    "before_seconds": 2.782,
+    "after_seconds": 3.8
+  },
+  {
+    "test": "src.tests.test_v44_replay_commercial.test_understanding_replay_classifies_commercial_asr_without_asr_or_llm",
+    "before_seconds": 2.217,
+    "after_seconds": 3.596
+  },
+  {
+    "test": "src.tests.test_stage38_independent_mp4.test_canary_and_controlled_stories_have_independent_provenance",
+    "before_seconds": 3.223,
+    "after_seconds": 3.55
+  },
+  {
+    "test": "src.tests.test_v43_runtime.test_downstream_replay_does_not_run_asr_vision_or_llm",
+    "before_seconds": 2.175,
+    "after_seconds": 3.33
+  },
+  {
+    "test": "src.tests.test_s9_s10_s11_delivery.test_s9_real_ffmpeg_canary_with_full_approval_and_independent_batch",
+    "before_seconds": 3.214,
+    "after_seconds": 3.232
+  },
+  {
+    "test": "src.tests.test_build_manifest_truth.test_real_offline_replay_preserves_original_identity_and_reports_mixed_origin",
+    "before_seconds": 2.371,
+    "after_seconds": 2.999
+  },
+  {
+    "test": "src.tests.test_stage05_selective_replay.test_replay_hits_and_selectively_invalidates",
+    "before_seconds": 2.077,
+    "after_seconds": 2.773
+  },
+  {
+    "test": "src.tests.test_stage38_independent_mp4.test_failed_middle_story_does_not_stop_next_or_overwrite_reviewed_files",
+    "before_seconds": 2.46,
+    "after_seconds": 2.699
+  },
+  {
+    "test": "src.tests.test_v42_export.test_exporter_self_test",
+    "before_seconds": 2.132,
+    "after_seconds": 2.609
+  }
+]

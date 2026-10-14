@@ -1,0 +1,30 @@
+{
+  "state": "VERIFIED",
+  "logical_sha256": "cec3c62a675a94a2fa6501eb946f4dcaf32a5dda47ea7005200e345577ee7ba3",
+  "logical_hash_equal": true,
+  "receipt_states": [
+    "verified_partial",
+    "verified_partial",
+    "verified_partial"
+  ],
+  "before_bytes": 331319797,
+  "after_bytes": 172939789,
+  "size_reduction_percent": 47.802760183388614,
+  "before_write_seconds": 21.035955500090495,
+  "after_packing_plus_write_seconds": 14.579861500067636,
+  "packing_plus_write_reduction_percent": 30.69075707065022,
+  "before_verify_seconds": 27.246657599927858,
+  "after_verify_seconds": 8.61160199996084,
+  "after_encoded_verify_seconds": 9.939635399961844,
+  "before_read_seconds": 8.388340800069273,
+  "after_encoded_read_seconds": 7.568959899945185,
+  "before_peak_ram_bytes": 1501851648,
+  "after_transform_peak_ram_bytes": 1501179904,
+  "encoded_read_peak_ram_bytes": 1363910656,
+  "limitations": [
+    "One fresh-process pair. OS filesystem cache not forcibly dropped.",
+    "Transform process peak RAM effectively unchanged; encoded-read process has distinct scope.",
+    "No inference, no original checkpoint rewrite, no claim of global memory reduction.",
+    "Logical digest verified after hydrating encoded checkpoint in independent process."
+  ]
+}

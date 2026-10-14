@@ -97,8 +97,15 @@ def write_json(path, data):
                                          prefix=path.name + ".", suffix=".tmp", delete=False) as handle:
             temporary = Path(handle.name)
             encoder = json.JSONEncoder(ensure_ascii=False, separators=(",", ":"), allow_nan=False, default=str)
+            buffered, buffered_chars = [], 0
             for chunk in encoder.iterencode(clean):
-                handle.write(chunk)
+                buffered.append(chunk)
+                buffered_chars += len(chunk)
+                if buffered_chars >= 262144:
+                    handle.write(''.join(buffered))
+                    buffered, buffered_chars = [], 0
+            if buffered:
+                handle.write(''.join(buffered))
             handle.flush()
             os.fsync(handle.fileno())
         for attempt in range(5):
@@ -124,8 +131,10 @@ def read_json(path):
             raise ValueError('JSON numerico nao finito.')
         return number
     with Path(path).open(encoding='utf-8-sig') as handle:
-        return json.load(handle,parse_float=parse_float,
-                         parse_constant=lambda value: (_ for _ in ()).throw(ValueError('JSON nao finito: '+value)))
+        value = json.load(handle,parse_float=parse_float,
+                          parse_constant=lambda value: (_ for _ in ()).throw(ValueError('JSON nao finito: '+value)))
+    from .checkpoint_storage import decode_checkpoint
+    return decode_checkpoint(value)
 
 
 def overlap(a, b, c, d):
@@ -196,7 +205,7 @@ def run_command(args, logger=None, *, timeout=7200, output_limit_bytes=8 * 1024 
 def versions():
     out = {}
     for package in ["numpy", "scipy", "opencv-contrib-python", "opencv-python", "opencv-python-headless", "faster-whisper",
-                    "ctranslate2", "scenedetect", "pyannote.audio", "torch", "torchaudio", "torchcodec",
+                    "ctranslate2", "scenedetect", "av", "pyannote.audio", "torch", "torchaudio", "torchcodec",
                     "soundfile", "mediapipe", "ultralytics", "pytesseract", "panns-inference", "yt-dlp"]:
         try:
             out[package] = importlib.metadata.version(package)
@@ -409,13 +418,24 @@ class Context:
             finalizer(name, result)
         from .runtime_metrics import resource_snapshot
         resources = resource_snapshot()
-        write_json(checkpoint, result)
+        from .checkpoint_storage import encode_checkpoint
+        persistence_started = time.monotonic()
+        stored = encode_checkpoint(result, stage=name)
+        packing_seconds = time.monotonic() - persistence_started
+        writing_started = time.monotonic()
+        write_json(checkpoint, stored)
+        persistence_seconds = time.monotonic() - writing_started
         self.states[name] = {"key": key, "status": result["status"]}
         self.stage_metrics[name] = {"cache_hit": False, "elapsed_seconds": result["elapsed_seconds"]}
         self.stage_metrics[name].update(resources)
         self.stage_metrics[name].update(cache_metrics,
                                        process_cpu_seconds_delta=time.process_time() - cpu_started,
-                                       gpu_vram_used_bytes=None)
+                                       gpu_vram_used_bytes=None,
+                                       checkpoint_encoding_seconds=packing_seconds,
+                                       checkpoint_write_seconds=persistence_seconds,
+                                       checkpoint_bytes=checkpoint.stat().st_size,
+                                       checkpoint_storage_codec=(stored.get('checkpoint_storage') or {}).get('codec'),
+                                       producer_and_persistence_seconds=time.monotonic() - started)
         self._notes(name, result)
         self.logger.info("%s: %s (%.1fs)", name, result["status"], result["elapsed_seconds"])
         progress_details = {}
@@ -552,6 +572,7 @@ def setup_logging(output):
 def external_fingerprints(cfg, stage=None):
     """Hash only external evidence actually consumed by the requested stage."""
     from .config import asset_path
+    from .body_model_paths import select_body_model_path
     paths = [
         cfg["transcription"]["import_file"], cfg["diarization"]["import_file"],
         cfg["audio"]["isolated_file"], cfg["vision"]["manual_mapping_file"],
@@ -570,5 +591,12 @@ def external_fingerprints(cfg, stage=None):
     }
     if stage is not None:
         paths=scoped.get(stage,[])
-    return {str(asset_path(p)): file_hash(asset_path(p))
-            for p in paths if p and asset_path(p).is_file()}
+    fingerprints = {}
+    for value in paths:
+        if not value:
+            continue
+        path = (select_body_model_path(value)[0] if stage == '07_people_tracking' and
+                value == cfg['vision']['yolo_model'] else asset_path(value))
+        if path.is_file():
+            fingerprints[str(path)] = file_hash(path)
+    return fingerprints

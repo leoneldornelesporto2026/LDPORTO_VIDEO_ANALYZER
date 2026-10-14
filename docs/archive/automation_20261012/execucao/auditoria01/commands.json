@@ -1,0 +1,125 @@
+[
+  {
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit_code": 0,
+    "seconds": 0.031,
+    "log": "automacao/execucao/auditoria01/git_initial.log"
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "orquestrador.py",
+      "--status"
+    ],
+    "exit_code": 0,
+    "seconds": 0.062,
+    "log": "automacao/execucao/auditoria01/status_initial.log"
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\run_audit.py",
+      "_static"
+    ],
+    "exit_code": 0,
+    "seconds": 0.907,
+    "log": "automacao/execucao/auditoria01/static.log"
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.406,
+    "log": "automacao/execucao/auditoria01/pip_check.log"
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\focused.xml",
+      "src/tests/test_stage65_execution_receipts.py",
+      "src/tests/test_build_manifest_truth.py",
+      "src/tests/test_stage64_curation_recovery.py",
+      "src/tests/test_stage64_legacy_review.py",
+      "src/tests/test_v42_cache.py",
+      "src/tests/test_v44_reporting_robustness.py",
+      "src/tests/test_stage06_report_coherence.py",
+      "src/tests/test_camera_director.py",
+      "src/tests/test_s6_camera_director_smart_zoom.py",
+      "src/tests/test_v44_second_curation.py"
+    ],
+    "exit_code": 0,
+    "seconds": 42.203,
+    "log": "automacao/execucao/auditoria01/focused.log",
+    "tests": 195,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 194
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "analyze.py",
+      "--help"
+    ],
+    "exit_code": 0,
+    "seconds": 0.218,
+    "log": "automacao/execucao/auditoria01/cli_help.log"
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\automacao\\execucao\\auditoria01\\full.xml"
+    ],
+    "exit_code": 0,
+    "seconds": 189.5,
+    "log": "automacao/execucao/auditoria01/full.log",
+    "tests": 1631,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 6,
+    "passed": 1625
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "orquestrador.py",
+      "--status"
+    ],
+    "exit_code": 0,
+    "seconds": 0.063,
+    "log": "automacao/execucao/auditoria01/status_final.log"
+  },
+  {
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit_code": 0,
+    "seconds": 0.031,
+    "log": "automacao/execucao/auditoria01/git_final.log"
+  }
+]

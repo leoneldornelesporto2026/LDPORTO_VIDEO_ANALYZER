@@ -1,0 +1,26 @@
+[
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\benchmark_storage.py",
+      "storage_after",
+      "--encoded"
+    ],
+    "returncode": 0,
+    "wrapper_seconds": 40.9556225000415
+  },
+  {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-B",
+      "docs\\reports\\sol_v4_20261013\\benchmark_storage.py",
+      "storage_encoded_read",
+      "--input",
+      "docs\\reports\\sol_v4_20261013\\storage_after\\10_active_speaker.json",
+      "--read-only"
+    ],
+    "returncode": 0,
+    "wrapper_seconds": 27.364434399991296
+  }
+]

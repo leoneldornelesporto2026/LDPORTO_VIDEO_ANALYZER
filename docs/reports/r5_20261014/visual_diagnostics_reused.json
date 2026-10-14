@@ -1,0 +1,32 @@
+{
+  "scope": "existing_diagnostics_only_no_new_inference",
+  "speaker_diagnostic_reason_counts": {
+    "TRACK_FRAGMENTATION": 2,
+    "OFFSCREEN_SPEAKER": 3,
+    "AUDIO_VIDEO_LAG_INCONSISTENT": 1,
+    "CONTEMPORARY_SYNC_NOT_VERIFIED": 1,
+    "GLOBAL_IDENTITY_NOT_CURRENT_SPEECH": 1,
+    "LOW_AFFINITY": 4
+  },
+  "speaker_mapping_reason_counts": {
+    "global_multi_evidence_affinity": 1,
+    "insufficient_consensus": 4
+  },
+  "director_counts": {
+    "source_shot_resets": 432,
+    "unconfirmed_audio_visual_windows": 49766,
+    "visual_only_fallback_windows": 3179,
+    "switches_suppressed": 1076,
+    "director_switches": 49,
+    "focused_windows_without_editorial_beat": 2767,
+    "deadzone_suppressed_moves": 1179,
+    "crop_preflight_blocked_windows": 2,
+    "unsafe_crop_avoided": 2
+  },
+  "counts_are_not_continuous_observations": true,
+  "audio_video_global_sync_verified": false,
+  "active_person_inferred": false,
+  "new_camera_motion_applied": false,
+  "fallback": "SOURCE_PRESERVE",
+  "publication_ready": false
+}

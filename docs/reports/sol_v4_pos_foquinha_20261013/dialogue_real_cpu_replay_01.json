@@ -1,0 +1,396 @@
+{
+  "mode": "read_only_CPU_replay; no_audio_or_human_annotation",
+  "sources_sha256": {
+    "transcript_segments.json": "232b588ac3c6a2431fbec8fa65fa9adc24035f7b2e0a7e7391de81771b75cef2",
+    "questions_answers.json": "f652c25279a9b6c2eb5ce65e87daa348f71aee4f1a14a91ccbd2a377eeb17ae3",
+    "topics.json": "d5ba7948cf211594bca9c436f012b91591c968bba215a3164ad8be85c058ba30",
+    "story_arcs.json": "b696f515c945903ac3f94638b8c7a92996d8aff1619675d06c6ffdbd63366a46"
+  },
+  "qa": {
+    "schema_version": "1.0",
+    "counts": {
+      "before_unresolved": 98,
+      "before_not_expected": 181,
+      "before_linked_candidate": 1,
+      "question_reference_or_ownership_unresolved": 3,
+      "after_unresolved": 98,
+      "after_not_expected": 181,
+      "after_linked_candidate": 1
+    },
+    "attempts": [
+      {
+        "question_id": "Q_0032",
+        "question_start": 274.32,
+        "asker_context_segment_ids": [],
+        "reaction_segment_ids": [
+          "SEG_00132"
+        ],
+        "previous_unresolved_reason": "answer_relevance_unresolved",
+        "recovered": false,
+        "stop_reason": "new_question_before_answer"
+      },
+      {
+        "question_id": "Q_0139",
+        "question_start": 1965.46,
+        "asker_context_segment_ids": [
+          "SEG_00775"
+        ],
+        "reaction_segment_ids": [],
+        "previous_unresolved_reason": "intervention_relevance_unresolved",
+        "recovered": false,
+        "stop_reason": "intervention_relevance_unresolved"
+      },
+      {
+        "question_id": "Q_0154",
+        "question_start": 2148.06,
+        "asker_context_segment_ids": [
+          "SEG_00843"
+        ],
+        "reaction_segment_ids": [],
+        "previous_unresolved_reason": "intervention_relevance_unresolved",
+        "recovered": false,
+        "stop_reason": "intervention_relevance_unresolved"
+      },
+      {
+        "question_id": "Q_0166",
+        "question_start": 2261.36,
+        "asker_context_segment_ids": [],
+        "reaction_segment_ids": [
+          "SEG_00881"
+        ],
+        "previous_unresolved_reason": "answer_relevance_unresolved",
+        "recovered": false,
+        "stop_reason": "answer_relevance_unresolved"
+      },
+      {
+        "question_id": "Q_0181",
+        "question_start": 2429.68,
+        "asker_context_segment_ids": [
+          "SEG_00930"
+        ],
+        "reaction_segment_ids": [],
+        "previous_unresolved_reason": "intervention_relevance_unresolved",
+        "recovered": false,
+        "stop_reason": "intervention_relevance_unresolved"
+      }
+    ],
+    "manual_review_sample": [
+      {
+        "question_id": "Q_0015",
+        "question_segment_ids": [
+          "SEG_00057",
+          "SEG_00058"
+        ],
+        "question_speaker": "SPEAKER_01",
+        "question_start": 151.62,
+        "question_end": 154.64,
+        "answer_segment_ids": [
+          "SEG_00059"
+        ],
+        "answer_speaker": "SPEAKER_02",
+        "answer_start": 154.64,
+        "answer_end": 156.76,
+        "answer_status": "linked_candidate",
+        "unresolved_reason": "answer_continuation_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0003",
+        "question_segment_ids": [
+          "SEG_00012",
+          "SEG_00013"
+        ],
+        "question_speaker": "SPEAKER_01",
+        "question_start": 34.24,
+        "question_end": 35.86,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "new_question_before_answer",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0013",
+        "question_segment_ids": [
+          "SEG_00047",
+          "SEG_00048"
+        ],
+        "question_speaker": "SPEAKER_00",
+        "question_start": 131.28,
+        "question_end": 137.64,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "missing_speaker_evidence",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0031",
+        "question_segment_ids": [
+          "SEG_00127",
+          "SEG_00128"
+        ],
+        "question_speaker": "SPEAKER_01",
+        "question_start": 263.52,
+        "question_end": 265.94,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "answer_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0040",
+        "question_segment_ids": [
+          "SEG_00178"
+        ],
+        "question_speaker": "SPEAKER_01",
+        "question_start": 362.2,
+        "question_end": 363.06,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "answer_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0055",
+        "question_segment_ids": [
+          "SEG_00279"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 567.22,
+        "question_end": 570.06,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0072",
+        "question_segment_ids": [
+          "SEG_00351"
+        ],
+        "question_speaker": "SPEAKER_01",
+        "question_start": 695.88,
+        "question_end": 696.74,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "new_question_before_answer",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0114",
+        "question_segment_ids": [
+          "SEG_00561"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 1253.38,
+        "question_end": 1254.92,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0131",
+        "question_segment_ids": [
+          "SEG_00708"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 1777.84,
+        "question_end": 1777.98,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "answer_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0151",
+        "question_segment_ids": [
+          "SEG_00831",
+          "SEG_00832"
+        ],
+        "question_speaker": "SPEAKER_01",
+        "question_start": 2128.3,
+        "question_end": 2131.2,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "missing_speaker_evidence",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0175",
+        "question_segment_ids": [
+          "SEG_00916",
+          "SEG_00917"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 2392.14,
+        "question_end": 2396.54,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0194",
+        "question_segment_ids": [
+          "SEG_00971"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 2568.66,
+        "question_end": 2569.12,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0212",
+        "question_segment_ids": [
+          "SEG_01061"
+        ],
+        "question_speaker": "SPEAKER_00",
+        "question_start": 2916.88,
+        "question_end": 2919.02,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "new_question_before_answer",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0223",
+        "question_segment_ids": [
+          "SEG_01110"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 3129.96,
+        "question_end": 3131.62,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0244",
+        "question_segment_ids": [
+          "SEG_01287"
+        ],
+        "question_speaker": "SPEAKER_00",
+        "question_start": 3509.86,
+        "question_end": 3512.56,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      },
+      {
+        "question_id": "Q_0251",
+        "question_segment_ids": [
+          "SEG_01311"
+        ],
+        "question_speaker": "SPEAKER_02",
+        "question_start": 3556.66,
+        "question_end": 3558.38,
+        "answer_segment_ids": [],
+        "answer_speaker": null,
+        "answer_start": null,
+        "answer_end": null,
+        "answer_status": "unresolved",
+        "unresolved_reason": "intervention_relevance_unresolved",
+        "annotation_status": "unreviewed",
+        "audio_verified_complete": null
+      }
+    ],
+    "distinct_associated_answer_span_count": 1,
+    "unresolved_reason_counts": {
+      "intervention_relevance_unresolved": 42,
+      "answer_relevance_unresolved": 18,
+      "new_question_before_answer": 23,
+      "missing_speaker_evidence": 15
+    },
+    "source_duplicate_ids_observed": false,
+    "verified_complete_qa_count": null,
+    "human_accuracy_measured": false,
+    "scope": "full_source_transcript; semantic_chunk_boundaries_not_search_limits"
+  },
+  "story_before": {
+    "count": 100,
+    "narrative_supported": 0,
+    "missing_support_counts": {
+      "no_payoff": 100,
+      "no_setup": 62,
+      "no_development": 62,
+      "cross_chunk_continuity_unresolved": 3,
+      "missing_speaker_evidence": 6
+    },
+    "normalization_event_count": 0
+  },
+  "story_recalculated": {
+    "count": 100,
+    "narrative_supported": 0,
+    "missing_support_counts": {
+      "no_payoff": 100,
+      "no_setup": 62,
+      "no_development": 62,
+      "cross_chunk_continuity_unresolved": 3,
+      "missing_speaker_evidence": 6
+    },
+    "normalization_event_count": 0
+  },
+  "input_payloads_unchanged": true
+}

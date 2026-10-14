@@ -1,0 +1,299 @@
+{
+  "schema_version": "1.0",
+  "source_review_window_count": 16,
+  "candidate_priority_ids": [
+    "MOMENT_00022_0001",
+    "MOMENT_00002_0002",
+    "MOMENT_00008_0002",
+    "MOMENT_00002_0000",
+    "MOMENT_00022_0002"
+  ],
+  "source_risk_priority_refs": [
+    {
+      "window_id": "SOURCE_REVIEW_00001",
+      "start": 14.64,
+      "end": 21.48,
+      "word_ids": [
+        "WORD_0000033",
+        "WORD_0000034",
+        "WORD_0000035",
+        "WORD_0000039"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/1",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00006",
+      "start": 112.3,
+      "end": 122.28,
+      "word_ids": [
+        "WORD_0000328",
+        "WORD_0000338",
+        "WORD_0000340",
+        "WORD_0000348"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/6",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00008",
+      "start": 144.38,
+      "end": 166.56,
+      "word_ids": [
+        "WORD_0000443",
+        "WORD_0000444",
+        "WORD_0000445",
+        "WORD_0000446",
+        "WORD_0000447",
+        "WORD_0000448",
+        "WORD_0000449",
+        "WORD_0000455",
+        "WORD_0000463",
+        "WORD_0000471",
+        "WORD_0000472",
+        "WORD_0000473",
+        "WORD_0000474",
+        "WORD_0000475",
+        "WORD_0000476",
+        "WORD_0000477",
+        "WORD_0000478",
+        "WORD_0000481",
+        "WORD_0000482",
+        "WORD_0000483",
+        "WORD_0000484",
+        "WORD_0000485",
+        "WORD_0000497",
+        "WORD_0000498",
+        "WORD_0000499",
+        "WORD_0000500",
+        "WORD_0000501",
+        "WORD_0000502",
+        "WORD_0000503"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability",
+        "overlapping_speech"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/8",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00009",
+      "start": 167.08,
+      "end": 179.74,
+      "word_ids": [
+        "WORD_0000521",
+        "WORD_0000522",
+        "WORD_0000523",
+        "WORD_0000524",
+        "WORD_0000525",
+        "WORD_0000526",
+        "WORD_0000527",
+        "WORD_0000528",
+        "WORD_0000532",
+        "WORD_0000535",
+        "WORD_0000536",
+        "WORD_0000537",
+        "WORD_0000538",
+        "WORD_0000540"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability",
+        "overlapping_speech"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/9",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00012",
+      "start": 206.92,
+      "end": 222.54,
+      "word_ids": [
+        "WORD_0000651",
+        "WORD_0000654",
+        "WORD_0000659",
+        "WORD_0000667",
+        "WORD_0000669",
+        "WORD_0000671",
+        "WORD_0000672",
+        "WORD_0000673",
+        "WORD_0000674",
+        "WORD_0000675",
+        "WORD_0000676",
+        "WORD_0000677",
+        "WORD_0000678",
+        "WORD_0000686",
+        "WORD_0000687",
+        "WORD_0000688",
+        "WORD_0000689",
+        "WORD_0000690",
+        "WORD_0000691",
+        "WORD_0000692",
+        "WORD_0000693",
+        "WORD_0000694",
+        "WORD_0000695",
+        "WORD_0000696",
+        "WORD_0000697",
+        "WORD_0000701",
+        "WORD_0000702",
+        "WORD_0000703",
+        "WORD_0000704"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability",
+        "overlapping_speech"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/12",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00013",
+      "start": 227.02,
+      "end": 239.38,
+      "word_ids": [
+        "WORD_0000733",
+        "WORD_0000740",
+        "WORD_0000755",
+        "WORD_0000760"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/13",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00014",
+      "start": 251.36,
+      "end": 280.68,
+      "word_ids": [
+        "WORD_0000805",
+        "WORD_0000806",
+        "WORD_0000807",
+        "WORD_0000813",
+        "WORD_0000814",
+        "WORD_0000823",
+        "WORD_0000838",
+        "WORD_0000844",
+        "WORD_0000854",
+        "WORD_0000861",
+        "WORD_0000864",
+        "WORD_0000867",
+        "WORD_0000868",
+        "WORD_0000869",
+        "WORD_0000870",
+        "WORD_0000871",
+        "WORD_0000872",
+        "WORD_0000873",
+        "WORD_0000880",
+        "WORD_0000881",
+        "WORD_0000882",
+        "WORD_0000883",
+        "WORD_0000886",
+        "WORD_0000887",
+        "WORD_0000888"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability",
+        "overlapping_speech"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/14",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00015",
+      "start": 289.26,
+      "end": 302.28,
+      "word_ids": [
+        "WORD_0000932",
+        "WORD_0000933",
+        "WORD_0000934",
+        "WORD_0000943",
+        "WORD_0000944",
+        "WORD_0000945",
+        "WORD_0000953",
+        "WORD_0000954",
+        "WORD_0000955",
+        "WORD_0000956",
+        "WORD_0000957",
+        "WORD_0000958",
+        "WORD_0000959",
+        "WORD_0000963"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "comparison_clip_boundary",
+        "missing_or_low_model_probability",
+        "overlapping_speech"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/15",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00000",
+      "start": 7.699999999999999,
+      "end": 12.06,
+      "word_ids": [
+        "WORD_0000008"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "missing_or_low_model_probability"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/0",
+      "audio_verified": false
+    },
+    {
+      "window_id": "SOURCE_REVIEW_00004",
+      "start": 79.48,
+      "end": 92.9,
+      "word_ids": [
+        "WORD_0000225",
+        "WORD_0000226",
+        "WORD_0000228",
+        "WORD_0000229",
+        "WORD_0000247",
+        "WORD_0000248",
+        "WORD_0000249",
+        "WORD_0000250"
+      ],
+      "reasons": [
+        "acoustic_hypotheses_disagree",
+        "missing_or_low_model_probability",
+        "overlapping_speech"
+      ],
+      "source_ref": "transcript/source_audio_review.json#windows/4",
+      "audio_verified": false
+    }
+  ],
+  "existing_acoustic_multipass": {
+    "status": "executed",
+    "asr_calls": 16,
+    "processed_audio_seconds": 86.36000000000007,
+    "human_audio_review": false
+  },
+  "additional_asr_calls": 0,
+  "budget_restarted": false,
+  "human_review_pending": true,
+  "scope": "References into existing source queue; no duplicate editorial queue or acoustic reprocessing."
+}

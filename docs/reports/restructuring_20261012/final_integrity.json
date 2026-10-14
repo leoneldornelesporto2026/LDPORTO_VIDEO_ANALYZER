@@ -1,0 +1,206 @@
+{
+  "date_local": "2026-10-12",
+  "timezone": "America/Sao_Paulo",
+  "branch": "baseline/ldporto-20261012-prompt01",
+  "head": "2f4634f202f976c135c4bd28db590e289ce72156",
+  "same_initial_branch": true,
+  "same_initial_head": true,
+  "source_count_signed_for_final_suite": 274,
+  "source_sha256_matches_frozen_tests": true,
+  "source_mismatches": [],
+  "protected_package": {
+    ".package/PROJECT_EXPORT_MANIFEST.json": {
+      "initial_sha256": "348a88f140d74e3e30bf6536e4934b0d12f9f0f5dc3c443c958ad0f7f3c9128f",
+      "final_sha256": "348a88f140d74e3e30bf6536e4934b0d12f9f0f5dc3c443c958ad0f7f3c9128f",
+      "unchanged": true
+    },
+    ".package/PROJECT_EXPORT_README.txt": {
+      "initial_sha256": "2349e96177883dd8faf2ceff67f5b48e29fa2a45a804787510d4cd6327910e1a",
+      "final_sha256": "2349e96177883dd8faf2ceff67f5b48e29fa2a45a804787510d4cd6327910e1a",
+      "unchanged": true
+    },
+    ".package/PROJECT_EXPORT_TREE.txt": {
+      "initial_sha256": "443880fa7ad2dd8c275cb379df4345fc9200b931befecdfc66b2483f3c637afc",
+      "final_sha256": "443880fa7ad2dd8c275cb379df4345fc9200b931befecdfc66b2483f3c637afc",
+      "unchanged": true
+    }
+  },
+  "moved_files": [
+    {
+      "path": "src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip",
+      "sha256": "5a9da201f984d63de2c68dbd9aee4c03365b9e0815b1fb041130d4da02b5f073",
+      "matches_original": true
+    },
+    {
+      "path": "src/tests/fixtures/historical_evidence/SECOND_CURATION_READY.zip",
+      "sha256": "8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/AUDITORIA_GERAL_01.md",
+      "sha256": "2369a57bd84ec778b968ce3e60b7771705676a11dc4626143f81e9f4147e14e2",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/commands.json",
+      "sha256": "c0bac7b0f88da1ba7ef5b97c965d652ec2bce15d91e89e49119b0f3310ba0b1b",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/CORRECOES_01.md",
+      "sha256": "28b855a5bd305dc928fe87f039bb60bcb5e2bbf9c66a2d3ecb9e2b0face90a75",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/final_integrity.json",
+      "sha256": "ebe6230a7f59d2b15b22d8f36b15c8606bf2f40d45fa416c18f4877f1acb7a9c",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/focused.xml",
+      "sha256": "2cd2fa9e8ab36be7c36e6180a168df1dc5d5d2faee64bf2443e6cf33d62ce2ef",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/full.xml",
+      "sha256": "523de5abdaf57a3952eeec0b05e108bc1f393453b81ed4c631d0fef395d43305",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/historical_evidence_readonly.json",
+      "sha256": "9b6ed77265e1ef3dec094b4b72ce9d1bd7e35a90f229ff1925a6ee4a3b68cd36",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/initial_integrity.json",
+      "sha256": "08d724ffb8b9737adf3557293358791400ff4a0c4b90d0c403743e1851b993e2",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/PENDENCIAS_02.md",
+      "sha256": "7de3411ec68093550caaee8b1086555759ced6bff119202ae96008306eac135d",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/static_results.json",
+      "sha256": "8434f0961efeb9c68bbaabdc42d9d5296c9331ca88cf945a3459238205986271",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/STATUS_FINAL_01.json",
+      "sha256": "2548da875903325f2a53a652312f62343911078c5c0fc2a5c83daed0f6302160",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/auditoria01/TESTES_01.json",
+      "sha256": "da3ee01b17d6215305f3a22fa75ecd6d514b30728275a711eaddffab483ac044",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/checkpoints/CHECKPOINT_ETAPA_01.md",
+      "sha256": "5f1720048fa56114ee2cc259c94a15ca4753dc207d479a5a3557a8daa1a2c56f",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/automation_20261012/execucao/checkpoints/TESTES_01.json",
+      "sha256": "7fe152fe7b917e99c3be47992380807d697ae807c3fecb7249a3e882721b0aa4",
+      "matches_original": true
+    },
+    {
+      "path": "docs/archive/FINAL_HOMOLOGACAO_20261009.md",
+      "sha256": "e8183ce16cf5c4ad2543ffcfb1d796a3ad97b3eeadda68dfec53a922e13e3b35",
+      "matches_original": true
+    }
+  ],
+  "backup_sha256": "9263b50c70791968212b966d7c3415de8cfba82fb4e154a5875615cce106971c",
+  "backup_matches_verified_manifest": true,
+  "retired_components_absent": true,
+  "active_automation_reference_matches": [],
+  "git_diff_check_exit_code": 0,
+  "full_suite": {
+    "command": [
+      "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-rs",
+      "--junitxml=docs\\reports\\restructuring_20261012\\after_full.xml"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 205.01856919995043,
+    "scope": "final full frozen suite; no filters or ignored modules",
+    "collected_cases": 1714,
+    "passed": 1711,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 3,
+    "skips": [
+      {
+        "test": "src.tests.test_stage46_commercial_visual_replay::test_symlink_media_and_parent_artifacts_rejected",
+        "reason": "Windows symlink privilege unavailable; reparse check needs local homologation"
+      },
+      {
+        "test": "src.tests.test_stage55_commercial_evidence::test_opt_in_tesseract_on_authored_synthetic_offer",
+        "reason": "Opt-in synthetic Tesseract only: LDPORTO_STAGE55_REAL_OCR=1"
+      },
+      {
+        "test": "src.tests.test_stage64_curation_recovery::test_links_are_blocked",
+        "reason": "Windows symlink privilege unavailable"
+      }
+    ],
+    "source_changes_during_tests": []
+  },
+  "verification": {
+    "passed": true,
+    "imported_modules": 100,
+    "gui_status": "initialized"
+  },
+  "artifact_sha256": {
+    "after_full.log": "2d93c33e6f759b0fd58820bae7306c8b08582035e878bffcde948c2642b41db6",
+    "after_full.xml": "5404773130fe5938e8d60db17a1a85605ac71fcdc38b5bc0bfcd170ce00753bc",
+    "after_full_run.json": "6ea6bf75c16cf60f7764ca5cf573707104add0122218f1a2f6af268e822d16a6",
+    "analyze_help.log": "474b834460753c0f3cfd1293ad88beb263a94fd36cac7b092dd8fb1e010f04d6",
+    "asr_audit.md": "eb97fa3d910974f402a277696a010233e2b388cbc0213bfe2d72c166d722b6ee",
+    "asr_new_test_collection.txt": "ebe298d1c163008885fd8d7bf9c498117a1aac1b35b383fb4bbaf39585cfc730",
+    "asr_targeted_tests_final.txt": "d5e2fd0486eb2ec45efbf1d8c1bccdb3a596fb0716943e316ded2736c2e1b1f3",
+    "asr_targeted_tests_initial.txt": "5ab216ac49d0c9072792646e9b4b57a635ca1d703b507fec54232dd869b1ef9c",
+    "asr_targeted_tests_review.txt": "3c4ae4625c385fe0b3f4d1fb8f4afbdf46fa2e3f8c2a65c8860edb24c6ae0125",
+    "asr_understanding_uncertainty_tests.txt": "4ed58600766b68e8beafca1a2b1077178f8ad875f6039ca53984b5adbb978d90",
+    "backup.json": "3d3091424b5680228fe9c9712b871eb4804b31ab586b245de51a76db252ed91b",
+    "before_active.log": "c03fde9295547921479394971fd33de587429dbab5aacf469e9e59027266a389",
+    "before_active.xml": "e10e0c82436303f3038a7b971b4f3ede09e0800fbb0fe7763d226a9d8ed83d46",
+    "before_active_run.json": "171d959a574180db48837bf3e326b61befe8fd3d152699f45dce053d75cd1e16",
+    "before_collection.xml": "4c17f0e457fbef09f171356075af0406f26499270e10e6a99b39472ef1f64b68",
+    "cleanup.json": "1d09ce6936adfcde5b7f22b838b95ad9f13f75babed74847cac6df104c4040f4",
+    "code_audit.json": "d7d727aca1975b69cbc179f24aa1f4775af1099e08e14e67bb8f47427de10ee0",
+    "COMANDOS.md": "a4a0b6a7d232b515f5bf169c02048417596947b8d7af262fa8f8bf924c24adc1",
+    "compare_runs_help.log": "e5a8078c64117677326d660cebf3b789c1bb8266f134cfc8cf047e863f5a545c",
+    "exportar_ldporto_help.log": "a8faf42afd40aa4c1eb2d2025449a093e1ebe4335cd5e220556cf63f61918362",
+    "first_full.log": "76e87f918729d76b98eb57d9a9ea48dbb4e7835fbcd1d6e3954d32e9db07548e",
+    "first_full.xml": "21a59c77c8c2db038df041e58258e96bc3a0480c72210ebeaceaf62b04274fff",
+    "first_full_run.json": "83f6ef3bbb2b45a9e556c8e5483c955081468bbd1ff8d871c1d8138ac2d13df4",
+    "git_diff_check.log": "192d5abecf458be04da62b3bcf4624343e6c2182a325c3e7480058de21c21f11",
+    "git_final_diff_stat.txt": "8c55a95ff2f200e156d5011fe48fa633d4380541f11ad7bedd3662e27e5e1902",
+    "git_final_status.txt": "c098ff8c7e2630833896c86fc13fdd6c42982e74c6a339c9dc36fdc6429454df",
+    "inventory_after.json": "641a10f16587c9f80d314c3815b271dff5fe9f57b7ea35da30d2d65b56837713",
+    "inventory_before.json": "64bd95f6009f8c7280b6c75cca5cc981b0f566128b3e60565b0652e38ba64c9a",
+    "RELATORIO_TECNICO.md": "b33818a7c615a9cfc4fd18d45716bcb47cccd0daf8ea5739623828511c583419",
+    "runtime_compatibility_focus.log": "9eb0f9303a06abb56f0e4ad1bdca58a387c927d4fce2980257125a0c0b827745",
+    "runtime_cpu_overhead.json": "ed5c3b506659e11be39438f26570e4c270f67fddd634458ad1df3ced51d68b7f",
+    "runtime_final_focus.log": "7735f0b1f4e96b0376f0dd84a5f9b31009fe90d771f9135f6f374d2a447f5b0a",
+    "runtime_focus.log": "37d467711727ab6559c6e2a26dd48d768b16506e7ac5467fe24b2380edcf45b2",
+    "runtime_new_contracts.log": "9582585d7ed8bec8b3e84ae36e3ecb21b30e2f90d78af94ed90211c3e66a344f",
+    "runtime_review.md": "89f0ec06b1133487e183edf9f6e09ba9038c89965d7eaa9b1354141c5e6c8d8e",
+    "runtime_versions.json": "9b79ebf838a17084fec4d74509bfeca5928ee76b6bc0d045d0ee08f58781c610",
+    "source_before_final_tests.json": "bb7c1220bd545cb716719dd38d572e8c0af34028c58a4129e3b6ce59ba305495",
+    "source_before_first_full.json": "81cb98c3ebbe7b03aba64dfa5dbec32bcf46068bdf5539bd8785db1221ee98eb",
+    "tests_summary.json": "3379752f8ffe74492345c29867980b7955fe4d6083f51d5ea38f45268903b1b5",
+    "verification.json": "2a4b0ad8bfbccc0526628d369defae838aef7106711f9b914f4319d270efcd0a",
+    "vision_integrity.md": "93a1c9aacd193723b799f6fa6dda082211ffa928d0a28ee56e069808a726833e"
+  },
+  "protected_data_policy": "No deliberate modification/recursion of .venv, .git, models or local media; no content hashes claimed for those roots",
+  "publication_approved": false,
+  "real_audiovisual_homologated": false,
+  "automatic_commits": false,
+  "passed": true
+}

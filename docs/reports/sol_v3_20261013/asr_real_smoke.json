@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "validation_kind": "real_video_inference",
+  "status": "failed",
+  "inference_executed": false,
+  "human_audio_review": false,
+  "publication_ready": false,
+  "translations": [],
+  "downloads_allowed": false,
+  "requested_device": "cuda",
+  "source_filename": "jNQXAC9IVRw.mp4",
+  "error_type": "KeyError",
+  "error": "'duration'",
+  "elapsed_seconds": 0.15700000000651926
+}

@@ -1,0 +1,292 @@
+{
+  "scope": "focused_data_only_VARIG_QA; no_model_no_audio_or_video_decoding",
+  "source_sha256": {
+    "transcript_segments.json": "0fcb05d630ca318f814220839b9ddaa0b9cef81b6fef0ed7ce33088678496d08",
+    "questions_answers.json": "a0c6746f96ab0df7f36d0b0491d345dcd801325d1dbb4c099f2ba8200b75829c",
+    "topics.json": "3ed34161ea5634164e4bb5c02c917b419faf0a654016386c3f9e908333ddf581",
+    "program_sections.json": "e6c8e754c81a54d3cb3f5da5692f7829b695a6c846a29d9fe00ec6e3f06f0f6c"
+  },
+  "implementation_sha256": "65706b51bf4e9b7a6c7682f3da4c64e65cb3fca0e2785acf3664edcf5f1065b9",
+  "validity": {
+    "source_segments": 383,
+    "accepted_source_segments": 383,
+    "qa_records": 34,
+    "canonical_qa_records": 34,
+    "original_statuses": {
+      "unresolved": 29,
+      "not_expected": 5
+    },
+    "original_question_types": {
+      "direct_question": 27,
+      "tag_question": 2,
+      "yes_no_question": 2,
+      "banter": 3
+    }
+  },
+  "immediate_continuation_counts": {
+    "next_same_speaker": 24,
+    "next_unknown_speaker": 1,
+    "next_has_legacy_typed_cue": 0,
+    "next_has_shared_terms": 8,
+    "next_classified_question": 4
+  },
+  "before": {
+    "comparison_method": "new_narration_cue_disabled_in_memory; same_inputs_and_remaining_rules",
+    "links_with_answers": 0,
+    "unresolved": 29
+  },
+  "after": {
+    "links_with_answers": 2,
+    "unresolved": 27,
+    "all_require_review": true,
+    "proposals": [
+      {
+        "link_id": "QA_REL_0862d890092856d53dc1",
+        "question_id": "Q_0000",
+        "question_segment_ids": [
+          "SEG_00003"
+        ],
+        "answer_segment_ids": [
+          "SEG_00004"
+        ],
+        "evidence_segment_ids": [
+          "SEG_00002",
+          "SEG_00003",
+          "SEG_00004"
+        ],
+        "question_interval": {
+          "start": 13.96,
+          "end": 14.86
+        },
+        "answer_interval": {
+          "start": 14.94,
+          "end": 15.52
+        },
+        "question_speaker": "SPEAKER_00",
+        "answer_speakers": [
+          "SPEAKER_00"
+        ],
+        "association_type": "self_answer",
+        "evidence_status": "textual_candidate_for_review",
+        "rationale": {
+          "basis": "typed_response_cue",
+          "shared_terms": [],
+          "response_cue": "numeric_reading_self_response",
+          "explicit_question_reference": false,
+          "segment_distance": 1,
+          "elapsed_seconds": 0.08000000000000007,
+          "intervening_segment_ids": [],
+          "topic_shift_segment_ids": [],
+          "context_segment_ids": [
+            "SEG_00002"
+          ],
+          "referenced_numeric_literal": "0270",
+          "response_numeric_literal": "270",
+          "evidence_scope": "literal_transcript_number_equivalence; no_screen_or_audio_verification"
+        },
+        "question_topic_ids": [
+          "TOPIC_00000_001"
+        ],
+        "answer_topic_ids": [
+          "TOPIC_00000_001"
+        ],
+        "question_section_ids": [
+          "SECTION_0001"
+        ],
+        "answer_section_ids": [
+          "SECTION_0001"
+        ],
+        "entity_ids": [],
+        "alternatives": [],
+        "uncertainties": [
+          "textual_association_unverified",
+          "answer_completeness_unverified"
+        ],
+        "requires_review": true,
+        "confirmed": false,
+        "causality_confirmed": false,
+        "question_answer_complete": null,
+        "audio_verified_complete": null,
+        "changes_canonical_qa": false,
+        "source_transcript_needs_review": false,
+        "uncertain_segment_ids": []
+      },
+      {
+        "link_id": "QA_REL_4011af738648e8b0335e",
+        "question_id": "Q_0004",
+        "question_segment_ids": [
+          "SEG_00013"
+        ],
+        "answer_segment_ids": [
+          "SEG_00014"
+        ],
+        "evidence_segment_ids": [
+          "SEG_00013",
+          "SEG_00014"
+        ],
+        "question_interval": {
+          "start": 66.46,
+          "end": 70.2
+        },
+        "answer_interval": {
+          "start": 70.38,
+          "end": 77.64
+        },
+        "question_speaker": "SPEAKER_00",
+        "answer_speakers": [
+          "SPEAKER_00"
+        ],
+        "association_type": "self_answer",
+        "evidence_status": "textual_candidate_for_review",
+        "rationale": {
+          "basis": "typed_response_cue",
+          "shared_terms": [
+            "contou",
+            "voo"
+          ],
+          "response_cue": "polar_narration_self_response",
+          "explicit_question_reference": false,
+          "segment_distance": 1,
+          "elapsed_seconds": 0.1799999999999926,
+          "intervening_segment_ids": [],
+          "topic_shift_segment_ids": [],
+          "context_segment_ids": [],
+          "evidence_scope": "same_speaker_literal_polar_reply_and_two_anchors; no_audio_verification"
+        },
+        "question_topic_ids": [
+          "TOPIC_00000_002"
+        ],
+        "answer_topic_ids": [
+          "TOPIC_00000_002"
+        ],
+        "question_section_ids": [
+          "SECTION_0002"
+        ],
+        "answer_section_ids": [
+          "SECTION_0002"
+        ],
+        "entity_ids": [],
+        "alternatives": [],
+        "uncertainties": [
+          "textual_association_unverified",
+          "answer_completeness_unverified"
+        ],
+        "requires_review": true,
+        "confirmed": false,
+        "causality_confirmed": false,
+        "question_answer_complete": null,
+        "audio_verified_complete": null,
+        "changes_canonical_qa": false,
+        "source_transcript_needs_review": false,
+        "uncertain_segment_ids": []
+      }
+    ]
+  },
+  "examples": [
+    {
+      "question_id": "Q_0000",
+      "question_segment_ids": [
+        "SEG_00003"
+      ],
+      "question_short": "Como a gente lê?",
+      "question_interval": {
+        "start": 13.96,
+        "end": 14.86
+      },
+      "next_segment_id": "SEG_00004",
+      "next_short": "270.",
+      "next_interval": {
+        "start": 14.94,
+        "end": 15.52
+      },
+      "new_proposals": [
+        "QA_REL_0862d890092856d53dc1"
+      ]
+    },
+    {
+      "question_id": "Q_0004",
+      "question_segment_ids": [
+        "SEG_00013"
+      ],
+      "question_short": "Ué, a gente já não contou essa história desse voo aqui no canal?",
+      "question_interval": {
+        "start": 66.46,
+        "end": 70.2
+      },
+      "next_segment_id": "SEG_00014",
+      "next_short": "Sim, a gente contou, inclusive com a participação do Nilson Zilli, o copiloto daquele trágico voo, e",
+      "next_interval": {
+        "start": 70.38,
+        "end": 77.64
+      },
+      "new_proposals": [
+        "QA_REL_4011af738648e8b0335e"
+      ]
+    },
+    {
+      "question_id": "Q_0015",
+      "question_segment_ids": [
+        "SEG_00126"
+      ],
+      "question_short": "Aí você deve estar pensando, é, mas se não tem radar, Como é que o piloto sabe para onde está indo?",
+      "question_interval": {
+        "start": 709.46,
+        "end": 714.72
+      },
+      "next_segment_id": "SEG_00127",
+      "next_short": "Um dos principais recursos que existiam na época anterior ao GPS eram os auxílios de radionavegação.",
+      "next_interval": {
+        "start": 714.94,
+        "end": 722.38
+      },
+      "new_proposals": []
+    },
+    {
+      "question_id": "Q_0024",
+      "question_segment_ids": [
+        "SEG_00267"
+      ],
+      "question_short": "220, 230 a nós é devagar?",
+      "question_interval": {
+        "start": 1441.04,
+        "end": 1443.62
+      },
+      "next_segment_id": "SEG_00268",
+      "next_short": "Zilli, continua monitorando os sinais.",
+      "next_interval": {
+        "start": 1443.88,
+        "end": 1445.92
+      },
+      "new_proposals": []
+    },
+    {
+      "question_id": "Q_0032",
+      "question_segment_ids": [
+        "SEG_00366"
+      ],
+      "question_short": "Porque existe um código morse associado com cada frequência, e eles não ouviram isso.",
+      "question_interval": {
+        "start": 2110.58,
+        "end": 2115.84
+      },
+      "next_segment_id": "SEG_00367",
+      "next_short": "Então houve um afastamento da conduta operacional.",
+      "next_interval": {
+        "start": 2115.96,
+        "end": 2118.8
+      },
+      "new_proposals": []
+    }
+  ],
+  "limitations": [
+    "No human QA accuracy/recall measured",
+    "Q_0032 is a legacy direct_question classification of a causal statement with no question mark; canonical record unchanged",
+    "Q_0015 is plausible explanatory narration without literal response cue/shared anchors; abstention preserved",
+    "Q_0024 immediate continuation is not an explicit response; abstention preserved"
+  ],
+  "original_inputs_unchanged": true,
+  "explicit_arc_resumption_cue_count": 0,
+  "arc_cue_scope": "Current strict _RESUMPTION lexical rule; absence does not prove absence of real event resumption",
+  "previous_implementation_sha256": "8f311548f2b9aa5808694ef820b6e30f1a6f12d830a6cc9bdd1800cc91fec669",
+  "final_guard_replay_identical": true
+}

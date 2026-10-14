@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "completed_model_calls": 12,
+  "all_schema_and_references_valid": true,
+  "pair_wall_seconds": {
+    "legacy": [
+      246.84299999999348,
+      240.25,
+      241.40700000000652
+    ],
+    "compact": [
+      245.0,
+      250.10900000005495,
+      248.56299999996554
+    ]
+  },
+  "pair_median_seconds": {
+    "legacy": 241.40700000000652,
+    "compact": 248.56299999996554
+  },
+  "compact_pair_change_percent": 2.9642885251706996,
+  "output_shapes": {
+    "legacy": [
+      {
+        "stage": "chunk",
+        "repetition": 1,
+        "counts": {
+          "topics": 4,
+          "moments": 4
+        }
+      },
+      {
+        "stage": "global",
+        "repetition": 1,
+        "counts": {
+          "top_moments": 2,
+          "content_angles": 2,
+          "notes": 2
+        }
+      },
+      {
+        "stage": "chunk",
+        "repetition": 2,
+        "counts": {
+          "topics": 4,
+          "moments": 4
+        }
+      },
+      {
+        "stage": "global",
+        "repetition": 2,
+        "counts": {
+          "top_moments": 2,
+          "content_angles": 2,
+          "notes": 2
+        }
+      },
+      {
+        "stage": "chunk",
+        "repetition": 3,
+        "counts": {
+          "topics": 4,
+          "moments": 4
+        }
+      },
+      {
+        "stage": "global",
+        "repetition": 3,
+        "counts": {
+          "top_moments": 2,
+          "content_angles": 2,
+          "notes": 2
+        }
+      }
+    ],
+    "compact": [
+      {
+        "stage": "chunk",
+        "repetition": 1,
+        "counts": {
+          "topics": 4,
+          "moments": 1
+        }
+      },
+      {
+        "stage": "global",
+        "repetition": 1,
+        "counts": {
+          "top_moments": 4,
+          "content_angles": 4,
+          "notes": 2
+        }
+      },
+      {
+        "stage": "chunk",
+        "repetition": 2,
+        "counts": {
+          "topics": 4,
+          "moments": 1
+        }
+      },
+      {
+        "stage": "global",
+        "repetition": 2,
+        "counts": {
+          "top_moments": 4,
+          "content_angles": 4,
+          "notes": 2
+        }
+      },
+      {
+        "stage": "chunk",
+        "repetition": 3,
+        "counts": {
+          "topics": 4,
+          "moments": 1
+        }
+      },
+      {
+        "stage": "global",
+        "repetition": 3,
+        "counts": {
+          "top_moments": 4,
+          "content_angles": 4,
+          "notes": 2
+        }
+      }
+    ]
+  },
+  "adopt_compact_by_default": false,
+  "reason": "compact chunk changed editorial output count; global became slower; pair median did not improve; human quality unverified",
+  "measurement_scope": "fixed source input and max preset; background user processes not suspended",
+  "resources": {
+    "samples": 113,
+    "sampling_started_after_first_pair": true,
+    "gpu_used_mib_min": 7575.0,
+    "gpu_used_mib_max": 11321.0,
+    "gpu_utilization_percent_min": 0.0,
+    "gpu_utilization_percent_max": 100.0,
+    "ram_available_bytes_min": 30660296704,
+    "ram_available_bytes_max": 36427628544,
+    "logical_cpu_percent_system_max": 65.4,
+    "model_exclusive_ram_bytes": null,
+    "model_exclusive_gpu_utilization_percent": null,
+    "scope": "system shared GPU/RAM; observed Ollama named-process RSS is not model RAM"
+  }
+}

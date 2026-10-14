@@ -1,0 +1,40 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v3_20261013\\after_full.xml"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 297.31299999996554,
+  "scope": "complete current suite after SOL V3, frozen code and installed optional YOLO dependencies",
+  "source_drift": [],
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "3",
+      "tests": "1795",
+      "time": "296.422",
+      "timestamp": "2026-10-13T07:11:27.273014-03:00",
+      "hostname": "leonelporto"
+    }
+  ],
+  "skipped": [
+    {
+      "name": "src.tests.test_stage46_commercial_visual_replay.test_symlink_media_and_parent_artifacts_rejected",
+      "reason": "Windows symlink privilege unavailable; reparse check needs local homologation"
+    },
+    {
+      "name": "src.tests.test_stage55_commercial_evidence.test_opt_in_tesseract_on_authored_synthetic_offer",
+      "reason": "Opt-in synthetic Tesseract only: LDPORTO_STAGE55_REAL_OCR=1"
+    },
+    {
+      "name": "src.tests.test_stage64_curation_recovery.test_links_are_blocked",
+      "reason": "Windows symlink privilege unavailable"
+    }
+  ]
+}

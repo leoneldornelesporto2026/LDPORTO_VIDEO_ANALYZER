@@ -1,0 +1,26 @@
+{
+  "source": "docs\\reports\\sol_v4_20261013\\storage_after\\10_active_speaker.json",
+  "source_physical_sha256": "ecc5f00a133b4bcf7fb0defd8f007f32ce4836924a7af824c9559c9aaf9b7d0a",
+  "source_bytes": 172939789,
+  "source_logical_sha256": "cec3c62a675a94a2fa6501eb946f4dcaf32a5dda47ea7005200e345577ee7ba3",
+  "read_seconds": 7.568959899945185,
+  "verify_seconds": 9.939635399961844,
+  "packing_seconds": 0.0,
+  "write_seconds": null,
+  "receipt_state": "verified_partial",
+  "output_bytes": null,
+  "output_physical_sha256": null,
+  "mappings": 92974,
+  "intervals": 92974,
+  "resources": {
+    "process_cpu_seconds": 26.5,
+    "working_set_bytes": 698679296,
+    "gpu_vram_used_bytes": null,
+    "gpu_utilization_percent": null,
+    "peak_process_memory_bytes": 1363910656,
+    "system_ram_bytes": null,
+    "available_ram_bytes": 34878746624,
+    "memory_measurement": "windows_process_peak_working_set_not_gpu_vram"
+  },
+  "measurement_scope": "Fresh process completed checkpoint only; read+integrity+write, no inference. Peak RAM is process lifetime."
+}

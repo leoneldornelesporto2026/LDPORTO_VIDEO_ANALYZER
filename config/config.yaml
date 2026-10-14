@@ -1,5 +1,6 @@
 # Configuração local. Nunca coloque token HF aqui.
-language: pt
+# auto preserva a fala original; pt/en continuam disponiveis como escolha explicita.
+language: auto
 device: auto
 compute_type: auto
 offline: false
@@ -23,6 +24,10 @@ transcription:
   overlap_seconds: 4
   low_confidence: 0.60
   multipass: true
+  multilingual: true
+  max_review_audio_seconds: 180
+  max_review_calls: 16
+  language_confidence_threshold: 0.60
   targeted_repair_enabled: true
   targeted_max_regions: 16
   targeted_max_audio_seconds: 180
@@ -54,6 +59,7 @@ vision:
   checkpoint_seconds: 30
   max_width: 960
   body_backend: auto
+  yolo_model: models/body/yolo11n.pt
   detector_cascade: true
   embedding_interval_seconds: 1.0
   boundary_extra_sampling: true
@@ -82,6 +88,7 @@ vision:
   tracklet_min_observations: 3
   identity_min_visual_seconds: 3.0
   reid_candidate_limit: 64
+  yolo_device: "cuda"
 
 scenes:
   enabled: true

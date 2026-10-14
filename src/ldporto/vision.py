@@ -49,6 +49,65 @@ def get_scene(time, scenes):
     return scenes[max(0, index)]["scene_id"]
 
 
+def _yolo_box_rows(boxes):
+    """Transfer a real Boxes tensor once; retain legacy/test row adapters."""
+    if callable(getattr(boxes, 'cpu', None)):
+        cpu_boxes = boxes.cpu()
+        data = cpu_boxes.data
+        values = data.numpy() if callable(getattr(data, 'numpy', None)) else np.asarray(data)
+        if values.ndim != 2 or values.shape[1] not in (6, 7):
+            raise ValueError('Invalid YOLO Boxes shape')
+        for value in values:
+            yield value[:4], value[-2], value[-1]
+    else:
+        for row in boxes:
+            yield row.xyxy[0].cpu().numpy(), row.conf[0], row.cls[0] if hasattr(row, 'cls') else 0
+
+
+def _subtask_measurements(timings, counts, detector_seconds, detector_calls):
+    """Partition wall phases; mean latency always states its actual denominator."""
+    seconds = {**dict(timings), **dict(detector_seconds)}
+    rows = {}
+    for label, phases, calls in (
+        ('decode', ('video_grab', 'video_retrieve'), counts.get('grab_calls', 0)),
+        ('grab', ('video_grab',), counts.get('grab_calls', 0)),
+        ('retrieve', ('video_retrieve',), counts.get('retrieve_calls', 0)),
+        ('preprocess', ('frame_preprocessing',), counts.get('preprocess_calls', 0)),
+        ('face', ('face_detection',), detector_calls.get('face_detection_calls', 0)),
+        ('face_quality', ('face_quality',), detector_calls.get('face_quality_calls', 0)),
+        ('frame_quality', ('frame_quality',), counts.get('frame_quality_calls', 0)),
+        ('landmark', ('landmark_inference',), detector_calls.get('landmark_calls', 0)),
+        ('embedding', ('face_embedding',), detector_calls.get('embedding_calls', 0)),
+        ('body', ('body_detection',), detector_calls.get('body_detection_calls', 0)),
+        ('tracking', ('tracker_association',), counts.get('tracking_calls', 0)),
+        ('serialization', ('checkpoint_io',), counts.get('checkpoint_calls', 0)),
+        ('observation_quality', ('observation_quality',), counts.get('observation_quality_calls', 0)),
+    ):
+        total_ms = sum(seconds.get(phase, 0.) for phase in phases) * 1000
+        rows[label] = {'total_ms': total_ms, 'calls': calls,
+                       'mean_ms_per_call': total_ms / calls if calls else None,
+                       'phases': list(phases)}
+    return rows
+
+
+def _observation_sharpness(gray, face, quality):
+    """Reuse only the exact shared-gray ROI and the same Laplacian calculation."""
+    import cv2
+    height, width = gray.shape
+    x1 = max(0, min(width-1, int(face['x'] * width)))
+    y1 = max(0, min(height-1, int(face['y'] * height)))
+    x2 = max(x1+1, min(width, int((face['x']+face['width']) * width)))
+    y2 = max(y1+1, min(height, int((face['y']+face['height']) * height)))
+    quality = quality or {}
+    if (quality.get('sharpness_roi_pixels') == [x1, y1, x2, y2] and
+            quality.get('sharpness_method') == 'cv2_laplacian_cv64f_variance_gray_v1' and
+            quality.get('sharpness_gray_source') == 'shared_frame_gray' and
+            finite_or_none(quality.get('sharpness')) is not None):
+        return quality['sharpness'], True
+    roi = gray[y1:y2, x1:x2]
+    return (finite_or_none(float(cv2.Laplacian(roi, cv2.CV_64F).var())) if roi.size else None), False
+
+
 class Tracker:
     """Shot-local tracks; anonymous face hypotheses are consolidated by Re-ID."""
     def __init__(self, cfg):
@@ -257,6 +316,13 @@ def load_local_yolo(cfg):
     report = {"requested": cfg["body_backend"], "initialized": None,
               "fallback_reason": None, "exception_type": None, "device": "cpu",
               "diagnostic_reason": None, "model_path": None, "model_sha256": None,
+              "configured_model": cfg.get("yolo_model"), "resolved_model_path": None,
+              "expected_model_format": ".pt", "expected_model_task": "detect",
+              "expected_person_class": {"id": 0, "name": "person"},
+              "model_validation_reason": None,
+              "allow_model_downloads": False, "allow_dependency_install": False,
+              "model_loaded": False, "inference_executed": False, "inference_successful": False,
+              "local_smoke_validated": None,
               "device_requested": cfg.get("yolo_device", "cpu"), "device_actually_used": None,
               "benchmark_frame_seconds": None, "readiness": "NOT_READY"}
     if not cfg["body_detection"]:
@@ -266,16 +332,23 @@ def load_local_yolo(cfg):
         report.update(initialized="hog", fallback_reason="hog_configured")
         return None, report
     try:
-        model = asset_path(cfg["yolo_model"])
+        from .body_model_paths import select_body_model_path
+        model, selection = select_body_model_path(cfg["yolo_model"])
+        report.update(selection)
         if not model.is_file():
             report.update(initialized="hog", fallback_reason="yolo_local_model_missing",
-                          diagnostic_reason="model_file_missing")
+                          diagnostic_reason="model_file_missing", model_validation_reason="missing_file")
             return None, report
         # Restrict to explicitly trusted, local PyTorch detection checkpoints.
         # Reject links/reparse points, empty files and formats with sidecar downloads.
-        if (model.suffix.lower() != ".pt" or model.stat().st_size == 0 or
-                any(p.is_symlink() or getattr(p.lstat(), "st_file_attributes", 0) & 1024
-                    for p in (model, *model.parents))):
+        if model.suffix.lower() != ".pt":
+            report["model_validation_reason"] = "unsupported_format"
+        elif model.stat().st_size == 0:
+            report["model_validation_reason"] = "empty_file"
+        elif any(p.is_symlink() or getattr(p.lstat(), "st_file_attributes", 0) & 1024
+                 for p in (model, *model.parents)):
+            report["model_validation_reason"] = "link_or_reparse_point"
+        if report["model_validation_reason"]:
             raise ValueError("unsafe local model file")
         import hashlib
         digest = hashlib.sha256()
@@ -299,9 +372,10 @@ def load_local_yolo(cfg):
     try:
         # Ultralytics uses this flag to auto-install missing checkpoint modules.
         # Disable it even when callers configured online ASR separately.
-        import os
-        os.environ["YOLO_AUTOINSTALL"] = "false"
+        from .body_model_paths import configure_local_yolo_privacy
+        report['privacy'] = configure_local_yolo_privacy()
         from ultralytics import YOLO
+        configure_local_yolo_privacy()
         import sys
         checks = sys.modules.get("ultralytics.utils.checks")
         if checks is not None:
@@ -312,15 +386,19 @@ def load_local_yolo(cfg):
         return None, report
     try:
         body = YOLO(str(model.resolve()))
+        configure_local_yolo_privacy()
         names = getattr(body, "names", None)
-        if getattr(body, "task", "detect") != "detect" or (names is not None and
-                (names.get(0) if isinstance(names, dict) else names[0]) != "person"):
+        if getattr(body, "task", "detect") != "detect":
+            report["model_validation_reason"] = "unsupported_task"
+            raise ValueError("local model must use detection task")
+        if names is not None and (names.get(0) if isinstance(names, dict) else names[0]) != "person":
+            report["model_validation_reason"] = "person_class_missing"
             raise ValueError("local model must detect class 0 person")
     except Exception as exc:
         report.update(initialized="hog", fallback_reason="yolo_model_load_failed",
                       diagnostic_reason="model_load_error", device="cpu", exception_type=type(exc).__name__)
         return None, report
-    report["initialized"] = "yolo"
+    report.update(initialized="yolo", model_loaded=True)
     return body, report
 
 
@@ -390,6 +468,10 @@ class PersonDetectionEngine:
             except (ImportError, AttributeError, RuntimeError):
                 pass
         return {**self.body_backend_report, "executed_backends": executed,
+                'inference_executed': bool(self.calls.get('yolo_predict_calls', 0)),
+                'inference_successful': bool(self.calls.get('yolo_successful_calls', 0)),
+                'model_predict_calls': self.calls.get('yolo_predict_calls', 0),
+                'inference_execution_scope': 'model_predict_invocation_not_smoke_validation',
                 'peak_vram_mb': peak, 'peak_vram_scope': 'torch_allocator_process_lifetime_not_system_peak',
                 'vram_snapshot_count': self.vram_sample_count,
                 'vram_free_min_mb': self.vram_free_min_mb, 'vram_free_max_mb': self.vram_free_max_mb,
@@ -459,6 +541,9 @@ class PersonDetectionEngine:
     def set_frame_context(self, time, shot_id, shot_duration=None):
         self.frame_context = (time, shot_id, shot_duration)
 
+    def set_frame_gray(self, gray):
+        self._frame_gray = gray
+
     def detect(self, frame, time=None, shot_id=None):
         cv2 = self.cv2
         if time is None:
@@ -467,12 +552,28 @@ class PersonDetectionEngine:
         shot_duration = getattr(self, "frame_context", (None, None, None))[2]
         face_started=perf_counter()
         embedding_seconds=0.0
+        quality_seconds = 0.0
         height, width = frame.shape[:2]
+        shared_gray = getattr(self, '_frame_gray', None)
+        self._frame_gray = None  # Never reuse pixels from a previous detector call.
+        if shared_gray is not None and shared_gray.shape != (height, width):
+            shared_gray = None
         faces, bodies = [], []
         cascade = self.cfg.get("detector_cascade", False) and time is not None
         if not hasattr(self, "calls"):
             self.calls = defaultdict(int)
             self.face_history, self.last_body_time, self.last_shot = [], -math.inf, None
+        def measure_quality(box, confidence, eyes):
+            nonlocal quality_seconds
+            started = perf_counter()
+            self.calls['face_quality_calls'] += 1
+            try:
+                return assess_face(frame, box, confidence=confidence, eyes=eyes, gray=shared_gray,
+                    min_pixels=int(self.cfg.get('face_min_pixels_for_embedding', 28)),
+                    min_sharpness=float(self.cfg.get('face_min_sharpness_for_embedding', 18)),
+                    min_confidence=float(self.cfg.get('face_min_confidence_for_embedding', .74)))
+            finally:
+                quality_seconds += perf_counter() - started
         shot_changed = shot_id != self.last_shot
         if shot_changed:
             self.face_history, self.last_body_time = [], -math.inf
@@ -490,7 +591,7 @@ class PersonDetectionEngine:
             face_detector_status = 'unavailable'
             self.calls['face_detector_unavailable_frames'] += 1
         elif isinstance(self.face, cv2.CascadeClassifier):
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray = shared_gray if shared_gray is not None else cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             try:
                 haar_detections = self.face.detectMultiScale(gray, 1.1, 5, minSize=(30, 30))
             except (cv2.error, ValueError, RuntimeError):
@@ -537,13 +638,9 @@ class PersonDetectionEngine:
                                 for proposal in sorted(corrected, key=lambda r: -float(r[14])):
                                     box = bbox(proposal[:4], width, height)
                                     # Judge the ORIGINAL pixels, never the enlarged crop.
-                                    rescue_quality = assess_face(frame, box,
-                                        confidence=float(proposal[14]),
-                                        eyes=[{'x': float(proposal[i])/width,
-                                               'y': float(proposal[i+1])/height} for i in (4, 6)],
-                                        min_pixels=int(self.cfg.get('face_min_pixels_for_embedding', 28)),
-                                        min_sharpness=float(self.cfg.get('face_min_sharpness_for_embedding', 18)),
-                                        min_confidence=float(self.cfg.get('face_min_confidence_for_embedding', .74)))
+                                    rescue_quality = measure_quality(box, float(proposal[14]),
+                                        [{'x': float(proposal[i])/width,
+                                          'y': float(proposal[i+1])/height} for i in (4, 6)])
                                     if not rescue_quality['embedding_eligible']:
                                         self.calls['face_rescue_quality_rejections'] += 1
                                         continue
@@ -565,10 +662,7 @@ class PersonDetectionEngine:
                 face_box = bbox(row[:4], width, height)
                 eyes = [{'x': float(row[i])/width, 'y': float(row[i+1])/height}
                         for i in (4, 6)]
-                quality = (assess_face(frame, face_box, confidence=finite_or_none(float(row[14])),
-                            eyes=eyes, min_pixels=int(self.cfg.get('face_min_pixels_for_embedding', 28)),
-                            min_sharpness=float(self.cfg.get('face_min_sharpness_for_embedding', 18)),
-                            min_confidence=float(self.cfg.get('face_min_confidence_for_embedding', .74)))
+                quality = (measure_quality(face_box, finite_or_none(float(row[14])), eyes)
                     if self.cfg.get('face_quality_gate', False) else None)
                 reason = None
                 history_matches = [(iou(face_box, previous["bbox"]), index, previous)
@@ -618,7 +712,8 @@ class PersonDetectionEngine:
                               "face_detection_source": "yunet"})
         self.last_face_detector_status = face_detector_status
         self.phase_seconds['face_embedding']+=embedding_seconds
-        self.phase_seconds['face_detection']+=max(0.0,perf_counter()-face_started-embedding_seconds)
+        self.phase_seconds['face_quality'] += quality_seconds
+        self.phase_seconds['face_detection']+=max(0.0,perf_counter()-face_started-embedding_seconds-quality_seconds)
         body_started=perf_counter()
         run_body = (not cascade or not faces or any((face.get("confidence") or 0) < .9 for face in faces) or
                     time - self.last_body_time >= self.cfg.get("body_refresh_seconds", .5))
@@ -641,6 +736,9 @@ class PersonDetectionEngine:
                     if device_check["reason"]:
                         raise RuntimeError(device_check["reason"])
                 predict_started = perf_counter()
+                from .body_model_paths import configure_local_yolo_privacy
+                configure_local_yolo_privacy()
+                self.calls['yolo_predict_calls'] += 1
                 out = self.yolo.predict(frame, classes=[0], verbose=False,
                     conf=self.cfg.get("yolo_confidence", .5), device=self.body_backend_report["device"])[0]
                 actual = getattr(getattr(self.yolo, "predictor", None), "device", None)
@@ -654,11 +752,11 @@ class PersonDetectionEngine:
                     raise TimeoutError("body frame soft deadline exceeded")
                 if actual != self.body_backend_report["device"]:
                     raise RuntimeError("device_execution_mismatch")
-                for row in out.boxes:
-                    if hasattr(row, "cls") and int(row.cls[0]) != 0:
+                for coordinates, score, class_id in _yolo_box_rows(out.boxes):
+                    if int(class_id) != 0:
                         continue
-                    x1, y1, x2, y2 = row.xyxy[0].cpu().numpy()
-                    confidence = finite_or_none(float(row.conf[0]))
+                    x1, y1, x2, y2 = coordinates
+                    confidence = finite_or_none(float(score))
                     if (not all(math.isfinite(float(v)) for v in (x1,y1,x2,y2)) or
                             x2 <= x1 or y2 <= y1 or confidence is None or
                             not self.cfg.get("yolo_confidence", .5) <= confidence <= 1):
@@ -800,6 +898,7 @@ class VisionEngine:
         resumed = checkpoint_store.load() if float(cfg.get("checkpoint_seconds", 0) or 0) > 0 else None
         # Generated by GitHub Copilot - Oct-05-2026
         timings=defaultdict(float)
+        phase_counts = defaultdict(int)
         stage_started=perf_counter()
         from .performance import FrameTelemetry
         telemetry = FrameTelemetry()
@@ -860,10 +959,12 @@ class VisionEngine:
             while True:
                 ctx.check_cancel('07_people_tracking')
                 phase_started=perf_counter()
+                phase_counts['grab_calls'] += 1
                 grabbed=cap.grab()
-                timings['video_decode']+=perf_counter()-phase_started
+                timings['video_grab']+=perf_counter()-phase_started
                 if not grabbed:
                     break
+                phase_counts['grab_successful_frames'] += 1
                 time = cap.get(cv2.CAP_PROP_POS_MSEC)/1000
                 if time <= 0 and frame_index:
                     time = frame_index/fps
@@ -878,12 +979,16 @@ class VisionEngine:
                     continue
                 phase_started=perf_counter()
                 frame_attempt_started = telemetry.attempt()
+                phase_counts['retrieve_calls'] += 1
                 got, frame = cap.retrieve()
-                timings['video_decode']+=perf_counter()-phase_started
+                timings['video_retrieve']+=perf_counter()-phase_started
                 if not got:
                     continue
+                phase_counts['retrieve_successful_frames'] += 1
                 if time >= metadata["duration"]:
                     break
+                phase_started = perf_counter()
+                phase_counts['preprocess_calls'] += 1
                 height, width = frame.shape[:2]
                 scale = min(1, cfg["max_width"]/width)
                 if scale < 1:
@@ -891,6 +996,7 @@ class VisionEngine:
                 sh, sw = frame.shape[:2]
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 small = cv2.resize(gray, (160, 90))
+                timings['frame_preprocessing'] += perf_counter() - phase_started
                 motion_started=perf_counter()
                 scene_index = max(0, bisect.bisect_right(scene_starts, time)-1)
                 scene_id = scenes[scene_index]["scene_id"] if scenes else None
@@ -908,21 +1014,27 @@ class VisionEngine:
                                 "method": "phase_correlation_global_translation"}
                     except (cv2.error, ValueError, TypeError):
                         source_camera_motion = None
+                timings['motion_estimation']+=perf_counter()-motion_started
+                phase_started = perf_counter()
+                phase_counts['frame_quality_calls'] += 1
+                gray_mean = float(gray.mean())
                 quality = {"time": time, "frame": index, "scene_id": scene_id,
                            "short_shot_scheduled": bool(short_shot_due),
                            "boundary_scheduled": bool(boundary_due),
-                           "brightness": finite_or_none(float(gray.mean()/255)),
+                           "brightness": finite_or_none(gray_mean/255),
                            "blur_laplacian_variance": finite_or_none(float(cv2.Laplacian(gray, cv2.CV_64F).var())),
                            "camera_motion_proxy": motion, "source_camera_motion": source_camera_motion,
                            "boundary_difference": boundary_difference if change else None,
-                           "possible_black_frame": bool(gray.mean() < 5),
+                           "possible_black_frame": bool(gray_mean < 5),
                            "possible_freeze_frame": bool(motion is not None and motion < 0.0005),
                            "visible_people": []}
-                timings['motion_estimation']+=perf_counter()-motion_started
+                timings['frame_quality'] += perf_counter() - phase_started
                 phase_started=perf_counter()
                 if hasattr(detector, "set_frame_context"):
                     scene_duration = scenes[scene_index]["end"] - scenes[scene_index]["start"] if scenes else None
                     detector.set_frame_context(time, scene_id, scene_duration)
+                if hasattr(detector, 'set_frame_gray'):
+                    detector.set_frame_gray(gray)
                 detections = detector.detect(frame)
                 quality['face_detector_status'] = getattr(detector, 'last_face_detector_status', None)
                 checkpoint_backend['body'] = "yolo" if detector.yolo is not None else "hog" if detector.hog is not None else None
@@ -930,6 +1042,7 @@ class VisionEngine:
                     quality["body_backend_execution"] = detector.backend_execution()
                 timings['face_body_embedding_detection']+=perf_counter()-phase_started
                 phase_started=perf_counter()
+                phase_counts['tracking_calls'] += 1
                 current = tracker.update(detections, time, scene_id)
                 if boundary_due:
                     quality['boundary_face_observed'] = any(d.get('face_visible') for d in current)
@@ -953,13 +1066,14 @@ class VisionEngine:
                     pid = obs["person_id"]
                     sharpness = None
                     if face:
-                        x1 = max(0, min(sw-1, int(face["x"] * sw)))
-                        y1 = max(0, min(sh-1, int(face["y"] * sh)))
-                        x2 = max(x1+1, min(sw, int((face["x"]+face["width"]) * sw)))
-                        y2 = max(y1+1, min(sh, int((face["y"]+face["height"]) * sh)))
-                        roi = gray[y1:y2, x1:x2]
-                        if roi.size:
-                            sharpness = finite_or_none(float(cv2.Laplacian(roi, cv2.CV_64F).var()))
+                        phase_started = perf_counter()
+                        phase_counts['observation_quality_calls'] += 1
+                        sharpness, reused = _observation_sharpness(gray, face, obs.get('face_quality'))
+                        if reused:
+                            phase_counts['sharpness_reused'] += 1
+                        elif sharpness is not None:
+                            phase_counts['sharpness_computed'] += 1
+                        timings['observation_quality'] += perf_counter() - phase_started
                     lip_opening = mouth_matches[0]["lip_opening"] if len(mouth_matches) == 1 else None
                     row = {**obs, "time": time, "frame": index, "scene_id": scene_id,
                            "person_detection_kind": ('FACE_BODY_PERSON' if obs['face_visible'] and obs['body_visible'] else
@@ -999,10 +1113,12 @@ class VisionEngine:
                             thumbnails.append({'time':time,'reason':'qualified_visual_evidence','path':relative,'raw_person_id':pid})
                         timings['thumbnail_io']+=perf_counter()-phase_started
                 if scene_id not in thumb_scenes and len(thumbnails) < cfg["max_thumbnails"]:
+                    phase_started = perf_counter()
                     path = thumbnail_dir / f"{scene_id or 'frame'}_{time:.3f}.jpg"
                     cv2.imwrite(str(path), frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
                     thumbnails.append({"time": time, "reason": "scene_start", "path": "thumbnails/"+path.name})
                     thumb_scenes.add(scene_id)
+                    timings['thumbnail_io'] += perf_counter() - phase_started
                 frames.append(quality)
                 while speech_index < len(segments) and segments[speech_index]["end"] < time:
                     speech_index += 1
@@ -1019,6 +1135,7 @@ class VisionEngine:
                 last_gray, last_scene = small, scene_id
                 if time >= next_checkpoint:
                     phase_started=perf_counter()
+                    phase_counts['checkpoint_calls'] += 1
                     checkpoint_store.save(chunk_index, chunk_start, time,
                         observations[obs_mark:], frames[frame_mark:], thumbnails[thumb_mark:], people, tracker,
                         last_gray, last_scene, next_sample, frame_index, checkpoint_backend,
@@ -1049,6 +1166,8 @@ class VisionEngine:
                 if 'previous_cv_threads' in locals():
                     cv2.setNumThreads(previous_cv_threads)
         if checkpoint_seconds > 0 and (len(frames) > frame_mark or len(observations) > obs_mark):
+            phase_started = perf_counter()
+            phase_counts['checkpoint_calls'] += 1
             final_end = min(float(metadata.get("duration") or chunk_start),
                             max([f.get("time", chunk_start) for f in frames[frame_mark:]] or [chunk_start]))
             checkpoint_store.save(chunk_index, chunk_start, max(final_end, chunk_start+1e-6),
@@ -1057,6 +1176,7 @@ class VisionEngine:
                 {'burst_until':scheduler.burst_until,'last_speaker':scheduler.last_speaker,
                  'last_visible_count':scheduler.last_visible_count,
                  'last_missing_lip_burst':scheduler.last_missing_lip_burst if math.isfinite(scheduler.last_missing_lip_burst) else -10})
+            timings['checkpoint_io'] += perf_counter() - phase_started
         if not frames:
             raise RuntimeError("Nenhum frame foi decodificado.")
         backend_execution = detector.backend_execution() if hasattr(detector, "backend_execution") else None
@@ -1087,11 +1207,16 @@ class VisionEngine:
             person["reid_confidence"] = min(reid_scores) if reid_scores else None
             person["face_samples"] = sum(bool(r.get("face_visible")) for r in person_rows)
             person["sample_presence_fraction"] = person["observation_count"]/len(frames)
+        timings['video_decode'] = timings['video_grab'] + timings['video_retrieve']
+        subtask_metrics = _subtask_measurements(timings, phase_counts,
+            getattr(detector, 'phase_seconds', {}), detector_calls)
         return ok({"people": list(people.values()), "observations": observations,
                    "frames": frames, "thumbnails": thumbnails,
                    "scene_intervals": [{k: s[k] for k in ("start", "end", "scene_id")} for s in scenes],
                    "sample_fps": cfg["sample_fps"], "speech_sample_fps": cfg["speech_sample_fps"],
                    "performance": {'elapsed_seconds':perf_counter()-stage_started,'phase_seconds':{**dict(timings),**dict(getattr(detector,'phase_seconds',{}))},
+                                   'timing_counts': dict(phase_counts), 'subtask_metrics': subtask_metrics,
+                                   **{name + '_ms': row['total_ms'] for name, row in subtask_metrics.items()},
                                    'frame_telemetry': telemetry.report(),
                                    'opencv_threads': cfg.get('opencv_threads', 1),
                                    'observations_without_identity_evidence_percent': 100 * sum(not r.get('face_embedding_available') for r in observations) / len(observations) if observations else None,
@@ -1118,13 +1243,18 @@ class VisionEngine:
                                    'frames_per_second_scope':'current_execution_only_excludes_resumed_frames',
                                    'call_rates':{name:{'calls_per_second':count/max(perf_counter()-stage_started,1e-9),
                                        'ms_per_call':({**dict(timings),**dict(getattr(detector,'phase_seconds',{}))}).get(
-                                           {'embedding_calls':'face_embedding','landmark_calls':'landmark_inference'}.get(name,name.removesuffix('_calls')),0)*1000/count if count else None}
+                                           {'embedding_calls':'face_embedding','landmark_calls':'landmark_inference'}.get(name,name.removesuffix('_calls')))*1000/count
+                                           if count and {'embedding_calls':'face_embedding','landmark_calls':'landmark_inference'}.get(name,name.removesuffix('_calls'))
+                                               in {**dict(timings), **dict(getattr(detector,'phase_seconds',{}))} else None}
                                        for name,count in detector_calls.items() if name.endswith('_calls')},
                                    'cpu_hog_overlap': dict(getattr(detector, 'overlap_budget', {})),
                                    'cpu_hog_overlap_enabled': bool(getattr(detector, '_hog_pool', None) or
                                            getattr(detector, 'overlap_budget', {}).get('enabled')),
                                    'gpu_time_seconds':None,'gpu_time_reason':'not_instrumented',
-                                   'phase_accounting':'detector_subphases_partition_combined_detection; do_not_sum_both'},
+                                   'phase_accounting': 'face_detection+face_quality+face_embedding+body_detection partition detector work; '
+                                       'video_decode aggregates video_grab+video_retrieve; face_body_embedding_detection aggregates detector phases; '
+                                       'do_not_sum_aggregates_with_components; CPU_HOG_overlap_may_make_worker_times_nonadditive',
+                                   'measurement_scope': 'current_execution_only; counts_exclude_resumed_observations'},
                   "quality": {"body_detection": backend_execution,
                                "sample_count": len(frames), "actual_width": width, "actual_height": height,
                                "mean_brightness": float(np.mean([f["brightness"] for f in frames])),
@@ -1136,6 +1266,7 @@ class VisionEngine:
 
 class ActiveSpeakerEngine:
     def run(self, ctx, audio, diarization, vision, metadata):
+        from .speaker_windows import partition_evidence_slice, mouth_sample_diagnostics
         mappings, notes = [], []
         cfg = ctx.config["vision"]
         people = {p["person_id"] for p in vision.get("people", [])}
@@ -1156,8 +1287,18 @@ class ActiveSpeakerEngine:
         track_times = {pid: [r["time"] for r in rows] for pid, rows in tracks.items()}
         rate = sf.info(audio["mono"]).samplerate
         evidence_cfg = ctx.config.get("active_speaker", {})
+        policy = evidence_cfg.get('evidence_window_policy', 'legacy')
+        maximum = evidence_cfg.get('evidence_window_seconds', 3.)
+        minimum = evidence_cfg.get('min_audio_window_seconds', 1.5)
+        planning = {'schema_version': '1.0', 'policy': policy, 'bounded_slice_count': 0,
+                    'balanced_slice_count': 0, 'legacy_short_window_count': 0,
+                    'tail_anchor_slice_count': 0, 'measurement_overlap_window_count': 0,
+                    'planned_short_window_count': 0, 'planned_window_count': 0,
+                    'minimum_audio_seconds': minimum, 'maximum_window_seconds': maximum,
+                    'scope': 'measurement_plan; does_not_create_ASD_evidence'}
         with sf.SoundFile(audio["mono"]) as f:
             windows = []
+            anchors = []
             turns = diarization.get("turns", [])
             boundaries = {row[key] for row in vision.get("scene_intervals", []) for key in ("start", "end")}
             previous_scene = None
@@ -1170,20 +1311,37 @@ class ActiveSpeakerEngine:
             for turn_index, turn in enumerate(turns):
                 cuts = sorted({turn["start"], turn["end"]} | {boundary for boundary in boundaries if turn["start"] < boundary < turn["end"]})
                 for left, right in zip(cuts, cuts[1:]):
-                    start = left
-                    while start < right:
-                        end = min(right, start + evidence_cfg.get("evidence_window_seconds", 3.))
+                    legacy = partition_evidence_slice(left, right, max_seconds=maximum,
+                                                      min_audio_seconds=minimum)
+                    planned = (legacy if policy == 'legacy' else partition_evidence_slice(
+                        left, right, max_seconds=maximum, min_audio_seconds=minimum, policy=policy))
+                    planning['bounded_slice_count'] += 1
+                    planning['balanced_slice_count'] += policy == 'balanced_tail' and planned != legacy
+                    planning['tail_anchor_slice_count'] += policy == 'tail_anchor' and planned != legacy
+                    planning['measurement_overlap_window_count'] += max(0, len(planned)-len(legacy))
+                    planning['legacy_short_window_count'] += sum(b-a < minimum for a, b in legacy)
+                    planning['planned_short_window_count'] += sum(b-a < minimum for a, b in planned)
+                    planning['planned_window_count'] += len(planned)
+                    for window_index, (start, end) in enumerate(planned):
                         simultaneous = any(other is not turn and other.get("speaker") != turn.get("speaker") and
                                            overlap(start, end, other["start"], other["end"]) > 0 for other in turns)
-                        windows.append({**turn, "start": start, "end": end, "overlap": simultaneous,
-                                        "turn_id": turn.get("turn_id") or f"TURN_{turn_index:06}",
-                                        "evidence_window_id": f"ASD_WINDOW_{len(windows):06}"})
-                        start = end
+                        measured_window = {**turn, "start": start, "end": end, "overlap": simultaneous,
+                                           "turn_id": turn.get("turn_id") or f"TURN_{turn_index:06}"}
+                        if policy == 'tail_anchor' and window_index >= len(legacy):
+                            # Geometric overlap is distinct from simultaneous voices.
+                            # Queue anchors after ALL legacy rows, preserving their IDs.
+                            anchors.append({**measured_window, 'measurement_window_kind': 'tail_anchor',
+                                            'measurement_overlap': True})
+                        else:
+                            windows.append({**measured_window, "evidence_window_id": f"ASD_WINDOW_{len(windows):06}"})
+            for anchor in anchors:
+                windows.append({**anchor, 'evidence_window_id': f"ASD_WINDOW_{len(windows):06}"})
             for turn in windows:
                 start, end, speaker = turn["start"], turn["end"], turn["speaker"]
                 supplied = [m for m in manual if m["speaker"] == speaker and m["start"] <= start and m["end"] >= end]
                 if len(supplied) == 1:
                     mappings.append({"start": start, "end": end, "speaker": speaker,
+                                     **{key: turn[key] for key in ('measurement_window_kind', 'measurement_overlap') if key in turn},
                                      "speaker_id": speaker,
                                      "visible_person": supplied[0]["person_id"],
                                      "person_id": supplied[0]["person_id"],
@@ -1195,10 +1353,14 @@ class ActiveSpeakerEngine:
                     continue
                 candidates = []
                 screening = defaultdict(int)
+                audio_measurement = {'status': 'not_measured', 'sample_rate': rate,
+                                     'sample_count': None, 'start': None, 'end': None}
                 if not turn.get("overlap") and end-start >= evidence_cfg.get("min_audio_window_seconds", 1.5):
                     audio_start = max(0, start - .16)
                     f.seek(max(0, round(audio_start * rate)))
                     window_audio = f.read(max(1, round((end - audio_start + .16) * rate)), dtype="float32")
+                    audio_measurement.update(status='audio_window_read', sample_count=len(window_audio),
+                                             start=audio_start, end=audio_start + len(window_audio)/rate)
                     for pid, rows in tracks.items():
                         screening['mouth_tracks_examined'] += 1
                         times = track_times[pid]
@@ -1212,6 +1374,10 @@ class ActiveSpeakerEngine:
                         if len({r["scene_id"] for r in selected}) > 1:
                             screening['shot_change_inside_evidence'] += 1
                             continue
+                        sample_detail = mouth_sample_diagnostics(selected)
+                        if sample_detail['invalid_mouth_value_count']:
+                            screening['invalid_mouth_value'] += 1
+                            continue
                         from .speaker_signals import mouth_audio_evidence
                         signal = mouth_audio_evidence(selected, window_audio, rate, audio_start)
                         if signal:
@@ -1220,6 +1386,7 @@ class ActiveSpeakerEngine:
                                                "visibility_coverage": (selected[-1]["time"] - selected[0]["time"]) / (end - start),
                                                "track_stability": 1 / max(1, len({row.get('track_id') for row in selected})),
                                                "source_shot_id": selected[0].get("scene_id"),
+                                               "mouth_sample_diagnostics": sample_detail,
                                                "mouth_activity_mean": float(np.mean([r.get("mouth_activity") or 0 for r in selected])),
                                                "face_visibility": sum(bool(r.get('face_visible')) for r in selected) / len(selected),
                                                "embedding_continuity": sum(bool(r.get('face_embedding_available')) for r in selected) / len(selected)})
@@ -1227,8 +1394,10 @@ class ActiveSpeakerEngine:
                             screening['no_reliable_mouth_audio_signal'] += 1
                 elif turn.get('overlap'):
                     screening['simultaneous_audio_skipped'] += 1
+                    audio_measurement['status'] = 'skipped_audio_overlap'
                 else:
                     screening['audio_window_below_minimum'] += 1
+                    audio_measurement['status'] = 'skipped_short_audio_window'
                 candidates.sort(key=lambda c: c["correlation"], reverse=True)
                 chosen = None
                 if candidates and candidates[0]["correlation"] >= cfg["association_min_correlation"] and candidates[0]["correlation_lower_bound_proxy"] > 0:
@@ -1243,17 +1412,29 @@ class ActiveSpeakerEngine:
                         margin = top_score-candidates[1]["correlation"]
                         confidence *= max(0.0, min(1.0, margin/max(cfg["association_min_margin"], 1e-9)))
                 mappings.append({"start": start, "end": end, "speaker": speaker,
+                                 **{key: turn[key] for key in ('measurement_window_kind', 'measurement_overlap') if key in turn},
                                  "evidence_window_id": turn["evidence_window_id"], "turn_id": turn["turn_id"],
                                  "overlap": turn.get("overlap", False),
                                  "speaker_id": speaker, "visible_person": chosen, "person_id": chosen,
                                  "association_confidence": confidence, "confidence": confidence,
                                  "association_evidence_score": top_score,
                                  "candidate_screening": dict(screening),
+                                 'audio_measurement': audio_measurement,
                                  "candidates": candidates, "method": "lip_audio_correlation" if chosen else "unresolved",
                                  "evidence": (["diarization", "mouth_activity", "face_visible"] if chosen else
                                               (["diarization"] if speaker else [])),
                                  "inference": chosen is not None,
                                  "needs_review": True})
+        from .audiovisual_diagnostics import annotate_window_observations
+        annotate_window_observations(mappings, vision, metadata, cfg.get('face_min_pixels_for_embedding', 28))
         notes.append("Correlação boca/áudio é heurística, não um modelo ASD calibrado. "
                      "Um rosto sozinho ou centralizado não basta; associação incerta fica null.")
-        return ok({"mappings": mappings}, "partial" if not any(row.get("person_id") for row in mappings) else "ok", notes)
+        failures = defaultdict(int)
+        for row in mappings:
+            for key, value in (row.get('candidate_screening') or {}).items():
+                failures[key] += value
+        observed_mouth = mouth_sample_diagnostics(vision.get('observations', []))
+        return ok({"mappings": mappings, 'window_planning': planning,
+                   'measurement_failure_counts': dict(failures),
+                   'observed_mouth_samples': observed_mouth},
+                  "partial" if not any(row.get("person_id") for row in mappings) else "ok", notes)

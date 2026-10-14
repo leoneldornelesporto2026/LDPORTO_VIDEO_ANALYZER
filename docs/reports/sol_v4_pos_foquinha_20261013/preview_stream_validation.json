@@ -1,0 +1,104 @@
+[
+  {
+    "candidate_id": "MOMENT_00022_0001",
+    "command_argv": [
+      "C:\\Users\\leone\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1-full_build\\bin\\ffprobe.EXE",
+      "-v",
+      "error",
+      "-show_entries",
+      "stream=codec_type,codec_name,width,height,sample_rate,channels,duration:format=duration",
+      "-of",
+      "json",
+      "docs\\reports\\sol_v4_pos_foquinha_20261013\\source_previews\\MOMENT_00022_0001\\source_preserve.mp4"
+    ],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 480,
+        "height": 270,
+        "duration": "22.756067"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "duration": "22.760000"
+      }
+    ],
+    "format": {
+      "duration": "22.789067"
+    },
+    "has_audio_stream": true,
+    "human_audio_verified": false
+  },
+  {
+    "candidate_id": "MOMENT_00002_0002",
+    "command_argv": [
+      "C:\\Users\\leone\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1-full_build\\bin\\ffprobe.EXE",
+      "-v",
+      "error",
+      "-show_entries",
+      "stream=codec_type,codec_name,width,height,sample_rate,channels,duration:format=duration",
+      "-of",
+      "json",
+      "docs\\reports\\sol_v4_pos_foquinha_20261013\\source_previews\\MOMENT_00002_0002\\source_preserve.mp4"
+    ],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 480,
+        "height": 270,
+        "duration": "20.987633"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "duration": "20.980000"
+      }
+    ],
+    "format": {
+      "duration": "20.987633"
+    },
+    "has_audio_stream": true,
+    "human_audio_verified": false
+  },
+  {
+    "candidate_id": "MOMENT_00008_0002",
+    "command_argv": [
+      "C:\\Users\\leone\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1-full_build\\bin\\ffprobe.EXE",
+      "-v",
+      "error",
+      "-show_entries",
+      "stream=codec_type,codec_name,width,height,sample_rate,channels,duration:format=duration",
+      "-of",
+      "json",
+      "docs\\reports\\sol_v4_pos_foquinha_20261013\\source_previews\\MOMENT_00008_0002\\source_preserve.mp4"
+    ],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 480,
+        "height": 270,
+        "duration": "28.728700"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "duration": "28.740000"
+      }
+    ],
+    "format": {
+      "duration": "28.761700"
+    },
+    "has_audio_stream": true,
+    "human_audio_verified": false
+  }
+]

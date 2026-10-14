@@ -6,7 +6,7 @@ clipped or poorly localized to generate a trustworthy embedding.
 import math
 
 
-def assess_face(frame, box, *, confidence=None, eyes=None, min_pixels=28,
+def assess_face(frame, box, *, confidence=None, eyes=None, min_pixels=28, gray=None,
                 min_sharpness=18., min_confidence=.74):
     import cv2
     height, width = frame.shape[:2]
@@ -26,9 +26,10 @@ def assess_face(frame, box, *, confidence=None, eyes=None, min_pixels=28,
         reasons.append('low_detection_confidence')
     sharpness = brightness = None
     if roi.size:
-        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-        sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
-        brightness = float(gray.mean()) / 255.
+        roi_gray = (gray[top:bottom, left:right] if gray is not None and
+                    gray.shape == (height, width) else cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY))
+        sharpness = float(cv2.Laplacian(roi_gray, cv2.CV_64F).var())
+        brightness = float(roi_gray.mean()) / 255.
         if sharpness < min_sharpness:
             reasons.append('face_blurred')
         if brightness < .075 or brightness > .95:
@@ -47,4 +48,8 @@ def assess_face(frame, box, *, confidence=None, eyes=None, min_pixels=28,
             'face_width_px': right-left, 'face_height_px': bottom-top,
             'sharpness': sharpness, 'brightness': brightness,
             'detection_confidence': confidence,
-            'quality_method': 'face_size_sharpness_exposure_edge_landmarks_v1'}
+            'quality_method': 'face_size_sharpness_exposure_edge_landmarks_v1',
+            'sharpness_roi_pixels': [left, top, right, bottom],
+            'sharpness_method': 'cv2_laplacian_cv64f_variance_gray_v1',
+            'sharpness_gray_source': 'shared_frame_gray' if gray is not None and
+                gray.shape == (height, width) else 'bgr_roi'}

@@ -14,6 +14,8 @@ Runtime: Python 3.11.x. The root is the public interface, not artifact staging.
 | scripts/dev/, scripts/export/ | Canonical developer/export implementations |
 | docs/setup/, troubleshooting/ | Installation and operational guides |
 | docs/releases/, reports/ | Historical release evidence, not current runtime inputs |
+| docs/archive/, briefings/ | Explicit historical records and preserved engineering briefs |
+| src/tests/fixtures/historical_evidence/ | Read-only regression ZIPs with ORIGEM.json hashes |
 | analysis/ | Ignored local analysis, checkpoints and replay results |
 | pacotes_para_enviar/ | Ignored product packages: SECOND_CURATION and FORENSIC_REVIEW |
 | .cache/ | Ignored tools, benchmark extraction and local runtime history |
@@ -24,6 +26,6 @@ Windows compatibility wrappers and compare_runs.py/exportar_ldporto.py remain
 public entrypoints because older documented workflows and callers use them.
 They dispatch only; canonical implementations are under scripts/.
 
-PROJECT_EXPORT_* and WORK_PACKAGE_* were reproducible package outputs and are
-removed/ignored, not relocated into an archive. Historical delivery manifests v3
+Root PROJECT_EXPORT_* and WORK_PACKAGE_* are generated package outputs. Existing
+user-modified .package/PROJECT_EXPORT_* files are preserved unchanged. Historical delivery manifests v3
 and v4 are intentionally distinct immutable snapshots in docs/releases/.

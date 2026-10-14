@@ -1,0 +1,13 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "--ignore=src/tests/test_autopilot_orquestrador.py",
+    "--junitxml=docs\\reports\\restructuring_20261012\\before_active.xml"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 190.1657621000195,
+  "scope": "all active tests before code changes; existing retired orchestrator test cannot collect"
+}

@@ -1,0 +1,32 @@
+{
+  "command_argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\identity_b_focus_02.xml",
+    "src/tests/test_sol_v4_identity.py",
+    "src/tests/test_stage27_conservative_reid.py",
+    "src/tests/test_stage29_active_speaker_consensus.py",
+    "src/tests/test_s5_speaker_person_active.py",
+    "src/tests/test_v45_visual_identity_round2.py",
+    "src/tests/test_v45_visual_identity_final.py",
+    "src/tests/test_sol_v3_visual_diagnostics.py"
+  ],
+  "cwd": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER",
+  "elapsed_seconds": 2.7641478000441566,
+  "exit_code": 0,
+  "stdout_log": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\identity_b_focus_02.log",
+  "junit": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\identity_b_focus_02.xml",
+  "source_sha256": {
+    "src/ldporto/person_reid.py": "2a6258fadfaae6fb1bbf86f112ff082b7831b265eec23825d7a8b2796b3d576b",
+    "src/ldporto/speaker_windows.py": "ddcbab48422cb402df162e02489d2e9ac6ddf674b2b78e4866d68b004006f73e",
+    "src/ldporto/vision.py": "360f4a3c30190389b436ee8e176184ad2381f5e162c2e8a0cc8fce673eaac6b4",
+    "src/ldporto/config.py": "aa90fa2a3994f3ea2069fdf3b204c6a1dcd03cdc1e84988676f4ef9c3b1a9bbc",
+    "src/ldporto/pipeline.py": "a5b238e2246a64e34d574a62f78c491d06b422be927953f401f654669fb7354b",
+    "src/tests/test_sol_v4_identity.py": "84b3da730cf27d481f13b7e245e2e6ee1afe1c510c2531ddd36d27c83ac2d8e0",
+    "scripts/dev/benchmark_speaker_windows_sol_v4.py": "8c938b65ba5e3ed329459815e5c77b0cf600a04b435034b127bd2cadf199c3c6"
+  }
+}

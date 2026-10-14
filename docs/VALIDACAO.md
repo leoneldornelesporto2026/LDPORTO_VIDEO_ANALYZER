@@ -1,3 +1,6 @@
+> Registro/procedimento anterior: referências à antiga automação descrevem o
+> histórico. O desenvolvimento atual usa Git e pytest diretamente, conforme README.
+
 > Relatório histórico da entrega anterior. Resultados desta entrega v3: [TEST_REPORT_V3.md](TEST_REPORT_V3.md). A suíte recebida tinha 10 testes v2; a contagem antiga abaixo não foi reconstituída.
 
 # Validação desta entrega
@@ -71,7 +74,7 @@ palavras marcadas e compare as miniaturas com os locutores antes de planejar cro
 ## Etapa 52 — homologação final auditável (2026-10-09)
 
 O histórico acima registra verificações anteriores; os resultados desta etapa estão
-em `automacao/execucao/etapa52/` e no checkpoint 52. Homologação automática não
+em `docs/archive/automation_20261012/execucao/etapa52/` e no checkpoint 52. Homologação automática não
 substitui parecer humano. READY_FOR_REVIEW, PREVIEW_APPROVED e PUBLISH_READY são
 gates separados. Esta auditoria sempre mantém `publication_ready=false`.
 
@@ -97,8 +100,8 @@ gates separados. Esta auditoria sempre mantém `publication_ready=false`.
   Sem outputs comparáveis: pós e delta são null, status `not_measured`.
 - A regressão usa fixtures controladas para export, replays, previews, hash de
   aprovação e entradas ZIP maliciosas. ZIPs temporários de fixtures não são
-  snapshots do projeto. O teste que exporta o projeto completo é reservado ao
-  orquestrador por proibição de snapshots nesta etapa; registrar sua exclusão.
+  snapshots do projeto. O teste de exportação completa integra a regressão atual
+  e escreve em uma pasta temporária; não constitui entrega ou publicação.
 
 ### requires_real_media — checklist Windows / Python 3.11
 

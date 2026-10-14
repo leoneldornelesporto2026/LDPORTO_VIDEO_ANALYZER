@@ -1,0 +1,34 @@
+{
+  "package_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_pos_foquinha_20261013\\derived_export\\SECOND_CURATION_PARTIAL_7laRa_F3FbA_20261013_171022_194230_e1477c.zip",
+  "package_sha256": "d703664b432b1dda128f81276418fb85ff50c145107b1a977a768873da9c509c",
+  "package_bytes": 2653396,
+  "members": 142,
+  "declared_files": 141,
+  "queue_count": 77,
+  "queue_schema": "1.1",
+  "queue_states": {
+    "PROVISIONAL_HUMAN_REVIEW": 77
+  },
+  "official_shortlist_count": 0,
+  "readiness": {
+    "editorial_ready": true,
+    "transcript_ready": true,
+    "commercial_ready": false,
+    "visual_ready": false,
+    "speaker_person_ready": false,
+    "camera_ready": true,
+    "preview_ready": null
+  },
+  "publication_ready": false,
+  "source_review_window_count": 16,
+  "source_review_deferred_count": 254,
+  "queue_priority_ids": [
+    "MOMENT_00022_0001",
+    "MOMENT_00002_0002",
+    "MOMENT_00008_0002",
+    "MOMENT_00002_0000",
+    "MOMENT_00022_0002"
+  ],
+  "catalog_count": 80,
+  "alternates": 3
+}

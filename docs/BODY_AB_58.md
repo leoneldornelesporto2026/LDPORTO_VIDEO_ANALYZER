@@ -1,3 +1,6 @@
+> Registro/procedimento anterior: referências à antiga automação descrevem o
+> histórico. O desenvolvimento atual usa Git e pytest diretamente, conforme README.
+
 # A/B corporal local — etapa 58
 
 `src/ldporto/body_ab.py` acrescenta um protocolo independente ao goldset visual
@@ -109,4 +112,4 @@ Arquivos JSON de saída são criados exclusivamente, sem sobrescrever análises.
 
 Homologação pendente: timestamps/PTS do decoder Windows, YOLO/HOG reais em trechos
 consentidos, origem/licença/hash dos pesos, GPU compartilhada, anotação humana e
-tracking/Re-ID/ROI reais. Regressão independente permanece com o orquestrador.
+tracking/Re-ID/ROI reais. Regressão independente: `.venv/Scripts/python.exe -m pytest -q`.

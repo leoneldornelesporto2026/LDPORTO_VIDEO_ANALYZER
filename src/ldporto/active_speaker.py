@@ -115,6 +115,14 @@ def build_global_affinity(turns, known_people, raw_mappings, cfg):
             'evidence_refs': [row['evidence_window_id'] for row in positive],
             'evidence': ['diarization', 'mouth_audio_synchrony', 'independent_windows'] if accepted else [],
             'needs_review': True, 'confidence_is_calibrated': False})
+        speaker_rows = [row for row in raw_mappings if (row.get('speaker_id') or row.get('speaker')) == speaker]
+        candidate_rows = [row for row in speaker_rows if row.get('candidates')]
+        summaries[-1].update(raw_audio_windows=len(speaker_rows), candidate_evidence_windows=len(candidate_rows),
+            independent_affinity_windows=pair.get('evidence_windows', 0),
+            qualified_positive_windows=len(positive),
+            evidence_windows_scope='qualified_positive_consensus_support_not_all_measurement_attempts',
+            measurement_status='measured_no_qualified_consensus' if candidate_rows and not accepted else
+                               'measured_consensus' if accepted else 'no_candidate_signal_available')
     colliding = set()
     for index, left in enumerate(summaries):
         if not left['person_id']:
@@ -129,22 +137,32 @@ def build_global_affinity(turns, known_people, raw_mappings, cfg):
     for summary in summaries:
         if summary['speaker_id'] in colliding:
             stable.pop(summary['speaker_id'], None)
-            summary.update(person_id=None, confidence=None, unresolved_reason='simultaneous_speaker_person_conflict')
+            summary.update(person_id=None, confidence=None, association_status='UNRESOLVED',
+                           method='insufficient_consensus',
+                           measurement_status='measured_rejected_simultaneous_conflict',
+                           unresolved_reason='simultaneous_speaker_person_conflict')
+    for pair in affinity:
+        if pair['speaker_id'] in colliding:
+            pair['confidence'] = None
     return summaries, stable, affinity
 
 
 def build_active_speaker(diarization, vision, raw_mappings, cfg):
     turns = diarization.get('turns', [])
     raw = deepcopy(raw_mappings or [])
+    from .audiovisual_diagnostics import window_signal_diagnostics
     for row in raw:
         if row.get('method') != 'user_verified' and mixed_audio_window(row, turns):
             row['overlap'] = True
+        row['signal_diagnostic'] = window_signal_diagnostics(row, cfg)
     if not turns:
         return ok({'mappings': raw, 'mapping_summary': [], 'intervals': [], 'coverage': 0.},
                   'unavailable', ['Sem diarização: active_person permanece null.'])
     known = {person['person_id'] for person in vision.get('people', []) if person.get('person_id')}
     known |= {observation['person_id'] for observation in vision.get('observations', []) if observation.get('person_id')}
     summaries, stable, affinity = build_global_affinity(turns, known, raw, cfg)
+    mapping_conflicts = {summary['speaker_id']: summary['unresolved_reason'] for summary in summaries
+                        if summary['unresolved_reason'] == 'simultaneous_speaker_person_conflict'}
     lag_reports = {summary['speaker_id']: lag_consistency(raw, summary['speaker_id'],
                    summary.get('person_id'), cfg, turns) for summary in summaries}
     for summary in summaries:
@@ -210,7 +228,8 @@ def build_active_speaker(diarization, vision, raw_mappings, cfg):
             globally_mapped_person = person
             observed_person = observed.get(person)
             valid = bool(observed_person and observed_person.get('face_visible'))
-            unresolved = 'conflicting_manual_mapping' if method=='conflicting_manual_mapping' else None
+            unresolved = ('conflicting_manual_mapping' if method == 'conflicting_manual_mapping'
+                          else mapping_conflicts.get(speaker))
             if person not in known:
                 person, confidence = None, None
                 unresolved = unresolved or 'insufficient_consensus'
@@ -339,7 +358,8 @@ def build_active_speaker(diarization, vision, raw_mappings, cfg):
              'ambiguous_mapping_fraction':union_duration([turn for turn in turns if any(summary['speaker_id'] == turn['speaker'] and summary['unresolved_reason'] == 'ambiguous_global_affinity' for summary in summaries)])/speech if speech else None,
              'offscreen_speaker_fraction':union_duration([row for row in intervals if row['state']=='OFFSCREEN_SPEAKER'])/speech if speech else None,
              'unknown_person_fraction':union_duration([row for row in intervals if not row['person_id']])/speech if speech else None,
-             'conflicting_mapping_fraction':union_duration([row for row in intervals if row.get('unresolved_reason')=='conflicting_manual_mapping'])/speech if speech else None,
+             'conflicting_mapping_fraction':union_duration([row for row in intervals if row.get('unresolved_reason') in
+                 ('conflicting_manual_mapping', 'simultaneous_speaker_person_conflict')])/speech if speech else None,
              'mapping_support_windows':sum(summary['evidence_windows'] for summary in summaries),
              'mapping_support_window_count':len({reference for summary in summaries for reference in summary['evidence_refs']}),
              'observation_age_mean':sum(ages)/len(ages) if ages else None,
@@ -359,6 +379,14 @@ def build_active_speaker(diarization, vision, raw_mappings, cfg):
                    observed_wide_shot_speech_seconds=union_duration([r for r in intervals if r['wide_shot_observed']]),
                    no_contemporary_frame_speech_seconds=union_duration([r for r in intervals if r['visual_state'] == 'NO_CONTEMPORARY_FRAME']),
                    temporal_coverage_basis='nearest_sample_with_bounded_gap_and_scene_boundaries')
+    from collections import Counter
+    statuses = Counter(row['signal_diagnostic']['status'] for row in raw)
+    metrics.update(audio_evidence_window_count=len(raw),
+                   candidate_signal_window_count=sum(bool(row.get('candidates')) for row in raw),
+                   qualified_local_signal_window_count=sum(bool(row['signal_diagnostic']['qualified_local_candidate_count']) for row in raw),
+                   independent_affinity_window_count=sum(summary['independent_affinity_windows'] for summary in summaries),
+                   signal_window_status_counts=dict(statuses),
+                   signal_window_denominator='raw_audio_windows_per_speaker_overlap_windows_count_separately')
     return ok({'mappings': mappings, 'mapping_summary': summaries, 'affinity': affinity,
                'speaker_person_diagnostics': diagnostics,
                'active_speaker_evidence': raw, 'intervals': intervals,

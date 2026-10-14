@@ -1,0 +1,689 @@
+{
+  "visual": {
+    "07_people_tracking.json": {
+      "performance": {
+        "elapsed_seconds": 3304.2672621000092,
+        "phase_seconds": {
+          "video_decode": 1247.9625273817219,
+          "motion_estimation": 99.43586510280147,
+          "face_body_embedding_detection": 1525.0963882951764,
+          "tracker_association": 4.424027800559998,
+          "landmark_inference": 284.6679868964711,
+          "sampling_schedule": 0.12868530314881355,
+          "thumbnail_io": 0.22232949954923242,
+          "checkpoint_io": 78.57653049903456,
+          "face_embedding": 341.5644419066375,
+          "face_detection": 1006.7173329981742,
+          "body_detection": 171.79663351050112
+        },
+        "frame_telemetry": {
+          "stage": "07_people_tracking",
+          "scope": "current_execution_only",
+          "elapsed_seconds": 3304.2672625000123,
+          "frames_attempted": 25116,
+          "frames_succeeded": 25116,
+          "fps": 7.601080059425098,
+          "latency_p50_seconds": 0.06859495001845062,
+          "latency_p95_seconds": 0.13592711501405572,
+          "latency_scope": "last_512_successful_frames_decode_through_checkpoint",
+          "latency_samples": 512,
+          "peak_vram_mb": null,
+          "peak_vram_reason": "not_instrumented_system_wide",
+          "speedup_x": null,
+          "eta_seconds": null,
+          "eta_status": "calculando",
+          "max_frames_in_flight": 1,
+          "gpu_parallelism": false
+        },
+        "opencv_threads": 1,
+        "observations_without_identity_evidence_percent": 10.099748227018509,
+        "identity_metric_scope": "missing_available_embedding;_embedding_does_not_confirm_identity",
+        "decoded_frames": 119365,
+        "sampled_frames": 25116,
+        "boundary_scheduled_frames": 1054,
+        "boundary_scheduled_frames_with_face": 1035,
+        "boundary_scheduled_frames_with_embedding": 349,
+        "face_detection_backend": "yunet_or_test_backend",
+        "body_detection_backend": "yolo",
+        "body_backend_execution": {
+          "requested": "auto",
+          "initialized": "yolo",
+          "fallback_reason": null,
+          "exception_type": null,
+          "device": "cuda:0",
+          "diagnostic_reason": null,
+          "model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+          "model_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+          "configured_model": "models/body/yolo11n.pt",
+          "resolved_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+          "expected_model_format": ".pt",
+          "expected_model_task": "detect",
+          "expected_person_class": {
+            "id": 0,
+            "name": "person"
+          },
+          "model_validation_reason": null,
+          "allow_model_downloads": false,
+          "allow_dependency_install": false,
+          "model_loaded": true,
+          "inference_executed": true,
+          "inference_successful": true,
+          "local_smoke_validated": null,
+          "device_requested": "cuda",
+          "device_actually_used": "cuda:0",
+          "benchmark_frame_seconds": 0.20163230004254729,
+          "readiness": "EXECUTED_NOT_VALIDATED",
+          "configured_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+          "preferred_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+          "path_resolution": "configured_path",
+          "legacy_compatibility_used": false,
+          "device_preflight": {
+            "requested": "cuda",
+            "selected": "cuda:0",
+            "free_vram_mb": 10883,
+            "minimum_free_vram_mb": 2048,
+            "reason": null,
+            "stage": "07_people_tracking",
+            "measured_at_utc": "2026-10-13T12:25:15.660061+00:00",
+            "reserve_vram_mb": 1024,
+            "policy": "cpu_fallback",
+            "gpu_parallelism": false,
+            "peak_vram_mb": null,
+            "total_vram_mb": 12226.5625,
+            "query_seconds": 0.00008130003698170185,
+            "measurement_scope": "device_0_snapshot_not_reserved",
+            "concurrent_consumers": "Ollama/Whisper/pyannote/other_processes_not_attributed",
+            "variability": "may_change_after_query"
+          },
+          "privacy": {
+            "telemetry_enabled": false,
+            "offline_model_policy": true,
+            "settings_scope": "temporary_process_private_directory",
+            "user_settings_modified": false
+          },
+          "executed_backends": {
+            "entry_count": 1
+          },
+          "model_predict_calls": 13236,
+          "inference_execution_scope": "model_predict_invocation_not_smoke_validation",
+          "peak_vram_mb": 1652.697265625,
+          "peak_vram_scope": "torch_allocator_process_lifetime_not_system_peak",
+          "vram_snapshot_count": 13237,
+          "vram_free_min_mb": 10883,
+          "vram_free_max_mb": 10941,
+          "actually_executed_backend": "yolo",
+          "successful_backends": {
+            "entry_count": 1
+          },
+          "devices_used": {
+            "yolo": "cuda:0"
+          },
+          "body_limit_reason": null,
+          "body_inference_seconds": 171.57695340225473,
+          "confidence_semantics": {
+            "yolo": "detector_score_not_empirically_calibrated",
+            "hog": "raw_svm_score_not_probability"
+          },
+          "identity_evidence": false,
+          "active_speaker_evidence": false,
+          "counts_scope": "current_process_only",
+          "inference_calls": {
+            "yolo": 13236,
+            "hog": 0
+          },
+          "successful_calls": {
+            "yolo": 13236,
+            "hog": 0
+          },
+          "quality": "not_validated",
+          "seated_recall_validated": null,
+          "nvidia_validated": null
+        },
+        "short_shot_scheduled_frames": 273,
+        "short_shot_scheduled_frames_with_face": 232,
+        "short_shot_scheduled_frames_with_fresh_embedding": 231,
+        "short_shot_embedding_attempts": 1319,
+        "face_detection_calls": 25116,
+        "face_rescue_calls": 1135,
+        "body_detection_calls": 13236,
+        "yolo_inference_calls": 13236,
+        "yolo_predict_calls": 13236,
+        "yolo_successful_calls": 13236,
+        "successful_faces": 50907,
+        "frames_without_face": 232,
+        "landmark_calls": 25116,
+        "embedding_calls": 11822,
+        "successful_embeddings": 11822,
+        "embedding_calls_avoided": 33820,
+        "body_detection_calls_avoided": 11880,
+        "face_rescue_detected_faces": 40,
+        "embedding_quality_rejections": 5265,
+        "quality_face_blurred": 169,
+        "face_rescue_quality_rejections": 82,
+        "quality_face_clipped_at_frame_edge": 114,
+        "quality_eye_landmarks_collapsed": 364,
+        "quality_face_too_small": 4646,
+        "candidate_tracks": 1949,
+        "association_count": 50082,
+        "embedding_success_ratio": 1,
+        "useful_detection_ratio": 0.9913202739289696,
+        "frames_per_second": 7.60093451629276,
+        "frames_per_second_scope": "current_execution_only_excludes_resumed_frames",
+        "call_rates": {
+          "face_detection_calls": {
+            "calls_per_second": 7.600934307886072,
+            "ms_per_call": 40.08270954762599
+          },
+          "face_rescue_calls": {
+            "calls_per_second": 0.3434886293249605,
+            "ms_per_call": 0
+          },
+          "body_detection_calls": {
+            "calls_per_second": 4.005652418738807,
+            "ms_per_call": 12.979497847574882
+          },
+          "yolo_inference_calls": {
+            "calls_per_second": 4.005652417041653,
+            "ms_per_call": 0
+          },
+          "yolo_predict_calls": {
+            "calls_per_second": 4.005652415829401,
+            "ms_per_call": 0
+          },
+          "yolo_successful_calls": {
+            "calls_per_second": 4.005652414495923,
+            "ms_per_call": 0
+          },
+          "landmark_calls": {
+            "calls_per_second": 7.600934269701424,
+            "ms_per_call": 11.334129116757092
+          },
+          "embedding_calls": {
+            "calls_per_second": 3.5777291314582373,
+            "ms_per_call": 28.892272196467392
+          }
+        },
+        "cpu_hog_overlap": {
+          "enabled": false,
+          "workers": 0,
+          "reason": "disabled_by_config",
+          "gpu_workers": 0,
+          "gpu_overlap_enabled": false,
+          "free_vram_mib": null,
+          "required_vram_mib": null,
+          "reserve_vram_mib": 1024,
+          "gpu_reason": "gpu_overlap_not_requested"
+        },
+        "cpu_hog_overlap_enabled": false,
+        "gpu_time_seconds": null,
+        "gpu_time_reason": "not_instrumented",
+        "phase_accounting": "detector_subphases_partition_combined_detection; do_not_sum_both"
+      }
+    },
+    "08_person_reid.json": {
+      "metrics": {
+        "raw_track_count": 1949,
+        "valid_track_count": 1426,
+        "micro_track_count": 523,
+        "micro_with_embedding_count": 295,
+        "micro_without_embedding_count": 228,
+        "micro_face_attachment_fraction": 0.03728813559322034,
+        "micro_reid_attached_one_sample_count": 3,
+        "micro_track_ratio": 0.26834273986659823,
+        "micro_reid_attachment_count": 11,
+        "micro_retrieval_fallback_attempts": 295,
+        "micro_retrieval_fallback_matches": 295,
+        "micro_retrieval_fallback_accepted": 11,
+        "micro_exact_gallery_search_count": 295,
+        "micro_exact_gallery_contract": "bounded_full_cosine_gallery_with_runner_up_and_temporal_conflicts",
+        "stable_exact_fallback_accepted": 7,
+        "micro_track_mapped_fraction": 0.021032504780114723,
+        "unmapped_micro_track_count": 512,
+        "short_track_ratio": 0.25705489994869163,
+        "median_track_duration": 2.0353666666667323,
+        "orphan_track_count": 0,
+        "persistent_person_count": 1291,
+        "meaningful_persistent_person_count": 657,
+        "tracks_without_face_embedding_fraction": 0.17598768599281683,
+        "identity_fragmentation_score": 0.22216521292970753,
+        "identity_fragmentation_method": "heuristic_microtrack_and_missing_embedding_indicator_not_accuracy",
+        "track_fragmentation_ratio": null,
+        "id_switch_count": null,
+        "id_switch_measurement": "requires_annotated_identity_ground_truth",
+        "probable_id_switch_count": 0,
+        "probable_id_switch_method": "within_track_embedding_contradiction_proxy_not_accuracy",
+        "confirmed_track_count": 1426,
+        "embedding_success_fraction": 0.8240123140071832,
+        "reid_abstained_track_count": 1803,
+        "reid_embedding_rejected_sample_count": 0,
+        "reid_merge_count": 146,
+        "reid_rejected_merge_count": 99574,
+        "simultaneous_identity_conflict_count": 455,
+        "tracks_per_person": {
+          "entry_count": 1291
+        },
+        "person_total_visual_seconds": {
+          "entry_count": 1291
+        },
+        "track_duration_p25": 0.9342666666666446,
+        "observations_per_track_p25": 6,
+        "tracks_per_person_p25": 1,
+        "track_duration_p50": 2.0353666666667323,
+        "observations_per_track_p50": 15,
+        "tracks_per_person_p50": 1,
+        "track_duration_p75": 4.270933333333232,
+        "observations_per_track_p75": 28,
+        "tracks_per_person_p75": 1,
+        "track_duration_p95": 15.842493333333358,
+        "observations_per_track_p95": 92.19999999999982,
+        "tracks_per_person_p95": 1,
+        "embedding_gap_tracklet_count": 343,
+        "micro_embedding_absence_by_cause": {
+          "body_only_no_face_detected": 114,
+          "embedding_not_due": 19,
+          "quality_rejected": 95
+        }
+      }
+    },
+    "10_active_speaker.json": {
+      "metrics": {
+        "diarized_speech_seconds": 3851.9718750000015,
+        "known_person_speech_seconds": 0,
+        "active_speaker_coverage": 0,
+        "speaker_person_mapping_coverage": 0,
+        "speaker_person_high_confidence_coverage": 0,
+        "active_speaker_high_confidence_coverage": 0,
+        "ambiguous_mapping_fraction": 1,
+        "offscreen_speaker_fraction": 0.007543515336976793,
+        "unknown_person_fraction": 0.9999999999999989,
+        "conflicting_mapping_fraction": 0,
+        "mapping_support_windows": 6,
+        "mapping_support_window_count": 6,
+        "observation_age_mean": 0.05352694669755209,
+        "observation_age_p25": 0.025324999999952524,
+        "observation_age_p50": 0.06643333333317969,
+        "observation_age_p75": 0.06643333333340706,
+        "observation_age_p95": 0.10874166666690144,
+        "observation_age_method": "sample_distance_seconds",
+        "active_speaker_confirmed_coverage": 0,
+        "active_speaker_probable_coverage": 0,
+        "active_speaker_overlapping_ambiguous_seconds": 311.39437499999855,
+        "unresolved_speaker_count": 3,
+        "confirmed_active_speaker_seconds": 0,
+        "speech_without_resolved_face_seconds": 32.42565124999854,
+        "observed_wide_shot_speech_seconds": 0,
+        "no_contemporary_frame_speech_seconds": 40.18071175006338,
+        "temporal_coverage_basis": "nearest_sample_with_bounded_gap_and_scene_boundaries",
+        "audio_evidence_window_count": 3994,
+        "candidate_signal_window_count": 777,
+        "qualified_local_signal_window_count": 35,
+        "independent_affinity_window_count": 10,
+        "signal_window_status_counts": {
+          "insufficient_mouth_samples": 305,
+          "audio_window_too_short": 1496,
+          "audio_overlap": 1416,
+          "measured_signal_below_acceptance_gates": 742,
+          "qualified_local_signal_pending_independent_consensus": 35
+        },
+        "signal_window_denominator": "raw_audio_windows_per_speaker_overlap_windows_count_separately"
+      }
+    },
+    "04_transcription.json": {
+      "quality_metrics": {
+        "word_count": 13082,
+        "low_confidence_word_count": 666,
+        "low_confidence_word_fraction": 0.05090964684299037,
+        "reviewed_region_count": 100,
+        "auto_replacement_count": 0,
+        "unresolved_review_count": 710,
+        "timestamp_anomaly_count": 150,
+        "suspected_hallucination_region_count": 2,
+        "unresolved_review_region_count": 100,
+        "review_needed_word_count": 710,
+        "language_uncertain_word_count": 0,
+        "asr_discrepancy_word_count": 35,
+        "source_disagreement_region_count": 0,
+        "multipass_asr_calls": 16,
+        "multipass_audio_seconds": 86.36000000000007,
+        "multipass_deferred_hypotheses": 245,
+        "review_reason_metrics": {
+          "flagged_word_count": 710,
+          "word_count": 13082,
+          "flagged_fraction": 0.05427304693471946,
+          "exclusive_reason_signatures": {
+            "entry_count": 6
+          },
+          "overlapping_reason_counts": {
+            "acoustic_hypotheses_disagree": 35,
+            "comparison_clip_boundary": 14,
+            "missing_or_low_model_probability": 666,
+            "suspected_hallucination_proxy": 2,
+            "timestamp_anomaly": 6
+          },
+          "observed_condition_counts": {
+            "overlapping_speech": 0,
+            "timestamp_suspect_or_repaired": 6
+          },
+          "flag_rate_is_error_rate": false,
+          "word_error_rate": null,
+          "verified_correct_word_count": null,
+          "human_audio_verification_performed": false
+        },
+        "review_scope": "acoustic_multipass_not_human_audio_verification",
+        "music_noise_evidence": "not_measured_when_audio_events_disabled",
+        "speech_coverage": 0.8876016424485668,
+        "coverage_method": "nonoverlapping_word_timing_not_vad_ground_truth"
+      },
+      "review_budget": {
+        "max_regions": 100,
+        "max_calls": 16,
+        "max_audio_seconds": 180,
+        "asr_calls": 16,
+        "processed_audio_seconds": 86.36000000000007,
+        "deferred": {
+          "entry_count": 245
+        }
+      }
+    }
+  },
+  "semantic": {
+    "status": "partial",
+    "elapsed_seconds": 3956.484,
+    "metrics": {
+      "semantic_valid_chunk_ratio": 0.9565217391304348,
+      "semantic_initial_valid_ratio": 0.6956521739130435,
+      "semantic_repair_attempt_ratio": 0.30434782608695654,
+      "semantic_repair_success_ratio": 0.8571428571428571,
+      "semantic_fallback_ratio": 0.043478260869565216,
+      "semantic_cache_hit_ratio": 0,
+      "semantic_seconds": 3956.203,
+      "global_review_seconds": 593.766,
+      "semantic_call_budget": 89,
+      "semantic_inference_call_count": 30,
+      "model_fingerprint": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+      "global_review_status": "partial",
+      "semantic_call_p50_seconds": 122.688,
+      "semantic_call_p90_seconds": 235.094,
+      "semantic_call_p95_seconds": 253.578,
+      "semantic_repair_cost_seconds": 122.88899999985006,
+      "slowest_semantic_calls": [
+        {
+          "chunk_id": "SEMANTIC_00021",
+          "duration_seconds": 305.344
+        },
+        {
+          "chunk_id": "SEMANTIC_00006",
+          "duration_seconds": 290.672
+        },
+        {
+          "chunk_id": "SEMANTIC_00001",
+          "duration_seconds": 253.578
+        },
+        {
+          "chunk_id": "SEMANTIC_00002",
+          "duration_seconds": 235.094
+        },
+        {
+          "chunk_id": "SEMANTIC_00003",
+          "duration_seconds": 221.75
+        }
+      ],
+      "chunk_cache_hits": 0,
+      "chunk_cache_misses": 23,
+      "fallback_cost_seconds": 253.578,
+      "fallback_cost_scope": "entire_failed_chunk_including_inference_repair_and_recovery",
+      "chunk_cache_rewrites_avoided": 0,
+      "prompt_mode": "legacy_embedded_schema",
+      "global_review_cache_hit": false,
+      "total_inference_call_count": 32,
+      "semantic_generated_tokens": 32143,
+      "semantic_prompt_tokens": 398026,
+      "semantic_tokens_per_second": 8.797705464481654,
+      "semantic_prompt_tokens_per_second": 1461.3270859390816,
+      "semantic_generation_seconds": 3653.566276999001,
+      "semantic_prompt_seconds": 272.372971,
+      "semantic_load_seconds": 5.893393199999997,
+      "semantic_server_seconds": 3954.768965,
+      "semantic_request_bytes": 1370382,
+      "inference_metadata_record_count": 32,
+      "generation_throughput_measured_call_count": 32,
+      "prompt_throughput_measured_call_count": 32,
+      "semantic_cost_measurement_scope": "observed_calls_only_cached_original_costs_excluded",
+      "ollama_running_models_at_start": []
+    },
+    "topics": 117,
+    "moments": 80,
+    "chunks": [
+      {
+        "id": "SEMANTIC_00000",
+        "seconds": 204.141,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": true,
+        "fallback": false,
+        "input_chars": 57255,
+        "output_chars": 5839
+      },
+      {
+        "id": "SEMANTIC_00001",
+        "seconds": 253.578,
+        "cache_hit": false,
+        "validation_success": false,
+        "repair_attempted": true,
+        "fallback": true,
+        "input_chars": 65059,
+        "output_chars": 0
+      },
+      {
+        "id": "SEMANTIC_00002",
+        "seconds": 235.094,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 59468,
+        "output_chars": 5100
+      },
+      {
+        "id": "SEMANTIC_00003",
+        "seconds": 221.75,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 62956,
+        "output_chars": 4648
+      },
+      {
+        "id": "SEMANTIC_00004",
+        "seconds": 85.188,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": true,
+        "fallback": false,
+        "input_chars": 34041,
+        "output_chars": 3282
+      },
+      {
+        "id": "SEMANTIC_00005",
+        "seconds": 107.781,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 48127,
+        "output_chars": 3057
+      },
+      {
+        "id": "SEMANTIC_00006",
+        "seconds": 290.672,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 67774,
+        "output_chars": 4850
+      },
+      {
+        "id": "SEMANTIC_00007",
+        "seconds": 62.172,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 51546,
+        "output_chars": 1479
+      },
+      {
+        "id": "SEMANTIC_00008",
+        "seconds": 87.297,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": true,
+        "fallback": false,
+        "input_chars": 33147,
+        "output_chars": 3393
+      },
+      {
+        "id": "SEMANTIC_00009",
+        "seconds": 110.36,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 37893,
+        "output_chars": 3539
+      },
+      {
+        "id": "SEMANTIC_00010",
+        "seconds": 159.156,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 42210,
+        "output_chars": 4744
+      },
+      {
+        "id": "SEMANTIC_00011",
+        "seconds": 139.954,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 49917,
+        "output_chars": 3763
+      },
+      {
+        "id": "SEMANTIC_00012",
+        "seconds": 85.234,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 39689,
+        "output_chars": 2704
+      },
+      {
+        "id": "SEMANTIC_00013",
+        "seconds": 133.453,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": true,
+        "fallback": false,
+        "input_chars": 46346,
+        "output_chars": 4202
+      },
+      {
+        "id": "SEMANTIC_00014",
+        "seconds": 122.688,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 38941,
+        "output_chars": 3977
+      },
+      {
+        "id": "SEMANTIC_00015",
+        "seconds": 74.437,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": true,
+        "fallback": false,
+        "input_chars": 27909,
+        "output_chars": 3063
+      },
+      {
+        "id": "SEMANTIC_00016",
+        "seconds": 81.031,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 40061,
+        "output_chars": 2577
+      },
+      {
+        "id": "SEMANTIC_00017",
+        "seconds": 112.672,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 42233,
+        "output_chars": 3350
+      },
+      {
+        "id": "SEMANTIC_00018",
+        "seconds": 149.875,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 60597,
+        "output_chars": 3154
+      },
+      {
+        "id": "SEMANTIC_00019",
+        "seconds": 190.75,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 59627,
+        "output_chars": 3963
+      },
+      {
+        "id": "SEMANTIC_00020",
+        "seconds": 73.734,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 58779,
+        "output_chars": 1473
+      },
+      {
+        "id": "SEMANTIC_00021",
+        "seconds": 305.344,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": true,
+        "fallback": false,
+        "input_chars": 63235,
+        "output_chars": 6487
+      },
+      {
+        "id": "SEMANTIC_00022",
+        "seconds": 75.891,
+        "cache_hit": false,
+        "validation_success": true,
+        "repair_attempted": false,
+        "fallback": false,
+        "input_chars": 20508,
+        "output_chars": 2990
+      }
+    ]
+  }
+}

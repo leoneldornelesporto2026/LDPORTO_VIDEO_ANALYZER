@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import shutil
@@ -149,6 +150,27 @@ class OllamaContentError(ValueError):
         self.metadata = metadata
 
 
+def measured_number(value):
+    """Missing, negative and nonfinite server measurements remain unknown."""
+    try:
+        return value if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0 else None
+    except OverflowError:
+        return None
+
+
+def inference_measurements(result):
+    fields = {key: measured_number(result.get(source)) for key, source in (
+        ('server_total_seconds', 'total_duration'), ('load_seconds', 'load_duration'),
+        ('prompt_seconds', 'prompt_eval_duration'), ('generation_seconds', 'eval_duration'))}
+    fields = {key: value / 1e9 if value is not None else None for key, value in fields.items()}
+    for key, count, duration in (
+            ('prompt_tokens_per_second', 'prompt_eval_count', 'prompt_seconds'),
+            ('generation_tokens_per_second', 'eval_count', 'generation_seconds')):
+        tokens, seconds = measured_number(result.get(count)), fields[duration]
+        fields[key] = measured_number(tokens / seconds) if tokens is not None and seconds else None
+    return fields
+
+
 def chat(url: str, model: str, messages: list[dict], schema: dict, cfg: dict) -> tuple[dict, dict]:
     options = profile_options(cfg)
     payload = {
@@ -163,26 +185,45 @@ def chat(url: str, model: str, messages: list[dict], schema: dict, cfg: dict) ->
         payload['think'] = cfg['think']
     timeout = float(cfg.get("timeout_seconds", 600))
     started = time.monotonic()
-    result = _request_json(url, "/api/chat", payload=payload, timeout=timeout)
+    request_meta = {
+        'request_id': digest(payload)[:20], 'model': model,
+        'profile': cfg.get('profile', 'max'), 'options': options,
+        'input_chars': sum(len(message.get('content') or '') for message in messages),
+        'message_count': len(messages),
+        'schema_bytes': len(json.dumps(schema, ensure_ascii=False).encode('utf-8')),
+        'request_bytes': len(json.dumps(payload, ensure_ascii=False).encode('utf-8')),
+        'measurement_scope': 'ollama_server_reported_non_streaming',
+    }
+    try:
+        result = _request_json(url, "/api/chat", payload=payload, timeout=timeout)
+    except Exception as exc:
+        # Preserve exception types used by callers while retaining failed-call cost.
+        request_meta.update(duration_seconds=time.monotonic() - started,
+                            failure_category='transport_error', error_type=type(exc).__name__)
+        try:
+            exc.metadata = request_meta
+        except (AttributeError, TypeError):
+            pass
+        raise
     message = result.get('message') or {}
     content = message.get("content")
     meta = {
-        "request_id": digest(payload)[:20], "duration_seconds": time.monotonic() - started,
+        **request_meta, "duration_seconds": time.monotonic() - started,
         "model": result.get("model") or model,
         "profile": cfg.get("profile", "max"),
         "options": options,
-        "total_duration_ns": result.get("total_duration"),
-        "load_duration_ns": result.get("load_duration"),
-        "prompt_eval_count": result.get("prompt_eval_count"),
-        "eval_count": result.get("eval_count"),
-        "eval_duration_ns": result.get("eval_duration"),
-        "prompt_eval_duration_ns": result.get("prompt_eval_duration"),
+        "total_duration_ns": measured_number(result.get("total_duration")),
+        "load_duration_ns": measured_number(result.get("load_duration")),
+        "prompt_eval_count": measured_number(result.get("prompt_eval_count")),
+        "eval_count": measured_number(result.get("eval_count")),
+        "eval_duration_ns": measured_number(result.get("eval_duration")),
+        "prompt_eval_duration_ns": measured_number(result.get("prompt_eval_duration")),
         "thinking_chars": len(message.get('thinking') or ''), "thinking_requested": cfg.get('think'),
         "response_fields": sorted(message),
         "done_reason": result.get("done_reason"),
-        "input_chars":sum(len(message.get('content','')) for message in messages),
         "output_chars":len(content or ''),
         "confidence_is_calibrated":False,
+        **inference_measurements(result),
     }
     if not isinstance(content, str) or not content.strip():
         meta['failure_category'] = 'empty_thinking_only' if message.get('thinking') else 'empty_content'

@@ -1,0 +1,110 @@
+{
+  "authorization": "explicit user reply",
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pip",
+    "--isolated",
+    "install",
+    "--no-deps",
+    "--no-index",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_SOLV3_BACKUP_20261013\\acquisition\\ultralytics-8.3.200-py3-none-any.whl",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_SOLV3_BACKUP_20261013\\acquisition\\psutil-7.1.3-cp37-abi3-win_amd64.whl",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_SOLV3_BACKUP_20261013\\acquisition\\polars-1.35.2-py3-none-any.whl",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_SOLV3_BACKUP_20261013\\acquisition\\polars_runtime_32-1.35.2-cp39-abi3-win_amd64.whl",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_SOLV3_BACKUP_20261013\\acquisition\\ultralytics_thop-2.0.18-py3-none-any.whl",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_SOLV3_BACKUP_20261013\\acquisition\\torchvision-0.23.0+cu128-cp311-cp311-win_amd64.whl"
+  ],
+  "exit_code": 0,
+  "packages": [
+    {
+      "package": "ultralytics",
+      "version": "8.3.200",
+      "source_url": "https://files.pythonhosted.org/packages/34/ee/fb2a0b98285dcfacfc93f33abd74ab06c038bdcaf596abb3d79956eb0e28/ultralytics-8.3.200-py3-none-any.whl",
+      "bytes": 1071413,
+      "sha256": "adf3f1bc360a375a96a16231ff1d5407508f94ea13ea0c658c474650143ea920",
+      "license": "AGPL-3.0",
+      "action": "downloaded_verified"
+    },
+    {
+      "package": "psutil",
+      "version": "7.1.3",
+      "source_url": "https://files.pythonhosted.org/packages/55/4c/c3ed1a622b6ae2fd3c945a366e64eb35247a31e4db16cf5095e269e8eb3c/psutil-7.1.3-cp37-abi3-win_amd64.whl",
+      "bytes": 247633,
+      "sha256": "f39c2c19fe824b47484b96f9692932248a54c43799a84282cfe58d05a6449efd",
+      "license": "BSD-3-Clause",
+      "action": "downloaded_verified"
+    },
+    {
+      "package": "polars",
+      "version": "1.35.2",
+      "source_url": "https://files.pythonhosted.org/packages/b4/9a/24e4b890c7ee4358964aa92c4d1865df0e8831f7df6abaa3a39914521724/polars-1.35.2-py3-none-any.whl",
+      "bytes": 783597,
+      "sha256": "5e8057c8289ac148c793478323b726faea933d9776bd6b8a554b0ab7c03db87e",
+      "license": "Copyright (c) 2025 Ritchie Vink\n        Some portions Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.\n        \n        Permission is hereby granted, free of charge, to any person obtaining a copy\n        of this software and associated documentation files (the \"Software\"), to deal\n        in the Software without restriction, including without limitation the rights\n        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n        copies of the Software, and to permit persons to whom the Software is\n        furnished to do so, subject to the following conditions:\n        \n        The above copyright notice and this permission notice shall be included in all\n        copies or substantial portions of the Software.\n        \n        THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n        SOFTWARE.\n        ",
+      "action": "downloaded_verified"
+    },
+    {
+      "package": "polars-runtime-32",
+      "version": "1.35.2",
+      "source_url": "https://files.pythonhosted.org/packages/dc/40/96a808ca5cc8707894e196315227f04a0c82136b7fb25570bc51ea33b88d/polars_runtime_32-1.35.2-cp39-abi3-win_amd64.whl",
+      "bytes": 41290019,
+      "sha256": "ddc015fac39735592e2e7c834c02193ba4d257bb4c8c7478b9ebe440b0756b84",
+      "license": null,
+      "action": "downloaded_verified"
+    },
+    {
+      "package": "ultralytics-thop",
+      "version": "2.0.18",
+      "source_url": "https://files.pythonhosted.org/packages/7f/c7/fb42228bb05473d248c110218ffb8b1ad2f76728ed8699856e5af21112ad/ultralytics_thop-2.0.18-py3-none-any.whl",
+      "bytes": 28941,
+      "sha256": "2bb44851ad224b116c3995b02dd5e474a5ccf00acf237fe0edb9e1506ede04ec",
+      "license": "AGPL-3.0",
+      "action": "downloaded_verified"
+    },
+    {
+      "package": "torchvision",
+      "version": "0.23.0+cu128",
+      "source_url": "https://download-r2.pytorch.org/whl/cu128/torchvision-0.23.0%2Bcu128-cp311-cp311-win_amd64.whl",
+      "sha256": "70b3d8bfe04438006ec880c162b0e3aaac90c48b759aa41638dd714c732b182c",
+      "bytes": 7539965,
+      "license": "BSD-3-Clause",
+      "action": "downloaded_verified"
+    }
+  ],
+  "weight": {
+    "path": "models/body/yolo11n.pt",
+    "source_url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt",
+    "release": "v8.3.0",
+    "bytes": 5613764,
+    "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "publisher_digest": null,
+    "digest_scope": "local SHA-256 recorded; release API provides no publisher digest",
+    "license": "AGPL-3.0",
+    "authorization": "explicit user reply Autorizar instalacao restrita e peso oficial"
+  },
+  "protected_versions_before": {
+    "torch": "2.8.0+cu128",
+    "torchaudio": "2.8.0+cu128",
+    "opencv-python": "5.0.0.93",
+    "opencv-contrib-python": "4.11.0.86",
+    "numpy": "2.2.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.11.2",
+    "pillow": "12.3.0",
+    "requests": "2.34.2"
+  },
+  "protected_versions_after": {
+    "torch": "2.8.0+cu128",
+    "torchaudio": "2.8.0+cu128",
+    "opencv-python": "5.0.0.93",
+    "opencv-contrib-python": "4.11.0.86",
+    "numpy": "2.2.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.11.2",
+    "pillow": "12.3.0",
+    "requests": "2.34.2"
+  },
+  "protected_versions_unchanged": true,
+  "no_automatic_dependency_resolution": true
+}

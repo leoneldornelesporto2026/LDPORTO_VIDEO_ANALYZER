@@ -91,7 +91,7 @@ def test_historical_flags_are_not_the_prompt_percentage():
     import hashlib
     from pathlib import Path
     import zipfile
-    source = Path(__file__).resolve().parents[2] / 'automacao/evidencias/CHATGPT_REVIEW.zip'
+    source = Path(__file__).resolve().parent / 'fixtures/historical_evidence/CHATGPT_REVIEW.zip'
     with zipfile.ZipFile(source) as archive:
         member = next(n for n in archive.namelist() if n.endswith('/analysis.json'))
         analysis = json.loads(archive.read(member))

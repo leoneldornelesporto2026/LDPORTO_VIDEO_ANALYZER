@@ -1,0 +1,99 @@
+## baseline/ldporto-20261012-prompt01
+ M .package/PROJECT_EXPORT_MANIFEST.json
+ M .package/PROJECT_EXPORT_README.txt
+ M .package/PROJECT_EXPORT_TREE.txt
+ M AGENTS.md
+ D FINAL_HOMOLOGACAO.md
+ M README.md
+ M app.py
+ D automacao/prompts/ETAPA_01.txt
+ M config/config.yaml
+ M docs/BODY_AB_58.md
+ M docs/ETAPA64_RECUPERACAO.md
+ M docs/REPOSITORY_STRUCTURE.md
+ M docs/S9_S11_REAL_TEST.md
+ M docs/VALIDACAO.md
+ D orquestrador.py
+ M scripts/dev/audit_qa.py
+ M scripts/dev/audit_second_curation64.py
+ D scripts/dev/baseline_etapa01.py
+ D scripts/dev/verificar_liberacao_etapa66.py
+ M src/ldporto/active_speaker.py
+ M src/ldporto/camera_director.py
+ M src/ldporto/camera_evidence.py
+ M src/ldporto/compact_artifacts.py
+ M src/ldporto/config.py
+ M src/ldporto/curation_recovery.py
+ M src/ldporto/diarization.py
+ M src/ldporto/handoff.py
+ M src/ldporto/inference_smoke.py
+ M src/ldporto/ollama_local.py
+ M src/ldporto/pipeline.py
+ M src/ldporto/progress.py
+ M src/ldporto/reports.py
+ M src/ldporto/round62_audit.py
+ M src/ldporto/runtime_metrics.py
+ M src/ldporto/second_curation_export.py
+ M src/ldporto/semantic.py
+ M src/ldporto/targeted_asr.py
+ M src/ldporto/transcription.py
+ M src/ldporto/understanding.py
+ M src/ldporto/vision.py
+ M src/tests/fixtures/autopilot_historico/README.md
+ D src/tests/test_autopilot_orquestrador.py
+ M src/tests/test_stage13_explainability.py
+ M src/tests/test_stage17_editorial_replay.py
+ M src/tests/test_stage18_handoff_audit.py
+ M src/tests/test_stage19_uncertain_words.py
+ M src/tests/test_v43_runtime.py
+?? docs/README.md
+?? docs/archive/FINAL_HOMOLOGACAO_20261009.md
+?? docs/archive/README.md
+?? docs/archive/automation_20261012/execucao/auditoria01/AUDITORIA_GERAL_01.md
+?? docs/archive/automation_20261012/execucao/auditoria01/CORRECOES_01.md
+?? docs/archive/automation_20261012/execucao/auditoria01/PENDENCIAS_02.md
+?? docs/archive/automation_20261012/execucao/auditoria01/STATUS_FINAL_01.json
+?? docs/archive/automation_20261012/execucao/auditoria01/TESTES_01.json
+?? docs/archive/automation_20261012/execucao/auditoria01/commands.json
+?? docs/archive/automation_20261012/execucao/auditoria01/final_integrity.json
+?? docs/archive/automation_20261012/execucao/auditoria01/focused.xml
+?? docs/archive/automation_20261012/execucao/auditoria01/full.xml
+?? docs/archive/automation_20261012/execucao/auditoria01/historical_evidence_readonly.json
+?? docs/archive/automation_20261012/execucao/auditoria01/initial_integrity.json
+?? docs/archive/automation_20261012/execucao/auditoria01/static_results.json
+?? docs/briefings/README.md
+?? docs/reports/restructuring_20261012/COMANDOS.md
+?? docs/reports/restructuring_20261012/RELATORIO_TECNICO.md
+?? docs/reports/restructuring_20261012/after_full.xml
+?? docs/reports/restructuring_20261012/after_full_run.json
+?? docs/reports/restructuring_20261012/asr_audit.md
+?? docs/reports/restructuring_20261012/asr_new_test_collection.txt
+?? docs/reports/restructuring_20261012/asr_targeted_tests_final.txt
+?? docs/reports/restructuring_20261012/asr_targeted_tests_initial.txt
+?? docs/reports/restructuring_20261012/asr_targeted_tests_review.txt
+?? docs/reports/restructuring_20261012/asr_understanding_uncertainty_tests.txt
+?? docs/reports/restructuring_20261012/backup.json
+?? docs/reports/restructuring_20261012/before_active.xml
+?? docs/reports/restructuring_20261012/before_active_run.json
+?? docs/reports/restructuring_20261012/before_collection.xml
+?? docs/reports/restructuring_20261012/cleanup.json
+?? docs/reports/restructuring_20261012/code_audit.json
+?? docs/reports/restructuring_20261012/first_full.xml
+?? docs/reports/restructuring_20261012/first_full_run.json
+?? docs/reports/restructuring_20261012/inventory_after.json
+?? docs/reports/restructuring_20261012/inventory_before.json
+?? docs/reports/restructuring_20261012/runtime_cpu_overhead.json
+?? docs/reports/restructuring_20261012/runtime_review.md
+?? docs/reports/restructuring_20261012/runtime_versions.json
+?? docs/reports/restructuring_20261012/source_before_final_tests.json
+?? docs/reports/restructuring_20261012/source_before_first_full.json
+?? docs/reports/restructuring_20261012/tests_summary.json
+?? docs/reports/restructuring_20261012/verification.json
+?? docs/reports/restructuring_20261012/vision_integrity.md
+?? src/ldporto/editorial_outcome.py
+?? src/tests/fixtures/historical_evidence/ORIGEM.json
+?? src/tests/test_historical_fixture_provenance.py
+?? src/tests/test_runtime_fidelity_contracts.py
+?? src/tests/test_transcription_fidelity.py
+?? src/tests/test_transcription_report_integrity.py
+?? src/tests/test_vision_decision_integrity.py

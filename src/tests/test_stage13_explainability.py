@@ -66,7 +66,7 @@ def test_selection_limits_and_repetition_have_explanations():
 
 def test_all_52_historical_candidates_receive_stable_diagnostics():
     # Old S4 evidence is input to current offline diagnostic code, not an updated video run.
-    evidence = Path(__file__).resolve().parents[2] / 'automacao' / 'evidencias'
+    evidence = Path(__file__).resolve().parent / 'fixtures' / 'historical_evidence'
     with zipfile.ZipFile(evidence / 'CHATGPT_REVIEW.zip') as archive:
         member = next(p for p in archive.namelist() if p.endswith('/main_moments.json'))
         rows = json.loads(archive.read(member))

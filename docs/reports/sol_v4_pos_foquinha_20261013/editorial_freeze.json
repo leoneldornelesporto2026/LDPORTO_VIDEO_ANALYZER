@@ -1,0 +1,15 @@
+{
+  "files": {
+    "src/ldporto/second_curation.py": "04f6a86d039ea15c97d99164efb5b44f5b06aa256370fea8f143ba248b654909",
+    "src/ldporto/editorial_outcome.py": "f6ad191e4829a057b538e60579d911b38a1d34a044173337986440ee0b26e226",
+    "src/ldporto/integrity_contracts.py": "39812e9283ab96b91f4dba0fe1b252ed3edca4f005d0c0f80f953d55aacaecdc",
+    "src/tests/test_sol_v4_post_editorial.py": "bed9eab24a75e9fa5c82a3d39e655f6c8b756f4b47fb4ff2be2142649c935fe7"
+  },
+  "test_count_new": 14,
+  "focused_passed": 111,
+  "focused_returncode": 0,
+  "api": "human_review_queue(candidates,schema_version=\"1.1\"), legacy=\"1.0\"; candidate_editorial_review_plan(candidate); human_review_summary(candidates)",
+  "inference_calls": 0,
+  "historical_analysis_edits": 0,
+  "change_scope": "second_curation/editorial_outcome; only human_review_queue function in integrity_contracts; new offline test"
+}

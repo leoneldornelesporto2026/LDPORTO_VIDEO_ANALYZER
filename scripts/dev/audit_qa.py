@@ -16,10 +16,10 @@ def main():
     parser.add_argument('--curation-zip', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
     args = parser.parse_args()
-    evidence_root = Path('automacao/evidencias').resolve()
+    evidence_root = (Path(__file__).resolve().parents[2] / 'src/tests/fixtures/historical_evidence').resolve()
     output = args.output_dir.resolve()
     if output == evidence_root or evidence_root in output.parents:
-        parser.error('Output must not modify automacao/evidencias')
+        parser.error('Output must not modify historical evidence fixtures')
     with ZipFile(args.review_zip) as archive:
         def read(name):
             matches = [n for n in archive.namelist() if n == name or n.endswith('/' + name)]

@@ -114,7 +114,20 @@ def classify_content(text, evidence_segment_ids=None, visual_evidence=None):
     }
     spans = []
     for signal, pattern in signals.items():
-        for match in list(re.finditer(pattern, normalized))[:3]:
+        considered_matches = 0
+        for match in re.finditer(pattern, normalized):
+            suffix = normalized[match.end():]
+            # A physical unit/comparison is not a monetary offer or payment plan.
+            # Keep this local: an actual price/instalment elsewhere remains evidence.
+            if (signal == 'price' and re.fullmatch(r'\d[\d.,]*\s+mil', match.group()) and
+                    re.match(r'\s+pes\b', suffix)):
+                continue
+            if (signal == 'installment' and re.fullmatch(r'\d{1,3}\s+vezes', match.group()) and
+                    re.match(r'\s+a\s+forca\s+da\s+gravidade\b', suffix)):
+                continue
+            considered_matches += 1
+            if considered_matches > 3:
+                break
             prefix = normalized[max(0, match.start() - 24):match.start()]
             if signal in {"sales_cta", "recommendation", "health_claim", "discount", "sponsor", "urgency", "guest_invitation"} and re.search(r"\b(?:nao|nunca|sem)\s+(?:\w+\s+){0,2}$", prefix):
                 continue

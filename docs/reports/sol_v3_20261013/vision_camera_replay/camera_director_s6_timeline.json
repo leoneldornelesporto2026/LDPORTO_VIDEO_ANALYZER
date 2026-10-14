@@ -1,0 +1,1433 @@
+[
+  {
+    "broadcast_graphics": [],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "SHOT_SWITCH",
+    "schema_version": "4.3",
+    "start": 0.0,
+    "end": 0.50346875,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": -0.0014596220607220544,
+        "dy": -0.004325491008355679,
+        "magnitude": 0.004565125302060429,
+        "confidence": 0.9513962395985921,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "NO_CLEAR_SPEAKER",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": null,
+    "audio_speakers": [],
+    "audio_events": [
+      {
+        "start": 0.0,
+        "end": 0.50346875,
+        "speaker_ids": []
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [
+      "PERSON_001"
+    ],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 0.13333333333333333,
+    "visual_observed_at_end": 0.5333333333333333,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "initial",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 0.0,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 0.50346875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "source_shot_reset",
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 0.0,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": []
+    },
+    "director_id": "DIRECTOR_000000"
+  },
+  {
+    "broadcast_graphics": [],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 0.50346875,
+    "end": 1.0434687500000002,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": 0.0048833151522966745,
+        "dy": -0.007323716515867002,
+        "magnitude": 0.008802476383463542,
+        "confidence": 0.8869910562369558,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "MONOLOGUE",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": "SPEAKER_00",
+    "audio_speakers": [
+      "SPEAKER_00"
+    ],
+    "audio_events": [
+      {
+        "start": 0.50346875,
+        "end": 1.0434687500000002,
+        "speaker_ids": [
+          "SPEAKER_00"
+        ]
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [
+      "PERSON_001"
+    ],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 0.5333333333333333,
+    "visual_observed_at_end": 1.0666666666666667,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 0.50346875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 1.0434687500000002,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 0.49653125,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": []
+    },
+    "director_id": "DIRECTOR_000001"
+  },
+  {
+    "broadcast_graphics": [
+      {
+        "start": 0.94,
+        "end": 3.08,
+        "moment_id": "MOMENT_00000_0000",
+        "schema_version": "1.0",
+        "regions": [],
+        "status": "measured",
+        "ocr_required": false
+      }
+    ],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 1.0434687500000002,
+    "end": 1.27971875,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": -0.0026706618627503785,
+        "dy": -0.0028515609878649035,
+        "magnitude": 0.0039068958077561255,
+        "confidence": 0.3894221434990565,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "NO_CLEAR_SPEAKER",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": null,
+    "audio_speakers": [],
+    "audio_events": [
+      {
+        "start": 1.0434687500000002,
+        "end": 1.27971875,
+        "speaker_ids": []
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [
+      "PERSON_001"
+    ],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 1.2,
+    "visual_observed_at_end": 1.2,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 1.0434687500000002,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 1.27971875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 0.0,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": [
+        "MOMENT_00000_0000"
+      ]
+    },
+    "director_id": "DIRECTOR_000002"
+  },
+  {
+    "broadcast_graphics": [
+      {
+        "start": 0.94,
+        "end": 3.08,
+        "moment_id": "MOMENT_00000_0000",
+        "schema_version": "1.0",
+        "regions": [],
+        "status": "measured",
+        "ocr_required": false
+      }
+    ],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 1.27971875,
+    "end": 13.98659375,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": 0.021624633284071226,
+        "dy": -0.00614988539976393,
+        "magnitude": 0.02248212301142378,
+        "confidence": 0.31111079374949135,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "MONOLOGUE",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": "SPEAKER_00",
+    "audio_speakers": [
+      "SPEAKER_00"
+    ],
+    "audio_events": [
+      {
+        "start": 1.27971875,
+        "end": 13.98659375,
+        "speaker_ids": [
+          "SPEAKER_00"
+        ]
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 1.3333333333333333,
+    "visual_observed_at_end": 14.0,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 1.27971875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 13.98659375,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 12.653614583333333,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": [
+        "MOMENT_00000_0000"
+      ]
+    },
+    "director_id": "DIRECTOR_000003"
+  },
+  {
+    "broadcast_graphics": [],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 13.98659375,
+    "end": 14.121593750000002,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": -0.0013380119991471596,
+        "dy": -0.0028661393246393473,
+        "magnitude": 0.003163072989689911,
+        "confidence": 0.9835753287209404,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "NO_CLEAR_SPEAKER",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": null,
+    "audio_speakers": [],
+    "audio_events": [
+      {
+        "start": 13.98659375,
+        "end": 14.121593750000002,
+        "speaker_ids": []
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [
+      "PERSON_001"
+    ],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 14.0,
+    "visual_observed_at_end": 14.0,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 13.98659375,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 14.121593750000002,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 0.0,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": []
+    },
+    "director_id": "DIRECTOR_000004"
+  },
+  {
+    "broadcast_graphics": [],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 14.121593750000002,
+    "end": 16.83846875,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": -0.0013669901084840674,
+        "dy": 0.0018162494599311665,
+        "magnitude": 0.0022731968804732988,
+        "confidence": 0.9877018892765045,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "MONOLOGUE",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": "SPEAKER_00",
+    "audio_speakers": [
+      "SPEAKER_00"
+    ],
+    "audio_events": [
+      {
+        "start": 14.121593750000002,
+        "end": 16.83846875,
+        "speaker_ids": [
+          "SPEAKER_00"
+        ]
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 14.133333333333333,
+    "visual_observed_at_end": 16.866666666666667,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 14.121593750000002,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 16.83846875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 2.6784062499999983,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": []
+    },
+    "director_id": "DIRECTOR_000005"
+  },
+  {
+    "broadcast_graphics": [
+      {
+        "start": 16.48,
+        "end": 18.34,
+        "moment_id": "MOMENT_00000_0003",
+        "schema_version": "1.0",
+        "regions": [],
+        "status": "measured",
+        "ocr_required": false
+      }
+    ],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 16.83846875,
+    "end": 18.62721875,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": 9.601009919411042e-05,
+        "dy": 0.005500625449998608,
+        "magnitude": 0.0055014632853741426,
+        "confidence": 0.6882590900527107,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "OVERLAP",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": null,
+    "audio_speakers": [
+      "SPEAKER_00",
+      "SPEAKER_01"
+    ],
+    "audio_events": [
+      {
+        "start": 16.83846875,
+        "end": 18.62721875,
+        "speaker_ids": [
+          "SPEAKER_00",
+          "SPEAKER_01"
+        ]
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [
+      "PERSON_001"
+    ],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 16.866666666666667,
+    "visual_observed_at_end": 18.53333333333333,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 16.83846875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 18.62721875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 0.0,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": [
+        "MOMENT_00000_0003"
+      ]
+    },
+    "director_id": "DIRECTOR_000006"
+  },
+  {
+    "broadcast_graphics": [],
+    "graphics_policy": "avoid_face_text_overlap",
+    "interview_layout": {
+      "layout": "source_preserve",
+      "people": [],
+      "reason": "NO_RELEVANT_VISIBLE_TARGET"
+    },
+    "camera_evidence_role": "SOURCE_CLOSEUP_PRESERVE",
+    "speaker_identity_confirmed": false,
+    "camera_state": "HOLD",
+    "schema_version": "4.3",
+    "start": 18.62721875,
+    "end": 19.014,
+    "camera_mode": "SOURCE_PRESERVE",
+    "zoom_mode": "SOURCE_PRESERVE",
+    "smart_zoom": {
+      "zoom": 1.0,
+      "requested_zoom": 1.0,
+      "mode": "SOURCE_PRESERVE",
+      "reason_codes": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "digital_motion_allowed": false,
+      "zoom_attempted": false,
+      "new_zoom_request": false,
+      "target_person_id": null,
+      "source_camera_motion": {
+        "dx": 0.001817162470865874,
+        "dy": 9.955433668180389e-05,
+        "magnitude": 0.0018198874996756043,
+        "confidence": 0.931290692223443,
+        "method": "phase_correlation_global_translation"
+      },
+      "beat": null,
+      "state_entered_at": 0.0,
+      "last_zoom_event_at": null
+    },
+    "conversation_mode": "MONOLOGUE",
+    "source_shot_id": "SHOT_00000",
+    "audio_speaker": "SPEAKER_00",
+    "audio_speakers": [
+      "SPEAKER_00"
+    ],
+    "audio_events": [
+      {
+        "start": 18.62721875,
+        "end": 19.014,
+        "speaker_ids": [
+          "SPEAKER_00"
+        ]
+      }
+    ],
+    "focus_person": null,
+    "focus_confidence": null,
+    "visible_people": [
+      "PERSON_001"
+    ],
+    "visibility_is_sampled": true,
+    "visual_observed_at_start": 18.53333333333333,
+    "visual_observed_at_end": 18.53333333333333,
+    "layout": "full_frame",
+    "framing": "original",
+    "camera": {
+      "center_start": [
+        0.5,
+        0.5
+      ],
+      "center_end": [
+        0.5,
+        0.5
+      ],
+      "zoom_start": 1.0,
+      "zoom_end": 1.0,
+      "zoom_target": 1.0,
+      "movement_style": "hold",
+      "tracking_mode": "source_preserve",
+      "transition_in": "hold",
+      "transition_out": "hold",
+      "keyframes": [
+        {
+          "time": 18.62721875,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time": 19.014,
+          "center": [
+            0.5,
+            0.5
+          ],
+          "zoom": 1.0,
+          "target": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "acceleration": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "crop": {
+      "safe": false,
+      "rect_end": null,
+      "quality_limited_max_zoom": 1.0,
+      "max_allowed": 1.0,
+      "baseline_requires_upscale": null,
+      "upscale_ratio": null,
+      "max_upscale_ratio": 2.0,
+      "requested_zoom": 1.0,
+      "actual_zoom": 1.0,
+      "limited_by_quality": false,
+      "quality_unknown": null,
+      "preflight_reason": null,
+      "preflight_sample_count": null,
+      "full_frame_policy": "fit_with_padding"
+    },
+    "split": null,
+    "reaction": null,
+    "decision": {
+      "confidence": null,
+      "confidence_is_calibrated": false,
+      "reasons": [
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "switch_suppressed": false,
+      "switch_suppressed_reason": null,
+      "selected_candidate": "FULL_FRAME"
+    },
+    "speaker_switch_rate": {
+      "changes_5s": 0,
+      "changes_10s": 0,
+      "mean_recent_turn_seconds": null
+    },
+    "continuous_speech_duration": 0.3727812499999992,
+    "global_plan": {
+      "planner_id": "PLAN_000000",
+      "state": "SOURCE_FULL_FRAME",
+      "layout": "full_frame",
+      "focus_person": null,
+      "reason_code": "SOURCE_FRAME_SELECTED"
+    },
+    "context": {
+      "question_ids": [],
+      "story_arc_ids": [],
+      "moment_ids": []
+    },
+    "director_id": "DIRECTOR_000007"
+  }
+]

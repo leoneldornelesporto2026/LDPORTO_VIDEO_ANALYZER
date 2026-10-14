@@ -24,7 +24,8 @@ def snapshot_json(path, expected=None):
     from .core import sanitize_json_numbers
     if sanitize_json_numbers(value) != value:
         raise ValueError('nonfinite_json')
-    return value, checksum
+    from .checkpoint_storage import decode_checkpoint
+    return decode_checkpoint(value), checksum
 
 
 def module_hashes(selected=None):
@@ -70,7 +71,8 @@ def create_receipt(stage, record, modules, dependencies, *, producer='Context.st
 
 def verify_receipt(stage, record, *, artifacts=True):
     try:
-        if record.get('data_checksum') != digest(record['data']):
+        data_checksum = digest(record['data'])
+        if record.get('data_checksum') != data_checksum:
             return 'corrupted'
         if artifacts and any(file_hash(path) != sha for path, sha in record.get('artifact_checksums', {}).items()):
             return 'corrupted'
@@ -101,9 +103,9 @@ def verify_receipt(stage, record, *, artifacts=True):
                 or receipt['trust_scope'] != TRUST
                 or receipt['method'] != 'producer_finalization_before_atomic_checkpoint'
                 or datetime.fromisoformat(receipt['timestamp']).tzinfo is None
-                or receipt['output_checksums'] != {'data': digest(record['data']),
+                or receipt['output_checksums'] != {'data': data_checksum,
                                                    'artifacts': record.get('artifact_checksums', {})}
-                or record['data_checksum'] != digest(record['data'])):
+                or record['data_checksum'] != data_checksum):
             return 'corrupted'
         if artifacts and any(file_hash(path) != sha for path, sha in record.get('artifact_checksums', {}).items()):
             return 'corrupted'

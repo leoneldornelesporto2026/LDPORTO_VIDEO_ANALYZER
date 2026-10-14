@@ -1,0 +1,40 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--junitxml=docs\\reports\\restructuring_20261012\\after_full.xml"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 203.61695010005496,
+  "scope": "intermediate complete suite before legacy word projection compatibility fix; test fixture file changed during run, requiring frozen final rerun",
+  "collected_cases": 1713,
+  "passed": 1710,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 3,
+  "skips": [
+    {
+      "test": "src.tests.test_stage46_commercial_visual_replay::test_symlink_media_and_parent_artifacts_rejected",
+      "reason": "Windows symlink privilege unavailable; reparse check needs local homologation"
+    },
+    {
+      "test": "src.tests.test_stage55_commercial_evidence::test_opt_in_tesseract_on_authored_synthetic_offer",
+      "reason": "Opt-in synthetic Tesseract only: LDPORTO_STAGE55_REAL_OCR=1"
+    },
+    {
+      "test": "src.tests.test_stage64_curation_recovery::test_links_are_blocked",
+      "reason": "Windows symlink privilege unavailable"
+    }
+  ],
+  "source_changes_during_tests": [
+    "src/tests/test_runtime_fidelity_contracts.py"
+  ],
+  "artifact_relocated_to": {
+    "junit": "first_full.xml",
+    "log": "first_full.log",
+    "source_snapshot": "source_before_first_full.json"
+  }
+}

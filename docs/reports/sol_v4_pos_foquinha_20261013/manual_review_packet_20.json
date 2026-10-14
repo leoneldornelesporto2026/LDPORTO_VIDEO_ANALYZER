@@ -1,0 +1,2085 @@
+{
+  "schema_version": "1.0",
+  "annotation_status": "PENDING_HUMAN",
+  "precision_recall": null,
+  "entries": [
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00022_0001",
+      "start": 3946.52,
+      "end": 3969.28,
+      "literal_text": "gente que tá bobeando que eu vejo aqui nos analytics analíticos, Então se inscreve, comenta se vocês gostaram, se vocês têm alguma coisa que vocês gostariam de ter visto nesses analíticos que a gente não mostrou. Enfim, fica aí com vocês. Se se inscreve no meu também. Se inscreve no canal, por favor. Vocês viram que tava caindo ali no algoritmo que a gente mostrou ali no analítico. Tem muita coisa boa vindo Foquinha está renovando seus inscritos, então essa é a sua oportunidade de se inscrever no canal da Foquinha também.",
+      "segment_ids": [
+        "SEG_01501",
+        "SEG_01502",
+        "SEG_01503",
+        "SEG_01504",
+        "SEG_01505",
+        "SEG_01506",
+        "SEG_01507",
+        "SEG_01508",
+        "SEG_01509",
+        "SEG_01510",
+        "SEG_01511",
+        "SEG_01512",
+        "SEG_01513",
+        "SEG_01514",
+        "SEG_01515",
+        "SEG_01516",
+        "SEG_01517"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_01499",
+          "start": 3929.52,
+          "end": 3935.3,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00"
+          ],
+          "text": "aí eu amo e a gente tava assim eu tô na tô no céu muito obrigada eu quero agradecer uma vez",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0012923",
+            "WORD_0012924",
+            "WORD_0012925",
+            "WORD_0012926",
+            "WORD_0012927",
+            "WORD_0012928",
+            "WORD_0012929",
+            "WORD_0012930",
+            "WORD_0012931",
+            "WORD_0012932",
+            "WORD_0012933",
+            "WORD_0012934",
+            "WORD_0012935",
+            "WORD_0012936",
+            "WORD_0012937",
+            "WORD_0012938",
+            "WORD_0012939",
+            "WORD_0012940",
+            "WORD_0012941",
+            "WORD_0012942",
+            "WORD_0012943"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_5faff4795fabb489501dbd68"
+          ],
+          "needs_review": true,
+          "review_reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "uncertain_word_ids": [
+            "WORD_0012923",
+            "WORD_0012929",
+            "WORD_0012933",
+            "WORD_0012934",
+            "WORD_0012939",
+            "WORD_0012941"
+          ]
+        },
+        {
+          "segment_id": "SEG_01500",
+          "start": 3935.3,
+          "end": 3946.52,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00"
+          ],
+          "text": "se você gostou você sabe né como é que funciona deixa o seu like já se inscreve se você não for inscrito eu acho que pessoal já inscrito aqui no nosso canal do YouTube Brasil tem",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0012944",
+            "WORD_0012945",
+            "WORD_0012946",
+            "WORD_0012947",
+            "WORD_0012948",
+            "WORD_0012949",
+            "WORD_0012950",
+            "WORD_0012951",
+            "WORD_0012952",
+            "WORD_0012953",
+            "WORD_0012954",
+            "WORD_0012955",
+            "WORD_0012956",
+            "WORD_0012957",
+            "WORD_0012958",
+            "WORD_0012959",
+            "WORD_0012960",
+            "WORD_0012961",
+            "WORD_0012962",
+            "WORD_0012963",
+            "WORD_0012964",
+            "WORD_0012965",
+            "WORD_0012966",
+            "WORD_0012967",
+            "WORD_0012968",
+            "WORD_0012969",
+            "WORD_0012970",
+            "WORD_0012971",
+            "WORD_0012972",
+            "WORD_0012973",
+            "WORD_0012974",
+            "WORD_0012975",
+            "WORD_0012976",
+            "WORD_0012977",
+            "WORD_0012978",
+            "WORD_0012979"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_5faff4795fabb489501dbd68"
+          ],
+          "needs_review": true,
+          "review_reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "uncertain_word_ids": [
+            "WORD_0012944",
+            "WORD_0012966",
+            "WORD_0012969",
+            "WORD_0012977",
+            "WORD_0012979"
+          ]
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_01518",
+          "start": 3970.88,
+          "end": 3972.98,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_01"
+          ],
+          "text": "Muito obrigada, gente, e até o próximo episódio.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0013072",
+            "WORD_0013073",
+            "WORD_0013074",
+            "WORD_0013075",
+            "WORD_0013076",
+            "WORD_0013077",
+            "WORD_0013078",
+            "WORD_0013079"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_5faff4795fabb489501dbd68"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_01519",
+          "start": 3973.94,
+          "end": 3974.56,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_01"
+          ],
+          "text": "Beijo, tchau!",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0013080",
+            "WORD_0013081"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_5faff4795fabb489501dbd68"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "ineligible_by_quality_gate"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false,
+      "unapproved_source_preview_ref": "source_previews\\MOMENT_00022_0001\\source_preserve.mp4",
+      "preview_sha256": "296f0dd6113d42a21efe4715f4904d18f724909d88f98882eb04a63f1b9cd867"
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00002_0002",
+      "start": 425.02,
+      "end": 446.0,
+      "literal_text": "Sim. Mas eu adoro também assistir os conteúdos dos programas de talk show. Os gringos também, tem o Jimmy Fallon, o Jimmy Kimmel, todos estão no YouTube. E eles fazem conteúdos que são só pro YouTube, então eu acho muito legal. Eu gosto muito de ver como que eles fazem, assim. A Kelly Clarkson também, o programa dela eu adoro. Então, sempre tem um conteúdo pra quem tá no YouTube, eu acho isso ótimo.",
+      "segment_ids": [
+        "SEG_00195",
+        "SEG_00196",
+        "SEG_00197",
+        "SEG_00198",
+        "SEG_00199",
+        "SEG_00200",
+        "SEG_00201",
+        "SEG_00202",
+        "SEG_00203",
+        "SEG_00204"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00193",
+          "start": 421.5,
+          "end": 422.96000000000004,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "E o Baphos no Mês, que acaba virando um",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0001353",
+            "WORD_0001354",
+            "WORD_0001355",
+            "WORD_0001356",
+            "WORD_0001357",
+            "WORD_0001358",
+            "WORD_0001359",
+            "WORD_0001360",
+            "WORD_0001361"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00194",
+          "start": 422.96000000000004,
+          "end": 424.88,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_02"
+          ],
+          "text": "podcast, um videocast também, né?",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0001362",
+            "WORD_0001363",
+            "WORD_0001364",
+            "WORD_0001365",
+            "WORD_0001366"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00205",
+          "start": 446.12,
+          "end": 450.22,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_02"
+          ],
+          "text": "Isso te ajudou de alguma forma também a praticar o idioma, ou a forma como você entrevista?",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0001441",
+            "WORD_0001442",
+            "WORD_0001443",
+            "WORD_0001444",
+            "WORD_0001445",
+            "WORD_0001446",
+            "WORD_0001447",
+            "WORD_0001448",
+            "WORD_0001449",
+            "WORD_0001450",
+            "WORD_0001451",
+            "WORD_0001452",
+            "WORD_0001453",
+            "WORD_0001454",
+            "WORD_0001455",
+            "WORD_0001456",
+            "WORD_0001457"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": true,
+          "review_reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "uncertain_word_ids": [
+            "WORD_0001452"
+          ]
+        },
+        {
+          "segment_id": "SEG_00206",
+          "start": 450.22,
+          "end": 450.65999999999997,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_02"
+          ],
+          "text": "Com certeza.",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0001458",
+            "WORD_0001459"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "ineligible_by_quality_gate"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false,
+      "unapproved_source_preview_ref": "source_previews\\MOMENT_00002_0002\\source_preserve.mp4",
+      "preview_sha256": "43ea062f1461000cb892779453b7a693217274467a4795515d02f18c72d4f35d"
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00008_0002",
+      "start": 1585.2,
+      "end": 1613.94,
+      "literal_text": "Falando um pouco de passado e das transformações que aconteceram na sua carreira ao longo dessa década que você está produzindo conteúdo aqui na plataforma, a minha produção vai colocar ali no video wall, aqui atrás de você, alguns dos vídeos que eu queria saber o que você reconhece aí. Gente, que lindo! Nossa Senhora! Olha, o primeiro ali, que tá repetindo e eu girando que nem uma tonta é o primeiro vídeo do meu canal. O de franjinha. É, que era um teaser.",
+      "segment_ids": [
+        "SEG_00664",
+        "SEG_00665",
+        "SEG_00666",
+        "SEG_00667",
+        "SEG_00668",
+        "SEG_00669",
+        "SEG_00670",
+        "SEG_00671"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00662",
+          "start": 1582.46,
+          "end": 1582.92,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_02"
+          ],
+          "text": "Com saúde mental.",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0005249",
+            "WORD_0005250",
+            "WORD_0005251"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_fc8a94a4a0f7ad5ec97ceec5"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00663",
+          "start": 1583.04,
+          "end": 1584.12,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00"
+          ],
+          "text": "É isso, exatamente.",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0005252",
+            "WORD_0005253",
+            "WORD_0005254"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_fc8a94a4a0f7ad5ec97ceec5"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00672",
+          "start": 1614.56,
+          "end": 1617.2,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Porque eu lancei meu canal querendo ir pra TV.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0005339",
+            "WORD_0005340",
+            "WORD_0005341",
+            "WORD_0005342",
+            "WORD_0005343",
+            "WORD_0005344",
+            "WORD_0005345",
+            "WORD_0005346",
+            "WORD_0005347"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_fc8a94a4a0f7ad5ec97ceec5"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00673",
+          "start": 1617.4,
+          "end": 1618.74,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Olha só como as coisas são, né.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0005348",
+            "WORD_0005349",
+            "WORD_0005350",
+            "WORD_0005351",
+            "WORD_0005352",
+            "WORD_0005353",
+            "WORD_0005354"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_fc8a94a4a0f7ad5ec97ceec5"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "ineligible_by_quality_gate"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false,
+      "unapproved_source_preview_ref": "source_previews\\MOMENT_00008_0002\\source_preserve.mp4",
+      "preview_sha256": "3b85e66298be0c299dd75e9216ad78ded7a802f64c95cf4b55b7ea30a91c34af"
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00002_0000",
+      "start": 363.1,
+      "end": 407.76,
+      "literal_text": "Nossa, tinha Ela deu uma diminuída nos vídeos desse assunto Mas a Grace Helbig, eu sempre gostei muito Inclusive, nossa Ela tem um podcast há muito, muito tempo Antes das pessoas pensarem em podcast Aqui no Brasil, assim eu sempre amei ela sempre uma referência assim para mim e a gente não consumia tão era tão fora da realidade consumir podcast que por causa dos vídeos dela de um podcast e ficar vai acho que eu quero ter um programa na rádio porque assim não não pensar vai eu vou ter uma coisa com ela tem que um podcast não pensava nisso lembra até que eu tentei vender um programa que era um podcast a gente foi ver hoje para uma rádio sério do Brasil que é bem conhecida e não eu levei o dela referência e falaram, ai não, nada a ver. Você tava muito pra frente. Eu tava muito à frente do meu tempo, por causa da Grace Helbig.",
+      "segment_ids": [
+        "SEG_00179",
+        "SEG_00180",
+        "SEG_00181",
+        "SEG_00182",
+        "SEG_00183",
+        "SEG_00184"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00177",
+          "start": 360.36,
+          "end": 362.12,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_01"
+          ],
+          "text": "algum criador, assim, que destaca pra você?",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0001128",
+            "WORD_0001129",
+            "WORD_0001130",
+            "WORD_0001131",
+            "WORD_0001132",
+            "WORD_0001133",
+            "WORD_0001134"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00178",
+          "start": 362.2,
+          "end": 363.06,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_01",
+            "SPEAKER_02"
+          ],
+          "text": "Que você sempre dá uma olhadinha?",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0001135",
+            "WORD_0001136",
+            "WORD_0001137",
+            "WORD_0001138",
+            "WORD_0001139",
+            "WORD_0001140"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00185",
+          "start": 407.96000000000004,
+          "end": 409.34000000000003,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Pois muito que bem, agora você",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0001302",
+            "WORD_0001303",
+            "WORD_0001304",
+            "WORD_0001305",
+            "WORD_0001306",
+            "WORD_0001307"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00186",
+          "start": 409.34000000000003,
+          "end": 410.9,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_02"
+          ],
+          "text": "tem os seus próprios podcasts,",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0001308",
+            "WORD_0001309",
+            "WORD_0001310",
+            "WORD_0001311",
+            "WORD_0001312"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f78a756f8ad9d1ccb0347a8a"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "ineligible_by_quality_gate",
+        "topic_boundary_crossed"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00022_0002",
+      "start": 3970.88,
+      "end": 3974.56,
+      "literal_text": "Muito obrigada, gente, e até o próximo episódio. Beijo, tchau!",
+      "segment_ids": [
+        "SEG_01518",
+        "SEG_01519"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_01516",
+          "start": 3963.88,
+          "end": 3964.02,
+          "speaker": null,
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_01"
+          ],
+          "text": "boa",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0013051"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_5faff4795fabb489501dbd68"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_01517",
+          "start": 3964.02,
+          "end": 3969.28,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_01"
+          ],
+          "text": "vindo Foquinha está renovando seus inscritos, então essa é a sua oportunidade de se inscrever no canal da Foquinha também.",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0013052",
+            "WORD_0013053",
+            "WORD_0013054",
+            "WORD_0013055",
+            "WORD_0013056",
+            "WORD_0013057",
+            "WORD_0013058",
+            "WORD_0013059",
+            "WORD_0013060",
+            "WORD_0013061",
+            "WORD_0013062",
+            "WORD_0013063",
+            "WORD_0013064",
+            "WORD_0013065",
+            "WORD_0013066",
+            "WORD_0013067",
+            "WORD_0013068",
+            "WORD_0013069",
+            "WORD_0013070",
+            "WORD_0013071"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_5faff4795fabb489501dbd68"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [],
+      "measured_gate_reasons": [
+        "below_editorial_quality_floor",
+        "below_hard_min_without_complete_unit_proof",
+        "ineligible_by_quality_gate"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00010_0000",
+      "start": 1800.22,
+      "end": 1807.58,
+      "literal_text": "entrevista com o Riverdale, que por muito tempo… Não sei se ainda hoje, era o vídeo mais visto do meu canal. É o vídeo mais visto do seu canal. mais visto do seu canal. Olha só, até hoje.",
+      "segment_ids": [
+        "SEG_00722",
+        "SEG_00723",
+        "SEG_00724",
+        "SEG_00725",
+        "SEG_00726",
+        "SEG_00727",
+        "SEG_00728",
+        "SEG_00729",
+        "SEG_00730"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00720",
+          "start": 1797.84,
+          "end": 1798.04,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_01",
+            "SPEAKER_02"
+          ],
+          "text": "Uhum.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0005936"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_2fdd5f91f30f57a41fdd57ea"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00721",
+          "start": 1799.86,
+          "end": 1800.22,
+          "speaker": "SPEAKER_01",
+          "speakers": [
+            "SPEAKER_01"
+          ],
+          "text": "Aí,",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0005937"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_2fdd5f91f30f57a41fdd57ea"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00731",
+          "start": 1807.9,
+          "end": 1808.22,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Babado!",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0005976"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_2fdd5f91f30f57a41fdd57ea"
+          ],
+          "needs_review": true,
+          "review_reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "uncertain_word_ids": [
+            "WORD_0005976"
+          ]
+        },
+        {
+          "segment_id": "SEG_00732",
+          "start": 1808.22,
+          "end": 1808.74,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_01",
+            "SPEAKER_02"
+          ],
+          "text": "Acho que",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0005977",
+            "WORD_0005978"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_2fdd5f91f30f57a41fdd57ea"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "below_editorial_quality_floor",
+        "below_hard_min_without_complete_unit_proof",
+        "ineligible_by_quality_gate"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00013_0000",
+      "start": 2343.12,
+      "end": 2351.06,
+      "literal_text": "eu tava vendo uma entrevista no Podpah recentemente com a Fátima Bernardes, que tá fazendo, né, a sua migração pro YouTube. Eu tô doida pra assistir, inclusive, que eu não vi ainda.",
+      "segment_ids": [
+        "SEG_00897",
+        "SEG_00898",
+        "SEG_00899",
+        "SEG_00900"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00895",
+          "start": 2340.2,
+          "end": 2342.34,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Eu acho que vai ser muito vencedor, assim.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0007795",
+            "WORD_0007796",
+            "WORD_0007797",
+            "WORD_0007798",
+            "WORD_0007799",
+            "WORD_0007800",
+            "WORD_0007801",
+            "WORD_0007802"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_920962cb6404b80f7d8de458"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00896",
+          "start": 2342.74,
+          "end": 2343.1,
+          "speaker": null,
+          "speakers": [
+            "SPEAKER_00",
+            "SPEAKER_02"
+          ],
+          "text": "É,",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0007803"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_920962cb6404b80f7d8de458"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00901",
+          "start": 2351.24,
+          "end": 2354.9,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "E ela conta um pouco de como essa falha, ela é...",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0007836",
+            "WORD_0007837",
+            "WORD_0007838",
+            "WORD_0007839",
+            "WORD_0007840",
+            "WORD_0007841",
+            "WORD_0007842",
+            "WORD_0007843",
+            "WORD_0007844",
+            "WORD_0007845",
+            "WORD_0007846"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_920962cb6404b80f7d8de458"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00902",
+          "start": 2354.9,
+          "end": 2358.22,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "A permissão de falhar é libertadora.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0007847",
+            "WORD_0007848",
+            "WORD_0007849",
+            "WORD_0007850",
+            "WORD_0007851",
+            "WORD_0007852"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_920962cb6404b80f7d8de458"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "below_editorial_quality_floor",
+        "below_hard_min_without_complete_unit_proof",
+        "ineligible_by_quality_gate"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00015_0000",
+      "start": 2725.53,
+      "end": 2794.43,
+      "literal_text": "Eu já tinha, outras pessoas já estiveram nesse lugar ali por um período curto, mas eu acho que eu coloco assim como o primeiro, o Rodrigo Dedes que eu falei, né, o 10 que eu comentei aqui mais cedo ele foi o primeiro mesmo que é um contratado que assim oficial sabe e tá comigo um tempão e é isso assim a mesmo ele assim hoje ele meu braço direito mesmo que eu falo e mas é isso foi todo um processo né se ele essa pessoa acho que a única que eu confiei totalmente assim sabe que ela ajudou com o conteúdo é um conteúdo mas é isso o 10 sobe vídeo no canal teve é isso hoje a empresa cresceu né temos mais gente trabalhando comigo e tal então teve um momento que ele era eu e ele fazendo tudo assim sabe então tudo que precisava fazer a gente tava ali os dois se se dividindo ele me ajudando e tal mas é isso assim sempre evoluindo também né e agora de ter mais gente na equipe assim mas ele é bem importante assim Assim, ele foi a primeira pessoa que eu confiei total e, por exemplo, de aprovação de vídeo, né?",
+      "segment_ids": [
+        "SEG_01011",
+        "SEG_01012",
+        "SEG_01013",
+        "SEG_01014",
+        "SEG_01015"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_01009",
+          "start": 2716.71,
+          "end": 2721.79,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00"
+          ],
+          "text": "Porque eu sei que quando você tá começando, tudo fica assim com você, vira sua equipe.",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0008993",
+            "WORD_0008994",
+            "WORD_0008995",
+            "WORD_0008996",
+            "WORD_0008997",
+            "WORD_0008998",
+            "WORD_0008999",
+            "WORD_0009000",
+            "WORD_0009001",
+            "WORD_0009002",
+            "WORD_0009003",
+            "WORD_0009004",
+            "WORD_0009005",
+            "WORD_0009006",
+            "WORD_0009007",
+            "WORD_0009008"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_7db73e616d2b5e2098fe0792"
+          ],
+          "needs_review": true,
+          "review_reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "uncertain_word_ids": [
+            "WORD_0009004"
+          ]
+        },
+        {
+          "segment_id": "SEG_01010",
+          "start": 2721.93,
+          "end": 2725.21,
+          "speaker": "SPEAKER_00",
+          "speakers": [
+            "SPEAKER_00"
+          ],
+          "text": "Mas chega uma hora que você tem que entregar pra alguém alguma parte.",
+          "speech_overlap": true,
+          "word_ids": [
+            "WORD_0009009",
+            "WORD_0009010",
+            "WORD_0009011",
+            "WORD_0009012",
+            "WORD_0009013",
+            "WORD_0009014",
+            "WORD_0009015",
+            "WORD_0009016",
+            "WORD_0009017",
+            "WORD_0009018",
+            "WORD_0009019",
+            "WORD_0009020",
+            "WORD_0009021"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_7db73e616d2b5e2098fe0792"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_01016",
+          "start": 2794.51,
+          "end": 2797.69,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "De conseguir não assistir o vídeo e ele dar o ok.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0009226",
+            "WORD_0009227",
+            "WORD_0009228",
+            "WORD_0009229",
+            "WORD_0009230",
+            "WORD_0009231",
+            "WORD_0009232",
+            "WORD_0009233",
+            "WORD_0009234",
+            "WORD_0009235",
+            "WORD_0009236"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_7db73e616d2b5e2098fe0792"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_01017",
+          "start": 2798.41,
+          "end": 2798.85,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Sim.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0009237"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_7db73e616d2b5e2098fe0792"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "answer_or_payoff_unresolved",
+        "below_editorial_quality_floor",
+        "clean_ending:false",
+        "ineligible_by_quality_gate",
+        "question_answer_unit_incomplete"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00004_0001",
+      "start": 846.1800000000001,
+      "end": 894.04,
+      "literal_text": "eu não faço mais aquele conteúdo que é uma guerra de ai vou sair primeiro eu faço é do factual eu faço um conteúdo sobre cultura pop celebridades música que é muito factual então antes quando sair acontecer uma treta eu já tava dois dias depois no YouTube explicando a treta mas assim a minha vida era outra eu tinha eu ficava basicamente a minha rotina era fazer YouTube hoje tem outras redes hoje eu tenho trabalho meu trabalho como apresentador em em outros lugares, entendeu? Trabalhos com marcas, minha vida pessoal, que antes eu acabava deixando mais de lado. Tipo, eu gravava vídeo do YouTube 10 da noite, entendeu? Então, assim, fim de semana... Então, assim, hoje eu respeito mais essa minha saúde mental, mais essa rotina, mas eu não faço mais vídeos correndo.",
+      "segment_ids": [
+        "SEG_00389",
+        "SEG_00390",
+        "SEG_00391",
+        "SEG_00392",
+        "SEG_00393",
+        "SEG_00394"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00387",
+          "start": 840.78,
+          "end": 843.5,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Mas é isso, assim, eu entendo que é uma mudança.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0002743",
+            "WORD_0002744",
+            "WORD_0002745",
+            "WORD_0002746",
+            "WORD_0002747",
+            "WORD_0002748",
+            "WORD_0002749",
+            "WORD_0002750",
+            "WORD_0002751",
+            "WORD_0002752"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f0dbaa1e7526a1c510ca37ff"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00388",
+          "start": 843.6,
+          "end": 846.1800000000001,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Inclusive, da minha forma de fazer conteúdo também.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0002753",
+            "WORD_0002754",
+            "WORD_0002755",
+            "WORD_0002756",
+            "WORD_0002757",
+            "WORD_0002758",
+            "WORD_0002759",
+            "WORD_0002760"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f0dbaa1e7526a1c510ca37ff"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00395",
+          "start": 894.04,
+          "end": 896.52,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Eu acho que não tá mais nesse lugar, nem o meu canal, nem eu.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0002896",
+            "WORD_0002897",
+            "WORD_0002898",
+            "WORD_0002899",
+            "WORD_0002900",
+            "WORD_0002901",
+            "WORD_0002902",
+            "WORD_0002903",
+            "WORD_0002904",
+            "WORD_0002905",
+            "WORD_0002906",
+            "WORD_0002907",
+            "WORD_0002908",
+            "WORD_0002909"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f0dbaa1e7526a1c510ca37ff"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00396",
+          "start": 896.6,
+          "end": 899.48,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Não tô mais nessa de corrida pra sair primeiro.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0002910",
+            "WORD_0002911",
+            "WORD_0002912",
+            "WORD_0002913",
+            "WORD_0002914",
+            "WORD_0002915",
+            "WORD_0002916",
+            "WORD_0002917",
+            "WORD_0002918"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_f0dbaa1e7526a1c510ca37ff"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "measured_gate_reasons": [
+        "answer_or_payoff_unresolved",
+        "below_editorial_quality_floor",
+        "clean_ending:false",
+        "ineligible_by_quality_gate",
+        "missing_story_development",
+        "missing_story_setup",
+        "narrative_integrity:incomplete",
+        "question_answer_unit_incomplete",
+        "story_payoff_not_grounded"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "candidate",
+      "candidate_id": "MOMENT_00006_0002",
+      "start": 1135.3,
+      "end": 1170.52,
+      "literal_text": "Que é o almoço do anjo, o presente do anjo. Porque tinha gente que entrava na live e falava assim... Gente, achei que era uma live bíblica. Da igreja! E aí, deu... Pela porcentagem dos evangélicos da plataforma. E deu super certo, assim. Foi muito legal. E a gente fazia toda semana. Então, era um resumão da semana. Trazia fatos que estavam acontecendo naquela hora também e tal. E foi muito legal. Foi muito legal, porque acabou que a gente criou meio que uma comunidade ali. Uma galera que tava toda semana esperando. A gente já sabia quem eram as pessoas. Então, deu essa movimentada das pessoas esperando a gente toda quarta-feira pra essa live. Então, isso foi muito legal.",
+      "segment_ids": [
+        "SEG_00495",
+        "SEG_00496",
+        "SEG_00497",
+        "SEG_00498",
+        "SEG_00499",
+        "SEG_00500",
+        "SEG_00501",
+        "SEG_00502",
+        "SEG_00503",
+        "SEG_00504",
+        "SEG_00505",
+        "SEG_00506",
+        "SEG_00507",
+        "SEG_00508",
+        "SEG_00509",
+        "SEG_00510",
+        "SEG_00511",
+        "SEG_00512",
+        "SEG_00513"
+      ],
+      "context_before": [
+        {
+          "segment_id": "SEG_00493",
+          "start": 1133.5,
+          "end": 1133.82,
+          "speaker": null,
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Dos",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0003678"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_40406be6e28ab6abba3b054e"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00494",
+          "start": 1133.82,
+          "end": 1135.26,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "anjos, por causa do BBB, né?",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0003679",
+            "WORD_0003680",
+            "WORD_0003681",
+            "WORD_0003682",
+            "WORD_0003683",
+            "WORD_0003684"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_40406be6e28ab6abba3b054e"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        }
+      ],
+      "context_after": [
+        {
+          "segment_id": "SEG_00514",
+          "start": 1170.56,
+          "end": 1174.4,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "E ficou tranquilo também do vídeo não passar, não ficar velho, sabe?",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0003806",
+            "WORD_0003807",
+            "WORD_0003808",
+            "WORD_0003809",
+            "WORD_0003810",
+            "WORD_0003811",
+            "WORD_0003812",
+            "WORD_0003813",
+            "WORD_0003814",
+            "WORD_0003815",
+            "WORD_0003816",
+            "WORD_0003817"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_40406be6e28ab6abba3b054e"
+          ],
+          "needs_review": false,
+          "review_reasons": [],
+          "uncertain_word_ids": []
+        },
+        {
+          "segment_id": "SEG_00515",
+          "start": 1174.52,
+          "end": 1177.3,
+          "speaker": "SPEAKER_02",
+          "speakers": [
+            "SPEAKER_02"
+          ],
+          "text": "Tipo, passar… Você tá falando de uma atriz de BBB, já tá acontecendo outra.",
+          "speech_overlap": false,
+          "word_ids": [
+            "WORD_0003818",
+            "WORD_0003819",
+            "WORD_0003820",
+            "WORD_0003821",
+            "WORD_0003822",
+            "WORD_0003823",
+            "WORD_0003824",
+            "WORD_0003825",
+            "WORD_0003826",
+            "WORD_0003827",
+            "WORD_0003828",
+            "WORD_0003829",
+            "WORD_0003830",
+            "WORD_0003831"
+          ],
+          "text_kind": "original_transcript",
+          "language": null,
+          "languages": [],
+          "language_hint": "pt",
+          "language_hints": [
+            "pt"
+          ],
+          "language_detection_scope": "chunk_initial_hint",
+          "language_probability": null,
+          "language_is_segment_verified": false,
+          "hypothesis_ids": [
+            "ASR_40406be6e28ab6abba3b054e"
+          ],
+          "needs_review": true,
+          "review_reasons": [
+            "missing_or_low_model_probability"
+          ],
+          "uncertain_word_ids": [
+            "WORD_0003826"
+          ]
+        }
+      ],
+      "measured_gate_reasons": [
+        "answer_or_payoff_unresolved",
+        "below_editorial_quality_floor",
+        "clean_ending:false",
+        "ineligible_by_quality_gate",
+        "question_answer_unit_incomplete",
+        "question_without_complete_answer"
+      ],
+      "assessment_scope": "recorded_selection_gates_not_human_content_annotation",
+      "annotation_status": "PENDING_HUMAN",
+      "complete_conversation": null,
+      "independent_clarity": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "qa",
+      "question_id": "Q_0015",
+      "start": 151.62,
+      "end": 156.76,
+      "literal_question": "Assim, não tem nada disso, desse papinho de ah, por que você começou no YouTube? Não, a gente",
+      "literal_answer_candidate": "já vai começar mostrando os recibos.",
+      "segment_ids": [
+        "SEG_00057",
+        "SEG_00058",
+        "SEG_00059"
+      ],
+      "recorded_status": "linked_candidate",
+      "recorded_reason": "answer_continuation_unresolved",
+      "annotation_status": "PENDING_HUMAN",
+      "question_answer_ground_truth": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "qa",
+      "question_id": "Q_0002",
+      "start": 26.52,
+      "end": 33.04,
+      "literal_question": "Se você colocar meu nome aí, vai aparecer coisa boa, tá? E hoje a gente tem uma entrevistada que eu estou aqui suando o sovaco de estar",
+      "literal_answer_candidate": null,
+      "segment_ids": [
+        "SEG_00009",
+        "SEG_00010"
+      ],
+      "recorded_status": "unresolved",
+      "recorded_reason": "answer_relevance_unresolved",
+      "annotation_status": "PENDING_HUMAN",
+      "question_answer_ground_truth": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "qa",
+      "question_id": "Q_0000",
+      "start": 7.16,
+      "end": 8.96,
+      "literal_question": "aí, minha gente, tudo bem com vocês?",
+      "literal_answer_candidate": null,
+      "segment_ids": [
+        "SEG_00001"
+      ],
+      "recorded_status": "unresolved",
+      "recorded_reason": "intervention_relevance_unresolved",
+      "annotation_status": "PENDING_HUMAN",
+      "question_answer_ground_truth": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "qa",
+      "question_id": "Q_0013",
+      "start": 131.28,
+      "end": 137.64,
+      "literal_question": "Mas a gente também faz aqui uma série, uma parte investigativa, né, Mari? É, a gente gosta de mostrar aquela parte do",
+      "literal_answer_candidate": null,
+      "segment_ids": [
+        "SEG_00047",
+        "SEG_00048"
+      ],
+      "recorded_status": "unresolved",
+      "recorded_reason": "missing_speaker_evidence",
+      "annotation_status": "PENDING_HUMAN",
+      "question_answer_ground_truth": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "qa",
+      "question_id": "Q_0003",
+      "start": 34.24,
+      "end": 35.86,
+      "literal_question": "Amiga, quem é que está aí com a gente? Olha,",
+      "literal_answer_candidate": null,
+      "segment_ids": [
+        "SEG_00012",
+        "SEG_00013"
+      ],
+      "recorded_status": "unresolved",
+      "recorded_reason": "new_question_before_answer",
+      "annotation_status": "PENDING_HUMAN",
+      "question_answer_ground_truth": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "qa",
+      "question_id": "Q_0008",
+      "start": 88.72,
+      "end": 91.28,
+      "literal_question": "A gente tá muito feliz de estar aqui O YouTube é minha casinha, sabe?",
+      "literal_answer_candidate": null,
+      "segment_ids": [
+        "SEG_00029"
+      ],
+      "recorded_status": "not_expected",
+      "recorded_reason": "answer_not_expected",
+      "annotation_status": "PENDING_HUMAN",
+      "question_answer_ground_truth": null,
+      "audio_verified": false,
+      "publication_ready": false
+    },
+    {
+      "kind": "story",
+      "story_arc_id": "STORY_0000",
+      "start": 38.68,
+      "end": 81.24,
+      "setup": {
+        "text": "Ela começou aqui quando o YouTube também era um pouco mato, assim, ela capinou, tá?",
+        "segment_ids": [
+          "SEG_00015"
+        ],
+        "start": 38.68,
+        "end": 43.34
+      },
+      "development": {
+        "text": "Está começando mais um podcast do YouTube, Lu Nazaré na área. E eu não estou sozinha aqui, não. Estou com a minha casca de bala, sim. Mari Torquato, tudo bem? Oi, gente! Sejam bem-vindos a mais um vídeo aqui do podcast. Eu sou a Mariana Torquato, sou gerente de parcerias do YouTube e também sou criadora de conteúdo. Se você colocar meu nome aí, vai aparecer coisa boa, tá? E hoje a gente tem uma entrevistada que eu estou aqui suando o sovaco de estar perto. Amiga, quem é que está aí com a gente? Olha, ela não é fraca não, tá? Ela começou aqui quando o YouTube também era um pouco mato, assim, ela capinou, tá? Desde lá de 2014, quando ela abriu o canal, assim, timidamente. Lá em 2015, ela começou a publicar seus vídeos. Hoje, ela reúne uma legião aí de mais de 2 milhões de inscritos, tá? Só aqui no nosso site, tá? Ela também que já entrevistou diversos artistas internacionais e nacionais também, tudo bom. Ela que é uma referência aqui no nosso site pra todas as pessoas, inclusive pra gente. Tô muito feliz em introduzir pra vocês aqui no nosso quarto episódio do podcast do YouTube. Fernanda Rocha, mas também conhecida como a dona do FBI do mundo pop.",
+        "segment_ids": [
+          "SEG_00002",
+          "SEG_00003",
+          "SEG_00004",
+          "SEG_00005",
+          "SEG_00006",
+          "SEG_00007",
+          "SEG_00008",
+          "SEG_00009",
+          "SEG_00010",
+          "SEG_00011",
+          "SEG_00012",
+          "SEG_00013",
+          "SEG_00014",
+          "SEG_00015",
+          "SEG_00016",
+          "SEG_00017",
+          "SEG_00018",
+          "SEG_00019",
+          "SEG_00020",
+          "SEG_00021",
+          "SEG_00022",
+          "SEG_00023"
+        ],
+        "start": 9.7,
+        "end": 80.56
+      },
+      "payoff": null,
+      "recorded_narrative_supported": false,
+      "annotation_status": "PENDING_HUMAN",
+      "narrative_ground_truth": null,
+      "publication_ready": false
+    },
+    {
+      "kind": "story",
+      "story_arc_id": "STORY_0001",
+      "start": 96.82,
+      "end": 113.14,
+      "setup": {
+        "text": "Então, fico muito feliz quando eu sou chamada pra coisas envolvendo o YouTube, no YouTube.",
+        "segment_ids": [
+          "SEG_00033"
+        ],
+        "start": 96.82,
+        "end": 101.3
+      },
+      "development": {
+        "text": "Ai, amei! Muito feliz de estar aqui com vocês, gente. A gente tá muito feliz de estar aqui O YouTube é minha casinha, sabe? Entendeu? Eu sinto esse... Tenho esse apego com o YouTube, que foi a minha primeira rede oficial, assim. Então, fico muito feliz quando eu sou chamada pra coisas envolvendo o YouTube, no YouTube. E você tá há 10 anos sem desistir do nosso site, né? Olha, eu tô fiel, entendeu? A gente vê um monte de gente desistindo, largando pra outras plataformas. E eu tô aqui, ó. Eu sou contatinho fiel.",
+        "segment_ids": [
+          "SEG_00027",
+          "SEG_00028",
+          "SEG_00029",
+          "SEG_00030",
+          "SEG_00031",
+          "SEG_00032",
+          "SEG_00033",
+          "SEG_00034",
+          "SEG_00035",
+          "SEG_00036",
+          "SEG_00037",
+          "SEG_00038"
+        ],
+        "start": 85.32,
+        "end": 112.36
+      },
+      "payoff": null,
+      "recorded_narrative_supported": false,
+      "annotation_status": "PENDING_HUMAN",
+      "narrative_ground_truth": null,
+      "publication_ready": false
+    },
+    {
+      "kind": "story",
+      "story_arc_id": "STORY_0002",
+      "start": 151.62,
+      "end": 164.56,
+      "setup": {
+        "text": "Assim, não tem nada disso, desse papinho de ah, por que você começou no YouTube?",
+        "segment_ids": [
+          "SEG_00057"
+        ],
+        "start": 151.62,
+        "end": 154.16
+      },
+      "development": {
+        "text": "A história é real, de quem tá aqui na plataforma fazendo aí a roda girar. E também eu tenho certeza que você tem várias histórias bacanas pra contar pra gente. Mas aqui a gente começa... Eu sei que você é dona aí da tal da empresa do FBI, do POP, tá? Mas a gente também faz aqui uma série, uma parte investigativa, né, Mari? É, a gente gosta de mostrar aquela parte do youtuber que você não vê por aí. Que ele não mostra pra qualquer um. Que é o que ele assiste, que são os analytics. Agora a gente vai fazer o FBI da Foquinha, entendeu? Medo! Então pra começar, a gente já vai começar assim. Assim, não tem nada disso, desse papinho de ah, por que você começou no YouTube? Não, a gente já vai começar mostrando os recibos. Tá, tô nervosa. É o nosso quadro em alta no YouTube. Tá preparada? Tô, né? Fazer o quê? Fazer quê, né? Fofoca de fofinha.",
+        "segment_ids": [
+          "SEG_00043",
+          "SEG_00044",
+          "SEG_00045",
+          "SEG_00046",
+          "SEG_00047",
+          "SEG_00048",
+          "SEG_00049",
+          "SEG_00050",
+          "SEG_00051",
+          "SEG_00052",
+          "SEG_00053",
+          "SEG_00054",
+          "SEG_00055",
+          "SEG_00056",
+          "SEG_00057",
+          "SEG_00058",
+          "SEG_00059",
+          "SEG_00060",
+          "SEG_00061",
+          "SEG_00062",
+          "SEG_00063",
+          "SEG_00064",
+          "SEG_00065",
+          "SEG_00066"
+        ],
+        "start": 117.42,
+        "end": 163.86
+      },
+      "payoff": null,
+      "recorded_narrative_supported": false,
+      "annotation_status": "PENDING_HUMAN",
+      "narrative_ground_truth": null,
+      "publication_ready": false
+    },
+    {
+      "kind": "story",
+      "story_arc_id": "STORY_0003",
+      "start": 176.76,
+      "end": 184.76,
+      "setup": {
+        "text": "Vamos trazer então aqui o que você assiste na sua home, o tem aqui, o o YouTube recomenda quando a gente abre o YouTube na sua conta.",
+        "segment_ids": [
+          "SEG_00081"
+        ],
+        "start": 176.76,
+        "end": 184.0
+      },
+      "development": {
+        "text": "Aí eu tô aqui. Vamos ver. Você não imaginava que a gente tinha essa... Como é fala? Essa surpresinha. Essa fofoquinha. Tá. Vamos trazer então aqui o que você assiste na sua home, o tem aqui, o o YouTube recomenda quando a gente abre o YouTube na sua conta.",
+        "segment_ids": [
+          "SEG_00069",
+          "SEG_00070",
+          "SEG_00071",
+          "SEG_00072",
+          "SEG_00073",
+          "SEG_00074",
+          "SEG_00075",
+          "SEG_00076",
+          "SEG_00077",
+          "SEG_00078",
+          "SEG_00079",
+          "SEG_00080",
+          "SEG_00081"
+        ],
+        "start": 167.74,
+        "end": 184.0
+      },
+      "payoff": null,
+      "recorded_narrative_supported": false,
+      "annotation_status": "PENDING_HUMAN",
+      "narrative_ground_truth": null,
+      "publication_ready": false
+    }
+  ],
+  "source_zip_sha256": "0c6cd22d4892fddbb23ab71e6c12997c2a47709ebd919c12b8ebeaaeaec2f4ff",
+  "scope": "20 source text windows for reproducible human review; no visual identity or audio approval inferred."
+}

@@ -1,0 +1,19 @@
+{
+  "files": {
+    "src/ldporto/checkpoint_storage.py": "d1b980f3608403e16e81957cc59ac565b93c3c3723f99ec1a2ea24ceaffb5c23",
+    "src/ldporto/core.py": "0afb542be1f05f50a3096a855cc84b47315d4326dfc6c6671e2e6c74e07e6b33",
+    "src/ldporto/execution_receipts.py": "828a4d07a786d23d655f5a6c1cb0c570df97362c361804e9e64ce0e5714c7a0d",
+    "src/ldporto/reports.py": "f5499d41334d1382ad947676811d79fc5cd9b2db5dbd932c8cf359c5e51c35e8",
+    "src/ldporto/compact_artifacts.py": "c64b5e8c967a4ee4e0e55248385f9d15385d00e78b2eb22c02c1350e263fbd40",
+    "src/ldporto/semantic.py": "116bab82ae3d8f9cbfc8a3bd9028800cd5cba3b2058c2222ca8ff0d145e4e532",
+    "src/ldporto/pipeline.py": "1092b9efece958a5675be2bb4d508da014d283be2b93420be9bf30ad70065c4c",
+    "scripts/dev/audit_camera_s6.py": "cb92b03c707bbd6d1d561c707cdcbf7634f45f6219e4cbb011a151ccd53e168e",
+    "scripts/dev/audit_speaker_s5.py": "67737dbb9133c339bfbfdfb0057f713dfa80bdb679fa10560f4bfc8dafb6967e",
+    "src/tests/test_sol_v4_checkpoint_storage.py": "3985958d0215648ef49c804f17f50aa11c9106e15bbf6d01b4d837ec5fff7394"
+  },
+  "api": "encode_checkpoint(record, stage=\"10_active_speaker\") / decode_checkpoint(value)",
+  "test_count_new": 35,
+  "source_change_scope": "Storage C only; pipeline includes storage helper fingerprint for stage10",
+  "inference_calls": 0,
+  "historical_checkpoint_edits": 0
+}

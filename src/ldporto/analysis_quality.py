@@ -166,8 +166,11 @@ def quality_gate(analysis, cfg=None):
     preview = analysis.get('preview_validation') or {}
     from .integrity_contracts import preview_technical_readiness
     technically_verified = preview_technical_readiness(preview)
+    from .causal_diagnostics import quality_causal_diagnostics
+    causal = quality_causal_diagnostics(analysis, issues)
     return {'schema_version':'1.0','status':status,'issues':issues,'required_missing_capabilities':required_missing,
             'preview_validated':technically_verified, 'preview_technical_verified':technically_verified,
             'preview_approved':False, 'publication_ready':False,
             'preview_validation_scope':'technical_canary_not_editorial_approval',
-            'not_accuracy_certification':True}
+            'not_accuracy_certification':True,
+            'causal_diagnostics': causal, 'root_causes': causal['root_causes']}

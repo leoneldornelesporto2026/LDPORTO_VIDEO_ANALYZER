@@ -1,0 +1,28 @@
+{
+  "status": "READY_FOR_NEXT_PROMPT",
+  "full_pytest_passed": true,
+  "critical_errors": [],
+  "orchestrator_status": {
+    "status": "RUNNING",
+    "active": 1,
+    "completed": 0,
+    "stages": []
+  },
+  "stage65_approved": null,
+  "stage64_deferred": null,
+  "next_stage": 2,
+  "next_stage_started": false,
+  "workspace_integrity": {
+    "manifest_files_checked": 480,
+    "initial_drift": [],
+    "changed_manifest_files": [],
+    "added_manifest_files": [],
+    "changed_evidence": [],
+    "state_unchanged": true,
+    "backup_verified": true,
+    "preexisting_git_changes_preserved": true,
+    "historical_stage_approval_unknown": true
+  },
+  "backup_verified": true,
+  "recommended_next_action": "Revisar este checkpoint e deixar o orquestrador concluir a etapa 01 pelo fluxo vigente; não executar retry/auto concorrente. Na próxima etapa autorizada, corrigir o helper de baseline com fixtures."
+}

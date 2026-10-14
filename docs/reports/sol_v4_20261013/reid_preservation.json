@@ -1,0 +1,653 @@
+{
+  "scope": "Re-ID only on saved original visual observations; no media decode, model, GPU, ASR, Qwen or full pipeline.",
+  "config_sha256": "e708c4ac41fe4c2a106b6d302e615576c579c928e9bc62db73137f3da3628902",
+  "current_builder_seconds": 2.553834500024095,
+  "legacy_fields": {
+    "review_pairs": {
+      "before_sha256": "91527cbca295919e033a123aa88b558dfbb71cc5e7be00e40fd71915a0760b5f",
+      "after_sha256": "91527cbca295919e033a123aa88b558dfbb71cc5e7be00e40fd71915a0760b5f",
+      "identical": true
+    },
+    "identities": {
+      "before_sha256": "2b956c5b7c4765aa5beb8fe3be8e6a6dfe3bbe06eb1bc67b4cfa84938b625670",
+      "after_sha256": "2b956c5b7c4765aa5beb8fe3be8e6a6dfe3bbe06eb1bc67b4cfa84938b625670",
+      "identical": true
+    },
+    "tracklets": {
+      "before_sha256": "ffddbd4500a46b08a6e4491a983a08926723a619f1741001aaff794c4889f5a7",
+      "after_sha256": "ffddbd4500a46b08a6e4491a983a08926723a619f1741001aaff794c4889f5a7",
+      "identical": true
+    },
+    "tracklet_to_person": {
+      "before_sha256": "7ec330fbae6a05120b3231aa221db7a499c8c08052c5b0a45d0c2483a6c64db7",
+      "after_sha256": "7ec330fbae6a05120b3231aa221db7a499c8c08052c5b0a45d0c2483a6c64db7",
+      "identical": true
+    },
+    "merge_decisions": {
+      "before_sha256": "4047be809a18dece526273f08332285da7d7944ab0e5604a2ef3b34696c57745",
+      "after_sha256": "4047be809a18dece526273f08332285da7d7944ab0e5604a2ef3b34696c57745",
+      "identical": true
+    },
+    "metrics": {
+      "before_sha256": "45cb22246856d83a2e1ef6cb785c762bf4a4b8eba1c5411262a2fe661fbb181b",
+      "after_sha256": "45cb22246856d83a2e1ef6cb785c762bf4a4b8eba1c5411262a2fe661fbb181b",
+      "identical": true
+    },
+    "embedding_gap_audit": {
+      "before_sha256": "872cb896314759c9cf8621797076ec874edba833984769dac3e21c1d7fc2cb38",
+      "after_sha256": "872cb896314759c9cf8621797076ec874edba833984769dac3e21c1d7fc2cb38",
+      "identical": true
+    }
+  },
+  "outcome_diagnostics": {
+    "schema_version": "1.0",
+    "track_outcomes": {
+      "seed": 1291,
+      "tracks_without_candidate_comparison": 344,
+      "rejected_tracks_with_best_candidate": 1459,
+      "unmapped": 512,
+      "micro_without_fresh_embedding": 228,
+      "merged": 146,
+      "online_face_reentry_tracks": 123,
+      "online_reentry_offline_seed_tracks": 53,
+      "stable_without_fresh_embedding": 115
+    },
+    "best_candidate_rejection_gates": {
+      "score_below_threshold": 310,
+      "cluster_inconsistency": 118,
+      "temporal_conflict": 12,
+      "margin_below_required": 1410
+    },
+    "gate_counts_overlap": true,
+    "legacy_abstention_scope": "identity_seeds_plus_unmapped_tracks; not_identity_accuracy",
+    "review_pairs": [
+      {
+        "pair_id": "ONLINE_OFFLINE_00001",
+        "track_id_a": "TRACK_00033",
+        "track_id_b": "TRACK_00025",
+        "time_a": 161.3612,
+        "time_b": 155.3552,
+        "online_source_person_ids": [
+          "PERSON_006"
+        ],
+        "offline_person_id": "PERSON_REID_00009",
+        "candidate_person_id": "PERSON_006",
+        "online_face_similarity": 0.6347743272781372,
+        "offline_face_similarity": 0.8238597499164281,
+        "offline_margin": 0.03960987405113625,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00002",
+        "track_id_a": "TRACK_00039",
+        "track_id_b": "TRACK_00028",
+        "time_a": 169.3692,
+        "time_b": 157.39056666666667,
+        "online_source_person_ids": [
+          "PERSON_006"
+        ],
+        "offline_person_id": "PERSON_REID_00012",
+        "candidate_person_id": "PERSON_014",
+        "online_face_similarity": 0.5900903940200806,
+        "offline_face_similarity": 0.8736484917251218,
+        "offline_margin": 0.11066305119193587,
+        "required_margin": 0.14,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00003",
+        "track_id_a": "TRACK_00044",
+        "track_id_b": "TRACK_00034",
+        "time_a": 175.70886666666667,
+        "time_b": 161.3612,
+        "online_source_person_ids": [
+          "PERSON_016"
+        ],
+        "offline_person_id": "PERSON_REID_00014",
+        "candidate_person_id": "PERSON_016",
+        "online_face_similarity": 0.7924391031265259,
+        "offline_face_similarity": 0.6707271184893996,
+        "offline_margin": 0.03885713224700893,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00004",
+        "track_id_a": "TRACK_00061",
+        "track_id_b": "TRACK_00042",
+        "time_a": 188.0211666666667,
+        "time_b": 175.70886666666667,
+        "online_source_person_ids": [
+          "PERSON_014"
+        ],
+        "offline_person_id": "PERSON_REID_00029",
+        "candidate_person_id": "PERSON_019",
+        "online_face_similarity": 0.7166697382926941,
+        "offline_face_similarity": 0.7838685560345156,
+        "offline_margin": 0.03953856251913801,
+        "required_margin": 0.14,
+        "rejection_gates": [
+          "score_below_threshold",
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00005",
+        "track_id_a": "TRACK_00073",
+        "track_id_b": "TRACK_00067",
+        "time_a": 236.60303333333334,
+        "time_b": 211.77823333333333,
+        "online_source_person_ids": [
+          "PERSON_040"
+        ],
+        "offline_person_id": "PERSON_REID_00034",
+        "candidate_person_id": "PERSON_040",
+        "online_face_similarity": 0.835057258605957,
+        "offline_face_similarity": 0.9014642944929685,
+        "offline_margin": 0.051175896458952375,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00006",
+        "track_id_a": "TRACK_00083",
+        "track_id_b": "TRACK_00040",
+        "time_a": 253.15290000000002,
+        "time_b": 172.0719,
+        "online_source_person_ids": [
+          "PERSON_048"
+        ],
+        "offline_person_id": "PERSON_REID_00039",
+        "candidate_person_id": "PERSON_002",
+        "online_face_similarity": 0.8552917242050171,
+        "offline_face_similarity": 0.8771689841507473,
+        "offline_margin": 0.004804007619979345,
+        "required_margin": 0.14,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00007",
+        "track_id_a": "TRACK_00174",
+        "track_id_b": "TRACK_00085",
+        "time_a": 359.2255333333334,
+        "time_b": 258.42483333333337,
+        "online_source_person_ids": [
+          "PERSON_051"
+        ],
+        "offline_person_id": "PERSON_051",
+        "candidate_person_id": "PERSON_001",
+        "online_face_similarity": 0.7290359735488892,
+        "offline_face_similarity": 0.8934680139525374,
+        "offline_margin": 0.07743666424665718,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00008",
+        "track_id_a": "TRACK_00180",
+        "track_id_b": "TRACK_00085",
+        "time_a": 368.50146666666666,
+        "time_b": 258.42483333333337,
+        "online_source_person_ids": [
+          "PERSON_001"
+        ],
+        "offline_person_id": "PERSON_REID_00100",
+        "candidate_person_id": "PERSON_001",
+        "online_face_similarity": 0.7954553365707397,
+        "offline_face_similarity": 0.8238472594535639,
+        "offline_margin": 0.08729722684300567,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "cluster_inconsistency"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00009",
+        "track_id_a": "TRACK_00183",
+        "track_id_b": "TRACK_00180",
+        "time_a": 390.0897,
+        "time_b": 368.50146666666666,
+        "online_source_person_ids": [
+          "PERSON_001"
+        ],
+        "offline_person_id": "PERSON_REID_00103",
+        "candidate_person_id": "PERSON_REID_00100",
+        "online_face_similarity": 0.815040111541748,
+        "offline_face_similarity": 0.9122891676948133,
+        "offline_margin": 0.047188642118989654,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00010",
+        "track_id_a": "TRACK_00191",
+        "track_id_b": "TRACK_00183",
+        "time_a": 404.4707333333333,
+        "time_b": 390.0897,
+        "online_source_person_ids": [
+          "PERSON_001"
+        ],
+        "offline_person_id": "PERSON_REID_00110",
+        "candidate_person_id": "PERSON_REID_00103",
+        "online_face_similarity": 0.812861442565918,
+        "offline_face_similarity": 0.8810303907362378,
+        "offline_margin": 0.01657794750957442,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00011",
+        "track_id_a": "TRACK_00197",
+        "track_id_b": "TRACK_00085",
+        "time_a": 414.5474666666667,
+        "time_b": 258.42483333333337,
+        "online_source_person_ids": [
+          "PERSON_001"
+        ],
+        "offline_person_id": "PERSON_REID_00115",
+        "candidate_person_id": "PERSON_001",
+        "online_face_similarity": 0.7866988182067871,
+        "offline_face_similarity": 0.8021302810728177,
+        "offline_margin": 0.03024721082427062,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required",
+          "cluster_inconsistency"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00012",
+        "track_id_a": "TRACK_00204",
+        "track_id_b": "TRACK_00197",
+        "time_a": 421.62120000000004,
+        "time_b": 414.5474666666667,
+        "online_source_person_ids": [
+          "PERSON_001"
+        ],
+        "offline_person_id": "PERSON_REID_00122",
+        "candidate_person_id": "PERSON_REID_00115",
+        "online_face_similarity": 0.7204570174217224,
+        "offline_face_similarity": 0.8989133320253092,
+        "offline_margin": 0.0674204599396061,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00013",
+        "track_id_a": "TRACK_00223",
+        "track_id_b": "TRACK_00196",
+        "time_a": 447.447,
+        "time_b": 409.4423666666667,
+        "online_source_person_ids": [
+          "PERSON_143"
+        ],
+        "offline_person_id": "PERSON_REID_00139",
+        "candidate_person_id": "PERSON_139",
+        "online_face_similarity": 0.8731894493103027,
+        "offline_face_similarity": 0.9535946885787063,
+        "offline_margin": 0.014315603151781597,
+        "required_margin": 0.14,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00014",
+        "track_id_a": "TRACK_00267",
+        "track_id_b": "TRACK_00256",
+        "time_a": 556.0221333333334,
+        "time_b": 542.6087333333334,
+        "online_source_person_ids": [
+          "PERSON_153"
+        ],
+        "offline_person_id": "PERSON_153",
+        "candidate_person_id": "PERSON_195",
+        "online_face_similarity": 0.8809503316879272,
+        "offline_face_similarity": 0.8590198568142715,
+        "offline_margin": 0.006419593667016055,
+        "required_margin": 0.14,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00015",
+        "track_id_a": "TRACK_00269",
+        "track_id_b": "TRACK_00203",
+        "time_a": 558.2243333333333,
+        "time_b": 419.31890000000004,
+        "online_source_person_ids": [
+          "PERSON_002"
+        ],
+        "offline_person_id": "PERSON_REID_00177",
+        "candidate_person_id": "PERSON_145",
+        "online_face_similarity": 0.8800588846206665,
+        "offline_face_similarity": 0.9328086752705724,
+        "offline_margin": 0.02512936379598929,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00016",
+        "track_id_a": "TRACK_00321",
+        "track_id_b": "TRACK_00040",
+        "time_a": 693.6262666666667,
+        "time_b": 172.0719,
+        "online_source_person_ids": [
+          "PERSON_018"
+        ],
+        "offline_person_id": "PERSON_018",
+        "candidate_person_id": "PERSON_002",
+        "online_face_similarity": 0.8365147113800049,
+        "offline_face_similarity": 0.9529562601572075,
+        "offline_margin": 0.02929663101206481,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00017",
+        "track_id_a": "TRACK_00329",
+        "track_id_b": "TRACK_00192",
+        "time_a": 746.1120333333333,
+        "time_b": 406.0389666666667,
+        "online_source_person_ids": [
+          "PERSON_061"
+        ],
+        "offline_person_id": "PERSON_061",
+        "candidate_person_id": "PERSON_136",
+        "online_face_similarity": 0.8035207390785217,
+        "offline_face_similarity": 0.8982539401367622,
+        "offline_margin": 0.006073517654790694,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00018",
+        "track_id_a": "TRACK_00343",
+        "track_id_b": "TRACK_00040",
+        "time_a": 792.2915,
+        "time_b": 172.0719,
+        "online_source_person_ids": [
+          "PERSON_002"
+        ],
+        "offline_person_id": "PERSON_REID_00242",
+        "candidate_person_id": "PERSON_002",
+        "online_face_similarity": 0.8445504903793335,
+        "offline_face_similarity": 0.8993504499019742,
+        "offline_margin": 0.029670520421317903,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00019",
+        "track_id_a": "TRACK_00390",
+        "track_id_b": "TRACK_00233",
+        "time_a": 980.8799,
+        "time_b": 481.9481333333334,
+        "online_source_person_ids": [
+          "PERSON_165"
+        ],
+        "offline_person_id": "PERSON_REID_00277",
+        "candidate_person_id": "PERSON_173",
+        "online_face_similarity": 0.8413271903991699,
+        "offline_face_similarity": 0.9428511835110979,
+        "offline_margin": 0.007734583258714234,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00020",
+        "track_id_a": "TRACK_00589",
+        "track_id_b": "TRACK_00264",
+        "time_a": 1554.7532,
+        "time_b": 555.6551000000001,
+        "online_source_person_ids": [
+          "PERSON_203"
+        ],
+        "offline_person_id": "PERSON_REID_00426",
+        "candidate_person_id": "PERSON_203",
+        "online_face_similarity": 0.8750917911529541,
+        "offline_face_similarity": 0.8856605325493073,
+        "offline_margin": 0.015319670631089743,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00021",
+        "track_id_a": "TRACK_00613",
+        "track_id_b": "TRACK_00319",
+        "time_a": 1600.7324666666668,
+        "time_b": 683.3159666666667,
+        "online_source_person_ids": [
+          "PERSON_196"
+        ],
+        "offline_person_id": "PERSON_REID_00441",
+        "candidate_person_id": "PERSON_256",
+        "online_face_similarity": 0.8039519786834717,
+        "offline_face_similarity": 0.8505125963374462,
+        "offline_margin": 0.0034006683440086505,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00022",
+        "track_id_a": "TRACK_00721",
+        "track_id_b": "TRACK_00701",
+        "time_a": 1727.6592666666668,
+        "time_b": 1695.8274666666669,
+        "online_source_person_ids": [
+          "PERSON_592"
+        ],
+        "offline_person_id": "PERSON_REID_00480",
+        "candidate_person_id": "PERSON_616",
+        "online_face_similarity": 0.883062481880188,
+        "offline_face_similarity": 0.9747969127748167,
+        "offline_margin": 0.0014470647368415301,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00023",
+        "track_id_a": "TRACK_00733",
+        "track_id_b": "TRACK_00434",
+        "time_a": 1743.9755666666667,
+        "time_b": 1123.8560666666667,
+        "online_source_person_ids": [
+          "PERSON_217"
+        ],
+        "offline_person_id": "PERSON_REID_00487",
+        "candidate_person_id": "PERSON_364",
+        "online_face_similarity": 0.7572832107543945,
+        "offline_face_similarity": 0.9679361986045011,
+        "offline_margin": 0.0011584753080114973,
+        "required_margin": 0.08,
+        "rejection_gates": [
+          "margin_below_required"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      },
+      {
+        "pair_id": "ONLINE_OFFLINE_00024",
+        "track_id_a": "TRACK_00777",
+        "track_id_b": "TRACK_00119",
+        "time_a": 1770.8691000000001,
+        "time_b": 288.25463333333335,
+        "online_source_person_ids": [
+          "PERSON_669"
+        ],
+        "offline_person_id": "PERSON_669",
+        "candidate_person_id": "PERSON_067",
+        "online_face_similarity": 0.5600272417068481,
+        "offline_face_similarity": 0.39606233376609745,
+        "offline_margin": 0.11245667868050813,
+        "required_margin": 0.14,
+        "rejection_gates": [
+          "score_below_threshold",
+          "margin_below_required",
+          "cluster_inconsistency"
+        ],
+        "decision_kind": "online_offline_disagreement",
+        "annotation_same_person": null,
+        "annotation_status": "unreviewed",
+        "image_evidence": null,
+        "auto_merge": false
+      }
+    ],
+    "human_identity_accuracy_measured": false
+  },
+  "persistent_person_count_before": 1291,
+  "persistent_person_count_after": 1291,
+  "fragmentation_proxy_before": 0.22216521292970753,
+  "fragmentation_proxy_after": 0.22216521292970753,
+  "human_identity_accuracy": null,
+  "id_switches_ground_truth": null
+}

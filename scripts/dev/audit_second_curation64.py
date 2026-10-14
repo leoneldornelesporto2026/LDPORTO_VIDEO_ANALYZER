@@ -13,7 +13,7 @@ from ldporto.export_privacy import privacy_findings, sanitize_export
 
 def main():
     root = Path('analysis/video_31329be78ca4')
-    out = Path('automacao/execucao/etapa64')
+    out = Path('docs/reports/curation_recovery64')
     read = lambda name: json.loads((root/name).read_text(encoding='utf-8-sig'))
     package, analysis = read('second_curation_package.json'), read('analysis.json')
     sources = [(f"candidates/{c['candidate_id']}.json", c, 'second_curation_package.json')

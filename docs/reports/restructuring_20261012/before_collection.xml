@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.545" timestamp="2026-10-12T21:33:10.787682-03:00" hostname="leonelporto"><testcase classname="" name="src.tests.test_autopilot_orquestrador" time="0.000"><error message="collection failure">src\tests\test_autopilot_orquestrador.py:16: in &lt;module&gt;
+    SPEC.loader.exec_module(autopilot)
+&lt;frozen importlib._bootstrap_external&gt;:936: in exec_module
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:1073: in get_code
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:1130: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\orquestrador.py'</error></testcase></testsuite></testsuites>

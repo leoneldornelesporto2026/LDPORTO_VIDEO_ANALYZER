@@ -1,0 +1,207 @@
+{
+  "schema_version": "1.0",
+  "scope": "four_frame_local_inference",
+  "video_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\jNQXAC9IVRw\\jNQXAC9IVRw.mp4",
+  "video_sha256": "e25bcad888afc039e27d316da0471ea08199ed2cf0f424cffd46d05a7902c998",
+  "requested_device": "cpu",
+  "backend": {
+    "requested": "yolo",
+    "initialized": "yolo",
+    "fallback_reason": null,
+    "exception_type": null,
+    "device": "cpu",
+    "diagnostic_reason": null,
+    "model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "model_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "configured_model": "models/body/yolo11n.pt",
+    "resolved_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "expected_model_format": ".pt",
+    "expected_model_task": "detect",
+    "expected_person_class": {
+      "id": 0,
+      "name": "person"
+    },
+    "model_validation_reason": null,
+    "allow_model_downloads": false,
+    "allow_dependency_install": false,
+    "model_loaded": true,
+    "inference_executed": true,
+    "inference_successful": true,
+    "local_smoke_validated": true,
+    "device_requested": "cpu",
+    "device_actually_used": "cpu",
+    "benchmark_frame_seconds": null,
+    "readiness": "INFERENCE_EXECUTED",
+    "configured_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "preferred_model_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\models\\body\\yolo11n.pt",
+    "path_resolution": "configured_path",
+    "legacy_compatibility_used": false,
+    "device_preflight": {
+      "requested": "cpu",
+      "selected": "cpu",
+      "free_vram_mb": null,
+      "minimum_free_vram_mb": 2048,
+      "reason": null,
+      "stage": "07_people_tracking",
+      "measured_at_utc": null,
+      "reserve_vram_mb": 1024,
+      "policy": "cpu_fallback",
+      "gpu_parallelism": false,
+      "peak_vram_mb": null
+    },
+    "privacy": {
+      "telemetry_enabled": false,
+      "offline_model_policy": true,
+      "settings_scope": "temporary_process_private_directory",
+      "user_settings_modified": false
+    }
+  },
+  "load_seconds": 0.1255529000191018,
+  "frames": [
+    {
+      "requested_time": 2.0,
+      "decoded_time": 2.0,
+      "inference_seconds": 0.12130920006893575,
+      "device_actually_used": "cpu",
+      "frame_pixels_sha256": "30a661d8b3eab748656470d893f4f159497923cc701b95783a4b73d381af9d3c",
+      "laplacian_variance": 581.7497252927991,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.8917601704597473,
+          "xyxy_pixels": [
+            37.39544677734375,
+            35.89891052246094,
+            302.126220703125,
+            239.66123962402344
+          ],
+          "bbox_normalized": {
+            "x": 0.11686077117919921,
+            "y": 0.14957879384358724,
+            "width": 0.8272836685180665,
+            "height": 0.8490097045898437
+          }
+        }
+      ],
+      "evidence_path": "frame_00.png",
+      "evidence_sha256": "78d257bcf7534a3fa5f8e3b8a669896e27bf5cc48654c94e4d1940f012cf2150",
+      "process_rss_bytes": 557080576
+    },
+    {
+      "requested_time": 6.0,
+      "decoded_time": 6.0,
+      "inference_seconds": 0.03647289995569736,
+      "device_actually_used": "cpu",
+      "frame_pixels_sha256": "3e23457b659a5a312e21469e6514ef6c8756c23986db8d8b3b87a2bb06df16c5",
+      "laplacian_variance": 547.7991571450128,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.9052640199661255,
+          "xyxy_pixels": [
+            47.347076416015625,
+            43.798622131347656,
+            286.19744873046875,
+            239.78262329101562
+          ],
+          "bbox_normalized": {
+            "x": 0.14795961380004882,
+            "y": 0.18249425888061524,
+            "width": 0.746407413482666,
+            "height": 0.8166000048319498
+          }
+        }
+      ],
+      "evidence_path": "frame_01.png",
+      "evidence_sha256": "fd3be6e38509dcb9177d8a2cab954909ba44cb749291e66f50d7fef403e4827a",
+      "process_rss_bytes": 558804992
+    },
+    {
+      "requested_time": 12.0,
+      "decoded_time": 12.0,
+      "inference_seconds": 0.0323869000421837,
+      "device_actually_used": "cpu",
+      "frame_pixels_sha256": "6fdb293df23617678004ca899511e1f34d031c90bde5fce04066ac40347e9337",
+      "laplacian_variance": 601.961701812066,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.8611068725585938,
+          "xyxy_pixels": [
+            31.7962646484375,
+            36.2174072265625,
+            302.2974853515625,
+            239.87799072265625
+          ],
+          "bbox_normalized": {
+            "x": 0.09936332702636719,
+            "y": 0.1509058634440104,
+            "width": 0.8453163146972656,
+            "height": 0.8485857645670573
+          }
+        }
+      ],
+      "evidence_path": "frame_02.png",
+      "evidence_sha256": "9245ced082fa64a57c3f95999d30e6c4768a004d68093bda4e4b4c3bd219ffdc",
+      "process_rss_bytes": 559054848
+    },
+    {
+      "requested_time": 18.0,
+      "decoded_time": 18.0,
+      "inference_seconds": 0.030290500028058887,
+      "device_actually_used": "cpu",
+      "frame_pixels_sha256": "4c61f3d07ee3734a3af44be05b7228bcf44e86cd9b52b6a9aaa99c251d861d1f",
+      "laplacian_variance": 620.6206989990233,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence_raw_not_calibrated": 0.9226773381233215,
+          "xyxy_pixels": [
+            52.53717041015625,
+            41.747406005859375,
+            270.67291259765625,
+            239.70455932617188
+          ],
+          "bbox_normalized": {
+            "x": 0.16417865753173827,
+            "y": 0.17394752502441407,
+            "width": 0.6816741943359375,
+            "height": 0.8248214721679688
+          }
+        }
+      ],
+      "evidence_path": "frame_03.png",
+      "evidence_sha256": "9e40b3427b4cb08d458b9cbbcecbb9bcf4b106fc0e804413251d6aa5b8344231",
+      "process_rss_bytes": 559374336
+    }
+  ],
+  "human_detection_accuracy": null,
+  "speaker_identity_validated": false,
+  "two_seated_people_recall": "PENDING_GROUND_TRUTH",
+  "model_downloads": 0,
+  "dependency_installs": 0,
+  "publication_ready": false,
+  "source": {
+    "duration": 18.933333333333334,
+    "width": 320.0,
+    "height": 240.0,
+    "fps": 15.0
+  },
+  "inference_call_count": 4,
+  "measured_peak_torch_vram_bytes": null,
+  "wall_seconds": 0.7991018999600783,
+  "exit_code": 0,
+  "command": [
+    "scripts/dev/smoke_body_detector.py",
+    "--video",
+    "input/youtube/jNQXAC9IVRw/jNQXAC9IVRw.mp4",
+    "--output",
+    "docs/reports/sol_v3_20261013/yolo_cpu",
+    "--device",
+    "cpu"
+  ]
+}

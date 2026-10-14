@@ -1,0 +1,25 @@
+{
+  "inspection_scope": "Assistant visual inspection of one middle frame from each preview, not human identity/camera/audio homologation.",
+  "samples": [
+    {
+      "candidate_id": "MOMENT_00022_0001",
+      "frame_index": 341,
+      "observation": "Wide source framing includes two visible faces; full16:9 scene retained."
+    },
+    {
+      "candidate_id": "MOMENT_00002_0002",
+      "frame_index": 314,
+      "observation": "Closer source framing with a principal visible face; full16:9 scene retained."
+    },
+    {
+      "candidate_id": "MOMENT_00008_0002",
+      "frame_index": 430,
+      "observation": "Closer source framing with a principal visible face and source-edge partial body; full16:9 scene retained."
+    }
+  ],
+  "active_speaker_inferred": false,
+  "identity_ground_truth": null,
+  "audio_listened": false,
+  "preview_approved": false,
+  "publication_ready": false
+}

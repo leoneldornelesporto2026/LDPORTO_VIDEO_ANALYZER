@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "src/tests/test_sol_v4_checkpoint_storage.py",
+    "src/tests/test_stage65_execution_receipts.py",
+    "src/tests/test_v42_cache.py",
+    "src/tests/test_v43_semantic.py",
+    "src/tests/test_stage06_report_coherence.py",
+    "src/tests/test_stage40_semantic_benchmark.py",
+    "src/tests/test_stage05_selective_replay.py",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\storage_focused.xml"
+  ],
+  "return_code": 0,
+  "wall_seconds": 28.84056189993862,
+  "scope": "offline_storage_provenance_cache_consumers"
+}

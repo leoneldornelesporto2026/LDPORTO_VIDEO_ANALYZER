@@ -68,6 +68,12 @@ def speaker_diagnostics(diarization, vision, raw, summaries, affinity, intervals
                 code = 'NO_MOUTH_AUDIO_CANDIDATE'
             elif not any((item.get('correlation_lower_bound_proxy') or 0) > 0 for item in candidates_in_window):
                 code = 'NO_BOUNDED_POSITIVE_SYNC'
+            elif summary.get('person_id') is None:
+                code = ('CORRELATION_BELOW_CONSENSUS_MINIMUM' if
+                        all('CORRELATION_BELOW_MINIMUM' in candidate.get('rejection_reasons', [])
+                            for candidate in (raw_window.get('signal_diagnostic') or {}).get('candidates', []))
+                        and (raw_window.get('signal_diagnostic') or {}).get('candidates') else
+                        'NO_ACCEPTED_GLOBAL_MAPPING')
             elif not any(item.get('person_id') == summary.get('person_id') for item in candidates_in_window):
                 code = 'MAPPED_PERSON_NOT_IN_LOCAL_CANDIDATES'
             else:
@@ -75,7 +81,10 @@ def speaker_diagnostics(diarization, vision, raw, summaries, affinity, intervals
             window_counts[code] += 1
             if code != 'BOUNDED_SYNC_CANDIDATE' and len(review_windows) < 16:
                 review_windows.append({'start': raw_window.get('start'), 'end': raw_window.get('end'),
-                                       'window_id': raw_window.get('evidence_window_id'), 'reason': code})
+                                       'window_id': raw_window.get('evidence_window_id'), 'reason': code,
+                                       'signal_diagnostic': raw_window.get('signal_diagnostic'),
+                                       'visual_measurement': raw_window.get('visual_measurement'),
+                                       'audio_measurement': raw_window.get('audio_measurement')})
         lag_report = summary.get('audio_video_sync') or {}
         if lag_report.get('status') == 'measured' and not lag_report.get('consistent'):
             reasons.append('AUDIO_VIDEO_LAG_INCONSISTENT')
@@ -91,6 +100,8 @@ def speaker_diagnostics(diarization, vision, raw, summaries, affinity, intervals
                        'speech_duration': speech, 'visible_overlap': visible_seconds,
                        'visible_overlap_basis': 'bounded_sample_intervals' if delivered else 'sample_span_proxy',
                        'association_status': summary.get('association_status', 'UNRESOLVED'),
+                       **{key: summary.get(key) for key in ('raw_audio_windows', 'candidate_evidence_windows',
+                           'independent_affinity_windows', 'qualified_positive_windows', 'measurement_status')},
                        'speech_without_resolved_face_seconds': union_duration([r for r in delivered if r.get('speech_without_resolved_face')]),
                        'observed_wide_shot_seconds': union_duration([r for r in delivered if r.get('wide_shot_observed')]),
                        'no_contemporary_frame_seconds': union_duration([r for r in delivered if r.get('visual_state') == 'NO_CONTEMPORARY_FRAME']),

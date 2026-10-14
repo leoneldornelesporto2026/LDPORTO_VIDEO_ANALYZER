@@ -1,0 +1,48 @@
+{
+  "catalog": 80,
+  "queue_entries": 77,
+  "evaluated": 77,
+  "shortlist": 0,
+  "alternates": 3,
+  "rejection_counts": {
+    "clean_opening:false": 32,
+    "missing_antecedent_or_continuation": 25,
+    "narrative_integrity:incomplete": 23,
+    "answer_or_payoff_unresolved": 63,
+    "below_editorial_quality_floor": 73,
+    "topic_boundary_crossed": 25,
+    "story_payoff_not_grounded": 23,
+    "question_without_complete_answer": 33,
+    "ineligible_by_quality_gate": 77,
+    "question_answer_unit_incomplete": 63,
+    "clean_ending:false": 69,
+    "incomplete_sentence_or_handoff": 16,
+    "below_hard_min_without_complete_unit_proof": 6,
+    "missing_story_development": 7,
+    "missing_story_setup": 3,
+    "duration_budget_exceeded": 1,
+    "mid_sentence": 6,
+    "context_gap_requires_review": 1,
+    "question_before_clip": 2,
+    "punchline_not_grounded": 1,
+    "humor_context_exceeds_topic_shot_or_duration": 1,
+    "humor_integrity:incomplete": 1
+  },
+  "qa_count": 280,
+  "qa_statuses": {
+    "linked_candidate": 1,
+    "unresolved": 98,
+    "not_expected": 181
+  },
+  "qa_unresolved_reasons": {
+    "intervention_relevance_unresolved": 42,
+    "answer_relevance_unresolved": 18,
+    "new_question_before_answer": 23,
+    "missing_speaker_evidence": 15
+  },
+  "story_count": 100,
+  "narrative_supported": 0,
+  "quality_gate_status": "P1_DEGRADED",
+  "preview_approved": false,
+  "publication_ready": false
+}

@@ -1,4 +1,27 @@
-L.D.PORTO VIDEO ANALYZER R4.9 — S9/S10/S11
-Base incremental: R4.9 S8. Teste tecnico sintético executado.
-Nao publicar sem pacote READY, hashes, preview, checklists e revisao editorial de cada Story.
-Consulte docs/S9_S11_REAL_TEST.md e docs/S11_TECHNICAL_VALIDATION_20261008.md.
+L.D.PORTO VIDEO ANALYZER - PACOTE DO PROJETO
+
+Origem:
+C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER
+
+Objetivo:
+Enviar a base atual de codigo/config/testes/docs para inspecao e evolucao.
+
+Inclui:
+- src / tests / config(s) / docs / schemas / scripts / examples
+- assets/resources pequenos permitidos
+- arquivos de projeto na raiz
+- documentacao/metadados pequenos de models quando existirem
+
+Exclui propositalmente:
+- analysis/
+- .venv / venv
+- videos e audios
+- modelos/pesos/binarios
+- downloads/input
+- caches
+- previews/proxies
+- ZIPs antigos e arquivos derivados de pacotes
+- scripts exportadores antigos substituidos por exportar_ldporto.py
+- credenciais/tokens detectados
+
+Use este ZIP quando a tarefa for alterar, revisar ou evoluir o codigo.

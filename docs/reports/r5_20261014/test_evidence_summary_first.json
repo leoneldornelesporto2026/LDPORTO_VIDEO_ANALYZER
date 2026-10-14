@@ -1,0 +1,23 @@
+{
+  "command": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\r5_20261014\\after_full.xml"
+  ],
+  "returncode": 0,
+  "wall_seconds": 352.57727810007054,
+  "test_count": 2080,
+  "passed": 2077,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 3,
+  "scope": "actual_offline_regression_not_human_media_homologation",
+  "baseline_passed": 1972,
+  "baseline_skipped": 3,
+  "old_cases_preserved": true,
+  "added_cases": 105,
+  "junit_sha256": "208fe9fdc569c0a0ca999db369bdb6478d716aeb3a9c3c639e553cd84817d643",
+  "log_sha256": "c13bc0f1cef2e000f27c856e5032a002064593d0c859d5fe678a655e22bd1f15"
+}

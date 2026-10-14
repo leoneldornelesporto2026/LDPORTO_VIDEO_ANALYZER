@@ -1,0 +1,19 @@
+{
+  "command_argv": [
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\sol_v4_20261013\\storage_export_regression_fix.xml",
+    "src/tests/test_sol_v4_checkpoint_storage.py",
+    "src/tests/test_v42_export.py::test_exporter_self_test",
+    "src/tests/test_v4_final.py::test_work_package_has_single_derived_manifest_files"
+  ],
+  "returncode": 0,
+  "wall_seconds": 6.356833800091408,
+  "test_count": 39,
+  "passed": 39,
+  "failed": 0,
+  "skipped": 0
+}

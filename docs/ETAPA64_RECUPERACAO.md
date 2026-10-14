@@ -1,3 +1,6 @@
+> Registro/procedimento anterior: referências à antiga automação descrevem o
+> histórico. O desenvolvimento atual usa Git e pytest diretamente, conforme README.
+
 # Recuperação da segunda curadoria — etapa 64
 
 O replay recupera exclusivamente `21_second_curation_handoff`. Não executa
@@ -7,7 +10,7 @@ invalidado. Estados parciais são conservados; validar o pacote nunca autoriza
 publicação, seleção de cortes ou Stories.
 
 ```powershell
-.venv/Scripts/python.exe scripts/dev/recover_second_curation64.py --analysis analysis/video_31329be78ca4 --cache analysis/video_31329be78ca4/cache/302b92446d433fcf --report automacao/execucao/etapa64/plano_revisao.json
+.venv/Scripts/python.exe scripts/dev/recover_second_curation64.py --analysis analysis/video_31329be78ca4 --cache analysis/video_31329be78ca4/cache/302b92446d433fcf --report docs/reports/curation_recovery64/plano_revisao.json
 ```
 
 Exit 0 significa que o plano possui dependências verificadas; exit 2 significa
@@ -93,8 +96,8 @@ O fingerprint da etapa 21 inclui o novo módulo de privacidade. Não mudam os
 fingerprints das etapas pesadas nem a configuração local.
 
 Evidências e limitações da execução estão em
-`automacao/execucao/checkpoints/CHECKPOINT_ETAPA_64.md` e
-`automacao/execucao/etapa64/`. A etapa não está aprovada para publicação.
+`docs/archive/automation_20261012/execucao/checkpoints/CHECKPOINT_ETAPA_64.md` e
+`docs/reports/curation_recovery64/`. A etapa não está aprovada para publicação.
 
 ## Retomada: consumo verificado e confirmação atômica
 
@@ -154,7 +157,7 @@ histórico:
 ```powershell
 .\.venv\Scripts\python.exe -X utf8 scripts/dev/legacy_review64.py `
   --analysis analysis/video_31329be78ca4 `
-  --report automacao/execucao/etapa64/legacy_review_plan.json
+  --report docs/reports/curation_recovery64/legacy_review_plan.json
 ```
 
 Verificar `review_input_possible`, `inline_fields`, `run_manifest_stage_status`,
@@ -171,8 +174,8 @@ Se o plano tiver sido revisado e os arquivos de saída não existirem:
 .\.venv\Scripts\python.exe -X utf8 scripts/dev/legacy_review64.py `
   --analysis analysis/video_31329be78ca4 `
   --apply-review `
-  --reviewed-plan automacao/execucao/etapa64/legacy_review_plan.json `
-  --output automacao/execucao/etapa64/entrada_revisao_derivada
+  --reviewed-plan docs/reports/curation_recovery64/legacy_review_plan.json `
+  --output docs/reports/curation_recovery64/entrada_revisao_derivada
 ```
 
 A cópia vai para um diretório NOVO, fora da análise. Faz sanitização conservadora

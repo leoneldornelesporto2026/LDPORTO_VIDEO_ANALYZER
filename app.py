@@ -15,13 +15,16 @@ import webbrowser
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT/"src"))
+
+from ldporto.config import load_config
 from ldporto.progress import WeightedProgress, STAGE_WEIGHTS, STAGE_LABELS, EVENT_PREFIX, human_duration
 from ldporto.core import scrub
 
 
 def body_diagnostic_text(report):
+    """Passive checks never replace proof of a real four-frame inference."""
     reason = report.get('model_validation_reason')
-    return ('Solicitado: ' + str(report.get('configured_model')) +
+    return ('Diagnostico passivo (nao executa frames):\nSolicitado: ' + str(report.get('configured_model')) +
             '\nResolvido: ' + str(report.get('resolved_model_path')) +
             '\nUltralytics: ' + str(report.get('ultralytics_version') or 'nao instalado') +
             '\nArquivo: ' + str(reason or 'presente; carregamento ainda nao testado') +
@@ -111,7 +114,6 @@ class App:
         ttk.Combobox(line2, textvariable=self.device, values=["auto", "cpu", "cuda"],
                      width=10, state="readonly").pack(side="left", padx=8)
         try:
-            from ldporto.config import load_config
             sem_cfg = load_config(ROOT/"config"/"config.yaml")["semantic_analysis"]
         except Exception:
             sem_cfg = {"backend": "ollama", "model": "qwen3:8b", "profile": "max"}
@@ -289,6 +291,10 @@ class App:
         device = tk.StringVar(value=cfg['yolo_device'])
         diagnostic = ttk.Label(dialog, text=body_diagnostic_text(body_model_diagnostics(cfg, root=ROOT)), wraplength=650)
         diagnostic.pack(anchor='w', pady=8)
+        last_smoke = self.body_status.get().strip()
+        if 'INFERENCE_EXECUTED' in last_smoke:
+            ttk.Label(dialog, text='Ultimo teste explicito nesta sessao: ' + last_smoke +
+                      '\nNao altera diagnostico passivo nem homologa qualidade.', wraplength=650).pack(anchor='w')
         def refresh_diagnostic():
             options = {**cfg, 'body_backend': backend.get(), 'yolo_model': model.get(), 'yolo_device': device.get()}
             diagnostic.configure(text=body_diagnostic_text(body_model_diagnostics(options, root=ROOT)))
@@ -499,7 +505,31 @@ class App:
         self.execution_log.delete('1.0', 'end')
         self.execution_diagnostic.set('')
 
+    def save_failure_diagnostic(self, code):
+        """Persist a bounded, redacted GUI failure trace outside analysis checkpoints."""
+        if code == 0:
+            return None
+        from datetime import datetime, timezone
+        folder = ROOT / 'diagnostics' / 'gui_failures'
+        try:
+            folder.mkdir(parents=True, exist_ok=True)
+            timestamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+            path = folder / ('gui_error_' + timestamp + '_' + uuid.uuid4().hex[:8] + '.txt')
+            lines = list(getattr(self, '_recent_process_lines', []))[-400:]
+            reason = getattr(self, 'last_failure', None)
+            content = ('L.D.PORTO VIDEO ANALYZER - processo retornou ' + str(code) + '\n'
+                       + 'Motivo reportado: ' + scrub(reason or 'nao registrado') + '\n'
+                       + 'Esta evidencia NAO identifica por si so a causa raiz.\n\n'
+                       + 'ULTIMAS LINHAS DO PROCESSO (max. 400):\n' + ''.join(lines))
+            with path.open('x', encoding='utf-8') as handle:
+                handle.write(scrub(content))
+            return path
+        except OSError:
+            return None
+
     def handle_stage_event(self, event):
+        if event.get('event') == 'run_failed':
+            self.last_failure = scrub(str(event.get('cause') or event.get('summary') or 'falha nao detalhada'))
         self.progress_model.update(event)
         metadata = event.get('metadata')
         if metadata:
@@ -653,6 +683,13 @@ class App:
             detail += '\n' + body_execution_text(backend)
             self.body_status.set(body_execution_text(backend))
         self.final_summary.set(self.final_summary.get() + detail)
+        if code != 0:
+            reason = getattr(self, 'last_failure', None)
+            logfile = getattr(self, 'failure_log_path', None)
+            if reason:
+                self.final_summary.set(self.final_summary.get() + '\nErro reportado: ' + scrub(reason)[:700])
+            if logfile:
+                self.final_summary.set(self.final_summary.get() + '\nLog da falha: ' + str(logfile))
         labels = {'editorial_ready':'Editorial', 'transcript_ready':'Transcricao', 'visual_ready':'Visual',
                   'speaker_person_ready':'Speaker/person', 'camera_ready':'Camera', 'preview_ready':'Preview'}
         self.final_readiness.set('\n'.join(label + ': ' + ('pronta para revisao' if package.get('readiness', {}).get(key) is True else
@@ -820,11 +857,19 @@ class App:
         env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUNBUFFERED="1")
         if self.hf_token.get().strip():
             env["HF_TOKEN"] = self.hf_token.get().strip()
-        self.proc = subprocess.Popen([sys.executable, "-u", str(ROOT/"analyze.py")]+args,
-                    cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    text=True, encoding="utf-8", errors="replace", env=env,
-                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
-                    start_new_session=os.name != "nt")
+        self._recent_process_lines = []
+        self.last_failure = None
+        self.failure_log_path = None
+        try:
+            self.proc = subprocess.Popen([sys.executable, "-u", str(ROOT/"analyze.py")]+args,
+                        cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                        text=True, encoding="utf-8", errors="replace", env=env,
+                        creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
+                        start_new_session=os.name != "nt")
+        except OSError as exc:
+            self.status.set('Nao foi possivel iniciar analyze.py: ' + scrub(exc))
+            messagebox.showerror('Falha ao iniciar', self.status.get())
+            return
         self.start_button.configure(state="disabled")
         if '--doctor' not in args:
             self.show_execution()
@@ -832,15 +877,22 @@ class App:
         self.status.set("Processando… acompanhe as etapas abaixo.")
         proc = self.proc
         def read():
-            for line in proc.stdout:
-                if line.startswith(EVENT_PREFIX):
-                    try:
-                        self.messages.put(('event', json.loads(line[len(EVENT_PREFIX):])))
-                        continue
-                    except ValueError:
-                        pass
-                self.messages.put(("line", scrub(line)))
-            self.messages.put(("done", proc.wait()))
+            try:
+                # PIPE is requested above, but keep the optional stream explicit.
+                stream = proc.stdout
+                if stream is not None:
+                    for line in stream:
+                        if line.startswith(EVENT_PREFIX):
+                            try:
+                                self.messages.put(('event', json.loads(line[len(EVENT_PREFIX):])))
+                                continue
+                            except ValueError:
+                                pass
+                        self.messages.put(("line", scrub(line)))
+            except (OSError, UnicodeError) as exc:
+                self.messages.put(('line', 'Falha na leitura do processo: ' + scrub(exc) + '\n'))
+            finally:
+                self.messages.put(("done", proc.wait()))
         threading.Thread(target=read, daemon=True).start()
 
     def ocr_options(self):
@@ -1019,9 +1071,14 @@ class App:
             self.launch(args)
 
     def update_ocr_execution(self):
+        folder = self.output_folder
+        if folder is None:
+            return
         try:
-            data = json.loads((self.output_folder/'ocr_execution.json').read_text(encoding='utf-8'))
-        except (OSError, ValueError):
+            data = json.loads((folder/'ocr_execution.json').read_text(encoding='utf-8'))
+        except (OSError, ValueError, TypeError):
+            return
+        if not isinstance(data, dict):
             return
         rows = []
         for key, label in [('general_13', 'geral 13'), ('commercial_17c', 'comercial 17c')]:
@@ -1030,13 +1087,13 @@ class App:
         self.ocr_execution_status.set('\n'.join(rows))
 
     def update_camera_summary(self):
-        if not self.output_folder:
+        folder = self.output_folder
+        if folder is None:
             return
         self.update_ocr_execution()
-        import json
         try:
-            q = json.loads((self.output_folder/"analysis_quality.json").read_text(encoding="utf-8"))
-            manifest = json.loads((self.output_folder/"manifest.json").read_text(encoding="utf-8"))
+            q = json.loads((folder/"analysis_quality.json").read_text(encoding="utf-8"))
+            manifest = json.loads((folder/"manifest.json").read_text(encoding="utf-8"))
             status = manifest.get("stage_status", {}).get("19_camera_director", {}).get("status", "unavailable")
             def pct(key):
                 v = q.get(key)
@@ -1142,13 +1199,19 @@ class App:
             return
         self.smoke_busy = True
         self.start_button.configure(state='disabled')
-        cfg = load_config(ROOT / 'config' / 'config.yaml')
-        cfg['device'] = self.device.get()
-        cfg['diarization']['enabled'] = self.diarization.get()
-        cfg['vision']['enabled'] = self.vision.get()
-        cfg['ocr'].update(self.ocr_options())
-        cfg['semantic_analysis'].update(backend='ollama' if self.ollama.get() else 'heuristic',
-                                        model=self.ollama_model.get().strip())
+        try:
+            cfg = load_config(ROOT / 'config' / 'config.yaml')
+            cfg['device'] = self.device.get()
+            cfg['diarization']['enabled'] = self.diarization.get()
+            cfg['vision']['enabled'] = self.vision.get()
+            cfg['ocr'].update(self.ocr_options())
+            cfg['semantic_analysis'].update(backend='ollama' if self.ollama.get() else 'heuristic',
+                                            model=self.ollama_model.get().strip())
+        except Exception as exc:
+            self.smoke_busy = False
+            self.start_button.configure(state='normal')
+            self.inference_smoke_status.set('Canario bloqueado na configuracao: ' + type(exc).__name__)
+            return
         self.inference_smoke_status.set('Canario em execucao sequencial; qualidade nao medida')
         def work():
             from ldporto.inference_smoke import run_inference_smoke, save_smoke
@@ -1197,6 +1260,11 @@ class App:
                         self.window.destroy()
                         return
                 elif kind == "line":
+                    recent = getattr(self, '_recent_process_lines', None)
+                    if isinstance(recent, list):
+                        recent.append(scrub(value)[:6000])
+                        if len(recent) > 400:
+                            del recent[:-400]
                     if 'execução de backend de corpos:' in value and hasattr(self, 'body_status'):
                         self.body_status.set(value.strip())
                     if 'WARNING' in value or 'fallback' in value.casefold():
@@ -1215,10 +1283,12 @@ class App:
                         self.execution_log.see('end')
                         if int(self.execution_log.index('end-1c').split('.')[0]) > 80:
                             self.execution_log.delete('1.0', '20.0')
-                else:
+                elif kind == 'done':
                     self.start_button.configure(state="normal")
                     if value == 0:
                         self.update_camera_summary()
+                    else:
+                        self.failure_log_path = self.save_failure_diagnostic(value)
                     self.status.set("Finalizado. Consulte os avisos no relatório." if value == 0
                                     else "Processamento terminou com erro/interrupção. Veja o log.")
                     if self.in_execution:

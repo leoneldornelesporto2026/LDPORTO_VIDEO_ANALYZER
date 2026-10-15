@@ -7,6 +7,7 @@ from .core import ok, Unavailable, write_json, read_json, digest, file_hash, ver
 from .config import ROOT, asset_path
 from .audio import ffmpeg_audio, separate_review_region
 from .gpu_runtime import configure_windows_nvidia_runtime
+from .model_cache import cached_whisper_snapshot
 from .asr_comparison import compare_hypotheses, source_review_dossier, review_reason_metrics, valid_interval
 
 
@@ -230,7 +231,11 @@ class TranscriptionEngine:
         if force_cpu:
             compute = "int8"
         self.ctx.logger.info("ASR: %s / %s / %s", self.ctx.config["transcription"]["model"], device, compute)
-        self.model = WhisperModel(self.ctx.config["transcription"]["model"],
+        configured_model = self.ctx.config["transcription"]["model"]
+        local_model = cached_whisper_snapshot(configured_model)
+        if self.ctx.config["offline"] and local_model is None:
+            raise Unavailable("Whisper offline: modelo CTranslate2 local incompleto ou ausente; execute o canario ASR.")
+        self.model = WhisperModel(str(local_model) if local_model else configured_model,
                                  device=device, compute_type=compute,
                                  download_root=str(ROOT / "models" / "whisper"),
                                  local_files_only=self.ctx.config["offline"])

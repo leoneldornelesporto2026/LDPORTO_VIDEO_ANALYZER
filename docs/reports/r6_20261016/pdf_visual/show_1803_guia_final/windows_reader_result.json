@@ -1,0 +1,38 @@
+﻿{
+    "reader":  "Windows.Data.Pdf.PdfDocument",
+    "source":  "GUIA_EDITORIAL_COMPLETO.pdf",
+    "source_sha256":  "15b52a86dc9f6016a1b73ce9b4ede0662ea5df5a0951330d8574c409c018c8b1",
+    "total_pages":  13,
+    "rendered_pages":  4,
+    "pages":  [
+                  {
+                      "page":  1,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_01.png",
+                      "bytes":  128574
+                  },
+                  {
+                      "page":  2,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_02.png",
+                      "bytes":  24517
+                  },
+                  {
+                      "page":  3,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_03.png",
+                      "bytes":  136502
+                  },
+                  {
+                      "page":  4,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_04.png",
+                      "bytes":  142433
+                  }
+              ],
+    "scope":  "independent_windows_pdf_reader_no_source_media"
+}

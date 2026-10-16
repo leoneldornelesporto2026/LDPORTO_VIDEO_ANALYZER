@@ -99,6 +99,13 @@ def test_real_zip_consumer_resolves_new_provenance_and_preserves_legacy(tmp_path
     protected_count = sum(n != 'SECOND_CURATION_MANIFEST.json' and not n.startswith('schemas/') for n in original_members)
     assert result['status'] == 'valid' and result['legacy_documents_preserved'] == protected_count
     assert result['publication_ready'] is False
+    derived_members = read_package(exported['path'])
+    master = json.loads(derived_members['HANDOFF_MASTER.json'])
+    assert derived_members[master['derivation']['parent_master_ref']] == original_members['HANDOFF_MASTER.json']
+    assert master['derivation']['parent_package_sha256'] == file_hash(reference)
+    assert master['publication_ready'] is False
+    assert master['semantic_caption_preflight_ref'] == 'subtitles/semantic_caption_preflight_r6.json'
+    assert json.loads(derived_members[master['semantic_caption_preflight_ref']])['new_asr_calls'] == 0
 
 
 @pytest.mark.parametrize('damage', ['shortened', 'missing_span', 'wrong_segment'])

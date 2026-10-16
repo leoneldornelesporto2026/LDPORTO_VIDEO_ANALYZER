@@ -1,0 +1,44 @@
+﻿{
+    "reader":  "Windows.Data.Pdf.PdfDocument",
+    "source":  "synthetic_editorial.pdf",
+    "source_sha256":  "b6176039573272a47a159a4e2b479fffa5604135b87d762385522be22f296d5e",
+    "rendered_pages":  5,
+    "pages":  [
+                  {
+                      "page":  1,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_01.png",
+                      "bytes":  139229
+                  },
+                  {
+                      "page":  2,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_02.png",
+                      "bytes":  22296
+                  },
+                  {
+                      "page":  3,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_03.png",
+                      "bytes":  153533
+                  },
+                  {
+                      "page":  4,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_04.png",
+                      "bytes":  155564
+                  },
+                  {
+                      "page":  5,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_05.png",
+                      "bytes":  46238
+                  }
+              ],
+    "scope":  "synthetic_pdf_independent_windows_reader"
+}

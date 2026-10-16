@@ -384,6 +384,11 @@ class ReportEngine:
             analysis['narrative_handoff_unavailable_reason'] = ('disabled_by_config' if narrative_source_available
                                                               else 'canonical_source_sha256_required')
         analysis["second_curation_package"] = build_second_curation_package(analysis)
+        # Cheap evidence projections reuse existing identity and camera engines.
+        from .camera_handoff import build_camera_handoff
+        from .performer_evidence import build_performer_evidence
+        r6_people = build_performer_evidence(analysis)
+        analysis['camera_handoff_r6'] = build_camera_handoff(analysis)
         analysis["social_output"] = build_social_output(analysis, getattr(ctx, "config", {}), analysis["second_curation_package"])
         story_by_candidate = {row["candidate_id"]: row for row in analysis["social_output"].get("stories", [])}
         for candidate in analysis["second_curation_package"].get("candidates", []):
@@ -402,6 +407,11 @@ class ReportEngine:
         export_cfg=getattr(ctx,'config',{}).get('export',{})
         chatgpt_handoff = build_chatgpt_handoff(analysis,compact=not export_cfg.get('legacy_full_analysis',False))
         exports = {
+            'person_tracks.json': r6_people['person_tracks'],
+            'person_appearances.json': r6_people['person_appearances'],
+            'instrument_observations.json': r6_people['instrument_observations'],
+            'performer_review_queue.json': r6_people['performer_review_queue'],
+            'camera_handoff_r6.json': analysis['camera_handoff_r6'],
             # v1 compatibility
             "video_summary.json": analysis["summary"],
             "editorial_result.json": analysis['editorial_result'],
@@ -647,8 +657,11 @@ class ReportEngine:
                                             'integrity_contracts.py', 'commercial_gate.py', 'social_output.py',
                                             'analysis_quality.py', 'causal_diagnostics.py', 'transcript_dossier.py',
                                             'editorial_outcome.py', 'transcription.py', 'asr_comparison.py',
+                                            'subtitle_review.py', 'timeline.py', 'camera_handoff.py', 'performer_evidence.py',
                                             'narrative_handoff.py', 'narrative_relations.py', 'commercial_context.py',
                                             '../../schemas/narrative_handoff.schema.json',
+                                            '../../schemas/caption_preflight_r6.schema.json',
+                                            '../../schemas/handoff_master_r6.schema.json',
                                             '../../schemas/second_curation_decisions.schema.json',
                                             'preview_renderer.py'],
                 output_version='1.2-stage06-report-contract', requires=['20_handoff'])
@@ -821,6 +834,18 @@ class ReportEngine:
             final_receipt_seconds=storage['final_receipt_seconds'])
         if getattr(ctx, 'config', {}).get('export'):
             record_runtime_history(analysis.get('metadata', {}), ctx.config, ctx.stage_metrics)
+        if export_cfg.get('organized_project_auto') and (package_result or {}).get('path'):
+            from .project_export import export_project
+            try:
+                project = export_project(package_result['path'], export_cfg.get('organized_project_root'), analysis=analysis,
+                    progress=lambda name, current, total: ctx.progress('21_second_curation_handoff',
+                        substage='dossier: '+name, current=current, total=total),
+                    cancelled=lambda: (ctx.output/'CANCEL_REQUESTED').exists())
+                write_json(ctx.output/'project_export.json',project)
+                analysis['project_export'] = project
+            except Exception as exc:
+                write_json(ctx.output/'project_export.json',{'state':'FAILED','error':str(exc),
+                    'publication_ready':False,'analysis_artifacts_preserved':True})
         return ok({"insights": str((ctx.output/"CHATGPT_ANALYSIS_HANDOFF.json").resolve()),
                    'second_curation_package_path':(package_result or {}).get('path'),
                    "report": str((ctx.output/"report.html").resolve())}, artifacts=outputs)

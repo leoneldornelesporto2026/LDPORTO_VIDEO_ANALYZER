@@ -1,0 +1,11 @@
+{
+  "reader": "Windows.Data.Pdf.PdfDocument",
+  "scope": "synthetic_fixture_only",
+  "all_five_rendered_pages_pixel_identical": true,
+  "before_nobreak_space_preserved": false,
+  "after_nobreak_space_preserved": true,
+  "before_normal_hyphen_preserved": false,
+  "after_normal_hyphen_preserved": true,
+  "before_soft_hyphen_count": 2,
+  "after_soft_hyphen_count": 1
+}

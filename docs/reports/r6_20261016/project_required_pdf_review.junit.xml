@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="5.278" timestamp="2026-10-16T14:55:26.485136-03:00" hostname="leonelporto"><testcase classname="src.tests.test_r6_project_integrity_safety" name="test_generated_dossier_cannot_validate_with_required_pdf_missing[00_RESUMO/GUIA_EDITORIAL_COMPLETO.pdf]" time="1.701"><failure message="AssertionError: assert 'valid' == 'failed'&#10;  &#10;  - failed&#10;  + valid">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-734/test_generated_dossier_cannot_0')
+required_path = '00_RESUMO/GUIA_EDITORIAL_COMPLETO.pdf'
+
+    @pytest.mark.parametrize('required_path', [
+        '00_RESUMO/GUIA_EDITORIAL_COMPLETO.pdf',
+        '00_RESUMO/RESUMO_EXECUTIVO.pdf',
+        '01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf',
+    ])
+    def test_generated_dossier_cannot_validate_with_required_pdf_missing(tmp_path, required_path):
+        source, _ = package(tmp_path)
+        result = export_project(source, tmp_path / 'Videos')
+        root = Path(result['path'])
+        _, data = manifest(root)
+        assert data['pdf_status'] == 'GENERATED'
+        (root / required_path).unlink()  # This test owns the isolated synthetic export.
+        refresh_file_inventory(root, data)
+&gt;       assert verify_project_export(root)['status'] == 'failed'
+E       AssertionError: assert 'valid' == 'failed'
+E         
+E         - failed
+E         + valid
+
+src\tests\test_r6_project_integrity_safety.py:164: AssertionError</failure></testcase><testcase classname="src.tests.test_r6_project_integrity_safety" name="test_generated_dossier_cannot_validate_with_required_pdf_missing[00_RESUMO/RESUMO_EXECUTIVO.pdf]" time="1.635"><failure message="AssertionError: assert 'valid' == 'failed'&#10;  &#10;  - failed&#10;  + valid">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-734/test_generated_dossier_cannot_1')
+required_path = '00_RESUMO/RESUMO_EXECUTIVO.pdf'
+
+    @pytest.mark.parametrize('required_path', [
+        '00_RESUMO/GUIA_EDITORIAL_COMPLETO.pdf',
+        '00_RESUMO/RESUMO_EXECUTIVO.pdf',
+        '01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf',
+    ])
+    def test_generated_dossier_cannot_validate_with_required_pdf_missing(tmp_path, required_path):
+        source, _ = package(tmp_path)
+        result = export_project(source, tmp_path / 'Videos')
+        root = Path(result['path'])
+        _, data = manifest(root)
+        assert data['pdf_status'] == 'GENERATED'
+        (root / required_path).unlink()  # This test owns the isolated synthetic export.
+        refresh_file_inventory(root, data)
+&gt;       assert verify_project_export(root)['status'] == 'failed'
+E       AssertionError: assert 'valid' == 'failed'
+E         
+E         - failed
+E         + valid
+
+src\tests\test_r6_project_integrity_safety.py:164: AssertionError</failure></testcase><testcase classname="src.tests.test_r6_project_integrity_safety" name="test_generated_dossier_cannot_validate_with_required_pdf_missing[01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf]" time="1.672"><failure message="AssertionError: assert 'valid' == 'failed'&#10;  &#10;  - failed&#10;  + valid">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-734/test_generated_dossier_cannot_2')
+required_path = '01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf'
+
+    @pytest.mark.parametrize('required_path', [
+        '00_RESUMO/GUIA_EDITORIAL_COMPLETO.pdf',
+        '00_RESUMO/RESUMO_EXECUTIVO.pdf',
+        '01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf',
+    ])
+    def test_generated_dossier_cannot_validate_with_required_pdf_missing(tmp_path, required_path):
+        source, _ = package(tmp_path)
+        result = export_project(source, tmp_path / 'Videos')
+        root = Path(result['path'])
+        _, data = manifest(root)
+        assert data['pdf_status'] == 'GENERATED'
+        (root / required_path).unlink()  # This test owns the isolated synthetic export.
+        refresh_file_inventory(root, data)
+&gt;       assert verify_project_export(root)['status'] == 'failed'
+E       AssertionError: assert 'valid' == 'failed'
+E         
+E         - failed
+E         + valid
+
+src\tests\test_r6_project_integrity_safety.py:164: AssertionError</failure></testcase></testsuite></testsuites>

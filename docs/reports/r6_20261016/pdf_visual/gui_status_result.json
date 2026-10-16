@@ -1,0 +1,27 @@
+{
+  "scope": "native_hidden_tk_status_only_no_inference_or_external_operations",
+  "initial_dossier_status": "Dossiê: ainda não gerado; PDFs e vídeos finais têm estados separados.",
+  "automatic_export_default": false,
+  "completion_heading": "Analise finalizada",
+  "completion_readiness": "Editorial: nao medida\nTranscricao: nao medida\nVisual: nao medida\nSpeaker/person: nao medida\nCamera: nao medida\nPreview: nao medida\nPreview aprovado: nao registrado\nPublicacao pronta: nao registrada\nCamera preservando source: speaker/person ou crop ainda insuficiente.",
+  "results_center_count": 1,
+  "results_center_buttons": [
+    "Abrir projeto",
+    "Guia editorial PDF",
+    "Transcrição disponível",
+    "Reels propostos",
+    "Stories sequenciais",
+    "Pessoas e cenas",
+    "Camera Director",
+    "Pendências de revisão",
+    "ZIP da segunda curadoria",
+    "Exportar / gerar PDFs novamente",
+    "Verificar integridade",
+    "Gerenciar espaço",
+    "Cancelar geração com segurança"
+  ],
+  "worker_started": false,
+  "process_started": false,
+  "inference_executed": false,
+  "network_accessed": false
+}

@@ -60,6 +60,11 @@ def main():
     if '--semantic-replay' in sys.argv:
         from ldporto.semantic_replay import main as semantic_main
         return semantic_main(sys.argv[1:])
+    if any(flag in sys.argv for flag in ('--export-project','--verify-project','--rebuild-package','--rebuild-project-index')):
+        from ldporto.project_export import main as project_main
+        aliases={'--export-project':'--package','--project-destination':'--destination'}
+        return project_main([aliases.get(arg,arg)
+                             for arg in sys.argv[1:]])
     configure_path()
     if sys.version_info[:2] != (3, 11):
         raise SystemExit('Runtime suportado: Python 3.11.x. Use .venv/Scripts/python.exe.')
@@ -93,6 +98,12 @@ def main():
     parser.add_argument('--smart-zoom-profile', choices=['conservative', 'natural', 'dynamic'])
     parser.add_argument('--no-smart-zoom', action='store_true')
     parser.add_argument('--include-candidate-previews', action='store_true')
+    parser.add_argument('--export-project', metavar='ZIP', help='Exportar dossiê existente sem inferência (rota independente)')
+    parser.add_argument('--verify-project', metavar='PASTA', help='Verificar hashes do dossiê sem alterações')
+    parser.add_argument('--rebuild-package', metavar='ANALISE', help='Reconstruir apenas ZIP em revisão nova, sem abrir mídia')
+    parser.add_argument('--rebuild-project-index', metavar='RAIZ', help='Reconstruir inventário somente leitura, saída JSON exclusiva')
+    parser.add_argument('--export-project-after-analysis', action='store_true', help='Gerar dossiê em Vídeos após concluir, sem renderizar cortes')
+    parser.add_argument('--project-destination', help='Raiz do dossiê organizado (opcional)')
     parser.add_argument('--social-aspect', choices=['9:16','4:5','1:1','16:9'])
     parser.add_argument('--caption-preset', choices=['auto','no_caption','simple','karaoke','popline','deep_diver','think_media','pod_p','news','show_highlight','clean_bold','high_contrast','soft_subtitle','creator_style'])
     parser.add_argument('--content-mode', choices=['auto','show','entrevista','podcast','programa_tv','reacao','educativo','humor','noticias'])
@@ -111,6 +122,10 @@ def main():
     try:
         from ldporto.config import load_config, configure_local_mode, validate
         cfg = load_config(args.config)
+        if args.export_project_after_analysis:
+            cfg['export']['organized_project_auto'] = True
+        if args.project_destination:
+            cfg['export']['organized_project_root'] = args.project_destination
         if args.device:
             cfg["device"] = args.device
         if args.model:

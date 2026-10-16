@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="10" time="3.864" timestamp="2026-10-16T14:53:32.636131-03:00" hostname="leonelporto"><testcase classname="src.tests.test_r6_project_export" name="test_unicode_searchable_pdf_with_index_bookmarks_links_and_pagination" time="0.079" /><testcase classname="src.tests.test_r6_project_export" name="test_unicode_aliases_keep_distinct_text_cids_with_the_same_embedded_font_glyph" time="0.057" /><testcase classname="src.tests.test_r6_project_export" name="test_project_delivery_is_exclusive_verified_and_preserves_source_package" time="1.260"><failure message="ValueError: project_export_verification_failed:project_read_failure:ValidationError">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_project_delivery_is_exclu0')
+
+    def test_project_delivery_is_exclusive_verified_and_preserves_source_package(tmp_path):
+        package=Path(_package(tmp_path))
+        before=hashlib.sha256(package.read_bytes()).hexdigest()
+&gt;       first=export_project(package,tmp_path/'Videos')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\tests\test_r6_project_export.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+package_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_project_delivery_is_exclu0/packages/SECOND_CURATION_PARTIAL_SYNTHETIC_R6_20261016_175332_993110_946480.zip')
+output_root = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_project_delivery_is_exclu0/Videos')
+analysis = None, progress = None, cancelled = None
+
+    def export_project(package_path, output_root=None, *, analysis=None, progress=None, cancelled=None):
+        """Create one exclusive revision. On cancellation keep a labelled partial dossier."""
+        from .second_curation_export import snapshot_core_package
+        package_path = Path(package_path)
+        package_bytes,validation = snapshot_core_package(package_path)
+        package_hash=hashlib.sha256(package_bytes).hexdigest()
+        root = _safe_ancestors(output_root or videos_directory()/'LDPORTO_VIDEO_ANALYZER')
+        root.mkdir(parents=True,exist_ok=True)
+        with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
+            names=set(archive.namelist())
+            def read(name,default=None):
+                _logical(name)
+                if name not in names:
+                    return default
+                raw = archive.read(name)
+                if name.endswith('.jsonl'):
+                    return [json.loads(line) for line in raw.decode('utf-8').splitlines() if line]
+                return json.loads(raw)
+            metadata=read('source/metadata.json',{})
+            manifest=read('SECOND_CURATION_MANIFEST.json',{})
+            index=read('CURATION_INDEX.json',{})
+            info=metadata.get('source') or {}
+            duration=metadata.get('duration')
+            source_hash=metadata.get('sha256')
+            title=info.get('title') or info.get('id') or 'Projeto audiovisual'
+            identifier=windows_component(info.get('id') or str(source_hash or '')[:12])
+            revision=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'_'+uuid.uuid4().hex[:6]
+            destination=root/(windows_component(title,max_length=85)+'__'+identifier+'__'+revision)
+            destination.mkdir(exist_ok=False)
+            state={'schema_version':'1.0','contract':'ldporto.project_dossier','revision':revision,
+                   'title':title,'video_id':info.get('id'),'source_sha256':source_hash,
+                   'source_media_hash_scope':'reported_by_analyzer_not_rehashed_by_dossier',
+                   'source_duration':duration,'package_sha256':package_hash,
+                   'package_run_id':manifest.get('run_id'),'created_at':datetime.now(timezone.utc).isoformat(),
+                   'analysis_status':index.get('analysis_status'),'state':'PARTIAL',
+                   'contents_kind':'planning_and_review_evidence','source_video_included':False,
+                   'final_social_videos_rendered':False,'preview_approved':False,'publication_ready':False,
+                   'pdf_status':'PENDING','files':[]}
+            def check():
+                if cancelled and cancelled():
+                    raise ExportCancelled('export_cancelled')
+            def emit(stage,current=0,total=1):
+                check()
+                if progress:
+                    progress(stage,current,total)
+            def copy_entry(name,target):
+                if name in names:
+                    _logical(name)
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    target.write_bytes(archive.read(name))
+                    return True
+                return False
+            _json(destination/'PROJECT_MANIFEST.json',state)
+            try:
+                emit('Evidências canônicas')
+                segments=read('transcript/relevant_segments.jsonl',[])
+                words=read('transcript/relevant_words.jsonl',[])
+                if analysis is not None:
+                    from .transcription import _require_original
+                    if (analysis.get('metadata') or {}).get('sha256')!=source_hash:
+                        raise ValueError('project_analysis_source_hash_mismatch')
+                    source_segments=analysis.get('transcript_segments') or segments
+                    source_words=analysis.get('words') or words
+                    for row in [*source_segments,*source_words]:
+                        _require_original(row)
+                    for exported,source_rows,id_key,keys in (
+                        (segments,source_segments,'segment_id',('segment_id','start','end','text','speaker')),
+                        (words,source_words,'word_id',('word_id','segment_id','start','end','word','raw','speaker'))):
+                        source_by_id={r.get(id_key):sanitize_export(r) for r in source_rows}
+                        for row in exported:
+                            actual=source_by_id.get(row.get(id_key))
+                            if actual is None or any(actual.get(k)!=row.get(k) for k in keys):
+                                raise ValueError('project_analysis_package_revision_mismatch:'+str(row.get(id_key)))
+                    segments=sanitize_export(source_segments)
+                    words=sanitize_export(source_words)
+                if not isinstance(segments,list) or not all(_interval(s,duration) for s in segments):
+                    raise ValueError('project_invalid_canonical_segment_interval')
+                if any(not _interval(w,duration) for w in words):
+                    raise ValueError('project_invalid_canonical_word_interval')
+                gaps,covered=_gaps(segments,duration)
+                coverage={'scope':'union_of_available_canonical_segment_intervals',
+                          'covered_seconds':covered,'source_seconds':duration,
+                          'coverage_ratio':covered/duration if duration else 0,
+                          'audio_verified':False,'gaps':gaps,'publication_ready':False}
+                state['transcript_coverage_ratio']=coverage['coverage_ratio']
+                transcript=destination/'01_TRANSCRICAO'
+                _transcript_files(transcript,segments,words)
+                _json(transcript/'lacunas_e_revisoes.json',coverage)
+                for src,target in (('people/participants.json','participantes.json'),('people/person_appearances.json','aparicoes.json'),
+                                   ('people/instrument_observations.json','instrumentos.json'),('people/performer_review_queue.json','identities_review.json')):
+                    if not copy_entry(src,destination/'02_PESSOAS_E_CENAS'/target):
+                        _json(destination/'02_PESSOAS_E_CENAS'/target,{'status':'UNAVAILABLE','observations':[], 'publication_ready':False})
+                _json(destination/'02_PESSOAS_E_CENAS/cenas.json',(analysis or {}).get('scenes') or {'status':'UNAVAILABLE','reference':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#camera/candidate_camera_plans.json'})
+                for src,target in (('camera/candidate_camera_plans.json','candidate_camera_plans.json'),
+                                   ('camera/shared_camera_handoff.json','camera_handoff.json'),('camera/camera_summary.json','zoom_validation.json')):
+                    copy_entry(src,destination/'05_CAMERAS'/target)
+                if analysis:
+                    from .camera_handoff import build_camera_handoff
+                    _json(destination/'05_CAMERAS/camera_timeline.json',build_camera_handoff(analysis))
+                    _json(destination/'05_CAMERAS/focus_targets.json',{'status':'PROPOSALS_REQUIRE_REVIEW',
+                        'camera_ref':'camera_timeline.json','publication_ready':False})
+                else:
+                    _json(destination/'05_CAMERAS/camera_timeline.json',{'status':'UNAVAILABLE','reason':'source_timeline_not_in_legacy_package'})
+                candidates=read('editorial/candidate_catalog.json',[])
+                candidates=_rows(candidates,'candidates')
+                by_candidate={r['candidate_id']:r for r in candidates}
+                plans=read('camera/candidate_camera_plans.json',[])
+                by_plan={r['candidate_id']:r for r in _rows(plans,'plans')}
+                preflight=read('subtitles/caption_preflight_r6.json',{})
+                caption_summary=_caption_summary(preflight)
+                summary=destination/'00_RESUMO'
+                _json(summary/'MELHORES_MOMENTOS.json',{'candidates':candidates,'default_shortlist':read('editorial/default_shortlist.json',[]),
+                    'ranking_kind':'editorial_heuristic_not_viral_probability','publication_ready':False})
+                guide=EditorialPDF(title,'Guia editorial · análise '+str(index.get('analysis_status'))+' · '+revision)
+                guide.section('Fonte e escopo de revisão')
+                for label,value in (('URL original',info.get('url')),('Duração',stamp(duration)),('SHA256 da mídia informado',source_hash),
+                    ('Run do pacote',manifest.get('run_id')),('Versão da análise',metadata.get('analyzer_version')),
+                    ('Cobertura temporal da transcrição','%.2f%%' % (coverage['coverage_ratio']*100))):
+                    _describe(guide,label,value)
+                guide.text('Fatos são os dados canônicos referenciados. Títulos, ranking e câmera são propostas editoriais. Identidades, direitos musicais, áudio e prévias exigem revisão humana. Nenhum vídeo social final foi renderizado por esta exportação.')
+                guide.section('Resumo e acontecimentos documentados')
+                _describe(guide,'Resumo da análise',read('summary/analysis_summary.json',{}).get('episode_summary'))
+                guide.section('Participantes e identidades')
+                for person in _rows(read('people/participants.json',[]),'participants'):
+                    _describe(guide,'Participante',person)
+                guide.section('Capítulos e linha do tempo')
+                for chapter in _rows(read('editorial/program_sections.json',[]),'sections'):
+                    _describe(guide,'Capítulo',chapter)
+                guide.section('Reels propostos e ranking editorial')
+                html_rows=[]
+                for number,candidate in enumerate(sorted(candidates,key=lambda c:(c.get('rank') or 100000,c['start'])),1):
+                    emit('Relatórios de Reels',number,len(candidates))
+                    cid=candidate['candidate_id']
+                    if not _interval(candidate,duration):
+                        raise ValueError('project_invalid_candidate_interval:'+cid)
+                    folder=destination/'03_REELS'/('REEL_%03d'%number)
+                    title_text=_title(candidate)
+                    _json(folder/'briefing.json',candidate)
+                    _json(folder/'camera_plan.json',by_plan.get(cid) or {'status':'UNAVAILABLE','publication_ready':False})
+                    _json(folder/'title_suggestions.json',{'kind':'editorial_proposal','primary':title_text,
+                        'alternatives':candidate.get('title_variants') or [],'human_approved':False})
+                    selected_segments=[s for s in segments if s.get('segment_id') in (candidate.get('segment_ids') or [])]
+                    selected_words=[w for w in words if w.get('word_id') in (candidate.get('word_ids') or [])]
+                    # Keep absolute source times; phrase boundaries remain source-bound.
+                    _transcript_files(folder,selected_segments,selected_words)
+                    _json(folder/'words.json',selected_words)
+                    clip_gaps,_=_gaps([{'start':max(candidate['start'],s['start'])-candidate['start'],
+                                       'end':min(candidate['end'],s['end'])-candidate['start']}
+                                      for s in selected_segments if s['start']&lt;candidate['end'] and s['end']&gt;candidate['start']],candidate['end']-candidate['start'])
+                    _json(folder/'lacunas.json',{'timebase':'clip_relative_seconds','gaps':clip_gaps})
+                    pdf=EditorialPDF(title_text,cid+' · proposta para revisão humana')
+                    pdf.section('Corte, contexto e evidência')
+                    for label,key in (('Início','start'),('Fim','end'),('Duração','duration'),('Categorias','categories'),('Motivo da seleção','selection_reason'),
+                        ('Contexto anterior','context_before'),('Contexto posterior','context_after'),('Pessoas','person_ids'),
+                        ('IDs dos segmentos','segment_ids'),('Riscos de limites','boundary_risks'),('Legenda','caption_preflight'),('Propostas criativas','generated_copy')):
+                        _describe(pdf,label,candidate.get(key))
+                    pdf.section('Plano de câmera e material visual')
+                    plan=by_plan.get(cid) or {}
+                    _describe(pdf,'Viabilidade',plan.get('camera_feasibility'))
+                    pdf.text('Plano estruturado: camera_plan.json. Movimento planejado exige render e verificação no Curator.')
+                    image_name='visuals/'+cid+'/contact_sheet.jpg'
+                    if copy_entry(image_name,folder/'visual_evidence/contact_sheet.jpg'):
+                        pdf.image(archive.read(image_name),'Frames reais incluídos pelo Analyzer; não comprovam aprovação da prévia final.')
+                    else:
+                        pdf.text('Imagens de referência: indisponíveis neste pacote.')
+                    _transcript_pdf(pdf,selected_segments,[],info.get('url'),check)
+                    pdf.section('Palavras com timestamp e lacunas')
+                    for word in selected_words:
+                        pdf.text('%s–%s %s [%s]' % (stamp(word['start']),stamp(word['end']),word.get('raw') or word.get('word',''),word.get('word_id')),9)
+                    _describe(pdf,'Lacunas relativas ao corte',clip_gaps)
+                    pdf.section('Checklist editorial e de publicação')
+                    pdf.text('Revisar frase completa, contexto, grafia, alinhamento, direitos, título, gancho, encerramento, CTA, thumbnail, crop e áreas seguras. Aprovação humana: pendente. Preview aprovado: não. Publicação pronta: não.')
+                    _describe(pdf,'Palavras-chave',candidate.get('keywords'))
+                    pdf.save(folder/'RELATORIO_REEL.pdf')
+                    guide.text('%s · %s–%s · %s' % (cid,stamp(candidate['start']),stamp(candidate['end']),title_text),11,'#006A75')
+                    _describe(guide,'Justificativa/pendências',candidate.get('editorial_review_plan') or candidate.get('boundary_decision_reasons'))
+                    html_rows.append('&lt;li&gt;&lt;a href="../03_REELS/REEL_%03d/RELATORIO_REEL.pdf"&gt;%s&lt;/a&gt; · %s–%s&lt;/li&gt;' % (number,escape(title_text),stamp(candidate['start']),stamp(candidate['end'])))
+                emit('Stories sequenciais')
+                series=read('editorial/story_series_proposals.json',{})
+                sequences=_rows(series,'series') or _rows(read('editorial/story_sequence_candidates.json',{}),'sequences')
+                standalone=_rows(read('social/stories_manifest.json',{}),'stories')
+                units={r.get('unit_id'):r for r in _rows(read('editorial/story_units.json',{}),'units')}
+                unit_titles={r.get('unit_id'):r for r in _rows(read('social/narrative_title_suggestions.json',{}),'titles')}
+                _json(destination/'04_STORIES/series.json',{'status':'REVIEW_REQUIRED' if sequences else 'UNAVAILABLE',
+                    'series':sequences,'story_visual_handoff_ref':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#social/story_visual_handoff.json',
+                    'publication_ready':False})
+                guide.section('Stories e continuidade narrativa')
+                for number,sequence in enumerate(sequences,1):
+                    emit('Relatórios de Stories',number,len(sequences))
+                    folder=destination/'04_STORIES'/('SERIE_%03d'%number)
+                    _json(folder/'briefing.json',sequence)
+                    pdf=EditorialPDF('Série %03d'%number,'Sequência proposta · revisão de continuidade pendente')
+                    pieces=sequence.get('stories') or [units.get(uid) for uid in sequence.get('unit_ids') or []]
+                    for part,unit in enumerate(pieces,1):
+                        if not unit:
+                            raise ValueError('project_story_unit_unresolved')
+                        uid=unit.get('story_id') or unit.get('unit_id')
+                        intervals=unit.get('source_intervals') or []
+                        if any(not _interval(s,duration) for s in intervals):
+                            raise ValueError('project_story_interval_invalid')
+                        piece_folder=folder/('PARTE_%02d'%part)
+                        _json(piece_folder/'briefing.json',unit)
+                        _json(piece_folder/'title_suggestions.json',unit_titles.get(uid) or {
+                            'primary_title':unit.get('primary_title'),'alternative_titles':unit.get('alternative_titles') or [],
+                            'status':'REVIEW_REQUIRED','human_approved':False})
+                        _json(piece_folder/'review.json',{'status':'BLOCKED' if sum(i['end']-i['start'] for i in intervals)&gt;60 else 'REVIEW_REQUIRED',
+                            'canonical_part_id':uid,'phrase_completion_confirmed':False,'publication_ready':False})
+                        ids=unit.get('source_segment_ids') or [r.get('segment_id') for r in intervals]
+                        part_segments=[r for r in segments if r.get('segment_id') in ids]
+                        part_words=[r for r in words if r.get('segment_id') in ids]
+                        _transcript_files(piece_folder,part_segments,part_words)
+                        _json(piece_folder/'words.json',part_words)
+                        from .camera_handoff import build_camera_handoff
+                        _json(piece_folder/'camera_plan.json',build_camera_handoff({
+                            'metadata':metadata,'camera_director_timeline':read('camera/camera_director_timeline.json',[])}, intervals=intervals))
+                        pdf.section('Parte %d · %s'%(part,uid))
+                        _describe(pdf,'Papel narrativo',unit.get('narrative_role'))
+                        _describe(pdf,'Intervalos da fonte',intervals)
+                        _describe(pdf,'Títulos individuais',unit_titles.get(uid) or unit.get('primary_title') or unit.get('title'))
+                        _transcript_pdf(pdf,part_segments,[],info.get('url'),check)
+                    pdf.text('Contratos de câmera/legendas e títulos canônicos permanecem no ZIP. Não há conteúdo adicional criado para preencher duração.')
+                    pdf.save(folder/'SERIE_COMPLETA.pdf')
+                    _describe(guide,'Sequência proposta',sequence)
+                for number,story in enumerate(standalone,1):
+                    # An independent Story stays independent; no series or continuity is invented.
+                    sid=story.get('story_id') or story.get('candidate_id')
+                    if not sid:
+                        raise ValueError('standalone_story_missing_canonical_id')
+                    folder=destination/'04_STORIES/AVULSOS'/windows_component(sid)
+                    _json(folder/'briefing.json',story)
+                    _json(folder/'review.json',{'series_id':None,'canonical_story_id':sid,
+                        'status':'BLOCKED' if not _interval(story,duration) or story['end']-story['start']&gt;60 else 'REVIEW_REQUIRED',
+                        'publication_ready':False})
+                    _describe(guide,'Story avulso proposto',story)
+                if not sequences:
+                    guide.text('Nenhuma série narrativa comprovada disponível neste pacote. Não foram inventadas partes ou títulos.')
+                guide.section('Câmera, legendas e limitações')
+                _describe(guide,'Câmera registrada',read('camera/camera_summary.json',{}))
+                _describe(guide,'Preflight de legendas',caption_summary)
+                guide.text('Arquivos de referência: 05_CAMERAS; 01_TRANSCRICAO/lacunas_e_revisoes.json; 06_SEGUNDA_CURADORIA/HANDOFF_MASTER.json. Planos não atestam crop renderizado ou zoom entregue.')
+                guide.section('Revisão humana obrigatória')
+                guide.text('Conferir nomes e papéis; áudio e lacunas; cortes de frases; continuidade das séries; direitos e créditos; títulos e thumbnails; legendas; geometria; renderização e frames finais. Os gates permanecem separados.')
+                guide.save(summary/'GUIA_EDITORIAL_COMPLETO.pdf')
+                executive=EditorialPDF(title,'Resumo executivo · materiais de planejamento')
+                executive.section('Estado da entrega')
+                for label,value in (('Análise',index.get('analysis_status')),('Candidatos',len(candidates)),('Shortlist automática',index.get('default_shortlist_count')),
+                                   ('Séries propostas',len(sequences)),('Cobertura de transcrição','%.2f%%'%(coverage['coverage_ratio']*100))):
+                    _describe(executive,label,value)
+                executive.text('Preview aprovado: não. Publicação pronta: não. Lacunas e pendências preservadas. Consulte o guia e os JSONs canônicos.')
+                executive.save(summary/'RESUMO_EXECUTIVO.pdf')
+                emit('PDF da transcrição')
+                pdf=EditorialPDF('Transcrição disponível · '+title,'Cobertura medida: %.2f%% · sem completar lacunas'%(coverage['coverage_ratio']*100))
+                pdf.section('Fonte e cobertura')
+                _describe(pdf,'SHA256 da fonte informado',source_hash)
+                pdf.text('Nomes somente quando confirmados nos contratos. IDs acústicos não identificam pessoas. Fala, canto e instrumental permanecem incertos na ausência de evidência por intervalo. JSON/JSONL são a fonte canônica dos timestamps.')
+                pdf.section('Capítulos e referências editoriais')
+                for chapter in _rows(read('editorial/program_sections.json',[]),'sections'):
+                    _describe(pdf,'Capítulo',chapter)
+                pdf.text('Reels: 03_REELS. Stories: 04_STORIES. Cada briefing referencia IDs canônicos da fonte.')
+                _transcript_pdf(pdf,segments,gaps,info.get('url'),check)
+                pdf.save(transcript/'TRANSCRICAO_COMPLETA.pdf')
+                emit('ZIP e índice de evidências')
+                handoff=destination/'06_SEGUNDA_CURADORIA'
+                handoff.mkdir(exist_ok=True)
+                (handoff/'SECOND_CURATION_READY.zip').write_bytes(package_bytes)
+                if file_hash(handoff/'SECOND_CURATION_READY.zip')!=state['package_sha256']:
+                    raise ValueError('package_copy_checksum_mismatch')
+                master=read('HANDOFF_MASTER.json')
+                _json(handoff/'HANDOFF_MASTER.json',{'schema_version':'1.0','package_ref':'SECOND_CURATION_READY.zip',
+                    'package_sha256':state['package_sha256'],'source_sha256':source_hash,'run_id':manifest.get('run_id'),
+                    'package_handoff_ref':'SECOND_CURATION_READY.zip#HANDOFF_MASTER.json' if master else None,
+                    'references':[{'archive_member':n} for n in sorted(names)],
+                    'publication_ready':False,'preview_approved':False})
+                (handoff/'HANDOFF_MASTER.md').write_text('# Índice do projeto\n\nEvidências canônicas no ZIP; IDs e referências internos foram validados.\n\nAprovações humanas pendentes.\n',encoding='utf-8')
+                copy_entry('SECOND_CURATION_DECISIONS.template.json',handoff/'decisions_template.json')
+                (handoff/'IMPORT_INSTRUCTIONS.md').write_text('Importe SECOND_CURATION_READY.zip no Curator. PDFs são dossiês para leitura; JSONs são canônicos. Não há MP4 social final. Verifique pendências, direitos e aprove prévias antes da publicação.\n',encoding='utf-8')
+                technical=destination/'07_RELATORIOS_TECNICOS'
+                _json(technical/'quality_report.json',read('summary/quality_summary.json',{}))
+                _json(technical/'limitations.json',{'analysis_status':index.get('analysis_status'),'readiness':manifest.get('readiness'),
+                    'transcript_coverage':coverage['coverage_ratio'],'caption_preflight':caption_summary,
+                    'human_review_required':True,'rights_status':'UNKNOWN_REQUIRES_REVIEW','publication_ready':False})
+                _json(technical/'provenance.json',{'package_sha256':state['package_sha256'],'source_sha256':source_hash,
+                    'package_build_provenance':manifest.get('build_provenance'),'new_audiovisual_inference':False,'original_audio_replaced':False})
+                (summary/'INDICE_GERAL.html').write_text('&lt;!doctype html&gt;&lt;html lang="pt-BR"&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;'+escape(title)+'&lt;/title&gt;&lt;h1&gt;'+escape(title)+'&lt;/h1&gt;&lt;p&gt;Materiais para revisão. Nenhum MP4 final; aprovações pendentes.&lt;/p&gt;&lt;p&gt;&lt;a href="GUIA_EDITORIAL_COMPLETO.pdf"&gt;Guia editorial&lt;/a&gt; · &lt;a href="../01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf"&gt;Transcrição&lt;/a&gt;&lt;/p&gt;&lt;ul&gt;'+''.join(html_rows)+'&lt;/ul&gt;&lt;/html&gt;',encoding='utf-8')
+                state.update(pdf_status='GENERATED',candidate_count=len(candidates),story_series_count=len(sequences),
+                             standalone_story_count=len(standalone),
+                             caption_preflight_summary=caption_summary,
+                             state='READY_FOR_REVIEW' if manifest.get('workflow',{}).get('review_ready') is True else 'PARTIAL')
+                emit('Verificação de integridade')
+            except ExportCancelled:
+                state.update(state='CANCELLED',pdf_status='PARTIAL')
+            except Exception as exc:
+                state.update(state='FAILED',error=type(exc).__name__+':'+str(exc),pdf_status='PARTIAL')
+                _finalize(destination,state)
+                raise
+            _finalize(destination,state)
+        verification=verify_project_export(destination)
+        if verification['status']!='valid':
+&gt;           raise ValueError('project_export_verification_failed:'+','.join(verification['errors']))
+E           ValueError: project_export_verification_failed:project_read_failure:ValidationError
+
+src\ldporto\project_export.py:419: ValueError</failure></testcase><testcase classname="src.tests.test_r6_project_export" name="test_cancelled_export_keeps_partial_manifest_and_never_claims_ready" time="0.917"><failure message="ValueError: project_export_verification_failed:project_read_failure:ValidationError">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_cancelled_export_keeps_pa0')
+
+    def test_cancelled_export_keeps_partial_manifest_and_never_claims_ready(tmp_path):
+        package=_package(tmp_path)
+&gt;       result=export_project(package,tmp_path/'Videos',cancelled=lambda:True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\tests\test_r6_project_export.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+package_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_cancelled_export_keeps_pa0/packages/SECOND_CURATION_PARTIAL_SYNTHETIC_R6_20261016_175334_305256_0ecdd0.zip')
+output_root = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_cancelled_export_keeps_pa0/Videos')
+analysis = None, progress = None
+cancelled = &lt;function test_cancelled_export_keeps_partial_manifest_and_never_claims_ready.&lt;locals&gt;.&lt;lambda&gt; at 0x000001614F3CF060&gt;
+
+    def export_project(package_path, output_root=None, *, analysis=None, progress=None, cancelled=None):
+        """Create one exclusive revision. On cancellation keep a labelled partial dossier."""
+        from .second_curation_export import snapshot_core_package
+        package_path = Path(package_path)
+        package_bytes,validation = snapshot_core_package(package_path)
+        package_hash=hashlib.sha256(package_bytes).hexdigest()
+        root = _safe_ancestors(output_root or videos_directory()/'LDPORTO_VIDEO_ANALYZER')
+        root.mkdir(parents=True,exist_ok=True)
+        with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
+            names=set(archive.namelist())
+            def read(name,default=None):
+                _logical(name)
+                if name not in names:
+                    return default
+                raw = archive.read(name)
+                if name.endswith('.jsonl'):
+                    return [json.loads(line) for line in raw.decode('utf-8').splitlines() if line]
+                return json.loads(raw)
+            metadata=read('source/metadata.json',{})
+            manifest=read('SECOND_CURATION_MANIFEST.json',{})
+            index=read('CURATION_INDEX.json',{})
+            info=metadata.get('source') or {}
+            duration=metadata.get('duration')
+            source_hash=metadata.get('sha256')
+            title=info.get('title') or info.get('id') or 'Projeto audiovisual'
+            identifier=windows_component(info.get('id') or str(source_hash or '')[:12])
+            revision=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'_'+uuid.uuid4().hex[:6]
+            destination=root/(windows_component(title,max_length=85)+'__'+identifier+'__'+revision)
+            destination.mkdir(exist_ok=False)
+            state={'schema_version':'1.0','contract':'ldporto.project_dossier','revision':revision,
+                   'title':title,'video_id':info.get('id'),'source_sha256':source_hash,
+                   'source_media_hash_scope':'reported_by_analyzer_not_rehashed_by_dossier',
+                   'source_duration':duration,'package_sha256':package_hash,
+                   'package_run_id':manifest.get('run_id'),'created_at':datetime.now(timezone.utc).isoformat(),
+                   'analysis_status':index.get('analysis_status'),'state':'PARTIAL',
+                   'contents_kind':'planning_and_review_evidence','source_video_included':False,
+                   'final_social_videos_rendered':False,'preview_approved':False,'publication_ready':False,
+                   'pdf_status':'PENDING','files':[]}
+            def check():
+                if cancelled and cancelled():
+                    raise ExportCancelled('export_cancelled')
+            def emit(stage,current=0,total=1):
+                check()
+                if progress:
+                    progress(stage,current,total)
+            def copy_entry(name,target):
+                if name in names:
+                    _logical(name)
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    target.write_bytes(archive.read(name))
+                    return True
+                return False
+            _json(destination/'PROJECT_MANIFEST.json',state)
+            try:
+                emit('Evidências canônicas')
+                segments=read('transcript/relevant_segments.jsonl',[])
+                words=read('transcript/relevant_words.jsonl',[])
+                if analysis is not None:
+                    from .transcription import _require_original
+                    if (analysis.get('metadata') or {}).get('sha256')!=source_hash:
+                        raise ValueError('project_analysis_source_hash_mismatch')
+                    source_segments=analysis.get('transcript_segments') or segments
+                    source_words=analysis.get('words') or words
+                    for row in [*source_segments,*source_words]:
+                        _require_original(row)
+                    for exported,source_rows,id_key,keys in (
+                        (segments,source_segments,'segment_id',('segment_id','start','end','text','speaker')),
+                        (words,source_words,'word_id',('word_id','segment_id','start','end','word','raw','speaker'))):
+                        source_by_id={r.get(id_key):sanitize_export(r) for r in source_rows}
+                        for row in exported:
+                            actual=source_by_id.get(row.get(id_key))
+                            if actual is None or any(actual.get(k)!=row.get(k) for k in keys):
+                                raise ValueError('project_analysis_package_revision_mismatch:'+str(row.get(id_key)))
+                    segments=sanitize_export(source_segments)
+                    words=sanitize_export(source_words)
+                if not isinstance(segments,list) or not all(_interval(s,duration) for s in segments):
+                    raise ValueError('project_invalid_canonical_segment_interval')
+                if any(not _interval(w,duration) for w in words):
+                    raise ValueError('project_invalid_canonical_word_interval')
+                gaps,covered=_gaps(segments,duration)
+                coverage={'scope':'union_of_available_canonical_segment_intervals',
+                          'covered_seconds':covered,'source_seconds':duration,
+                          'coverage_ratio':covered/duration if duration else 0,
+                          'audio_verified':False,'gaps':gaps,'publication_ready':False}
+                state['transcript_coverage_ratio']=coverage['coverage_ratio']
+                transcript=destination/'01_TRANSCRICAO'
+                _transcript_files(transcript,segments,words)
+                _json(transcript/'lacunas_e_revisoes.json',coverage)
+                for src,target in (('people/participants.json','participantes.json'),('people/person_appearances.json','aparicoes.json'),
+                                   ('people/instrument_observations.json','instrumentos.json'),('people/performer_review_queue.json','identities_review.json')):
+                    if not copy_entry(src,destination/'02_PESSOAS_E_CENAS'/target):
+                        _json(destination/'02_PESSOAS_E_CENAS'/target,{'status':'UNAVAILABLE','observations':[], 'publication_ready':False})
+                _json(destination/'02_PESSOAS_E_CENAS/cenas.json',(analysis or {}).get('scenes') or {'status':'UNAVAILABLE','reference':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#camera/candidate_camera_plans.json'})
+                for src,target in (('camera/candidate_camera_plans.json','candidate_camera_plans.json'),
+                                   ('camera/shared_camera_handoff.json','camera_handoff.json'),('camera/camera_summary.json','zoom_validation.json')):
+                    copy_entry(src,destination/'05_CAMERAS'/target)
+                if analysis:
+                    from .camera_handoff import build_camera_handoff
+                    _json(destination/'05_CAMERAS/camera_timeline.json',build_camera_handoff(analysis))
+                    _json(destination/'05_CAMERAS/focus_targets.json',{'status':'PROPOSALS_REQUIRE_REVIEW',
+                        'camera_ref':'camera_timeline.json','publication_ready':False})
+                else:
+                    _json(destination/'05_CAMERAS/camera_timeline.json',{'status':'UNAVAILABLE','reason':'source_timeline_not_in_legacy_package'})
+                candidates=read('editorial/candidate_catalog.json',[])
+                candidates=_rows(candidates,'candidates')
+                by_candidate={r['candidate_id']:r for r in candidates}
+                plans=read('camera/candidate_camera_plans.json',[])
+                by_plan={r['candidate_id']:r for r in _rows(plans,'plans')}
+                preflight=read('subtitles/caption_preflight_r6.json',{})
+                caption_summary=_caption_summary(preflight)
+                summary=destination/'00_RESUMO'
+                _json(summary/'MELHORES_MOMENTOS.json',{'candidates':candidates,'default_shortlist':read('editorial/default_shortlist.json',[]),
+                    'ranking_kind':'editorial_heuristic_not_viral_probability','publication_ready':False})
+                guide=EditorialPDF(title,'Guia editorial · análise '+str(index.get('analysis_status'))+' · '+revision)
+                guide.section('Fonte e escopo de revisão')
+                for label,value in (('URL original',info.get('url')),('Duração',stamp(duration)),('SHA256 da mídia informado',source_hash),
+                    ('Run do pacote',manifest.get('run_id')),('Versão da análise',metadata.get('analyzer_version')),
+                    ('Cobertura temporal da transcrição','%.2f%%' % (coverage['coverage_ratio']*100))):
+                    _describe(guide,label,value)
+                guide.text('Fatos são os dados canônicos referenciados. Títulos, ranking e câmera são propostas editoriais. Identidades, direitos musicais, áudio e prévias exigem revisão humana. Nenhum vídeo social final foi renderizado por esta exportação.')
+                guide.section('Resumo e acontecimentos documentados')
+                _describe(guide,'Resumo da análise',read('summary/analysis_summary.json',{}).get('episode_summary'))
+                guide.section('Participantes e identidades')
+                for person in _rows(read('people/participants.json',[]),'participants'):
+                    _describe(guide,'Participante',person)
+                guide.section('Capítulos e linha do tempo')
+                for chapter in _rows(read('editorial/program_sections.json',[]),'sections'):
+                    _describe(guide,'Capítulo',chapter)
+                guide.section('Reels propostos e ranking editorial')
+                html_rows=[]
+                for number,candidate in enumerate(sorted(candidates,key=lambda c:(c.get('rank') or 100000,c['start'])),1):
+                    emit('Relatórios de Reels',number,len(candidates))
+                    cid=candidate['candidate_id']
+                    if not _interval(candidate,duration):
+                        raise ValueError('project_invalid_candidate_interval:'+cid)
+                    folder=destination/'03_REELS'/('REEL_%03d'%number)
+                    title_text=_title(candidate)
+                    _json(folder/'briefing.json',candidate)
+                    _json(folder/'camera_plan.json',by_plan.get(cid) or {'status':'UNAVAILABLE','publication_ready':False})
+                    _json(folder/'title_suggestions.json',{'kind':'editorial_proposal','primary':title_text,
+                        'alternatives':candidate.get('title_variants') or [],'human_approved':False})
+                    selected_segments=[s for s in segments if s.get('segment_id') in (candidate.get('segment_ids') or [])]
+                    selected_words=[w for w in words if w.get('word_id') in (candidate.get('word_ids') or [])]
+                    # Keep absolute source times; phrase boundaries remain source-bound.
+                    _transcript_files(folder,selected_segments,selected_words)
+                    _json(folder/'words.json',selected_words)
+                    clip_gaps,_=_gaps([{'start':max(candidate['start'],s['start'])-candidate['start'],
+                                       'end':min(candidate['end'],s['end'])-candidate['start']}
+                                      for s in selected_segments if s['start']&lt;candidate['end'] and s['end']&gt;candidate['start']],candidate['end']-candidate['start'])
+                    _json(folder/'lacunas.json',{'timebase':'clip_relative_seconds','gaps':clip_gaps})
+                    pdf=EditorialPDF(title_text,cid+' · proposta para revisão humana')
+                    pdf.section('Corte, contexto e evidência')
+                    for label,key in (('Início','start'),('Fim','end'),('Duração','duration'),('Categorias','categories'),('Motivo da seleção','selection_reason'),
+                        ('Contexto anterior','context_before'),('Contexto posterior','context_after'),('Pessoas','person_ids'),
+                        ('IDs dos segmentos','segment_ids'),('Riscos de limites','boundary_risks'),('Legenda','caption_preflight'),('Propostas criativas','generated_copy')):
+                        _describe(pdf,label,candidate.get(key))
+                    pdf.section('Plano de câmera e material visual')
+                    plan=by_plan.get(cid) or {}
+                    _describe(pdf,'Viabilidade',plan.get('camera_feasibility'))
+                    pdf.text('Plano estruturado: camera_plan.json. Movimento planejado exige render e verificação no Curator.')
+                    image_name='visuals/'+cid+'/contact_sheet.jpg'
+                    if copy_entry(image_name,folder/'visual_evidence/contact_sheet.jpg'):
+                        pdf.image(archive.read(image_name),'Frames reais incluídos pelo Analyzer; não comprovam aprovação da prévia final.')
+                    else:
+                        pdf.text('Imagens de referência: indisponíveis neste pacote.')
+                    _transcript_pdf(pdf,selected_segments,[],info.get('url'),check)
+                    pdf.section('Palavras com timestamp e lacunas')
+                    for word in selected_words:
+                        pdf.text('%s–%s %s [%s]' % (stamp(word['start']),stamp(word['end']),word.get('raw') or word.get('word',''),word.get('word_id')),9)
+                    _describe(pdf,'Lacunas relativas ao corte',clip_gaps)
+                    pdf.section('Checklist editorial e de publicação')
+                    pdf.text('Revisar frase completa, contexto, grafia, alinhamento, direitos, título, gancho, encerramento, CTA, thumbnail, crop e áreas seguras. Aprovação humana: pendente. Preview aprovado: não. Publicação pronta: não.')
+                    _describe(pdf,'Palavras-chave',candidate.get('keywords'))
+                    pdf.save(folder/'RELATORIO_REEL.pdf')
+                    guide.text('%s · %s–%s · %s' % (cid,stamp(candidate['start']),stamp(candidate['end']),title_text),11,'#006A75')
+                    _describe(guide,'Justificativa/pendências',candidate.get('editorial_review_plan') or candidate.get('boundary_decision_reasons'))
+                    html_rows.append('&lt;li&gt;&lt;a href="../03_REELS/REEL_%03d/RELATORIO_REEL.pdf"&gt;%s&lt;/a&gt; · %s–%s&lt;/li&gt;' % (number,escape(title_text),stamp(candidate['start']),stamp(candidate['end'])))
+                emit('Stories sequenciais')
+                series=read('editorial/story_series_proposals.json',{})
+                sequences=_rows(series,'series') or _rows(read('editorial/story_sequence_candidates.json',{}),'sequences')
+                standalone=_rows(read('social/stories_manifest.json',{}),'stories')
+                units={r.get('unit_id'):r for r in _rows(read('editorial/story_units.json',{}),'units')}
+                unit_titles={r.get('unit_id'):r for r in _rows(read('social/narrative_title_suggestions.json',{}),'titles')}
+                _json(destination/'04_STORIES/series.json',{'status':'REVIEW_REQUIRED' if sequences else 'UNAVAILABLE',
+                    'series':sequences,'story_visual_handoff_ref':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#social/story_visual_handoff.json',
+                    'publication_ready':False})
+                guide.section('Stories e continuidade narrativa')
+                for number,sequence in enumerate(sequences,1):
+                    emit('Relatórios de Stories',number,len(sequences))
+                    folder=destination/'04_STORIES'/('SERIE_%03d'%number)
+                    _json(folder/'briefing.json',sequence)
+                    pdf=EditorialPDF('Série %03d'%number,'Sequência proposta · revisão de continuidade pendente')
+                    pieces=sequence.get('stories') or [units.get(uid) for uid in sequence.get('unit_ids') or []]
+                    for part,unit in enumerate(pieces,1):
+                        if not unit:
+                            raise ValueError('project_story_unit_unresolved')
+                        uid=unit.get('story_id') or unit.get('unit_id')
+                        intervals=unit.get('source_intervals') or []
+                        if any(not _interval(s,duration) for s in intervals):
+                            raise ValueError('project_story_interval_invalid')
+                        piece_folder=folder/('PARTE_%02d'%part)
+                        _json(piece_folder/'briefing.json',unit)
+                        _json(piece_folder/'title_suggestions.json',unit_titles.get(uid) or {
+                            'primary_title':unit.get('primary_title'),'alternative_titles':unit.get('alternative_titles') or [],
+                            'status':'REVIEW_REQUIRED','human_approved':False})
+                        _json(piece_folder/'review.json',{'status':'BLOCKED' if sum(i['end']-i['start'] for i in intervals)&gt;60 else 'REVIEW_REQUIRED',
+                            'canonical_part_id':uid,'phrase_completion_confirmed':False,'publication_ready':False})
+                        ids=unit.get('source_segment_ids') or [r.get('segment_id') for r in intervals]
+                        part_segments=[r for r in segments if r.get('segment_id') in ids]
+                        part_words=[r for r in words if r.get('segment_id') in ids]
+                        _transcript_files(piece_folder,part_segments,part_words)
+                        _json(piece_folder/'words.json',part_words)
+                        from .camera_handoff import build_camera_handoff
+                        _json(piece_folder/'camera_plan.json',build_camera_handoff({
+                            'metadata':metadata,'camera_director_timeline':read('camera/camera_director_timeline.json',[])}, intervals=intervals))
+                        pdf.section('Parte %d · %s'%(part,uid))
+                        _describe(pdf,'Papel narrativo',unit.get('narrative_role'))
+                        _describe(pdf,'Intervalos da fonte',intervals)
+                        _describe(pdf,'Títulos individuais',unit_titles.get(uid) or unit.get('primary_title') or unit.get('title'))
+                        _transcript_pdf(pdf,part_segments,[],info.get('url'),check)
+                    pdf.text('Contratos de câmera/legendas e títulos canônicos permanecem no ZIP. Não há conteúdo adicional criado para preencher duração.')
+                    pdf.save(folder/'SERIE_COMPLETA.pdf')
+                    _describe(guide,'Sequência proposta',sequence)
+                for number,story in enumerate(standalone,1):
+                    # An independent Story stays independent; no series or continuity is invented.
+                    sid=story.get('story_id') or story.get('candidate_id')
+                    if not sid:
+                        raise ValueError('standalone_story_missing_canonical_id')
+                    folder=destination/'04_STORIES/AVULSOS'/windows_component(sid)
+                    _json(folder/'briefing.json',story)
+                    _json(folder/'review.json',{'series_id':None,'canonical_story_id':sid,
+                        'status':'BLOCKED' if not _interval(story,duration) or story['end']-story['start']&gt;60 else 'REVIEW_REQUIRED',
+                        'publication_ready':False})
+                    _describe(guide,'Story avulso proposto',story)
+                if not sequences:
+                    guide.text('Nenhuma série narrativa comprovada disponível neste pacote. Não foram inventadas partes ou títulos.')
+                guide.section('Câmera, legendas e limitações')
+                _describe(guide,'Câmera registrada',read('camera/camera_summary.json',{}))
+                _describe(guide,'Preflight de legendas',caption_summary)
+                guide.text('Arquivos de referência: 05_CAMERAS; 01_TRANSCRICAO/lacunas_e_revisoes.json; 06_SEGUNDA_CURADORIA/HANDOFF_MASTER.json. Planos não atestam crop renderizado ou zoom entregue.')
+                guide.section('Revisão humana obrigatória')
+                guide.text('Conferir nomes e papéis; áudio e lacunas; cortes de frases; continuidade das séries; direitos e créditos; títulos e thumbnails; legendas; geometria; renderização e frames finais. Os gates permanecem separados.')
+                guide.save(summary/'GUIA_EDITORIAL_COMPLETO.pdf')
+                executive=EditorialPDF(title,'Resumo executivo · materiais de planejamento')
+                executive.section('Estado da entrega')
+                for label,value in (('Análise',index.get('analysis_status')),('Candidatos',len(candidates)),('Shortlist automática',index.get('default_shortlist_count')),
+                                   ('Séries propostas',len(sequences)),('Cobertura de transcrição','%.2f%%'%(coverage['coverage_ratio']*100))):
+                    _describe(executive,label,value)
+                executive.text('Preview aprovado: não. Publicação pronta: não. Lacunas e pendências preservadas. Consulte o guia e os JSONs canônicos.')
+                executive.save(summary/'RESUMO_EXECUTIVO.pdf')
+                emit('PDF da transcrição')
+                pdf=EditorialPDF('Transcrição disponível · '+title,'Cobertura medida: %.2f%% · sem completar lacunas'%(coverage['coverage_ratio']*100))
+                pdf.section('Fonte e cobertura')
+                _describe(pdf,'SHA256 da fonte informado',source_hash)
+                pdf.text('Nomes somente quando confirmados nos contratos. IDs acústicos não identificam pessoas. Fala, canto e instrumental permanecem incertos na ausência de evidência por intervalo. JSON/JSONL são a fonte canônica dos timestamps.')
+                pdf.section('Capítulos e referências editoriais')
+                for chapter in _rows(read('editorial/program_sections.json',[]),'sections'):
+                    _describe(pdf,'Capítulo',chapter)
+                pdf.text('Reels: 03_REELS. Stories: 04_STORIES. Cada briefing referencia IDs canônicos da fonte.')
+                _transcript_pdf(pdf,segments,gaps,info.get('url'),check)
+                pdf.save(transcript/'TRANSCRICAO_COMPLETA.pdf')
+                emit('ZIP e índice de evidências')
+                handoff=destination/'06_SEGUNDA_CURADORIA'
+                handoff.mkdir(exist_ok=True)
+                (handoff/'SECOND_CURATION_READY.zip').write_bytes(package_bytes)
+                if file_hash(handoff/'SECOND_CURATION_READY.zip')!=state['package_sha256']:
+                    raise ValueError('package_copy_checksum_mismatch')
+                master=read('HANDOFF_MASTER.json')
+                _json(handoff/'HANDOFF_MASTER.json',{'schema_version':'1.0','package_ref':'SECOND_CURATION_READY.zip',
+                    'package_sha256':state['package_sha256'],'source_sha256':source_hash,'run_id':manifest.get('run_id'),
+                    'package_handoff_ref':'SECOND_CURATION_READY.zip#HANDOFF_MASTER.json' if master else None,
+                    'references':[{'archive_member':n} for n in sorted(names)],
+                    'publication_ready':False,'preview_approved':False})
+                (handoff/'HANDOFF_MASTER.md').write_text('# Índice do projeto\n\nEvidências canônicas no ZIP; IDs e referências internos foram validados.\n\nAprovações humanas pendentes.\n',encoding='utf-8')
+                copy_entry('SECOND_CURATION_DECISIONS.template.json',handoff/'decisions_template.json')
+                (handoff/'IMPORT_INSTRUCTIONS.md').write_text('Importe SECOND_CURATION_READY.zip no Curator. PDFs são dossiês para leitura; JSONs são canônicos. Não há MP4 social final. Verifique pendências, direitos e aprove prévias antes da publicação.\n',encoding='utf-8')
+                technical=destination/'07_RELATORIOS_TECNICOS'
+                _json(technical/'quality_report.json',read('summary/quality_summary.json',{}))
+                _json(technical/'limitations.json',{'analysis_status':index.get('analysis_status'),'readiness':manifest.get('readiness'),
+                    'transcript_coverage':coverage['coverage_ratio'],'caption_preflight':caption_summary,
+                    'human_review_required':True,'rights_status':'UNKNOWN_REQUIRES_REVIEW','publication_ready':False})
+                _json(technical/'provenance.json',{'package_sha256':state['package_sha256'],'source_sha256':source_hash,
+                    'package_build_provenance':manifest.get('build_provenance'),'new_audiovisual_inference':False,'original_audio_replaced':False})
+                (summary/'INDICE_GERAL.html').write_text('&lt;!doctype html&gt;&lt;html lang="pt-BR"&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;'+escape(title)+'&lt;/title&gt;&lt;h1&gt;'+escape(title)+'&lt;/h1&gt;&lt;p&gt;Materiais para revisão. Nenhum MP4 final; aprovações pendentes.&lt;/p&gt;&lt;p&gt;&lt;a href="GUIA_EDITORIAL_COMPLETO.pdf"&gt;Guia editorial&lt;/a&gt; · &lt;a href="../01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf"&gt;Transcrição&lt;/a&gt;&lt;/p&gt;&lt;ul&gt;'+''.join(html_rows)+'&lt;/ul&gt;&lt;/html&gt;',encoding='utf-8')
+                state.update(pdf_status='GENERATED',candidate_count=len(candidates),story_series_count=len(sequences),
+                             standalone_story_count=len(standalone),
+                             caption_preflight_summary=caption_summary,
+                             state='READY_FOR_REVIEW' if manifest.get('workflow',{}).get('review_ready') is True else 'PARTIAL')
+                emit('Verificação de integridade')
+            except ExportCancelled:
+                state.update(state='CANCELLED',pdf_status='PARTIAL')
+            except Exception as exc:
+                state.update(state='FAILED',error=type(exc).__name__+':'+str(exc),pdf_status='PARTIAL')
+                _finalize(destination,state)
+                raise
+            _finalize(destination,state)
+        verification=verify_project_export(destination)
+        if verification['status']!='valid':
+&gt;           raise ValueError('project_export_verification_failed:'+','.join(verification['errors']))
+E           ValueError: project_export_verification_failed:project_read_failure:ValidationError
+
+src\ldporto\project_export.py:419: ValueError</failure></testcase><testcase classname="src.tests.test_r6_project_export" name="test_dossier_verifier_rejects_traversal_and_approval" time="1.238"><failure message="ValueError: project_export_verification_failed:project_read_failure:ValidationError">tmp_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_dossier_verifier_rejects_0')
+
+    def test_dossier_verifier_rejects_traversal_and_approval(tmp_path):
+&gt;       result=export_project(_package(tmp_path),tmp_path/'Videos')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\tests\test_r6_project_export.py:117: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+package_path = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_dossier_verifier_rejects_0/packages/SECOND_CURATION_PARTIAL_SYNTHETIC_R6_20261016_175335_239092_002f77.zip')
+output_root = WindowsPath('C:/Users/leone/AppData/Local/Temp/pytest-of-leone/pytest-729/test_dossier_verifier_rejects_0/Videos')
+analysis = None, progress = None, cancelled = None
+
+    def export_project(package_path, output_root=None, *, analysis=None, progress=None, cancelled=None):
+        """Create one exclusive revision. On cancellation keep a labelled partial dossier."""
+        from .second_curation_export import snapshot_core_package
+        package_path = Path(package_path)
+        package_bytes,validation = snapshot_core_package(package_path)
+        package_hash=hashlib.sha256(package_bytes).hexdigest()
+        root = _safe_ancestors(output_root or videos_directory()/'LDPORTO_VIDEO_ANALYZER')
+        root.mkdir(parents=True,exist_ok=True)
+        with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
+            names=set(archive.namelist())
+            def read(name,default=None):
+                _logical(name)
+                if name not in names:
+                    return default
+                raw = archive.read(name)
+                if name.endswith('.jsonl'):
+                    return [json.loads(line) for line in raw.decode('utf-8').splitlines() if line]
+                return json.loads(raw)
+            metadata=read('source/metadata.json',{})
+            manifest=read('SECOND_CURATION_MANIFEST.json',{})
+            index=read('CURATION_INDEX.json',{})
+            info=metadata.get('source') or {}
+            duration=metadata.get('duration')
+            source_hash=metadata.get('sha256')
+            title=info.get('title') or info.get('id') or 'Projeto audiovisual'
+            identifier=windows_component(info.get('id') or str(source_hash or '')[:12])
+            revision=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'_'+uuid.uuid4().hex[:6]
+            destination=root/(windows_component(title,max_length=85)+'__'+identifier+'__'+revision)
+            destination.mkdir(exist_ok=False)
+            state={'schema_version':'1.0','contract':'ldporto.project_dossier','revision':revision,
+                   'title':title,'video_id':info.get('id'),'source_sha256':source_hash,
+                   'source_media_hash_scope':'reported_by_analyzer_not_rehashed_by_dossier',
+                   'source_duration':duration,'package_sha256':package_hash,
+                   'package_run_id':manifest.get('run_id'),'created_at':datetime.now(timezone.utc).isoformat(),
+                   'analysis_status':index.get('analysis_status'),'state':'PARTIAL',
+                   'contents_kind':'planning_and_review_evidence','source_video_included':False,
+                   'final_social_videos_rendered':False,'preview_approved':False,'publication_ready':False,
+                   'pdf_status':'PENDING','files':[]}
+            def check():
+                if cancelled and cancelled():
+                    raise ExportCancelled('export_cancelled')
+            def emit(stage,current=0,total=1):
+                check()
+                if progress:
+                    progress(stage,current,total)
+            def copy_entry(name,target):
+                if name in names:
+                    _logical(name)
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    target.write_bytes(archive.read(name))
+                    return True
+                return False
+            _json(destination/'PROJECT_MANIFEST.json',state)
+            try:
+                emit('Evidências canônicas')
+                segments=read('transcript/relevant_segments.jsonl',[])
+                words=read('transcript/relevant_words.jsonl',[])
+                if analysis is not None:
+                    from .transcription import _require_original
+                    if (analysis.get('metadata') or {}).get('sha256')!=source_hash:
+                        raise ValueError('project_analysis_source_hash_mismatch')
+                    source_segments=analysis.get('transcript_segments') or segments
+                    source_words=analysis.get('words') or words
+                    for row in [*source_segments,*source_words]:
+                        _require_original(row)
+                    for exported,source_rows,id_key,keys in (
+                        (segments,source_segments,'segment_id',('segment_id','start','end','text','speaker')),
+                        (words,source_words,'word_id',('word_id','segment_id','start','end','word','raw','speaker'))):
+                        source_by_id={r.get(id_key):sanitize_export(r) for r in source_rows}
+                        for row in exported:
+                            actual=source_by_id.get(row.get(id_key))
+                            if actual is None or any(actual.get(k)!=row.get(k) for k in keys):
+                                raise ValueError('project_analysis_package_revision_mismatch:'+str(row.get(id_key)))
+                    segments=sanitize_export(source_segments)
+                    words=sanitize_export(source_words)
+                if not isinstance(segments,list) or not all(_interval(s,duration) for s in segments):
+                    raise ValueError('project_invalid_canonical_segment_interval')
+                if any(not _interval(w,duration) for w in words):
+                    raise ValueError('project_invalid_canonical_word_interval')
+                gaps,covered=_gaps(segments,duration)
+                coverage={'scope':'union_of_available_canonical_segment_intervals',
+                          'covered_seconds':covered,'source_seconds':duration,
+                          'coverage_ratio':covered/duration if duration else 0,
+                          'audio_verified':False,'gaps':gaps,'publication_ready':False}
+                state['transcript_coverage_ratio']=coverage['coverage_ratio']
+                transcript=destination/'01_TRANSCRICAO'
+                _transcript_files(transcript,segments,words)
+                _json(transcript/'lacunas_e_revisoes.json',coverage)
+                for src,target in (('people/participants.json','participantes.json'),('people/person_appearances.json','aparicoes.json'),
+                                   ('people/instrument_observations.json','instrumentos.json'),('people/performer_review_queue.json','identities_review.json')):
+                    if not copy_entry(src,destination/'02_PESSOAS_E_CENAS'/target):
+                        _json(destination/'02_PESSOAS_E_CENAS'/target,{'status':'UNAVAILABLE','observations':[], 'publication_ready':False})
+                _json(destination/'02_PESSOAS_E_CENAS/cenas.json',(analysis or {}).get('scenes') or {'status':'UNAVAILABLE','reference':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#camera/candidate_camera_plans.json'})
+                for src,target in (('camera/candidate_camera_plans.json','candidate_camera_plans.json'),
+                                   ('camera/shared_camera_handoff.json','camera_handoff.json'),('camera/camera_summary.json','zoom_validation.json')):
+                    copy_entry(src,destination/'05_CAMERAS'/target)
+                if analysis:
+                    from .camera_handoff import build_camera_handoff
+                    _json(destination/'05_CAMERAS/camera_timeline.json',build_camera_handoff(analysis))
+                    _json(destination/'05_CAMERAS/focus_targets.json',{'status':'PROPOSALS_REQUIRE_REVIEW',
+                        'camera_ref':'camera_timeline.json','publication_ready':False})
+                else:
+                    _json(destination/'05_CAMERAS/camera_timeline.json',{'status':'UNAVAILABLE','reason':'source_timeline_not_in_legacy_package'})
+                candidates=read('editorial/candidate_catalog.json',[])
+                candidates=_rows(candidates,'candidates')
+                by_candidate={r['candidate_id']:r for r in candidates}
+                plans=read('camera/candidate_camera_plans.json',[])
+                by_plan={r['candidate_id']:r for r in _rows(plans,'plans')}
+                preflight=read('subtitles/caption_preflight_r6.json',{})
+                caption_summary=_caption_summary(preflight)
+                summary=destination/'00_RESUMO'
+                _json(summary/'MELHORES_MOMENTOS.json',{'candidates':candidates,'default_shortlist':read('editorial/default_shortlist.json',[]),
+                    'ranking_kind':'editorial_heuristic_not_viral_probability','publication_ready':False})
+                guide=EditorialPDF(title,'Guia editorial · análise '+str(index.get('analysis_status'))+' · '+revision)
+                guide.section('Fonte e escopo de revisão')
+                for label,value in (('URL original',info.get('url')),('Duração',stamp(duration)),('SHA256 da mídia informado',source_hash),
+                    ('Run do pacote',manifest.get('run_id')),('Versão da análise',metadata.get('analyzer_version')),
+                    ('Cobertura temporal da transcrição','%.2f%%' % (coverage['coverage_ratio']*100))):
+                    _describe(guide,label,value)
+                guide.text('Fatos são os dados canônicos referenciados. Títulos, ranking e câmera são propostas editoriais. Identidades, direitos musicais, áudio e prévias exigem revisão humana. Nenhum vídeo social final foi renderizado por esta exportação.')
+                guide.section('Resumo e acontecimentos documentados')
+                _describe(guide,'Resumo da análise',read('summary/analysis_summary.json',{}).get('episode_summary'))
+                guide.section('Participantes e identidades')
+                for person in _rows(read('people/participants.json',[]),'participants'):
+                    _describe(guide,'Participante',person)
+                guide.section('Capítulos e linha do tempo')
+                for chapter in _rows(read('editorial/program_sections.json',[]),'sections'):
+                    _describe(guide,'Capítulo',chapter)
+                guide.section('Reels propostos e ranking editorial')
+                html_rows=[]
+                for number,candidate in enumerate(sorted(candidates,key=lambda c:(c.get('rank') or 100000,c['start'])),1):
+                    emit('Relatórios de Reels',number,len(candidates))
+                    cid=candidate['candidate_id']
+                    if not _interval(candidate,duration):
+                        raise ValueError('project_invalid_candidate_interval:'+cid)
+                    folder=destination/'03_REELS'/('REEL_%03d'%number)
+                    title_text=_title(candidate)
+                    _json(folder/'briefing.json',candidate)
+                    _json(folder/'camera_plan.json',by_plan.get(cid) or {'status':'UNAVAILABLE','publication_ready':False})
+                    _json(folder/'title_suggestions.json',{'kind':'editorial_proposal','primary':title_text,
+                        'alternatives':candidate.get('title_variants') or [],'human_approved':False})
+                    selected_segments=[s for s in segments if s.get('segment_id') in (candidate.get('segment_ids') or [])]
+                    selected_words=[w for w in words if w.get('word_id') in (candidate.get('word_ids') or [])]
+                    # Keep absolute source times; phrase boundaries remain source-bound.
+                    _transcript_files(folder,selected_segments,selected_words)
+                    _json(folder/'words.json',selected_words)
+                    clip_gaps,_=_gaps([{'start':max(candidate['start'],s['start'])-candidate['start'],
+                                       'end':min(candidate['end'],s['end'])-candidate['start']}
+                                      for s in selected_segments if s['start']&lt;candidate['end'] and s['end']&gt;candidate['start']],candidate['end']-candidate['start'])
+                    _json(folder/'lacunas.json',{'timebase':'clip_relative_seconds','gaps':clip_gaps})
+                    pdf=EditorialPDF(title_text,cid+' · proposta para revisão humana')
+                    pdf.section('Corte, contexto e evidência')
+                    for label,key in (('Início','start'),('Fim','end'),('Duração','duration'),('Categorias','categories'),('Motivo da seleção','selection_reason'),
+                        ('Contexto anterior','context_before'),('Contexto posterior','context_after'),('Pessoas','person_ids'),
+                        ('IDs dos segmentos','segment_ids'),('Riscos de limites','boundary_risks'),('Legenda','caption_preflight'),('Propostas criativas','generated_copy')):
+                        _describe(pdf,label,candidate.get(key))
+                    pdf.section('Plano de câmera e material visual')
+                    plan=by_plan.get(cid) or {}
+                    _describe(pdf,'Viabilidade',plan.get('camera_feasibility'))
+                    pdf.text('Plano estruturado: camera_plan.json. Movimento planejado exige render e verificação no Curator.')
+                    image_name='visuals/'+cid+'/contact_sheet.jpg'
+                    if copy_entry(image_name,folder/'visual_evidence/contact_sheet.jpg'):
+                        pdf.image(archive.read(image_name),'Frames reais incluídos pelo Analyzer; não comprovam aprovação da prévia final.')
+                    else:
+                        pdf.text('Imagens de referência: indisponíveis neste pacote.')
+                    _transcript_pdf(pdf,selected_segments,[],info.get('url'),check)
+                    pdf.section('Palavras com timestamp e lacunas')
+                    for word in selected_words:
+                        pdf.text('%s–%s %s [%s]' % (stamp(word['start']),stamp(word['end']),word.get('raw') or word.get('word',''),word.get('word_id')),9)
+                    _describe(pdf,'Lacunas relativas ao corte',clip_gaps)
+                    pdf.section('Checklist editorial e de publicação')
+                    pdf.text('Revisar frase completa, contexto, grafia, alinhamento, direitos, título, gancho, encerramento, CTA, thumbnail, crop e áreas seguras. Aprovação humana: pendente. Preview aprovado: não. Publicação pronta: não.')
+                    _describe(pdf,'Palavras-chave',candidate.get('keywords'))
+                    pdf.save(folder/'RELATORIO_REEL.pdf')
+                    guide.text('%s · %s–%s · %s' % (cid,stamp(candidate['start']),stamp(candidate['end']),title_text),11,'#006A75')
+                    _describe(guide,'Justificativa/pendências',candidate.get('editorial_review_plan') or candidate.get('boundary_decision_reasons'))
+                    html_rows.append('&lt;li&gt;&lt;a href="../03_REELS/REEL_%03d/RELATORIO_REEL.pdf"&gt;%s&lt;/a&gt; · %s–%s&lt;/li&gt;' % (number,escape(title_text),stamp(candidate['start']),stamp(candidate['end'])))
+                emit('Stories sequenciais')
+                series=read('editorial/story_series_proposals.json',{})
+                sequences=_rows(series,'series') or _rows(read('editorial/story_sequence_candidates.json',{}),'sequences')
+                standalone=_rows(read('social/stories_manifest.json',{}),'stories')
+                units={r.get('unit_id'):r for r in _rows(read('editorial/story_units.json',{}),'units')}
+                unit_titles={r.get('unit_id'):r for r in _rows(read('social/narrative_title_suggestions.json',{}),'titles')}
+                _json(destination/'04_STORIES/series.json',{'status':'REVIEW_REQUIRED' if sequences else 'UNAVAILABLE',
+                    'series':sequences,'story_visual_handoff_ref':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#social/story_visual_handoff.json',
+                    'publication_ready':False})
+                guide.section('Stories e continuidade narrativa')
+                for number,sequence in enumerate(sequences,1):
+                    emit('Relatórios de Stories',number,len(sequences))
+                    folder=destination/'04_STORIES'/('SERIE_%03d'%number)
+                    _json(folder/'briefing.json',sequence)
+                    pdf=EditorialPDF('Série %03d'%number,'Sequência proposta · revisão de continuidade pendente')
+                    pieces=sequence.get('stories') or [units.get(uid) for uid in sequence.get('unit_ids') or []]
+                    for part,unit in enumerate(pieces,1):
+                        if not unit:
+                            raise ValueError('project_story_unit_unresolved')
+                        uid=unit.get('story_id') or unit.get('unit_id')
+                        intervals=unit.get('source_intervals') or []
+                        if any(not _interval(s,duration) for s in intervals):
+                            raise ValueError('project_story_interval_invalid')
+                        piece_folder=folder/('PARTE_%02d'%part)
+                        _json(piece_folder/'briefing.json',unit)
+                        _json(piece_folder/'title_suggestions.json',unit_titles.get(uid) or {
+                            'primary_title':unit.get('primary_title'),'alternative_titles':unit.get('alternative_titles') or [],
+                            'status':'REVIEW_REQUIRED','human_approved':False})
+                        _json(piece_folder/'review.json',{'status':'BLOCKED' if sum(i['end']-i['start'] for i in intervals)&gt;60 else 'REVIEW_REQUIRED',
+                            'canonical_part_id':uid,'phrase_completion_confirmed':False,'publication_ready':False})
+                        ids=unit.get('source_segment_ids') or [r.get('segment_id') for r in intervals]
+                        part_segments=[r for r in segments if r.get('segment_id') in ids]
+                        part_words=[r for r in words if r.get('segment_id') in ids]
+                        _transcript_files(piece_folder,part_segments,part_words)
+                        _json(piece_folder/'words.json',part_words)
+                        from .camera_handoff import build_camera_handoff
+                        _json(piece_folder/'camera_plan.json',build_camera_handoff({
+                            'metadata':metadata,'camera_director_timeline':read('camera/camera_director_timeline.json',[])}, intervals=intervals))
+                        pdf.section('Parte %d · %s'%(part,uid))
+                        _describe(pdf,'Papel narrativo',unit.get('narrative_role'))
+                        _describe(pdf,'Intervalos da fonte',intervals)
+                        _describe(pdf,'Títulos individuais',unit_titles.get(uid) or unit.get('primary_title') or unit.get('title'))
+                        _transcript_pdf(pdf,part_segments,[],info.get('url'),check)
+                    pdf.text('Contratos de câmera/legendas e títulos canônicos permanecem no ZIP. Não há conteúdo adicional criado para preencher duração.')
+                    pdf.save(folder/'SERIE_COMPLETA.pdf')
+                    _describe(guide,'Sequência proposta',sequence)
+                for number,story in enumerate(standalone,1):
+                    # An independent Story stays independent; no series or continuity is invented.
+                    sid=story.get('story_id') or story.get('candidate_id')
+                    if not sid:
+                        raise ValueError('standalone_story_missing_canonical_id')
+                    folder=destination/'04_STORIES/AVULSOS'/windows_component(sid)
+                    _json(folder/'briefing.json',story)
+                    _json(folder/'review.json',{'series_id':None,'canonical_story_id':sid,
+                        'status':'BLOCKED' if not _interval(story,duration) or story['end']-story['start']&gt;60 else 'REVIEW_REQUIRED',
+                        'publication_ready':False})
+                    _describe(guide,'Story avulso proposto',story)
+                if not sequences:
+                    guide.text('Nenhuma série narrativa comprovada disponível neste pacote. Não foram inventadas partes ou títulos.')
+                guide.section('Câmera, legendas e limitações')
+                _describe(guide,'Câmera registrada',read('camera/camera_summary.json',{}))
+                _describe(guide,'Preflight de legendas',caption_summary)
+                guide.text('Arquivos de referência: 05_CAMERAS; 01_TRANSCRICAO/lacunas_e_revisoes.json; 06_SEGUNDA_CURADORIA/HANDOFF_MASTER.json. Planos não atestam crop renderizado ou zoom entregue.')
+                guide.section('Revisão humana obrigatória')
+                guide.text('Conferir nomes e papéis; áudio e lacunas; cortes de frases; continuidade das séries; direitos e créditos; títulos e thumbnails; legendas; geometria; renderização e frames finais. Os gates permanecem separados.')
+                guide.save(summary/'GUIA_EDITORIAL_COMPLETO.pdf')
+                executive=EditorialPDF(title,'Resumo executivo · materiais de planejamento')
+                executive.section('Estado da entrega')
+                for label,value in (('Análise',index.get('analysis_status')),('Candidatos',len(candidates)),('Shortlist automática',index.get('default_shortlist_count')),
+                                   ('Séries propostas',len(sequences)),('Cobertura de transcrição','%.2f%%'%(coverage['coverage_ratio']*100))):
+                    _describe(executive,label,value)
+                executive.text('Preview aprovado: não. Publicação pronta: não. Lacunas e pendências preservadas. Consulte o guia e os JSONs canônicos.')
+                executive.save(summary/'RESUMO_EXECUTIVO.pdf')
+                emit('PDF da transcrição')
+                pdf=EditorialPDF('Transcrição disponível · '+title,'Cobertura medida: %.2f%% · sem completar lacunas'%(coverage['coverage_ratio']*100))
+                pdf.section('Fonte e cobertura')
+                _describe(pdf,'SHA256 da fonte informado',source_hash)
+                pdf.text('Nomes somente quando confirmados nos contratos. IDs acústicos não identificam pessoas. Fala, canto e instrumental permanecem incertos na ausência de evidência por intervalo. JSON/JSONL são a fonte canônica dos timestamps.')
+                pdf.section('Capítulos e referências editoriais')
+                for chapter in _rows(read('editorial/program_sections.json',[]),'sections'):
+                    _describe(pdf,'Capítulo',chapter)
+                pdf.text('Reels: 03_REELS. Stories: 04_STORIES. Cada briefing referencia IDs canônicos da fonte.')
+                _transcript_pdf(pdf,segments,gaps,info.get('url'),check)
+                pdf.save(transcript/'TRANSCRICAO_COMPLETA.pdf')
+                emit('ZIP e índice de evidências')
+                handoff=destination/'06_SEGUNDA_CURADORIA'
+                handoff.mkdir(exist_ok=True)
+                (handoff/'SECOND_CURATION_READY.zip').write_bytes(package_bytes)
+                if file_hash(handoff/'SECOND_CURATION_READY.zip')!=state['package_sha256']:
+                    raise ValueError('package_copy_checksum_mismatch')
+                master=read('HANDOFF_MASTER.json')
+                _json(handoff/'HANDOFF_MASTER.json',{'schema_version':'1.0','package_ref':'SECOND_CURATION_READY.zip',
+                    'package_sha256':state['package_sha256'],'source_sha256':source_hash,'run_id':manifest.get('run_id'),
+                    'package_handoff_ref':'SECOND_CURATION_READY.zip#HANDOFF_MASTER.json' if master else None,
+                    'references':[{'archive_member':n} for n in sorted(names)],
+                    'publication_ready':False,'preview_approved':False})
+                (handoff/'HANDOFF_MASTER.md').write_text('# Índice do projeto\n\nEvidências canônicas no ZIP; IDs e referências internos foram validados.\n\nAprovações humanas pendentes.\n',encoding='utf-8')
+                copy_entry('SECOND_CURATION_DECISIONS.template.json',handoff/'decisions_template.json')
+                (handoff/'IMPORT_INSTRUCTIONS.md').write_text('Importe SECOND_CURATION_READY.zip no Curator. PDFs são dossiês para leitura; JSONs são canônicos. Não há MP4 social final. Verifique pendências, direitos e aprove prévias antes da publicação.\n',encoding='utf-8')
+                technical=destination/'07_RELATORIOS_TECNICOS'
+                _json(technical/'quality_report.json',read('summary/quality_summary.json',{}))
+                _json(technical/'limitations.json',{'analysis_status':index.get('analysis_status'),'readiness':manifest.get('readiness'),
+                    'transcript_coverage':coverage['coverage_ratio'],'caption_preflight':caption_summary,
+                    'human_review_required':True,'rights_status':'UNKNOWN_REQUIRES_REVIEW','publication_ready':False})
+                _json(technical/'provenance.json',{'package_sha256':state['package_sha256'],'source_sha256':source_hash,
+                    'package_build_provenance':manifest.get('build_provenance'),'new_audiovisual_inference':False,'original_audio_replaced':False})
+                (summary/'INDICE_GERAL.html').write_text('&lt;!doctype html&gt;&lt;html lang="pt-BR"&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;'+escape(title)+'&lt;/title&gt;&lt;h1&gt;'+escape(title)+'&lt;/h1&gt;&lt;p&gt;Materiais para revisão. Nenhum MP4 final; aprovações pendentes.&lt;/p&gt;&lt;p&gt;&lt;a href="GUIA_EDITORIAL_COMPLETO.pdf"&gt;Guia editorial&lt;/a&gt; · &lt;a href="../01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf"&gt;Transcrição&lt;/a&gt;&lt;/p&gt;&lt;ul&gt;'+''.join(html_rows)+'&lt;/ul&gt;&lt;/html&gt;',encoding='utf-8')
+                state.update(pdf_status='GENERATED',candidate_count=len(candidates),story_series_count=len(sequences),
+                             standalone_story_count=len(standalone),
+                             caption_preflight_summary=caption_summary,
+                             state='READY_FOR_REVIEW' if manifest.get('workflow',{}).get('review_ready') is True else 'PARTIAL')
+                emit('Verificação de integridade')
+            except ExportCancelled:
+                state.update(state='CANCELLED',pdf_status='PARTIAL')
+            except Exception as exc:
+                state.update(state='FAILED',error=type(exc).__name__+':'+str(exc),pdf_status='PARTIAL')
+                _finalize(destination,state)
+                raise
+            _finalize(destination,state)
+        verification=verify_project_export(destination)
+        if verification['status']!='valid':
+&gt;           raise ValueError('project_export_verification_failed:'+','.join(verification['errors']))
+E           ValueError: project_export_verification_failed:project_read_failure:ValidationError
+
+src\ldporto\project_export.py:419: ValueError</failure></testcase><testcase classname="src.tests.test_r6_project_export" name="test_windows_directory_names_are_safe[CON]" time="0.000" /><testcase classname="src.tests.test_r6_project_export" name="test_windows_directory_names_are_safe[AUX.txt]" time="0.000" /><testcase classname="src.tests.test_r6_project_export" name="test_windows_directory_names_are_safe[../..]" time="0.000" /><testcase classname="src.tests.test_r6_project_export" name="test_windows_directory_names_are_safe[\xe1udio&lt;&gt;:&quot;/\\|?* .]" time="0.000" /><testcase classname="src.tests.test_r6_project_export" name="test_windows_directory_names_are_safe[LPT1]" time="0.000" /></testsuite></testsuites>

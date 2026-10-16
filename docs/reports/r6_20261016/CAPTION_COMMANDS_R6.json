@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-16",
+  "scope": "caption_preflight_and_curator_read_only_import",
+  "commands": [
+    {
+      "command": ".venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider src/tests/test_r6_caption_handoff.py src/tests/test_s7_subtitle_review.py src/tests/test_stage21_subtitle_alignment.py src/tests/test_v44_targeted_asr.py",
+      "result": "1 failed, 54 passed in 6.46s",
+      "resolution": "Corrected synthetic S7 fixture missing selected_candidate_count; existing integrity gate preserved."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider src/tests/test_r6_caption_handoff.py src/tests/test_v43_handoff.py src/tests/test_v44_second_curation.py",
+      "result": "26 passed in 11.46s"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider src/tests/test_r6_caption_handoff.py src/tests/test_v43_handoff.py src/tests/test_v44_second_curation.py src/tests/test_s7_subtitle_review.py src/tests/test_stage21_subtitle_alignment.py src/tests/test_v44_targeted_asr.py",
+      "result": "70 passed in 14.14s"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider src/tests/test_r51_semantic_package.py src/tests/test_r6_caption_handoff.py",
+      "result": "50 passed in 8.31s",
+      "purpose": "Semantic derivative preserves parent master while refreshing current revision artifact index."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider src/tests/test_r51_semantic_package.py src/tests/test_r6_caption_handoff.py src/tests/test_v43_handoff.py src/tests/test_v44_second_curation.py",
+      "result": "62 passed in 15.04s"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B docs/reports/r6_20261016/verify_caption_curator.py",
+      "result": "read_package passed; smoke_import passed; 3 synthetic candidates; analyzer validation valid; Curator sources unchanged; models/render false",
+      "evidence": "caption_curator_import_r6.json"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider src/tests/test_r6_caption_handoff.py src/tests/test_r51_semantic_package.py src/tests/test_v43_handoff.py src/tests/test_v44_second_curation.py src/tests/test_s7_subtitle_review.py src/tests/test_stage21_subtitle_alignment.py src/tests/test_v44_targeted_asr.py",
+      "result": "109 passed in 16.21s",
+      "purpose": "Final focused regression including semantic Story interval triage, master derivation and legacy gates."
+    }
+  ],
+  "not_executed": ["full_pipeline", "ASR", "GPU", "Ollama", "real_media", "final_Curator_renderer", "human_audio_review"],
+  "publication_ready": false
+}

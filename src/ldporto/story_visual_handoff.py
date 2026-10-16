@@ -14,6 +14,7 @@ import unicodedata
 import jsonschema
 
 from .core import digest
+from .camera_handoff import build_camera_handoff
 from .export_privacy import sanitize_export
 from .semantic_narrative import source_claim_issues
 
@@ -491,6 +492,7 @@ def build_story_visual_handoff(legacy, semantic_artifacts, infer):
                 'summary', 'context_required', 'previous_story_dependency', 'next_story_relationship',
                 'missing_information', 'estimated_source_duration', 'new_information')},
                 'sequence_id': series.get('sequence_id', series_id), 'sequence_total': len(stories),
+                'camera_handoff': build_camera_handoff(legacy, intervals=story['source_intervals']),
                 'source_sha256': metadata['sha256'], 'revision': 'R5.1',
                 'supporting_evidence': _evidence(ids, by_id), 'provenance': provenance,
                 'primary_title': primary, 'alternative_titles': alternatives,
@@ -729,6 +731,9 @@ def validate_story_visual_handoff(artifacts, legacy, semantic_artifacts):
                 if not _strict_same(story['highlight_candidates'], _highlights({'keywords': keywords}, expected_alignment, by_id)):
                     errors.append('visual_highlight_timestamp_disagreement')
                 layout = story['layout_constraints']
+                if story.get('camera_handoff') is not None and not _strict_same(
+                        story['camera_handoff'], build_camera_handoff(legacy, intervals=story['source_intervals'])):
+                    errors.append('visual_shared_camera_handoff_disagreement')
                 if (layout.get('subject_regions_status') != 'UNKNOWN' or layout.get('subject_regions') != [] or
                         layout.get('coordinates') is not None or layout.get('crop_zoom_authorized') is not False or
                         layout.get('visual_validation_executed') is not False or layout.get('camera_mode') != 'SOURCE_PRESERVE' or

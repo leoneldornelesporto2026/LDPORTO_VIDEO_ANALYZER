@@ -2,6 +2,7 @@
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 import hashlib
+import io
 import json
 import math
 import re
@@ -21,6 +22,10 @@ from .narrative_handoff import (ARTIFACTS as NARRATIVE_ARTIFACTS, build_narrativ
                                validate_narrative_handoff, narrative_audit_documents)
 from .transcript_dossier import raw_hypothesis_dossier, review_word_ids, validate_review_dossier
 from .transcription import _require_original
+from .subtitle_review import (CAPTION_PREFLIGHT_PATH, SEMANTIC_CAPTION_PREFLIGHT_PATH,
+                              CAPTION_STATES, build_caption_preflight)
+from .camera_handoff import build_camera_handoff
+from .performer_evidence import build_performer_evidence
 from .ocr import normalize_commercial_observation
 from .commercial_gate import commercial_evidence_state, require_commercial_review, _speech_classification
 from .editorial_handoff_audit import AUDIT_PATH, audit_handoff, audit_exported_handoff
@@ -43,6 +48,146 @@ def _identifier(value):
     if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,100}', value) or '..' in value:
         raise ValueError('Unsafe candidate identifier.')
     return value
+
+
+def _write_handoff_master(root, run_id, source_hash, workflow, candidates, stories):
+    """Index existing artifacts; the outer manifest binds this index without a hash cycle."""
+    artifacts = [{'path': file.relative_to(root).as_posix(), 'bytes': file.stat().st_size,
+                  'sha256': file_hash(file)} for file in sorted(root.rglob('*')) if file.is_file()
+                 and 'optional_media' not in file.relative_to(root).parts
+                 and file.name not in {'HANDOFF_MASTER.json', 'SECOND_CURATION_MANIFEST.json'}]
+    document = {'schema_version': 'r6.1', 'run_id': run_id, 'source_sha256': source_hash,
+        'package_revision_scope': 'bound_by_second_curation_manifest_sha256',
+        'state': 'READY_FOR_REVIEW' if workflow.get('review_ready') else 'PARTIAL',
+        'preview_approved': False, 'human_approved': False, 'publication_ready': False,
+        'canonical_id_sources': {'candidate_id': 'editorial/candidate_catalog.json',
+            'story_id': 'social/stories_manifest.json', 'word_id': 'transcript/relevant_words.jsonl',
+            'segment_id': 'transcript/relevant_segments.jsonl', 'participant_id': 'people/participants.json',
+            'person_id': 'people/person_identities.json', 'speaker_id': 'people/speakers.json',
+            'track_id': 'people/person_tracks.json', 'appearance_id': 'people/person_appearances.json',
+            'director_id': 'camera/camera_director_timeline.json'},
+        'caption_preflight_ref': CAPTION_PREFLIGHT_PATH,
+        'candidates': [{'candidate_id': c['candidate_id'], 'file_ref': 'candidates/' + _identifier(c['candidate_id']) + '.json',
+            'caption_status': (c.get('caption_preflight') or {}).get('status')} for c in candidates],
+        'stories': [{'story_id': s['story_id'], 'candidate_id': s.get('candidate_id'),
+            'caption_status': (s.get('caption_preflight') or {}).get('status')} for s in stories],
+        'artifacts': artifacts,
+        'compatibility': {'legacy_contract_preserved': True, 'curator_import_test': 'not_attested_by_export',
+            'external_curator_render_verified': False}}
+    write_json(root / 'HANDOFF_MASTER.json', _public(document))
+
+
+def _validate_r6_handoff(names, read, manifest, index, candidates, segments):
+    """Legacy packages remain readable; R6 claims require all current interval evidence."""
+    if not index.get('handoff_master_ref') and 'HANDOFF_MASTER.json' not in names:
+        return []
+    errors = []
+    if index.get('handoff_master_ref') != 'HANDOFF_MASTER.json' or not {'HANDOFF_MASTER.json', CAPTION_PREFLIGHT_PATH} <= set(names):
+        return ['r6:missing_handoff_or_preflight']
+    master = json.loads(read('HANDOFF_MASTER.json'))
+    if master.get('run_id') != manifest.get('run_id') or master.get('source_sha256') != manifest.get('source_hash'):
+        errors.append('r6:master_provenance_disagreement')
+    if master.get('state') != ('READY_FOR_REVIEW' if manifest.get('workflow', {}).get('review_ready') else 'PARTIAL'):
+        errors.append('r6:master_review_state_disagreement')
+    if any(master.get(key) is not False for key in ('preview_approved', 'human_approved', 'publication_ready')):
+        errors.append('r6:master_approval_must_remain_false')
+    artifacts = master.get('artifacts') or []
+    paths = [r.get('path') for r in artifacts]
+    if len(paths) != len(set(paths)) or set(paths) != set(names) - {'HANDOFF_MASTER.json', 'SECOND_CURATION_MANIFEST.json'}:
+        errors.append('r6:master_artifact_index_disagreement')
+    for record in artifacts:
+        name = record.get('path')
+        if name not in names or name in {'HANDOFF_MASTER.json', 'SECOND_CURATION_MANIFEST.json'}:
+            errors.append('r6:master_dangling_artifact:' + str(name))
+            continue
+        payload = read(name)
+        if record.get('bytes') != len(payload) or record.get('sha256') != hashlib.sha256(payload).hexdigest():
+            errors.append('r6:master_artifact_hash:' + name)
+    words = [json.loads(line) for line in read('transcript/relevant_words.jsonl').decode('utf-8').splitlines() if line]
+    stories = json.loads(read('social/stories_manifest.json')).get('stories', [])
+    events = json.loads(read('audio/sound_events.json')).get('events', [])
+    preflight = json.loads(read(CAPTION_PREFLIGHT_PATH))
+    import jsonschema
+    for name, document in ((CAPTION_PREFLIGHT_PATH, preflight), ('HANDOFF_MASTER.json', master)):
+        schema_name = 'caption_preflight_r6.schema.json' if name == CAPTION_PREFLIGHT_PATH else 'handoff_master_r6.schema.json'
+        schema_path = 'schemas/' + schema_name
+        if schema_path not in names:
+            errors.append('r6:missing_schema:' + schema_path)
+        else:
+            try:
+                jsonschema.validate(document, read_json(SCHEMA_DIR / schema_name))
+            except jsonschema.ValidationError:
+                errors.append('r6:schema_invalid:' + name)
+    expected = build_caption_preflight(words, segments, candidates, stories, events=events,
+        duration=json.loads(read('source/metadata.json')).get('duration'),
+        caption_config=preflight.get('timing_policy'), threshold=preflight.get('confidence_threshold', .60))
+    if expected != preflight:
+        errors.append('r6:caption_preflight_evidence_disagreement')
+    if master.get('caption_preflight_ref') != CAPTION_PREFLIGHT_PATH:
+        errors.append('r6:master_preflight_ref')
+    for collection, id_key in ((candidates, 'candidate_id'), (stories, 'story_id')):
+        kind = 'candidates' if id_key == 'candidate_id' else 'stories'
+        expected_ids = [r[id_key] for r in collection]
+        if [r.get(id_key) for r in master.get(kind, [])] != expected_ids:
+            errors.append('r6:master_canonical_ids:' + kind)
+        for row in collection:
+            ident = row[id_key]
+            review = expected[kind].get(ident, {})
+            summary = row.get('caption_preflight') or {}
+            if (summary.get('ref') != CAPTION_PREFLIGHT_PATH or summary.get('status') not in CAPTION_STATES or
+                    summary.get('status') != review.get('status') or summary.get('publication_ready') is not False):
+                errors.append('r6:caption_preflight_summary:' + ident)
+        for row in master.get(kind, []):
+            if row.get('caption_status') != expected[kind].get(row.get(id_key), {}).get('status'):
+                errors.append('r6:master_caption_status:' + str(row.get(id_key)))
+            if kind == 'candidates' and row.get('file_ref') != 'candidates/' + str(row.get(id_key)) + '.json':
+                errors.append('r6:master_candidate_ref:' + str(row.get(id_key)))
+    for reference in master.get('canonical_id_sources', {}).values():
+        if reference not in names:
+            errors.append('r6:master_canonical_source_ref:' + str(reference))
+    if SEMANTIC_CAPTION_PREFLIGHT_PATH in names or master.get('semantic_caption_preflight_ref'):
+        from .semantic_package import semantic_caption_preflight
+        if (SEMANTIC_CAPTION_PREFLIGHT_PATH not in names or 'editorial/story_series_proposals.json' not in names or
+                master.get('semantic_caption_preflight_ref') != SEMANTIC_CAPTION_PREFLIGHT_PATH):
+            errors.append('r6:missing_semantic_story_preflight')
+        else:
+            semantic_report = json.loads(read(SEMANTIC_CAPTION_PREFLIGHT_PATH))
+            semantic_source = {'source/metadata.json': json.loads(read('source/metadata.json')),
+                'transcript/relevant_words.jsonl': words, 'transcript/relevant_segments.jsonl': segments,
+                'audio/sound_events.json': {'events': events},
+                'editorial/story_series_proposals.json': json.loads(read('editorial/story_series_proposals.json'))}
+            expected_semantic = semantic_caption_preflight(semantic_source,
+                caption_config=semantic_report.get('timing_policy'), threshold=semantic_report.get('confidence_threshold', .60))
+            if expected_semantic != semantic_report:
+                errors.append('r6:semantic_caption_preflight_evidence_disagreement')
+            if 'schemas/semantic_caption_preflight_r6.schema.json' not in names or not jsonschema.Draft202012Validator(
+                    read_json(SCHEMA_DIR / 'semantic_caption_preflight_r6.schema.json')).is_valid(semantic_report):
+                errors.append('r6:semantic_caption_preflight_schema_invalid')
+            expected_stories = [{'story_id': ident, 'caption_status': review['status'],
+                'source_intervals': review['source_intervals']} for ident, review in expected_semantic['stories'].items()]
+            if master.get('semantic_stories') != expected_stories:
+                errors.append('r6:master_semantic_story_index_disagreement')
+    camera_files = {'camera/shared_camera_handoff.json', 'camera/candidate_camera_plans.json',
+                    'camera/camera_director_timeline.json', 'schemas/camera_handoff.schema.json'}
+    if not camera_files <= set(names):
+        errors.append('r6:missing_shared_camera_contract')
+    else:
+        camera_validator = jsonschema.Draft202012Validator(read_json(SCHEMA_DIR / 'camera_handoff.schema.json'))
+        camera_source = {'metadata': json.loads(read('source/metadata.json')),
+                         'camera_director_timeline': json.loads(read('camera/camera_director_timeline.json'))}
+        plans = json.loads(read('camera/candidate_camera_plans.json'))
+        if not isinstance(plans, list) or [p.get('candidate_id') for p in plans] != [c['candidate_id'] for c in candidates]:
+            errors.append('r6:camera_candidate_index_disagreement')
+            plans = []
+        handoffs = [('shared', json.loads(read('camera/shared_camera_handoff.json')), build_camera_handoff(camera_source))]
+        handoffs += [(c['candidate_id'], p.get('camera_handoff'), build_camera_handoff(camera_source, c['start'], c['end']))
+                     for c, p in zip(candidates, plans)]
+        handoffs += [(s['story_id'], s.get('camera_handoff'), build_camera_handoff(camera_source, s.get('start'), s.get('end')))
+                     for s in stories]
+        for ident, received, expected_camera in handoffs:
+            if not camera_validator.is_valid(received) or received != expected_camera:
+                errors.append('r6:camera_evidence_disagreement:' + ident)
+    return errors
 
 
 def _validate_transcript_contract(contract, names, read, segments):
@@ -295,6 +440,7 @@ def validate_core_package(path):
                     errors.append('private_data:' + name)
         segments = [json.loads(line) for line in read('transcript/relevant_segments.jsonl').decode('utf-8').splitlines() if line]
         segment_ids = {row['segment_id'] for row in segments}
+        errors.extend(_validate_r6_handoff(names, read, manifest, index, catalog['candidates'], segments))
         if manifest.get('transcript_contract') is not None:
             if manifest['transcript_contract'] != index.get('transcript_contract') or manifest['transcript_contract'] != brief.get('transcript_contract'):
                 errors.append('transcript_contract:manifest_index_brief_disagreement')
@@ -540,7 +686,7 @@ def validate_core_package(path):
                         'question_answer_resolution', 'segment_ids', 'speaker_ids', 'primary_topic_id',
                         'secondary_topic_ids', 'alternate_of', 'alternate_ref', 'alternates',
                         'context_before', 'context_after', 'source_media_references',
-                        'editorial_potential', 'review_milestones', 'boundary_review_proposals')):
+                        'editorial_potential', 'review_milestones', 'boundary_review_proposals', 'caption_preflight')):
                     errors.append('candidate_file_mismatch:' + candidate['candidate_id'])
                 if individual.get('commercial_observations', []) != candidate.get('commercial_observations', []):
                     errors.append('commercial_observations_mismatch:' + candidate['candidate_id'])
@@ -586,6 +732,48 @@ def validate_core_package(path):
             archive.close()
 
 
+def snapshot_core_package(package_path):
+    """Validate exactly the immutable bytes the caller will consume/copy."""
+    with Path(package_path).open('rb') as handle:
+        raw = handle.read(256*1024**2+1)
+    if len(raw)>256*1024**2:
+        raise ValueError('core_package_snapshot_exceeds_budget')
+    with tempfile.TemporaryDirectory(prefix='ldporto_core_snapshot_') as folder:
+        path=Path(folder)/'snapshot.zip'
+        path.write_bytes(raw)
+        validation=validate_core_package(path)
+    if validation.get('status')!='valid':
+        raise ValueError('invalid_second_curation_package:'+','.join(validation.get('errors') or []))
+    return raw,validation
+
+
+def _verified_visual_reuse(package_path, metadata, candidates):
+    """Reuse hashed source contact sheets only; never carry forward preview approval."""
+    if not package_path:
+        return {}
+    raw_package,_ = snapshot_core_package(package_path)
+    by_id = {c['candidate_id']: c for c in candidates}
+    reused = {}
+    with zipfile.ZipFile(io.BytesIO(raw_package)) as archive:
+        previous = json.loads(archive.read('source/metadata.json'))
+        if previous.get('sha256') != metadata.get('sha256') or previous.get('duration') != metadata.get('duration'):
+            raise ValueError('visual_reuse_source_mismatch')
+        catalog = json.loads(archive.read('editorial/candidate_catalog.json'))
+        package_hash = hashlib.sha256(raw_package).hexdigest()
+        for row in catalog.get('candidates') or []:
+            cid = row['candidate_id']
+            current = by_id.get(cid)
+            member = 'visuals/' + _identifier(cid) + '/contact_sheet.jpg'
+            if (current and all(current.get(k) == row.get(k) for k in ('start','end')) and
+                    member in (row.get('visual_refs') or [])):
+                raw = archive.read(member)
+                if not raw.startswith(b'\xff\xd8'):
+                    raise ValueError('visual_reuse_invalid_jpeg')
+                reused[cid] = {'member': member, 'bytes': raw, 'package_sha256': package_hash,
+                    'sha256': hashlib.sha256(raw).hexdigest()}
+    return reused
+
+
 def build_core_package(analysis, source=None, output_dir=None, cfg=None, progress=None, package=None, directory_only=False):
     """Build SECOND_CURATION_READY/PARTIAL from existing facts and source frames."""
     cfg = cfg or {}
@@ -600,6 +788,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
     from copy import deepcopy
     package = deepcopy(package) if package is not None else build_second_curation_package(analysis)
     candidates = package['candidates']
+    reusable_visuals = _verified_visual_reuse(cfg.get('reuse_verified_visuals_package'), metadata, candidates)
     # Reconcile supplied/legacy packages too, without dropping any upstream link.
     package['question_reference_table'] = build_question_reference_table(analysis, candidates)
     package['reference_validation'] = validate_references(analysis, package)
@@ -646,6 +835,8 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             write('provenance/editorial_replay.json', replay)
         from .second_curation_decisions import SCHEMA
         write('schemas/second_curation_decisions.schema.json', SCHEMA)
+        for schema_name in ('caption_preflight_r6.schema.json', 'handoff_master_r6.schema.json', 'camera_handoff.schema.json'):
+            write('schemas/' + schema_name, read_json(SCHEMA_DIR / schema_name))
         write('SECOND_CURATION_DECISIONS.template.json', {'schema_version': '4.4.0', 'source_sha256': metadata.get('sha256'),
                                                        'provider': 'manual_json', 'actions': []})
         write('summary/analysis_summary.json', {'analysis_status': export_status, 'analyzer_version': analysis_version,
@@ -697,7 +888,8 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         word_ids.update((source_diagnostic or {}).get('word_ids') or [])
         word_ids.update(review_word_ids(source_review) | review_word_ids(hypothesis_comparison))
         word_keys = ('word_id', 'segment_id', 'word', 'raw', 'start', 'end', 'speaker', 'confidence', 'needs_review',
-                     'review_reasons', 'timestamp_suspect', 'text_kind', 'task', 'asr_task', 'is_translation', 'source', 'hypothesis_id', 'provenance',
+                     'review_reasons', 'timestamp_suspect', 'timestamp_repaired', 'alignment_verified', 'audio_verified', 'speech_overlap',
+                     'suspected_hallucination', 'text_kind', 'task', 'asr_task', 'is_translation', 'source', 'hypothesis_id', 'provenance',
                      'language', 'language_hint', 'language_detection_scope')
         legacy_word_keys = {'word_id', 'segment_id', 'word', 'start', 'end', 'speaker', 'confidence', 'needs_review', 'timestamp_suspect'}
         def project_word(row):
@@ -713,7 +905,12 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             write('editorial/' + name + '.json', analysis.get(name, []))
         write(QA_TABLE_PATH, package['question_reference_table'])
         write('people/speakers.json', analysis.get('speakers', []))
-        write('people/participants.json', analysis.get('participants', []))
+        performer_evidence = build_performer_evidence(analysis)
+        for key in ('participants', 'person_tracks', 'person_appearances', 'instrument_observations',
+                    'speaker_person_mapping', 'performer_review_queue'):
+            write('people/' + key + '.json', performer_evidence[key])
+        write('people/performer_evidence.json', {key: value for key, value in performer_evidence.items() if key not in
+            {'participants', 'person_tracks', 'person_appearances', 'instrument_observations', 'speaker_person_mapping', 'performer_review_queue'}})
         write('people/speaker_person_summary.json', analysis.get('speaker_person_summary', []))
         people_index = {person['person_id']: person for person in analysis.get('people', []) + analysis.get('person_identities', []) if person.get('person_id')}
         write('people/person_identities.json', [{key: person.get(key) for key in ('person_id', 'track_ids', 'first_seen', 'last_seen', 'total_visual_seconds', 'identity_status', 'reid_confidence')}
@@ -762,7 +959,18 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             candidate.pop('thumbnail_candidates', None)
             candidate['preview_reference'] = None
             candidate['preview_validation_status'] = (analysis.get('preview_validation') or {}).get('status', 'unavailable')
-            if candidate_id in selected_visuals:
+            reused = reusable_visuals.get(candidate_id)
+            if reused:
+                relative = reused['member']
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(reused['bytes'])
+                candidate['visual_refs'].append(relative)
+                visuals.append(relative)
+                candidate['visual_metadata'] = {'status':'ok', 'provenance':'verified_existing_source_contact_sheet',
+                    'reused_from_package_sha256':reused['package_sha256'], 'sha256':reused['sha256'],
+                    'new_frames_decoded':False, 'current_camera_render_verified':False}
+            if candidate_id in selected_visuals and not reused:
                 relative = f'visuals/{candidate_id}/contact_sheet.jpg'
                 result = build_contact_sheet(source or '', candidate, root / relative, analysis.get('camera_director_timeline', []))
                 candidate['visual_metadata'] = result
@@ -816,7 +1024,6 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                     (root/name).write_text(_public(value), encoding='utf-8')
                 else:
                     write(name, value)
-        write('editorial/candidate_catalog.json', {'schema_version': SCHEMA_VERSION, 'candidates': candidates})
         write('editorial/selection_report_s3.json', {'method': ((analysis.get('candidate_metrics') or {}).get('selection_report') or {}).get('method', 'evidence_gates_score_floor_topical_diversity'),
             'final_selection_is_human_review_required': True,
             'catalog_scope': {'catalog_count': len(candidates),
@@ -826,6 +1033,28 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
             'selection_report': (analysis.get('candidate_metrics') or {}).get('selection_report')})
         social_output = _reconcile_social_output(analysis.get('social_output') or {}, candidates,
                                                 integrity_ready and refs_resolved, analysis)
+        # Preflight is independent of first-pass ranking and never triggers ASR.
+        # Recompute from the exact canonical evidence included in this package.
+        exported_words = [project_word(row) for row in relevant_words]
+        exported_segments = [{key: row.get(key) for key in segment_keys} for row in segments]
+        caption_preflight = build_caption_preflight(_public(exported_words), _public(exported_segments), candidates,
+            social_output.get('stories', []), events=_public(analysis.get('audio_events') or []),
+            duration=metadata.get('duration'), caption_config=cfg.get('caption_preflight_config'),
+            threshold=cfg.get('caption_preflight_confidence_threshold', .60))
+        write(CAPTION_PREFLIGHT_PATH, caption_preflight)
+        for collection, kind, id_key in ((candidates, 'candidates', 'candidate_id'),
+                                        (social_output.get('stories', []), 'stories', 'story_id')):
+            for row in collection:
+                entry = caption_preflight[kind][row[id_key]]
+                row['caption_preflight'] = {'ref': CAPTION_PREFLIGHT_PATH, 'id': row[id_key],
+                    'status': entry['status'], 'allowed_caption_mode': entry['allowed_caption_mode'],
+                    'reason_codes': entry['reason_codes'], 'publication_ready': False}
+                if kind == 'candidates':
+                    row['camera_handoff_ref'] = 'camera/candidate_camera_plans.json'
+                    write('candidates/' + _identifier(row['candidate_id']) + '.json', row)
+                else:
+                    row['camera_handoff'] = build_camera_handoff(analysis, row.get('start'), row.get('end'))
+        write('editorial/candidate_catalog.json', {'schema_version': SCHEMA_VERSION, 'candidates': candidates})
         if narrative_info is not None:
             social_output.update(narrative_handoff_ref=narrative_info['handoff_ref'],
                 provisional_sequence_count=narrative_info['provisional_sequence_count'],
@@ -913,7 +1142,10 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         write('editorial/alternate_groups.json', [{'primary_candidate': candidate['candidate_id'], 'alternates': [row.get('moment_id') for row in candidate.get('alternates', [])], 'selection': candidate.get('dedup_selection'), 'candidate_files': {row.get('moment_id'): 'candidates/' + _identifier(row['moment_id']) + '.json' for row in candidate.get('alternates', [])}} for candidate in candidates if candidate.get('alternates')])
         write('quality/candidate_quality.json', [{'candidate_id': candidate['candidate_id'], **{key: candidate.get(key) for key in ('audio_quality', 'technical_quality', 'clean_opening', 'clean_ending', 'evidence_coverage', 'ranking_confidence', 'missing_field_reasons')}} for candidate in candidates])
         write('camera/candidate_camera_plans.json', [{'candidate_id': candidate['candidate_id'], 'camera_feasibility': candidate.get('camera_feasibility'),
-                                                   'director_segments': candidate.get('director_segments', []), 'crop_keyframes': candidate.get('crop_keyframes', [])} for candidate in candidates])
+            'director_segments': candidate.get('director_segments', []), 'crop_keyframes': candidate.get('crop_keyframes', []),
+            'camera_handoff': build_camera_handoff(analysis, candidate['start'], candidate['end'])} for candidate in candidates])
+        write('camera/camera_director_timeline.json', analysis.get('camera_director_timeline') or [])
+        write('camera/shared_camera_handoff.json', build_camera_handoff(analysis))
         media_path = None
         if media_files:
             media_path = output_dir / media_relative_name
@@ -978,6 +1210,8 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                  'transcript_contract': transcript_contract, 'editorial_result': editorial_result,
                  'full_source_review_ref': 'editorial/full_source_review.json', 'review_readiness_scope': review_readiness_scope}
         index['capability_contract'] = contract['capability_contract']
+        index['handoff_master_ref'] = 'HANDOFF_MASTER.json'
+        index['caption_preflight_ref'] = CAPTION_PREFLIGHT_PATH
         if narrative_info is not None:
             index['narrative_handoff'] = narrative_info
         write('CURATION_INDEX.json', index)
@@ -998,6 +1232,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
                                              'editorial/candidate_catalog.json', 'social/stories_manifest.json',
                                              'social/caption_style_recommendations.json', 'candidates/', 'visuals/']}
         brief['capability_contract'] = contract['capability_contract']
+        brief['recommended_entrypoints'].insert(0, 'HANDOFF_MASTER.json')
         if narrative_info is not None:
             brief['narrative_handoff'] = narrative_info
             brief['recommended_entrypoints'].insert(1, 'SECOND_CURATION_NARRATIVE_HANDOFF.json')
@@ -1011,6 +1246,7 @@ def build_core_package(analysis, source=None, output_dir=None, cfg=None, progres
         write(AUDIT_PATH, audit_exported_handoff(_public(candidates), lambda name: (root / name).read_bytes()))
         write('summary/privacy_redactions.json', {'state': 'redacted' if redactions else 'unchanged',
                                                  'findings': list(redactions)})
+        _write_handoff_master(root, run_id, metadata.get('sha256'), workflow, candidates, social_output.get('stories', []))
         files = [{'path': file.relative_to(root).as_posix(), 'bytes': file.stat().st_size, 'sha256': file_hash(file)} for file in sorted(root.rglob('*'))
              if file.is_file() and 'optional_media' not in file.relative_to(root).parts]
         manifest = {'schema_version': SCHEMA_VERSION, 'second_curation_schema_version': package.get('schema_version'), 'run_id': run_id,
@@ -1164,6 +1400,9 @@ def generate_visuals_on_demand(package_path, source, candidate_ids, output_dir, 
         brief['workflow'] = manifest['workflow']
         brief['known_limitations'] = manifest['missing_capabilities']
         write_json(root / 'SECOND_CURATOR_BRIEF.json', brief)
+        if (root / 'HANDOFF_MASTER.json').is_file():
+            _write_handoff_master(root, manifest.get('run_id'), manifest.get('source_hash'), manifest['workflow'],
+                catalog['candidates'], read_json(root / 'social/stories_manifest.json').get('stories', []))
         manifest['files'] = [{'path': f.relative_to(root).as_posix(), 'bytes': f.stat().st_size, 'sha256': file_hash(f)}
                              for f in sorted(root.rglob('*')) if f.is_file() and f.name != 'SECOND_CURATION_MANIFEST.json']
         manifest['file_count'] = len(manifest['files']) + 1

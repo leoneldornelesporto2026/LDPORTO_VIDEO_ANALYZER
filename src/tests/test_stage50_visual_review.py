@@ -200,14 +200,21 @@ def test_actual_synthetic_render_receipt_preview_hash_and_clipping(tmp_path, mon
     validation = verify_preview(target, {'duration':2}, [r])
     canary = dict(canary_id='SYNTHETIC',render=rendered['data'],validation=validation['data'])
     report = delivery_report([p],[r],[canary])
-    assert report['zoom_delivered_event_count'] == 1
+    # Uniform source pixels stay uniform after a real crop transform. Render
+    # receipts therefore prove execution, not visible final-frame zoom motion.
+    assert report['rendered_zoom_event_count'] == 1
+    assert report['zoom_delivered_event_count'] == 0
+    assert report['zoom_delivery_verified'] is None
+    assert report['proposal_outcomes'][0]['reason_codes'] == ['final_frame_motion_unverified']
     assert report['preview_approved'] is None and not report['publish_ready']
     bad = deepcopy(canary)
     bad['validation']['preview_sha256'] = 'b'*64
+    assert delivery_report([p],[r],[bad])['rendered_zoom_event_count'] == 0
     assert delivery_report([p],[r],[bad])['zoom_delivered_event_count'] == 0
     static = deepcopy(canary)
     for receipt in static['render']['rendered_motion']:
         receipt['scale_samples'] = [[t, 1.] for t, _ in receipt['scale_samples']]
+    assert delivery_report([p],[r],[static])['rendered_zoom_event_count'] == 0
     assert delivery_report([p],[r],[static])['zoom_delivered_event_count'] == 0
     bad = deepcopy(canary)
     bad['validation']['issues'] = [{'issue_type':'FACE_OR_HEAD_CLIPPED'}]

@@ -87,6 +87,17 @@ def decoded_documents(members):
     return documents
 
 
+def semantic_caption_preflight(documents, *, caption_config=None, threshold=.60):
+    from .subtitle_review import build_story_interval_preflight
+    stories = [story for series in (documents.get('editorial/story_series_proposals.json') or {}).get('series', [])
+               for story in series.get('stories', [])]
+    return build_story_interval_preflight(documents.get('transcript/relevant_words.jsonl') or [],
+        documents.get('transcript/relevant_segments.jsonl') or [], stories,
+        events=(documents.get('audio/sound_events.json') or {}).get('events', []),
+        duration=(documents.get('source/metadata.json') or {}).get('duration'),
+        caption_config=caption_config, threshold=threshold)
+
+
 def validate_semantic_artifacts(documents, legacy):
     """Offline consumer checks, independent of inference or its cached validators."""
     errors = []
@@ -244,7 +255,7 @@ def export_semantic_package(reference, output, additions):
     members = read_package(reference)
     legacy = decoded_documents(members)
     protected = {n: hashlib.sha256(v).hexdigest() for n, v in members.items()
-                 if n != 'SECOND_CURATION_MANIFEST.json' and not n.startswith('schemas/')}
+                 if n not in {'SECOND_CURATION_MANIFEST.json', 'HANDOFF_MASTER.json'} and not n.startswith('schemas/')}
     for name, value in additions.items():
         if name in members:
             raise ValueError('semantic_addition_cannot_replace_legacy:' + name)
@@ -260,6 +271,15 @@ def export_semantic_package(reference, output, additions):
             source = Path(__file__).parents[2]/name
             if source.is_file():
                 members[name] = source.read_bytes()
+    from .subtitle_review import CAPTION_PREFLIGHT_PATH, SEMANTIC_CAPTION_PREFLIGHT_PATH
+    preflight_documents = decoded_documents(members)
+    source_policy = preflight_documents.get(CAPTION_PREFLIGHT_PATH) or {}
+    semantic_preflight = semantic_caption_preflight(preflight_documents,
+        caption_config=source_policy.get('timing_policy'), threshold=source_policy.get('confidence_threshold', .60))
+    members[SEMANTIC_CAPTION_PREFLIGHT_PATH] = json.dumps(semantic_preflight, ensure_ascii=False,
+        indent=2, allow_nan=False).encode('utf-8')
+    members['schemas/semantic_caption_preflight_r6.schema.json'] = (
+        Path(__file__).parents[2]/'schemas/semantic_caption_preflight_r6.schema.json').read_bytes()
     documents = decoded_documents(members)
     validation = validate_semantic_artifacts({n: doc for n, doc in documents.items() if n not in legacy or n in additions}, legacy)
     schema_validation = validate_embedded_schemas(documents)
@@ -273,6 +293,25 @@ def export_semantic_package(reference, output, additions):
         legacy_core_expensive_inference_executed=manifest.get('expensive_inference_executed'),
         expensive_inference_executed=bool(text_calls), new_textual_inference_calls=text_calls,
         new_audiovisual_inference=False)
+    if 'HANDOFF_MASTER.json' in members:
+        # A derived package has a new file set. Preserve the parent's exact index
+        # as provenance, then bind the current index to this revision's bytes.
+        original_master = members['HANDOFF_MASTER.json']
+        parent_hash = hashlib.sha256(original_master).hexdigest()
+        parent_ref = 'provenance/parent_handoff_master_' + parent_hash[:16] + '.json'
+        if parent_ref in members and members[parent_ref] != original_master:
+            raise ValueError('semantic_parent_master_collision')
+        members[parent_ref] = original_master
+        master = json.loads(original_master)
+        master['derivation'] = {'scope': 'semantic_additions_only',
+            'parent_master_ref': parent_ref, 'parent_master_sha256': parent_hash,
+            'parent_package_sha256': file_hash(reference)}
+        master['semantic_caption_preflight_ref'] = SEMANTIC_CAPTION_PREFLIGHT_PATH
+        master['semantic_stories'] = [{'story_id': ident, 'caption_status': review['status'],
+            'source_intervals': review['source_intervals']} for ident, review in semantic_preflight['stories'].items()]
+        master['artifacts'] = [{'path': n, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
+            for n, data in sorted(members.items()) if n not in {'HANDOFF_MASTER.json', 'SECOND_CURATION_MANIFEST.json'}]
+        members['HANDOFF_MASTER.json'] = json.dumps(master, ensure_ascii=False, indent=2, allow_nan=False).encode('utf-8')
     manifest['files'] = [{'path': n, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
                          for n, data in sorted(members.items()) if n != 'SECOND_CURATION_MANIFEST.json']
     manifest['file_count'] = len(members)
@@ -307,6 +346,16 @@ def validate_semantic_package(path, *, reference=None):
     members = read_package(path)
     documents = decoded_documents(members)
     errors = validate_embedded_schemas(documents)['errors']
+    from .subtitle_review import SEMANTIC_CAPTION_PREFLIGHT_PATH
+    if SEMANTIC_CAPTION_PREFLIGHT_PATH in documents:
+        report = documents[SEMANTIC_CAPTION_PREFLIGHT_PATH]
+        expected_preflight = semantic_caption_preflight(documents, caption_config=report.get('timing_policy'),
+            threshold=report.get('confidence_threshold', .60))
+        if report != expected_preflight:
+            errors.append('semantic_caption_preflight_evidence_disagreement')
+        schema = documents.get('schemas/semantic_caption_preflight_r6.schema.json')
+        if not schema or not jsonschema.Draft202012Validator(schema).is_valid(report):
+            errors.append('semantic_caption_preflight_schema_invalid')
     semantic_names = {'editorial/global_topic_map.json', 'editorial/semantic_narrative_graph.json',
         'editorial/cross_arc_relations.json', 'editorial/semantic_qa_proposals.json',
         'editorial/narrative_completion_proposals.json', 'editorial/story_series_proposals.json',
@@ -329,7 +378,14 @@ def validate_semantic_package(path, *, reference=None):
         for n, original in reference_members.items():
             if n == 'SECOND_CURATION_MANIFEST.json' or n.startswith('schemas/'):
                 continue
-            if members.get(n) != original:
+            actual = members.get(n)
+            if n == 'HANDOFF_MASTER.json':
+                derivation = (documents.get(n) or {}).get('derivation') or {}
+                actual = members.get(derivation.get('parent_master_ref'))
+                if (derivation.get('parent_master_sha256') != hashlib.sha256(original).hexdigest() or
+                        derivation.get('parent_package_sha256') != hashlib.sha256(Path(reference).read_bytes()).hexdigest()):
+                    errors.append('legacy_master_provenance_changed')
+            if actual != original:
                 errors.append('legacy_artifact_changed:'+n)
             else:
                 protected_verified += 1

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "R6 evidence-only caption preflight",
+  "type": "object",
+  "required": ["schema_version", "scope", "source_duration", "timing_policy", "confidence_threshold", "candidate_count", "story_count", "candidates", "stories", "new_asr_calls", "audio_listening_performed", "publication_ready"],
+  "properties": {
+    "schema_version": {"const": "r6.1"},
+    "scope": {"const": "all_exported_candidate_and_story_intervals"},
+    "source_duration": {"type": ["number", "null"]},
+    "timing_policy": {"type": "object"},
+    "confidence_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+    "candidate_count": {"type": "integer", "minimum": 0},
+    "story_count": {"type": "integer", "minimum": 0},
+    "candidates": {"type": "object", "additionalProperties": {"$ref": "#/$defs/entry"}},
+    "stories": {"type": "object", "additionalProperties": {"$ref": "#/$defs/entry"}},
+    "new_asr_calls": {"const": 0},
+    "audio_listening_performed": {"const": false},
+    "publication_ready": {"const": false}
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["id", "start", "end", "status", "reason_codes", "canonical_word_ids", "canonical_segment_ids", "allowed_caption_mode", "karaoke_allowed", "human_approved", "subtitle_publish_ready", "publication_ready", "review_required"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "start": {"type": ["number", "null"]}, "end": {"type": ["number", "null"]},
+        "status": {"enum": ["CAPTION_READY", "PHRASE_SUBTITLE_ONLY", "INSTRUMENTAL_NO_CAPTION", "ALIGNMENT_REVIEW_REQUIRED", "AUDIO_REVIEW_REQUIRED", "BLOCKED"]},
+        "reason_codes": {"type": "array", "items": {"type": "string"}},
+        "canonical_word_ids": {"type": "array", "items": {"type": "string"}},
+        "canonical_segment_ids": {"type": "array", "items": {"type": "string"}},
+        "allowed_caption_mode": {"enum": ["none", "phrase_subtitles", "word_karaoke"]},
+        "karaoke_allowed": {"type": "boolean"},
+        "human_approved": {"const": false}, "subtitle_publish_ready": {"const": false},
+        "publication_ready": {"const": false}, "review_required": {"const": true}
+      }
+    }
+  }
+}

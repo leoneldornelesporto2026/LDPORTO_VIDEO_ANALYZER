@@ -26,6 +26,222 @@ CRITICAL_ISSUES = {'cut_splits_word', 'interrupted_or_incomplete_word',
                    'suspected_hallucination', 'alternate_asr_requires_listening',
                    'phrase_boundary_requires_listening'}
 
+CAPTION_PREFLIGHT_PATH = 'subtitles/caption_preflight_r6.json'
+SEMANTIC_CAPTION_PREFLIGHT_PATH = 'subtitles/semantic_caption_preflight_r6.json'
+CAPTION_STATES = {'CAPTION_READY', 'PHRASE_SUBTITLE_ONLY', 'INSTRUMENTAL_NO_CAPTION',
+                  'ALIGNMENT_REVIEW_REQUIRED', 'AUDIO_REVIEW_REQUIRED', 'BLOCKED'}
+
+
+def _covered_intervals(rows, start, end):
+    merged = []
+    for a, b in sorted((max(start, r['start']), min(end, r['end'])) for r in rows
+                       if _interval(r) and _hit(start, end, r['start'], r['end']) > 0):
+        if merged and a <= merged[-1][1]:
+            merged[-1][1] = max(b, merged[-1][1])
+        else:
+            merged.append([a, b])
+    return merged
+
+
+def _tokens(text):
+    return [re.sub(r'[^\w]', '', token.casefold()) for token in str(text or '').split()]
+
+
+def build_caption_preflight(words, segments, candidates, stories=(), *, events=(), duration=None,
+                            caption_config=None, threshold=.60):
+    """Cheap evidence triage for every exported interval, without ASR or approval.
+
+    Segment text cannot be spread across fabricated word timings. The legacy S7
+    selected review remains separate; this index also covers unselected/alternate
+    candidates and Story intervals with their own bounds.
+    """
+    cfg = {'max_words': 5, 'max_chars': 38, 'max_seconds': 2.8,
+           'max_gap_seconds': .45, 'uppercase_display': False, **(caption_config or {})}
+    categories = {'SPOKEN_DIALOGUE', 'SINGING', 'INSTRUMENTAL', 'CROWD_CHANT',
+                  'APPLAUSE', 'OVERLAPPING_SPEECH', 'MIXED_AUDIO', 'UNCERTAIN'}
+    aliases = {'SPEECH': 'SPOKEN_DIALOGUE', 'SPOKEN': 'SPOKEN_DIALOGUE',
+               'APPLAUSE': 'APPLAUSE', 'CLAPPING': 'APPLAUSE', 'SINGING': 'SINGING',
+               'INSTRUMENTAL': 'INSTRUMENTAL', 'SPEECH_OVERLAP': 'OVERLAPPING_SPEECH'}
+
+    def evaluate(row, ident):
+        start = row.get('ideal_start', row.get('start'))
+        end = row.get('ideal_end', row.get('end'))
+        result = {'id': ident, 'start': start, 'end': end, 'status': 'BLOCKED',
+                  'reason_codes': [], 'canonical_word_ids': [], 'canonical_segment_ids': [],
+                  'allowed_caption_mode': 'none', 'karaoke_allowed': False,
+                  'human_approved': False, 'subtitle_publish_ready': False,
+                  'publication_ready': False, 'review_required': True}
+        if (not _interval({'start': start, 'end': end}) or
+                not _number(duration) or end > duration):
+            result['reason_codes'] = ['invalid_or_unknown_source_range']
+            return result
+        local_words = sorted([w for w in words if _interval(w) and
+                              _hit(start, end, w['start'], w['end']) > 0], key=lambda w: w['start'])
+        local_segments = [s for s in segments if _interval(s) and
+                          _hit(start, end, s['start'], s['end']) > 0 and str(s.get('text') or '').strip()]
+        observed, instrumental = [], []
+        for index, event in enumerate(events):
+            if not isinstance(event, dict) or not _interval(event) or not _hit(start, end, event['start'], event['end']):
+                continue
+            raw = str(event.get('audio_category') or event.get('type') or event.get('kind') or event.get('category') or '').upper()
+            category = aliases.get(raw, raw)
+            if category in categories:
+                observed.append({'category': category, 'event_index': index,
+                                 'start': max(start, event['start']), 'end': min(end, event['end'])})
+                if category == 'INSTRUMENTAL':
+                    instrumental.append(event)
+        reasons = set()
+        review = review_selected_clips(words, [{'candidate_id': ident, 'start': start, 'end': end}],
+                                      [ident], events=events, caption_config=cfg, threshold=threshold)['candidates'][ident]
+        reasons.update(review['issue_counts'])
+        long_unaligned, unrepresented = [], []
+        for segment in local_segments:
+            # Compare whole canonical segments, including source context outside a
+            # cut. A partial set of words must not certify an entire long caption.
+            member = [w for w in words if _interval(w) and (
+                w.get('segment_id') == segment.get('segment_id') if segment.get('segment_id')
+                else _hit(segment['start'], segment['end'], w['start'], w['end']) > 0)]
+            member.sort(key=lambda w: w['start'])
+            represented = bool(member) and _tokens(segment['text']) == _tokens(' '.join(str(w.get('word') or w.get('raw') or '') for w in member))
+            if not represented:
+                unrepresented.append(segment.get('segment_id'))
+            long = (segment['end'] - segment['start'] > cfg['max_seconds'] or
+                    len(segment['text'].split()) > cfg['max_words'] or len(segment['text']) > cfg['max_chars'])
+            if long and (not represented or not all(w.get('alignment_verified') is True and not _word_issues(w, threshold) for w in member)):
+                long_unaligned.append(segment.get('segment_id'))
+        word_intervals = _covered_intervals(local_words, start, end)
+        segment_intervals = _covered_intervals(local_segments, start, end)
+        gaps, cursor = [], start
+        for a, b in word_intervals:
+            if cursor < a:
+                gaps.append({'start': cursor, 'end': a, 'reason': 'no_word_timestamp_evidence'})
+            cursor = b
+        if cursor < end:
+            gaps.append({'start': cursor, 'end': end, 'reason': 'no_word_timestamp_evidence'})
+        if long_unaligned:
+            reasons.add('long_caption_without_reliable_word_alignment')
+        if unrepresented:
+            reasons.add('canonical_segment_text_not_fully_represented_by_words')
+        if not observed:
+            reasons.add('audio_category_unavailable')
+        layout_review = False
+        for caption in review['captions']:
+            try:
+                checked_text(caption['asr_text'], cfg['max_chars'])
+            except ValueError:
+                layout_review = True
+                reasons.add('caption_text_layout_requires_review')
+        instrumental_intervals = _covered_intervals(instrumental, start, end)
+        instrumental_only = (instrumental_intervals == [[start, end]] and not local_words and not local_segments
+                             and all(r['category'] == 'INSTRUMENTAL' for r in observed))
+        critical = set(review['issue_counts']) & CRITICAL_ISSUES
+        if layout_review:
+            status = 'BLOCKED'
+        elif instrumental_only:
+            status = 'INSTRUMENTAL_NO_CAPTION'
+            reasons.discard('no_words_in_candidate')
+        elif not local_words and not local_segments:
+            status = 'BLOCKED'
+            reasons.add('canonical_transcript_unavailable')
+        elif long_unaligned or critical:
+            status = 'ALIGNMENT_REVIEW_REQUIRED'
+        elif any(r['category'] in {'SINGING', 'CROWD_CHANT', 'OVERLAPPING_SPEECH', 'MIXED_AUDIO', 'UNCERTAIN'} for r in observed):
+            status = 'AUDIO_REVIEW_REQUIRED'
+        elif unrepresented or not local_words or any(w.get('audio_verified') is not True or _word_issues(w, threshold) for w in local_words):
+            status = 'AUDIO_REVIEW_REQUIRED'
+        elif clip_karaoke_gate(review, {'candidate_id': ident, 'start': start, 'end': end}):
+            status = 'CAPTION_READY'
+        else:
+            status = 'PHRASE_SUBTITLE_ONLY'
+        mode = ('word_karaoke' if status == 'CAPTION_READY' else 'phrase_subtitles'
+                if status == 'PHRASE_SUBTITLE_ONLY' else 'none')
+        result.update(status=status, reason_codes=sorted(reasons),
+            canonical_word_ids=[w['word_id'] for w in local_words if w.get('word_id')],
+            canonical_segment_ids=[s['segment_id'] for s in local_segments if s.get('segment_id')],
+            word_count=len(local_words), caption_count=len(review['captions']),
+            alignment_verified_word_count=sum(w.get('alignment_verified') is True for w in local_words),
+            audio_verified_word_count=sum(w.get('audio_verified') is True for w in local_words),
+            word_evidence_seconds=sum(b-a for a, b in word_intervals),
+            segment_evidence_seconds=sum(b-a for a, b in segment_intervals),
+            word_evidence_gaps=gaps, unaligned_long_segment_ids=long_unaligned,
+            audio_categories_observed=observed, allowed_caption_mode=mode,
+            karaoke_allowed=status == 'CAPTION_READY',
+            draft_phrase_subtitles_available=bool(review['captions']) and not critical and not layout_review,
+            evidence_ref='transcript/relevant_words.jsonl', segment_evidence_ref='transcript/relevant_segments.jsonl')
+        return result
+
+    candidate_rows = {str(_candidate_id(c)): evaluate(c, str(_candidate_id(c))) for c in candidates if _candidate_id(c)}
+    story_rows = {str(s['story_id']): {**evaluate(s, str(s['story_id'])), 'candidate_id': s.get('candidate_id')}
+                  for s in stories if s.get('story_id')}
+    return {'schema_version': 'r6.1', 'scope': 'all_exported_candidate_and_story_intervals',
+            'source_duration': duration, 'timing_policy': cfg, 'confidence_threshold': threshold,
+            'candidate_count': len(candidate_rows), 'story_count': len(story_rows),
+            'candidates': candidate_rows, 'stories': story_rows,
+            'status_counts': dict(Counter(r['status'] for r in [*candidate_rows.values(), *story_rows.values()])),
+            'new_asr_calls': 0, 'audio_listening_performed': False, 'publication_ready': False,
+            'notes': ['Statuses describe available evidence, never approval of a final SRT or render.',
+                      'No word timing or missing speech is inferred from segment duration.',
+                      'Word evidence gaps do not prove silence or missing speech.',
+                      'No audio category is inferred from absent words or generic music.']}
+
+
+def build_story_interval_preflight(words, segments, stories, *, events=(), duration=None,
+                                   caption_config=None, threshold=.60):
+    """Review each canonical Story source interval without filling the gaps.
+
+    The aggregate never inherits CAPTION_READY across an unreviewed montage.
+    Repeated IDs on interval reviews identify the same canonical Story, not new
+    invented editorial pieces. No continuous start/end is assigned to a montage.
+    """
+    entries = {}
+    for story in stories:
+        ident = story.get('story_id') or story.get('unit_id')
+        if not ident or ident in entries:
+            raise ValueError('missing_or_duplicate_story_preflight_id')
+        intervals = story.get('source_intervals') or []
+        reviews = []
+        for index, interval in enumerate(intervals):
+            report = build_caption_preflight(words, segments,
+                [{'candidate_id': ident, 'start': interval.get('start'), 'end': interval.get('end')}],
+                events=events, duration=duration, caption_config=caption_config, threshold=threshold)
+            reviews.append({'source_interval_index': index, 'source_interval': deepcopy(interval),
+                            'preflight': report['candidates'][ident]})
+        reasons = {code for r in reviews for code in r['preflight']['reason_codes']}
+        states = {r['preflight']['status'] for r in reviews}
+        ordered = all(_interval(interval) for interval in intervals) and all(
+            a['end'] <= b['start'] for a, b in zip(intervals, intervals[1:]))
+        duration_seconds = sum(i['end']-i['start'] for i in intervals) if ordered else None
+        if not reviews:
+            reasons.add('story_source_intervals_unavailable')
+        if reviews and not ordered:
+            reasons.add('story_source_intervals_overlap_or_out_of_order')
+        if duration_seconds is not None and duration_seconds > 60:
+            reasons.add('story_assembled_duration_exceeds_60_seconds')
+        if not reviews or not ordered or (duration_seconds is not None and duration_seconds > 60) or 'BLOCKED' in states:
+            state = 'BLOCKED'
+        elif 'ALIGNMENT_REVIEW_REQUIRED' in states:
+            state = 'ALIGNMENT_REVIEW_REQUIRED'
+        elif len(reviews) > 1:
+            state = 'AUDIO_REVIEW_REQUIRED'
+        else:
+            state = reviews[0]['preflight']['status']
+        if len(reviews) > 1:
+            reasons.add('montage_phrase_transitions_require_human_review')
+        mode = reviews[0]['preflight']['allowed_caption_mode'] if len(reviews) == 1 and state != 'BLOCKED' else 'none'
+        entries[ident] = {'id': ident, 'canonical_id_kind': 'story_id' if story.get('story_id') else 'unit_id',
+            'start': None, 'end': None, 'timebase': 'source_absolute_intervals_not_a_continuous_window',
+            'source_intervals': deepcopy(intervals), 'interval_reviews': reviews,
+            'assembled_duration_seconds': duration_seconds, 'status': state, 'reason_codes': sorted(reasons),
+            'canonical_word_ids': list(dict.fromkeys(wid for r in reviews for wid in r['preflight']['canonical_word_ids'])),
+            'canonical_segment_ids': list(dict.fromkeys(sid for r in reviews for sid in r['preflight']['canonical_segment_ids'])),
+            'allowed_caption_mode': mode, 'karaoke_allowed': len(reviews) == 1 and state == 'CAPTION_READY',
+            'human_approved': False, 'subtitle_publish_ready': False, 'publication_ready': False, 'review_required': True}
+    return {'schema_version': 'r6.1', 'scope': 'canonical_story_source_intervals',
+        'source_duration': duration, 'timing_policy': caption_config or {}, 'confidence_threshold': threshold,
+        'story_count': len(entries), 'stories': entries, 'new_asr_calls': 0,
+        'audio_listening_performed': False, 'publication_ready': False,
+        'status_counts': dict(Counter(r['status'] for r in entries.values()))}
+
 
 def _sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()

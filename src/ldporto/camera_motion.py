@@ -164,7 +164,7 @@ class CameraMotion:
         self.target = [x, y, zoom]
         self.outside_since = None
 
-    def move(self, target, t, dt, cfg):
+    def move(self, target, t, dt, cfg, *, intentional_zoom=False):
         dx, dy = abs(target[0]-self.target[0]), abs(target[1]-self.target[1])
         outside = dx > cfg['horizontal_deadzone'] or dy > cfg['vertical_deadzone']
         suppressed = not outside and (dx > 1e-6 or dy > 1e-6)
@@ -175,7 +175,11 @@ class CameraMotion:
                 self.target[:2] = target[:2]
         else:
             self.outside_since = None
-        if abs(target[2]-self.target[2]) > cfg['zoom_deadzone']:
+        # The tracking deadzone rejects small measurement noise. A safe editorial
+        # transition is already a deliberate command: retaining its first small
+        # increments avoids turning a short valid push into a static timeline.
+        # The same speed, acceleration and jerk limits still apply below.
+        if intentional_zoom or abs(target[2]-self.target[2]) > cfg['zoom_deadzone']:
             self.target[2] = target[2]
         before = [self.x.position, self.y.position, self.zoom.position]
         for axis, goal in zip((self.x, self.y), self.target[:2]):

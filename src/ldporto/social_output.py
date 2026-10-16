@@ -10,6 +10,7 @@ import math
 import re
 
 from .core import overlap
+from .camera_handoff import build_camera_handoff
 from .subtitle_review import clip_karaoke_gate
 from .subtitle_style import style_rules
 from .safe_area import plan_safe_area
@@ -534,6 +535,7 @@ def build_social_output(analysis, cfg, package=None):
             "duration": candidate.get("duration") or candidate["end"] - candidate["start"],
             "category": candidate["story_category"], "score": candidate["story_score"],
             "visual_plan": visual_plan,
+            "camera_handoff": build_camera_handoff(analysis, candidate['start'], candidate['end']),
             "audio_reaction_evidence": [{"start": r.get('start'), "end": r.get('end'),
                 "label": r.get('label') or r.get('event') or r.get('type'),
                 "confidence": r.get('confidence')} for r in observed_reactions[:8]],

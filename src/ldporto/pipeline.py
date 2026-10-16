@@ -292,7 +292,8 @@ def analyze(source, cfg, output=None, force=False):
 
         delivery = preview.get('zoom_delivery') or {}
         director.setdefault('metrics', {}).update({key: delivery.get(key, 0 if key == 'zoom_delivered_event_count' else None)
-            for key in ('zoom_delivered_event_count', 'zoom_delivery_verified', 'zoom_delivery_fraction')})
+            for key in ('zoom_delivered_event_count', 'zoom_delivery_verified', 'zoom_delivery_fraction',
+                        'rendered_zoom_event_count', 'render_transform_receipts_verified')})
         director['metrics']['zoom_delivery_report'] = delivery
 
         analysis_status = "partial" if any(

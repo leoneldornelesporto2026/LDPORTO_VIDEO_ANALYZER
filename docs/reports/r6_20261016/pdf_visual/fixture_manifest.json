@@ -1,0 +1,8 @@
+{
+  "scope": "synthetic_pdf_no_source_media_or_inference",
+  "pdf": "synthetic_editorial.pdf",
+  "sha256": "204f162dbafa5b3a62d3155d41ebf56cf1c6218ecdf8b6a99eb349f29c3774bd",
+  "pages": 5,
+  "searchable": true,
+  "unicode_font_embedded": true
+}

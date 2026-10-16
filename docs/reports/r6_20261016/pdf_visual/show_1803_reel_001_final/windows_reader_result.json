@@ -1,0 +1,38 @@
+﻿{
+    "reader":  "Windows.Data.Pdf.PdfDocument",
+    "source":  "RELATORIO_REEL.pdf",
+    "source_sha256":  "a8629868f861486f16453a1d8d14071d392367e97179d414b37561b91b301d54",
+    "total_pages":  5,
+    "rendered_pages":  4,
+    "pages":  [
+                  {
+                      "page":  1,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_01.png",
+                      "bytes":  434083
+                  },
+                  {
+                      "page":  2,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_02.png",
+                      "bytes":  20108
+                  },
+                  {
+                      "page":  3,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_03.png",
+                      "bytes":  108465
+                  },
+                  {
+                      "page":  4,
+                      "width":  793.3333740234375,
+                      "height":  1122.666748046875,
+                      "file":  "page_04.png",
+                      "bytes":  122809
+                  }
+              ],
+    "scope":  "independent_windows_pdf_reader_no_source_media"
+}

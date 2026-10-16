@@ -478,7 +478,9 @@ def build_camera_director(metadata, vision, shots, active_speaker, person_motion
             if near_cut:
                 target = [*controller.target[:2], min(controller.target[2], geo['max_zoom'])]
                 reasons.append('hold_before_source_cut')
-            before, after, deadzone = controller.move(target, t, dt, cfg)
+            before, after, deadzone = controller.move(target, t, dt, cfg,
+                intentional_zoom=smart_decision['digital_motion_allowed'] and
+                    smart_decision['mode'] in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'})
             counts['deadzone_suppressed_moves'] += int(deadzone)
             rect = crop_rect(after[:2], max(1., after[2]), base_size(metadata, cfg))
             # Safety has priority over smoothing. Do not report an unsafe interpolated crop.

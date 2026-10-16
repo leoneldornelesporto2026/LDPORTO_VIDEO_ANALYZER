@@ -1,0 +1,162 @@
+{
+  "scope": "read_only_pdf_presentation_comparison_no_media_or_inference",
+  "reader": "Windows.Data.Pdf.PdfDocument",
+  "revisions": {
+    "previous": {
+      "revision": "20261016T175750222280Z_12a379",
+      "documents": {
+        "guide": {
+          "source_pdf_sha256": "562e53c4401ba1665def6fa1f7b010d4a7f02077ae14f3625624a5948d6f63a0",
+          "source_hash_matches_reader_result": true,
+          "total_pages": 14,
+          "inspected_page_numbers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reader_result_sha256": "b6650d963e39828442bbe9ec2f639b12c6697bb263b3e28ffad899d654324a75",
+          "images": [
+            {
+              "path": "show_1757_guia/page_01.png",
+              "bytes": 173867,
+              "sha256": "eb12e06127594c07740b2b6e296a07b260c796dceddcd8d4e206e8e4bc34134d"
+            },
+            {
+              "path": "show_1757_guia/page_02.png",
+              "bytes": 25069,
+              "sha256": "be7764f5a3e94cb3bd33ad808a3e4b14e70f521de3133d3c19b9713524d5de30"
+            },
+            {
+              "path": "show_1757_guia/page_03.png",
+              "bytes": 169653,
+              "sha256": "1369a3e7bc01b15ca96b591a5d992ae276676870aad0cd5b81ed27facc36a46b"
+            },
+            {
+              "path": "show_1757_guia/page_04.png",
+              "bytes": 133387,
+              "sha256": "f8d661641395ae0d35890b75344e951ef0a3b1a78ce98415a14f571d1504c6d3"
+            }
+          ]
+        },
+        "reel_001": {
+          "source_pdf_sha256": "c6eb0e7b835537d664d60f74bed55221d501fd201c4215a1494dc397a7cc5377",
+          "source_hash_matches_reader_result": true,
+          "total_pages": 5,
+          "inspected_page_numbers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reader_result_sha256": "594744def89ad84199bc93b221f07f9ab08a8b142d2ba18a3733bf62b5cad262",
+          "images": [
+            {
+              "path": "show_1757_reel_001/page_01.png",
+              "bytes": 449464,
+              "sha256": "33485c3fac66ceb165250f8c08842a006c199e607f185dbdaa08fd9754e7d11d"
+            },
+            {
+              "path": "show_1757_reel_001/page_02.png",
+              "bytes": 20108,
+              "sha256": "9475d43bdf472eda6a09ac5db859e9d72fe7edc67447a9a13e4535b279dbb802"
+            },
+            {
+              "path": "show_1757_reel_001/page_03.png",
+              "bytes": 108851,
+              "sha256": "512e6b76cd51fd1afe9ef364f92571753cc82baecb4547bbe86fce7416a76db3"
+            },
+            {
+              "path": "show_1757_reel_001/page_04.png",
+              "bytes": 123050,
+              "sha256": "ae9d9304453f9fdca64822e4aef09fa2d0e3e21d095a40be0af9a7a4f52cab43"
+            }
+          ]
+        }
+      }
+    },
+    "final": {
+      "revision": "20261016T180302510442Z_0796ac",
+      "documents": {
+        "guide": {
+          "source_pdf_sha256": "15b52a86dc9f6016a1b73ce9b4ede0662ea5df5a0951330d8574c409c018c8b1",
+          "source_hash_matches_reader_result": true,
+          "total_pages": 13,
+          "inspected_page_numbers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reader_result_sha256": "d6c4a394cfb56dc9e51553dab623c292e4a9cfc716a557c025da52f56de58c25",
+          "images": [
+            {
+              "path": "show_1803_guia_final/page_01.png",
+              "bytes": 128574,
+              "sha256": "016544e5437015d24e38002666f5d2e6c50fbd7fb4b7bf30111297b8621ba5ee"
+            },
+            {
+              "path": "show_1803_guia_final/page_02.png",
+              "bytes": 24517,
+              "sha256": "72bd828f540cfd3ffbb815a9b04c790530371eb110480cc8b7c8daa5b15a5a42"
+            },
+            {
+              "path": "show_1803_guia_final/page_03.png",
+              "bytes": 136502,
+              "sha256": "45080d1975f1b32ff114ff365b960e05c31a1377f14347fa8d64c43bfbb4f8f3"
+            },
+            {
+              "path": "show_1803_guia_final/page_04.png",
+              "bytes": 142433,
+              "sha256": "9186acea3fa58af47060f292d3896936998396928d3f490ba00626cd4143f219"
+            }
+          ]
+        },
+        "reel_001": {
+          "source_pdf_sha256": "a8629868f861486f16453a1d8d14071d392367e97179d414b37561b91b301d54",
+          "source_hash_matches_reader_result": true,
+          "total_pages": 5,
+          "inspected_page_numbers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reader_result_sha256": "c5f22b9b1678c32283a52d4d6ed790856d71a2c14faaba87b8d9ce4e9904d9d9",
+          "images": [
+            {
+              "path": "show_1803_reel_001_final/page_01.png",
+              "bytes": 434083,
+              "sha256": "af9ac1685e4ba143e39cf4d18eb16ef13964e3ceccf64204eb8e7b5c7b380801"
+            },
+            {
+              "path": "show_1803_reel_001_final/page_02.png",
+              "bytes": 20108,
+              "sha256": "9475d43bdf472eda6a09ac5db859e9d72fe7edc67447a9a13e4535b279dbb802"
+            },
+            {
+              "path": "show_1803_reel_001_final/page_03.png",
+              "bytes": 108465,
+              "sha256": "03b5067d968b35a2a90bc3d55cf00493f5b56e6cca61d7338c19971cef752fd6"
+            },
+            {
+              "path": "show_1803_reel_001_final/page_04.png",
+              "bytes": 122809,
+              "sha256": "e234b9603ff18bd527818daf012b40fe6bbc78bb83d82f79614750e2de0771dc"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "presentation_comparison": {
+    "guide_json_dump_removed": true,
+    "guide_proposed_summary_readable": true,
+    "reel_timing_formatted": true,
+    "reel_caption_state_readable_without_json": true,
+    "canonical_title_abstention_preserved": true,
+    "missing_identity_confirmation_preserved": true,
+    "inspected_pages_readable_without_observed_font_or_margin_failure": true,
+    "visual_approval_of_final_social_video": false
+  }
+}

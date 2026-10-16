@@ -1,0 +1,56 @@
+{
+  "exports": [
+    {
+      "path": "C:\\Users\\leone\\Videos\\LDPORTO_VIDEO_ANALYZER\\CHARLIE_BROWN_JR._THIAGO_CASTANHO_E_MARCÃO_BRITTO_-_João_Rock_2026_(Show_Completo)__9UCGZia2p1k__20261016T175750222280Z_12a379",
+      "title": "CHARLIE BROWN JR. THIAGO CASTANHO E MARCÃO BRITTO - João Rock 2026 (Show Completo)",
+      "revision": "20261016T175750222280Z_12a379",
+      "state": "READY_FOR_REVIEW",
+      "manifest_sha256": "0a2c7e0289086fbd07ecc5d7120d2a0146a94ead1ff15ade12ef0b33626004ef",
+      "files": 1702,
+      "bytes": 211012939,
+      "reel_pdf_count": 70,
+      "series_pdf_count": 49,
+      "story_parts_count": 86,
+      "caption_preflight_count": 86,
+      "coverage": 0.16917707146494537,
+      "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+      "package_sha256": "828d682f7708fc2d286390f78c1f23f2e2d453b73c5f4eb5155a7d4d6b3aea59",
+      "title_codepoints_has_replacement": false
+    },
+    {
+      "path": "C:\\Users\\leone\\Videos\\LDPORTO_VIDEO_ANALYZER\\CHARLIE_BROWN_JR._THIAGO_CASTANHO_E_MARCÃO_BRITTO_—_João_Rock_2026_(Show_Completo)__9UCGZia2p1k__20261016T180302510442Z_0796ac",
+      "title": "CHARLIE BROWN JR. THIAGO CASTANHO E MARCÃO BRITTO — João Rock 2026 (Show Completo)",
+      "revision": "20261016T180302510442Z_0796ac",
+      "state": "READY_FOR_REVIEW",
+      "manifest_sha256": "3dddbd44a8647f3405faf22415086add7233a381836cedd49f9232a21199a3ae",
+      "files": 1772,
+      "bytes": 210974748,
+      "reel_pdf_count": 70,
+      "series_pdf_count": 49,
+      "story_parts_count": 86,
+      "caption_preflight_count": 86,
+      "coverage": 0.16917707146494537,
+      "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+      "package_sha256": "828d682f7708fc2d286390f78c1f23f2e2d453b73c5f4eb5155a7d4d6b3aea59",
+      "title_codepoints_has_replacement": false
+    }
+  ],
+  "final_export": {
+    "path": "C:\\Users\\leone\\Videos\\LDPORTO_VIDEO_ANALYZER\\CHARLIE_BROWN_JR._THIAGO_CASTANHO_E_MARCÃO_BRITTO_—_João_Rock_2026_(Show_Completo)__9UCGZia2p1k__20261016T180302510442Z_0796ac",
+    "title": "CHARLIE BROWN JR. THIAGO CASTANHO E MARCÃO BRITTO — João Rock 2026 (Show Completo)",
+    "revision": "20261016T180302510442Z_0796ac",
+    "state": "READY_FOR_REVIEW",
+    "manifest_sha256": "3dddbd44a8647f3405faf22415086add7233a381836cedd49f9232a21199a3ae",
+    "files": 1772,
+    "bytes": 210974748,
+    "reel_pdf_count": 70,
+    "series_pdf_count": 49,
+    "story_parts_count": 86,
+    "caption_preflight_count": 86,
+    "coverage": 0.16917707146494537,
+    "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+    "package_sha256": "828d682f7708fc2d286390f78c1f23f2e2d453b73c5f4eb5155a7d4d6b3aea59",
+    "title_codepoints_has_replacement": false
+  },
+  "second_curation_package": "docs\\reports\\r6_20261016\\show_package\\PACKAGE_REVISION_20261016T175158839454Z_c275de\\SECOND_CURATION_READY_9UCGZia2p1k_20261016_175207_925148_1454e7.zip"
+}

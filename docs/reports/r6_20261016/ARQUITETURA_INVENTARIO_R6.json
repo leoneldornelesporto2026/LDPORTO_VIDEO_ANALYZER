@@ -1,0 +1,2897 @@
+{
+  "app.py": {
+    "bytes": 99667,
+    "sha256": "0443fad8397f1c0218bc899e6fbee156f71696b971a21b7163d784143980ff00",
+    "imports": [
+      "datetime",
+      "hashlib",
+      "json",
+      "ldporto.body_model_paths",
+      "ldporto.compact_artifacts",
+      "ldporto.config",
+      "ldporto.core",
+      "ldporto.curator_delivery",
+      "ldporto.inference_smoke",
+      "ldporto.ocr_diagnostics",
+      "ldporto.ollama_local",
+      "ldporto.paths",
+      "ldporto.performance_acceptance",
+      "ldporto.progress",
+      "ldporto.project_export",
+      "ldporto.review_media",
+      "ldporto.second_curation_export",
+      "ldporto.storage_dialog",
+      "os",
+      "pathlib",
+      "queue",
+      "shutil",
+      "subprocess",
+      "sys",
+      "tempfile",
+      "threading",
+      "time",
+      "tkinter",
+      "uuid",
+      "webbrowser",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "body_diagnostic_text",
+      "body_execution_text",
+      "editorial_triage_text",
+      "App"
+    ]
+  },
+  "analyze.py": {
+    "bytes": 16897,
+    "sha256": "9a862f80bf89434fe0ee3279b9b652cd7935c94c7556c0d48ff815b0cb6c9d97",
+    "imports": [
+      "argparse",
+      "datetime",
+      "importlib.util",
+      "json",
+      "ldporto.config",
+      "ldporto.core",
+      "ldporto.director_integration",
+      "ldporto.gpu_runtime",
+      "ldporto.inference_smoke",
+      "ldporto.pipeline",
+      "ldporto.preflight",
+      "ldporto.progress",
+      "ldporto.project_export",
+      "ldporto.replay",
+      "ldporto.semantic_replay",
+      "os",
+      "pathlib",
+      "platform",
+      "shutil",
+      "sys",
+      "traceback"
+    ],
+    "top_level_functions": [
+      "configure_path",
+      "configure_inference_gate",
+      "doctor",
+      "main"
+    ]
+  },
+  "src/ldporto/__init__.py": {
+    "bytes": 185,
+    "sha256": "428d6b47347477e0c800f652b7b47da222c8bdea50c4a8babaab4e9ba7a531e6",
+    "imports": [],
+    "top_level_functions": []
+  },
+  "src/ldporto/active_speaker.py": {
+    "bytes": 28832,
+    "sha256": "f606968314a2d09393203041ebf571b69ca98ed450866435b73c237b8423e8c5",
+    "imports": [
+      ".audiovisual_diagnostics",
+      ".core",
+      ".perception_diagnostics",
+      ".speaker_roles",
+      ".temporal",
+      "bisect",
+      "collections",
+      "copy",
+      "math"
+    ],
+    "top_level_functions": [
+      "_row_confidence",
+      "build_global_affinity",
+      "build_active_speaker"
+    ]
+  },
+  "src/ldporto/analysis_quality.py": {
+    "bytes": 10971,
+    "sha256": "4cd0e8f7fe33ceb8e0b2a44cf87fe1d09cc207e5a06bdd182148e8be68049b2e",
+    "imports": [
+      ".causal_diagnostics",
+      ".core",
+      ".integrity_contracts",
+      ".temporal",
+      "collections",
+      "statistics"
+    ],
+    "top_level_functions": [
+      "_coverage",
+      "camera_quality_metrics",
+      "_tracking_metrics",
+      "build_analysis_quality",
+      "quality_gate"
+    ]
+  },
+  "src/ldporto/asd_backend.py": {
+    "bytes": 1772,
+    "sha256": "43c8a95b918a38b85a60d1415e526f080380fe2bca5ab4d563a8cb3f610fc10d",
+    "imports": [
+      "abc"
+    ],
+    "top_level_functions": [
+      "ASDBackend",
+      "HeuristicConsensusBackend",
+      "available_backends"
+    ]
+  },
+  "src/ldporto/asr_comparison.py": {
+    "bytes": 12930,
+    "sha256": "8de545231eb286f7ef97a0dda9c9070afa86527b33ec2303e2e58b766a2986ab",
+    "imports": [
+      "collections",
+      "copy",
+      "math",
+      "re",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "valid_interval",
+      "lexical_token",
+      "lexical_text",
+      "_overlaps",
+      "compare_hypotheses",
+      "review_reason_metrics",
+      "source_review_dossier"
+    ]
+  },
+  "src/ldporto/audio.py": {
+    "bytes": 13662,
+    "sha256": "716dc223c0f6301b4f9c7a46102fb6f9909f7552e15f5c149fce0432fa7a2d12",
+    "imports": [
+      ".config",
+      ".core",
+      "json",
+      "math",
+      "numpy",
+      "os",
+      "panns_inference",
+      "panns_inference.config",
+      "pathlib",
+      "re",
+      "shutil",
+      "soundfile",
+      "sys"
+    ],
+    "top_level_functions": [
+      "ffmpeg_audio",
+      "extract_audio",
+      "audio_metrics",
+      "separate_review_region",
+      "plan_clip_audio",
+      "delivery_audio_filter",
+      "sound_events"
+    ]
+  },
+  "src/ldporto/audiovisual_diagnostics.py": {
+    "bytes": 6037,
+    "sha256": "4b4cdadf6613e08751666eedfa93918329ab9a61452185ef571370d12fe7416e",
+    "imports": [
+      ".speaker_roles",
+      ".temporal",
+      "bisect",
+      "collections"
+    ],
+    "top_level_functions": [
+      "window_signal_diagnostics",
+      "annotate_window_observations"
+    ]
+  },
+  "src/ldporto/baseline_audit.py": {
+    "bytes": 3547,
+    "sha256": "fea801fd561f751756760960021603112947a4a18d8d8b71db86d619ac32264c",
+    "imports": [
+      "hashlib",
+      "json",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "reconcile_tracking_counters",
+      "audit_baseline"
+    ]
+  },
+  "src/ldporto/body_ab.py": {
+    "bytes": 21083,
+    "sha256": "e88ec4c0cc56ea613580265195ba161b7827304fe0224f81dc1a4fadc4c5d378",
+    "imports": [
+      ".core",
+      ".vision",
+      ".visual_review",
+      "copy",
+      "cv2",
+      "hashlib",
+      "itertools",
+      "math",
+      "pathlib",
+      "time"
+    ],
+    "top_level_functions": [
+      "_finite",
+      "file_sha",
+      "manifest_basis",
+      "create_manifest",
+      "validate_manifest",
+      "derive_frames",
+      "run_backend",
+      "_box",
+      "_matches",
+      "compare_ab"
+    ]
+  },
+  "src/ldporto/body_model_paths.py": {
+    "bytes": 5143,
+    "sha256": "9fad38724fd4197b0594b7dc3dd17fc77db49d4706913ceb102f2082f68c98ed",
+    "imports": [
+      ".config",
+      "hashlib",
+      "importlib.metadata",
+      "os",
+      "pathlib",
+      "sys",
+      "tempfile"
+    ],
+    "top_level_functions": [
+      "_linked_path",
+      "configure_local_yolo_privacy",
+      "select_body_model_path",
+      "body_model_diagnostics"
+    ]
+  },
+  "src/ldporto/broadcast_graphics.py": {
+    "bytes": 5754,
+    "sha256": "4cf7c49b659a8d4f3588baa18b399a59d9750cffe6a9d68577db47d14012c1c0",
+    "imports": [
+      "cv2",
+      "numpy"
+    ],
+    "top_level_functions": [
+      "detect_graphics",
+      "face_safe_height",
+      "inspect_candidate_graphics",
+      "GraphicsAccumulator"
+    ]
+  },
+  "src/ldporto/build_provenance.py": {
+    "bytes": 31249,
+    "sha256": "6bb5887afff821295c44a14e6c923b2fc103d881a42a07c542c5cd18009c3146",
+    "imports": [
+      ".",
+      ".core",
+      ".execution_receipts",
+      ".run_status",
+      "hashlib",
+      "json",
+      "math",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "ProvenanceContext",
+      "attestation_digest",
+      "execution_stages",
+      "attest_execution",
+      "verify_execution",
+      "exporter_identity",
+      "build_provenance",
+      "analysis_provenance",
+      "editorial_replay_provenance",
+      "validate_editorial_replay",
+      "classify_provenance_mismatch",
+      "semantic_text_provenance",
+      "validate_semantic_text_provenance"
+    ]
+  },
+  "src/ldporto/camera_director.py": {
+    "bytes": 54860,
+    "sha256": "ec2a5a1982256239ecd4ebce0e33ffc25df973b96a329dc54bfded013deaff6d",
+    "imports": [
+      ".camera_evidence",
+      ".camera_geometry",
+      ".camera_motion",
+      ".camera_preflight",
+      ".core",
+      ".director_config",
+      ".interview_layout",
+      ".preview_verifier",
+      ".temporal",
+      "bisect",
+      "collections",
+      "json",
+      "math",
+      "time"
+    ],
+    "top_level_functions": [
+      "_confidence",
+      "_candidate",
+      "_editorial_zoom_beat",
+      "_prepare",
+      "build_camera_director"
+    ]
+  },
+  "src/ldporto/camera_evidence.py": {
+    "bytes": 11630,
+    "sha256": "5a501cc755d1b2a14001f424afe13ee8646418b2f8a1769c9c5ae9fe03829e84",
+    "imports": [
+      "collections",
+      "math"
+    ],
+    "top_level_functions": [
+      "local_speaker_supported",
+      "target_contradiction",
+      "candidate_delivery_evidence",
+      "focus_window_evidence",
+      "zoom_gate_diagnostics",
+      "VisualTargetEvidence",
+      "camera_state"
+    ]
+  },
+  "src/ldporto/camera_geometry.py": {
+    "bytes": 4821,
+    "sha256": "4cf6bc8bc5272207ca41d60cd7d7d79962b58160e4e4d2b29b5a248ec9f60a95",
+    "imports": [
+      ".camera_motion",
+      ".temporal",
+      "math"
+    ],
+    "top_level_functions": [
+      "base_size",
+      "subject_box",
+      "crop_rect",
+      "contains",
+      "geometry"
+    ]
+  },
+  "src/ldporto/camera_handoff.py": {
+    "bytes": 5987,
+    "sha256": "87b9c17e0e7c4868bc45479be2898440627a75982351d10b7db38288cdd1728e",
+    "imports": [
+      ".core",
+      ".zoom_delivery",
+      "copy",
+      "math"
+    ],
+    "top_level_functions": [
+      "_number",
+      "_rect_valid",
+      "build_camera_handoff"
+    ]
+  },
+  "src/ldporto/camera_motion.py": {
+    "bytes": 10178,
+    "sha256": "61530225a7b2e108348333b21e6f0e264675190948081ae24007d2874363f26a",
+    "imports": [
+      "collections",
+      "dataclasses",
+      "math"
+    ],
+    "top_level_functions": [
+      "clamp",
+      "ease_in_out",
+      "SmartZoomState",
+      "Axis",
+      "CameraMotion"
+    ]
+  },
+  "src/ldporto/camera_preflight.py": {
+    "bytes": 6575,
+    "sha256": "882a850b343634fbca33147feb5db76b97f53554346ad140108bbd62c6412c30",
+    "imports": [
+      ".camera_geometry",
+      ".temporal",
+      "collections"
+    ],
+    "top_level_functions": [
+      "preflight_target",
+      "preflight_split",
+      "evidence_funnel"
+    ]
+  },
+  "src/ldporto/camera_timeline.py": {
+    "bytes": 6772,
+    "sha256": "4a73360aa274160b637b7065e9d3f7dcc3c65016afd451b4d6d1833e3cb4f803",
+    "imports": [
+      ".core",
+      ".temporal",
+      "math"
+    ],
+    "top_level_functions": [
+      "build_camera_timeline"
+    ]
+  },
+  "src/ldporto/causal_diagnostics.py": {
+    "bytes": 5733,
+    "sha256": "1b70e124d69a7c48762b4bf9566343d5de53d5d135f3066f65714420e779e3f3",
+    "imports": [
+      "copy"
+    ],
+    "top_level_functions": [
+      "body_limitation_category",
+      "quality_causal_diagnostics"
+    ]
+  },
+  "src/ldporto/checkpoint_storage.py": {
+    "bytes": 3432,
+    "sha256": "d1b980f3608403e16e81957cc59ac565b93c3c3723f99ec1a2ea24ceaffb5c23",
+    "imports": [
+      "copy",
+      "json"
+    ],
+    "top_level_functions": [
+      "_projection",
+      "_canonical",
+      "encode_checkpoint",
+      "decode_checkpoint"
+    ]
+  },
+  "src/ldporto/commercial_context.py": {
+    "bytes": 6222,
+    "sha256": "4e62aa4792b0d3c8b3ce1362c891c0652368e3c59f6fc5f2909785359d3a2ab0",
+    "imports": [
+      ".editorial",
+      "re",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "_source",
+      "_extra_spans",
+      "contextual_commercial_review"
+    ]
+  },
+  "src/ldporto/commercial_gate.py": {
+    "bytes": 38971,
+    "sha256": "f090750fa414d14ff3b68263ce19cd176e790b526f5e466186b02d6b3f64bb2d",
+    "imports": [
+      ".core",
+      ".editorial",
+      ".integrity_contracts",
+      ".ocr",
+      ".ocr_diagnostics",
+      ".ocr_execution",
+      ".ocr_runtime",
+      "collections",
+      "cv2",
+      "hashlib",
+      "math",
+      "os",
+      "pathlib",
+      "pytesseract",
+      "re",
+      "shutil"
+    ],
+    "top_level_functions": [
+      "commercial_evidence_state",
+      "require_commercial_review",
+      "_interval",
+      "_as_range",
+      "_overlap",
+      "_precursors",
+      "_voice",
+      "_institutional_promo",
+      "_speech_classification",
+      "build_commercial_blocks",
+      "candidate_visual_coverage",
+      "commercial_risk",
+      "commercial_benchmark_metrics",
+      "refine_candidates",
+      "apply_commercial_refinement",
+      "ocr_runtime_fingerprint",
+      "commercial_visual_params",
+      "targeted_ocr"
+    ]
+  },
+  "src/ldporto/compact_artifacts.py": {
+    "bytes": 16388,
+    "sha256": "c64b5e8c967a4ee4e0e55248385f9d15385d00e78b2eb22c02c1350e263fbd40",
+    "imports": [
+      ".",
+      ".core",
+      ".execution_receipts",
+      "hashlib",
+      "json",
+      "math",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "projection_records",
+      "write_indexed_projection",
+      "compact_analysis_document",
+      "load_analysis_artifacts",
+      "create_compact_artifacts"
+    ]
+  },
+  "src/ldporto/config.py": {
+    "bytes": 37636,
+    "sha256": "0f5b40ebee2f3f6ebc8ae65456448291ec1e498187141b2f8c81a2a721c53152",
+    "imports": [
+      ".director_config",
+      ".editorial",
+      ".media_runtime",
+      ".paths",
+      "copy",
+      "math",
+      "os",
+      "pathlib",
+      "re",
+      "tempfile",
+      "yaml"
+    ],
+    "top_level_functions": [
+      "merge",
+      "load_config",
+      "save_ocr_options",
+      "save_body_options",
+      "validate",
+      "asset_path",
+      "configure_local_mode"
+    ]
+  },
+  "src/ldporto/core.py": {
+    "bytes": 28443,
+    "sha256": "0afb542be1f05f50a3096a855cc84b47315d4326dfc6c6671e2e6c74e07e6b33",
+    "imports": [
+      ".",
+      ".body_model_paths",
+      ".checkpoint_storage",
+      ".config",
+      ".media_runtime",
+      ".progress",
+      ".run_status",
+      ".runtime_metrics",
+      "contextlib",
+      "ctypes",
+      "dataclasses",
+      "hashlib",
+      "importlib.metadata",
+      "json",
+      "logging",
+      "math",
+      "os",
+      "pathlib",
+      "re",
+      "signal",
+      "subprocess",
+      "tempfile",
+      "time",
+      "traceback"
+    ],
+    "top_level_functions": [
+      "scrub",
+      "digest",
+      "file_hash",
+      "finite_or_none",
+      "sanitize_json_numbers",
+      "write_json",
+      "read_json",
+      "overlap",
+      "stamp",
+      "terminate_process_tree",
+      "run_command",
+      "versions",
+      "Unavailable",
+      "RunCancelled",
+      "ok",
+      "Context",
+      "output_lock",
+      "process_alive",
+      "SecretSafeFormatter",
+      "logging_session",
+      "setup_logging",
+      "external_fingerprints"
+    ]
+  },
+  "src/ldporto/curation_canary.py": {
+    "bytes": 13106,
+    "sha256": "31120035b5292cced589b6b2f094ae79972c2f1566abcae28295aa8c6e594547",
+    "imports": [
+      ".commercial_gate",
+      ".core",
+      ".curator_delivery",
+      ".integrity_contracts",
+      ".media_runtime",
+      ".preview_renderer",
+      ".preview_verifier",
+      ".safe_area",
+      ".second_curation",
+      ".second_curation_export",
+      "copy",
+      "math",
+      "pathlib",
+      "subprocess"
+    ],
+    "top_level_functions": [
+      "viewport_audit",
+      "run_real_canary"
+    ]
+  },
+  "src/ldporto/curation_recovery.py": {
+    "bytes": 17525,
+    "sha256": "c6701769654bd6b89abd8933e5a4147b5e103461538bd640582d71702d0fa74b",
+    "imports": [
+      ".compact_artifacts",
+      ".core",
+      ".execution_receipts",
+      ".export_privacy",
+      ".legacy_review",
+      ".run_status",
+      ".second_curation_export",
+      "hashlib",
+      "io",
+      "json",
+      "pathlib",
+      "tempfile",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "historical_contract",
+      "verified_json",
+      "handoff_receipt",
+      "snapshot",
+      "plan_recovery",
+      "recover"
+    ]
+  },
+  "src/ldporto/curator_bridge.py": {
+    "bytes": 10808,
+    "sha256": "e56781894519472ee8f5c2095849390ff6a521487a0234bf268240aa8d0aff02",
+    "imports": [
+      ".second_curation_export",
+      "__future__",
+      "collections",
+      "hashlib",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "tempfile",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "_read_json",
+      "_write_json",
+      "_safe_score",
+      "audit_second_curation_package",
+      "export_legacy_curator_bridge"
+    ]
+  },
+  "src/ldporto/curator_delivery.py": {
+    "bytes": 40005,
+    "sha256": "f9a1ee6ea445ecbef9f19bcb3dfa19379d8c92ae344a9eb1e4e207e3f602b688",
+    "imports": [
+      ".audio",
+      ".curator_bridge",
+      ".second_curation_decisions",
+      ".subtitle_style",
+      "__future__",
+      "datetime",
+      "hashlib",
+      "json",
+      "math",
+      "os",
+      "pathlib",
+      "re",
+      "shutil",
+      "subprocess",
+      "tempfile",
+      "time",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "file_sha256",
+      "canonical_hash",
+      "load_json",
+      "save_json",
+      "probe",
+      "_safe_candidate",
+      "prepare_plan",
+      "import_decisions",
+      "validate_plan",
+      "_ass_timestamp",
+      "_ass_escape",
+      "overlay_ass",
+      "verify_mp4",
+      "render_clip",
+      "verify_render_dependencies",
+      "approve_canary",
+      "verify_approval",
+      "render_batch",
+      "finalize_batch"
+    ]
+  },
+  "src/ldporto/diagnostic_dashboard.py": {
+    "bytes": 1441,
+    "sha256": "9fe768a356b5434100e4feb5e72c875596701d2132b6525d08ba501c4a896c52",
+    "imports": [
+      ".perception_diagnostics"
+    ],
+    "top_level_functions": [
+      "build_dashboard"
+    ]
+  },
+  "src/ldporto/diarization.py": {
+    "bytes": 12639,
+    "sha256": "3500380d31f949d82fdd399b9eb2d21267a53e5a8378f2fe11585bf188049075",
+    "imports": [
+      ".config",
+      ".core",
+      ".media_runtime",
+      ".model_cache",
+      ".temporal",
+      ".transcription",
+      "copy",
+      "gc",
+      "importlib.util",
+      "math",
+      "numpy",
+      "os",
+      "pyannote.audio",
+      "soundfile",
+      "torch"
+    ],
+    "top_level_functions": [
+      "overlap_intervals",
+      "diarization_capabilities",
+      "DiarizationEngine",
+      "align_speakers"
+    ]
+  },
+  "src/ldporto/director_config.py": {
+    "bytes": 9566,
+    "sha256": "137d7fa35ff538c389988a2a367e8cacbf95792e05543d42d375f511efd11d7d",
+    "imports": [
+      "copy",
+      "math"
+    ],
+    "top_level_functions": [
+      "resolve_smart_zoom",
+      "resolve_config"
+    ]
+  },
+  "src/ldporto/director_integration.py": {
+    "bytes": 9058,
+    "sha256": "fc7411ea65121e7cffe61fcbbf2a4136359b3926bf2742ffa284426291a6a4c1",
+    "imports": [
+      ".analysis_quality",
+      ".build_provenance",
+      ".camera_director",
+      ".compact_artifacts",
+      ".core",
+      ".global_camera_planner",
+      ".reports",
+      "bisect",
+      "copy",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "run_planner_stage",
+      "run_director_stage",
+      "attach_director",
+      "resume_director"
+    ]
+  },
+  "src/ldporto/editorial.py": {
+    "bytes": 55507,
+    "sha256": "5abf0e8e87bab588f8a60e01c75e899673b236ed17ef4c06ef0534b3f69b3424",
+    "imports": [
+      ".editorial_intelligence",
+      "collections",
+      "heapq",
+      "math",
+      "re",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "fold_text",
+      "terms",
+      "finite_score",
+      "normalize_context",
+      "require_pt_br",
+      "classify_content",
+      "normalize_moment",
+      "topic_hierarchy",
+      "duration_contract",
+      "_story_component_ids",
+      "_complete_story",
+      "assess_duration",
+      "opening_quality",
+      "ending_quality",
+      "_discourse_boundary_review",
+      "optimize_boundaries",
+      "rank_candidate",
+      "_equivalent",
+      "_primary_key",
+      "deduplicate_candidates"
+    ]
+  },
+  "src/ldporto/editorial_handoff_audit.py": {
+    "bytes": 6378,
+    "sha256": "adadc4b0b9d1d8f7122a78e096d7b7882f53e6e39dac871bd7d2e65f0122a204",
+    "imports": [
+      "json"
+    ],
+    "top_level_functions": [
+      "audit_handoff",
+      "audit_exported_handoff"
+    ]
+  },
+  "src/ldporto/editorial_intelligence.py": {
+    "bytes": 22397,
+    "sha256": "b02c5e94bf83e5ce97022514ccb2280f0b1431fd8e54fba834f403b9ab335785",
+    "imports": [
+      ".editorial",
+      ".story_recovery",
+      "collections",
+      "math",
+      "re",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "_fold",
+      "_ids",
+      "narrative_integrity",
+      "_speech",
+      "_payoff_candidate",
+      "humor_integrity",
+      "propose_humor_boundaries",
+      "absolute_selection_blockers",
+      "_selection_time",
+      "diversity_features",
+      "diversity_next",
+      "selection_disposition",
+      "explain_shortlist",
+      "select_editorial_shortlist"
+    ]
+  },
+  "src/ldporto/editorial_outcome.py": {
+    "bytes": 7536,
+    "sha256": "f6ad191e4829a057b538e60579d911b38a1d34a044173337986440ee0b26e226",
+    "imports": [
+      ".editorial",
+      ".ollama_local",
+      ".second_curation",
+      "collections"
+    ],
+    "top_level_functions": [
+      "full_source_review",
+      "classify_editorial_outcome"
+    ]
+  },
+  "src/ldporto/editorial_pdf.py": {
+    "bytes": 12681,
+    "sha256": "1eb72af8f57be419eb6caacb9f5588ce861a09e5eecc1eeb76c0f602cf70744f",
+    "imports": [
+      "os",
+      "pathlib",
+      "re",
+      "struct",
+      "textwrap",
+      "zlib"
+    ],
+    "top_level_functions": [
+      "_font_path",
+      "_Font",
+      "_pdf_string",
+      "_jpeg_size",
+      "EditorialPDF"
+    ]
+  },
+  "src/ldporto/editorial_review.py": {
+    "bytes": 8764,
+    "sha256": "e035126afb1a77047329b65dd03827be607b1c412331c4998dc271bc05a3db1e",
+    "imports": [
+      ".export_privacy",
+      "math",
+      "re"
+    ],
+    "top_level_functions": [
+      "editorial_potential",
+      "review_milestones",
+      "boundary_review_proposals"
+    ]
+  },
+  "src/ldporto/execution_receipts.py": {
+    "bytes": 10723,
+    "sha256": "828a4d07a786d23d655f5a6c1cb0c570df97362c361804e9e64ce0e5714c7a0d",
+    "imports": [
+      ".checkpoint_storage",
+      ".core",
+      ".export_privacy",
+      "copy",
+      "datetime",
+      "hashlib",
+      "json",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "snapshot_json",
+      "module_hashes",
+      "receipt_digest",
+      "create_receipt",
+      "verify_receipt",
+      "dependency_snapshots",
+      "_report_member_path",
+      "finalize_report_receipt",
+      "verify_report_receipt"
+    ]
+  },
+  "src/ldporto/export_privacy.py": {
+    "bytes": 4287,
+    "sha256": "9ed755861a8e1acb41e3408a5cfa133d6c46a22d1b723b965b7f29a7518fbf6f",
+    "imports": [
+      ".core",
+      "hashlib",
+      "json",
+      "pathlib",
+      "re",
+      "stat"
+    ],
+    "top_level_functions": [
+      "safe_path",
+      "string_rules",
+      "privacy_findings",
+      "sanitize_export",
+      "document_findings"
+    ]
+  },
+  "src/ldporto/face_quality.py": {
+    "bytes": 2876,
+    "sha256": "19f9ff0a7115b9757559476d4717a87cc05d095540e9fc3ef62ad9dcf72cabba",
+    "imports": [
+      "cv2",
+      "math"
+    ],
+    "top_level_functions": [
+      "assess_face"
+    ]
+  },
+  "src/ldporto/global_camera_planner.py": {
+    "bytes": 17445,
+    "sha256": "a2cb30e8107a30332f7d3a4dc8adbead89968075b161e01347c0125ba7fc6f6b",
+    "imports": [
+      ".camera_evidence",
+      ".camera_geometry",
+      ".core",
+      ".director_config",
+      ".temporal",
+      "collections",
+      "math"
+    ],
+    "top_level_functions": [
+      "_state_key",
+      "_profile_weights",
+      "_transition_cost",
+      "_candidate",
+      "_micro_interruptions",
+      "build_global_camera_plan"
+    ]
+  },
+  "src/ldporto/gpu_runtime.py": {
+    "bytes": 4435,
+    "sha256": "1e23ced03282c9ca768ebd5357a08f5a21ca451e8d8a8733fa830fc955f68d3e",
+    "imports": [
+      ".core",
+      "__future__",
+      "ctranslate2",
+      "ctypes",
+      "os",
+      "pathlib",
+      "site",
+      "sys",
+      "typing"
+    ],
+    "top_level_functions": [
+      "_site_packages",
+      "configure_windows_nvidia_runtime",
+      "cuda_library_status",
+      "ctranslate2_cuda_info"
+    ]
+  },
+  "src/ldporto/handoff.py": {
+    "bytes": 11362,
+    "sha256": "4d678758fcfc4a1c7b204542c62024219fbc8331b83fb66446206972b0cd61d2",
+    "imports": [
+      ".core"
+    ],
+    "top_level_functions": [
+      "report_state",
+      "build_chatgpt_handoff",
+      "handoff_markdown"
+    ]
+  },
+  "src/ldporto/homologation_audit.py": {
+    "bytes": 9879,
+    "sha256": "a9987fe9879bb79ba4991844e6c16f45166e6a9c59d1be42a6fa3cecc92c1ff5",
+    "imports": [
+      ".second_curation_decisions",
+      ".second_curation_export",
+      "collections",
+      "hashlib",
+      "json",
+      "jsonschema.exceptions",
+      "math",
+      "pathlib",
+      "stat",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "sha256",
+      "audit_package",
+      "compare_outputs"
+    ]
+  },
+  "src/ldporto/homologation_s11.py": {
+    "bytes": 13102,
+    "sha256": "8bbe6fc7035563d26df39385e93b61d23691b3382fc82ffa3d427774d6abbd6c",
+    "imports": [
+      ".curator_bridge",
+      ".curator_delivery",
+      ".homologation_audit",
+      ".ollama_local",
+      ".performance_acceptance",
+      "__future__",
+      "datetime",
+      "json",
+      "os",
+      "pathlib",
+      "platform",
+      "shutil",
+      "subprocess",
+      "xml.etree.ElementTree",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "_analysis",
+      "metric_delta",
+      "_runtime_checks",
+      "_offline_runtime_checks",
+      "homologate",
+      "markdown_report"
+    ]
+  },
+  "src/ldporto/identity_goldset.py": {
+    "bytes": 14675,
+    "sha256": "55319506c86b6ccae5e99fb1d2e2b1778a7a2139a4e3f2a29cd10da8242e98ec",
+    "imports": [
+      "collections",
+      "csv",
+      "cv2",
+      "math",
+      "numpy",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "_track_class",
+      "sample_tracklets",
+      "write_annotation_csv",
+      "read_annotation_csv",
+      "sample_reid_pairs",
+      "compare_identity_annotations",
+      "evaluate_annotations",
+      "write_contact_sheet"
+    ]
+  },
+  "src/ldporto/inference_smoke.py": {
+    "bytes": 20186,
+    "sha256": "d9dde32918872dddbe62f3a93a0b72141fe8550bc86e5fedc3c96f56eb484d83",
+    "imports": [
+      ".config",
+      ".core",
+      ".gpu_runtime",
+      ".media_runtime",
+      ".model_cache",
+      ".ocr_diagnostics",
+      ".ollama_local",
+      ".preflight",
+      ".transcription",
+      ".vision",
+      "__future__",
+      "contextlib",
+      "ctranslate2",
+      "cv2",
+      "datetime",
+      "faster_whisper",
+      "faster_whisper.utils",
+      "io",
+      "json",
+      "math",
+      "numpy",
+      "os",
+      "pathlib",
+      "pyannote.audio",
+      "signal",
+      "subprocess",
+      "sys",
+      "tempfile",
+      "time",
+      "torch",
+      "wave"
+    ],
+    "top_level_functions": [
+      "SmokeBlocked",
+      "CanaryFailure",
+      "_enabled",
+      "_worker_process",
+      "run_inference_smoke",
+      "save_smoke",
+      "replay_smoke",
+      "_memory",
+      "_infer",
+      "worker_main"
+    ]
+  },
+  "src/ldporto/integrity_contracts.py": {
+    "bytes": 23225,
+    "sha256": "c6507e1223da4d2b65e491bc28488541196a05f52b581fdfa0492d8dcf619762",
+    "imports": [
+      ".editorial",
+      ".editorial_review",
+      ".second_curation",
+      "copy"
+    ],
+    "top_level_functions": [
+      "stage_capability",
+      "capability_contract",
+      "canonical_report_metrics",
+      "audit_report_fields",
+      "build_question_reference_table",
+      "audit_question_references",
+      "audit_editorial_contract",
+      "derive_review_state",
+      "preview_technical_readiness",
+      "candidate_review_invariants",
+      "editorial_review_units",
+      "human_review_queue"
+    ]
+  },
+  "src/ldporto/interview_layout.py": {
+    "bytes": 1040,
+    "sha256": "067c397975797c5edf4bae04c5fba94dec9f691418a7667bb5428c30bf748c55",
+    "imports": [],
+    "top_level_functions": [
+      "choose_layout"
+    ]
+  },
+  "src/ldporto/legacy_review.py": {
+    "bytes": 12013,
+    "sha256": "dfbf03ef3820064855fff3a75f381cee47d7d3c63c8b90f5780e96099a4c9081",
+    "imports": [
+      ".compact_artifacts",
+      ".export_privacy",
+      "__future__",
+      "hashlib",
+      "json",
+      "os",
+      "pathlib",
+      "tempfile"
+    ],
+    "top_level_functions": [
+      "_hash",
+      "_read_json",
+      "_read_verified",
+      "_inventory",
+      "plan_legacy_review",
+      "create_legacy_review_input"
+    ]
+  },
+  "src/ldporto/master_timeline.py": {
+    "bytes": 4870,
+    "sha256": "d226a4cce0fce2561a97c37c2a9304ef26ca9930ad6e3f72fa77b09e05713085",
+    "imports": [
+      ".core",
+      ".temporal",
+      ".transcription",
+      "bisect",
+      "collections"
+    ],
+    "top_level_functions": [
+      "_overlapping",
+      "build_master_timeline"
+    ]
+  },
+  "src/ldporto/media.py": {
+    "bytes": 7576,
+    "sha256": "88b0e14ba03f8a742e620f37939eac7ee0c724a04c82924d1b4d7a54aff0c126",
+    "imports": [
+      ".core",
+      ".media_runtime",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "shutil",
+      "urllib.parse",
+      "yt_dlp"
+    ],
+    "top_level_functions": [
+      "youtube_id",
+      "resolve_input",
+      "inspect"
+    ]
+  },
+  "src/ldporto/media_runtime.py": {
+    "bytes": 3404,
+    "sha256": "67d2433fb4015677a3f7cbdb252bd0adac2b6ebcebd21751385d23f5c76f8205",
+    "imports": [
+      ".paths",
+      "importlib",
+      "os",
+      "pathlib",
+      "shutil"
+    ],
+    "top_level_functions": [
+      "find_media_tool",
+      "bootstrap_ffmpeg_shared",
+      "torchcodec_decoder_status"
+    ]
+  },
+  "src/ldporto/model_cache.py": {
+    "bytes": 2019,
+    "sha256": "8a46f4578a61a4d1a30b8abfb86c1b3290cd189954631c69987c3a420fcfc36d",
+    "imports": [
+      ".config",
+      "faster_whisper.utils",
+      "huggingface_hub",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "cached_pipeline_snapshot",
+      "cached_whisper_snapshot"
+    ]
+  },
+  "src/ldporto/narrative_handoff.py": {
+    "bytes": 45162,
+    "sha256": "bf72a2c331bc6efd101743db1b340e610f642a8b41c50eb89587af042272bab6",
+    "imports": [
+      ".commercial_context",
+      ".core",
+      ".editorial",
+      ".export_privacy",
+      ".narrative_relations",
+      "collections",
+      "copy",
+      "html",
+      "json",
+      "jsonschema",
+      "math",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "_valid_interval",
+      "_intervals",
+      "_literal",
+      "_chunks",
+      "_role",
+      "narrative_repair_plan",
+      "build_narrative_handoff",
+      "validate_narrative_handoff",
+      "narrative_audit_documents"
+    ]
+  },
+  "src/ldporto/narrative_relations.py": {
+    "bytes": 24164,
+    "sha256": "65706b51bf4e9b7a6c7682f3da4c64e65cb3fca0e2785acf3664edcf5f1065b9",
+    "imports": [
+      ".core",
+      ".editorial",
+      ".semantic",
+      ".story_recovery",
+      "collections",
+      "math",
+      "re"
+    ],
+    "top_level_functions": [
+      "_narrated_self_response",
+      "_rows",
+      "_context_ids",
+      "_interval",
+      "_nonoverlapping_source_span",
+      "_canonical_question",
+      "_proposal",
+      "build_question_answer_links",
+      "build_arc_context_links"
+    ]
+  },
+  "src/ldporto/narrative_replay.py": {
+    "bytes": 12551,
+    "sha256": "783875c5c4de3faf3e5d571f8bf897325ad576d1a35eb01039d67bb8a82eec91",
+    "imports": [
+      ".build_provenance",
+      ".core",
+      ".narrative_handoff",
+      ".replay",
+      ".second_curation",
+      ".second_curation_export",
+      ".understanding",
+      "argparse",
+      "copy",
+      "json",
+      "pathlib",
+      "time",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "narrative_replay_plan",
+      "replay_narrative_analysis",
+      "main"
+    ]
+  },
+  "src/ldporto/ocr.py": {
+    "bytes": 7300,
+    "sha256": "4c2bc4de833decebd855bdbe503455a5b97f8fc3572a8eaae94fdd00d4ca0d90",
+    "imports": [
+      ".core",
+      ".ocr_diagnostics",
+      ".ocr_execution",
+      ".ocr_runtime",
+      "collections",
+      "cv2",
+      "hashlib",
+      "math",
+      "pytesseract",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "normalize_commercial_observation",
+      "validate_observations",
+      "OcrEngine"
+    ]
+  },
+  "src/ldporto/ocr_diagnostics.py": {
+    "bytes": 12204,
+    "sha256": "4934f3df3ab8d331226b5b8bb376df7aa39ac89f8fa8f6a94ea0df524a0985f3",
+    "imports": [
+      ".core",
+      ".ocr_runtime",
+      "PIL",
+      "__future__",
+      "argparse",
+      "ctypes",
+      "importlib",
+      "json",
+      "os",
+      "pathlib",
+      "re",
+      "resource",
+      "shutil",
+      "subprocess",
+      "tempfile",
+      "time",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "_windows_job",
+      "_run",
+      "_normalize",
+      "_fixture",
+      "diagnose_ocr",
+      "main"
+    ]
+  },
+  "src/ldporto/ocr_execution.py": {
+    "bytes": 1873,
+    "sha256": "edbec73406ad7ffeb203a1e440d70910b9482643a585132f346c4e090f792b21",
+    "imports": [
+      "functools",
+      "time"
+    ],
+    "top_level_functions": [
+      "receipt",
+      "execution_summary"
+    ]
+  },
+  "src/ldporto/ocr_runtime.py": {
+    "bytes": 2196,
+    "sha256": "8e775f2375ada0d744d3609ca327af736d097bf5868f279242a6407a454d8196",
+    "imports": [
+      "importlib",
+      "os",
+      "pathlib",
+      "re",
+      "shutil",
+      "threading"
+    ],
+    "top_level_functions": [
+      "languages",
+      "resolve_executable",
+      "call"
+    ]
+  },
+  "src/ldporto/ollama_local.py": {
+    "bytes": 10958,
+    "sha256": "5e3fe76c689fd58a5826ef0db83a560bc1dcc4ba99c214aa5d259485062bdae6",
+    "imports": [
+      ".core",
+      "__future__",
+      "json",
+      "math",
+      "os",
+      "re",
+      "shutil",
+      "subprocess",
+      "time",
+      "urllib.error",
+      "urllib.parse",
+      "urllib.request"
+    ],
+    "top_level_functions": [
+      "validate_url",
+      "LoopbackRedirectHandler",
+      "_request_json",
+      "service_info",
+      "installed_model_names",
+      "resolve_model",
+      "profile_options",
+      "OllamaContentError",
+      "measured_number",
+      "inference_measurements",
+      "chat",
+      "nvidia_smi",
+      "windows_install_command"
+    ]
+  },
+  "src/ldporto/paths.py": {
+    "bytes": 2476,
+    "sha256": "83fe6157e6a89d9a81fe5566ebb4abe61b385e5a1fb19f5adab34a96636809e5",
+    "imports": [
+      "ctypes",
+      "os",
+      "pathlib",
+      "re",
+      "unicodedata",
+      "uuid"
+    ],
+    "top_level_functions": [
+      "project_path",
+      "optional_requirement",
+      "videos_directory",
+      "windows_component"
+    ]
+  },
+  "src/ldporto/perception_diagnostics.py": {
+    "bytes": 11169,
+    "sha256": "7f61c78bf60a3047409a3f5c55508d5e9edb4c55c6625a42c199413c01fa4921",
+    "imports": [
+      ".temporal",
+      "bisect",
+      "collections"
+    ],
+    "top_level_functions": [
+      "speaker_diagnostics",
+      "tracking_profile"
+    ]
+  },
+  "src/ldporto/performance.py": {
+    "bytes": 5877,
+    "sha256": "60780de02eb476cec88b12f6881b1fb721d897cef84f8aef64fbe162b7027906",
+    "imports": [
+      "__future__",
+      "collections",
+      "datetime",
+      "math",
+      "os",
+      "psutil",
+      "time"
+    ],
+    "top_level_functions": [
+      "measured_vram",
+      "FrameTelemetry",
+      "vision_resource_plan",
+      "cpu_overlap_budget"
+    ]
+  },
+  "src/ldporto/performance_acceptance.py": {
+    "bytes": 7875,
+    "sha256": "82aab04c6a3b596d88444b4be3e03d16d9f960651205e55bdad79b2f540a922d",
+    "imports": [
+      ".ollama_local",
+      ".runtime_metrics",
+      ".semantic_benchmark",
+      "__future__",
+      "ctypes",
+      "json",
+      "math",
+      "os",
+      "pathlib",
+      "platform",
+      "shutil",
+      "statistics",
+      "subprocess"
+    ],
+    "top_level_functions": [
+      "_valid",
+      "evaluate_vision_ab",
+      "evaluate_semantic_ab",
+      "physical_memory_available",
+      "resource_diagnostic",
+      "review_checkpoint_state"
+    ]
+  },
+  "src/ldporto/performer_evidence.py": {
+    "bytes": 5786,
+    "sha256": "b66de58cc86ffb9d87050ac0855681a648a18fa95abe3567f90147715514acf6",
+    "imports": [
+      ".core",
+      "copy",
+      "math"
+    ],
+    "top_level_functions": [
+      "_time",
+      "build_performer_evidence"
+    ]
+  },
+  "src/ldporto/person_motion.py": {
+    "bytes": 6083,
+    "sha256": "833241aed57cf908ed877275e5f8485bb88edb7343e811231d0dc7f4f21ff71a",
+    "imports": [
+      ".core",
+      "collections",
+      "math"
+    ],
+    "top_level_functions": [
+      "_direction",
+      "build_person_motion"
+    ]
+  },
+  "src/ldporto/person_reid.py": {
+    "bytes": 33048,
+    "sha256": "2a6258fadfaae6fb1bbf86f112ff082b7831b265eec23825d7a8b2796b3d576b",
+    "imports": [
+      ".core",
+      ".identity_goldset",
+      ".visual_identity_audit",
+      "collections",
+      "math",
+      "numpy"
+    ],
+    "top_level_functions": [
+      "_quantile",
+      "_usable_embedding",
+      "_embedding",
+      "_buckets",
+      "_face_neighbors",
+      "reid_outcome_diagnostics",
+      "_cluster_similarity",
+      "_conflict",
+      "build_person_identities",
+      "apply_person_identities"
+    ]
+  },
+  "src/ldporto/pipeline.py": {
+    "bytes": 30768,
+    "sha256": "9172dd3bca50e3c51a67b3fbd57fa8277e99dd877c925f19e5667043acd790e8",
+    "imports": [
+      ".",
+      ".active_speaker",
+      ".analysis_quality",
+      ".audio",
+      ".broadcast_graphics",
+      ".build_provenance",
+      ".camera_timeline",
+      ".commercial_gate",
+      ".config",
+      ".core",
+      ".diarization",
+      ".director_integration",
+      ".master_timeline",
+      ".media",
+      ".ocr",
+      ".ocr_execution",
+      ".person_motion",
+      ".person_reid",
+      ".preflight",
+      ".preview_integration",
+      ".preview_verifier",
+      ".progress",
+      ".reports",
+      ".run_status",
+      ".runtime_metrics",
+      ".scenes",
+      ".semantic",
+      ".shots",
+      ".storage",
+      ".subtitle_review",
+      ".targeted_asr",
+      ".timeline",
+      ".transcription",
+      ".uncertain_words_audit",
+      ".understanding",
+      ".vision",
+      ".visual_sampling",
+      "collections",
+      "datetime",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "_dialogue_evidence",
+      "_optional_visual_result",
+      "_active_stage",
+      "analyze",
+      "enrich_scenes"
+    ]
+  },
+  "src/ldporto/preflight.py": {
+    "bytes": 22518,
+    "sha256": "a4d60bc684135c563c7a9d23fdacb7a23fe29948dfb2a51e1823aace5c8250f0",
+    "imports": [
+      ".config",
+      ".core",
+      ".gpu_runtime",
+      ".inference_smoke",
+      ".media_runtime",
+      ".model_cache",
+      ".ocr_diagnostics",
+      ".ollama_local",
+      ".vision",
+      "__future__",
+      "contextlib",
+      "cv2",
+      "datetime",
+      "gc",
+      "huggingface_hub",
+      "importlib",
+      "importlib.metadata",
+      "io",
+      "json",
+      "jsonschema.validators",
+      "os",
+      "pathlib",
+      "pyannote.audio",
+      "shutil",
+      "subprocess",
+      "sys",
+      "tempfile",
+      "torch"
+    ],
+    "top_level_functions": [
+      "PreflightError",
+      "_import_check",
+      "_file_check",
+      "model_directory_fingerprint",
+      "validate_pipeline_model",
+      "_model_access",
+      "validate_vision_assets",
+      "_output_check",
+      "run_preflight",
+      "require_preflight"
+    ]
+  },
+  "src/ldporto/preview_integration.py": {
+    "bytes": 9486,
+    "sha256": "6cfa76560f265f8821d87cf4bb610665dab290579dbcf5fb6a259990a7e73c80",
+    "imports": [
+      ".core",
+      ".preview_renderer",
+      ".preview_verifier",
+      ".zoom_delivery",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "build_preview_package",
+      "run_preview_stage"
+    ]
+  },
+  "src/ldporto/preview_renderer.py": {
+    "bytes": 14927,
+    "sha256": "73bc2ccb6030de84086c4055ae418f52877e260ca9a866cf903aaa1e1bdde86a",
+    "imports": [
+      ".core",
+      ".media_runtime",
+      "bisect",
+      "cv2",
+      "math",
+      "numpy",
+      "pathlib",
+      "shutil",
+      "subprocess",
+      "tempfile"
+    ],
+    "top_level_functions": [
+      "select_canary_intervals",
+      "_fit",
+      "_crop",
+      "_interpolate_keyframes",
+      "_row_at",
+      "build_contact_sheet",
+      "render_preview"
+    ]
+  },
+  "src/ldporto/preview_verifier.py": {
+    "bytes": 23541,
+    "sha256": "a44c53c92f4c85eeb3ae3a21a38cf15728c69cc4df201052b39e08dfad990f52",
+    "imports": [
+      ".core",
+      ".media_runtime",
+      ".preview_renderer",
+      "copy",
+      "cv2",
+      "json",
+      "math",
+      "numpy",
+      "pathlib",
+      "shutil",
+      "subprocess"
+    ],
+    "top_level_functions": [
+      "zoom_diagnostics",
+      "border_geometry_evidence",
+      "_border_crop_context",
+      "border_temporal_report",
+      "_ffprobe",
+      "verify_preview",
+      "conservative_repair"
+    ]
+  },
+  "src/ldporto/progress.py": {
+    "bytes": 9404,
+    "sha256": "b754f32868efb0a269317b8e5b27652efcf37872e5834727ff7fcd789e0a1257",
+    "imports": [
+      ".core",
+      "collections",
+      "json",
+      "math",
+      "statistics",
+      "time"
+    ],
+    "top_level_functions": [
+      "emit_event",
+      "human_duration",
+      "WeightedProgress"
+    ]
+  },
+  "src/ldporto/project_export.py": {
+    "bytes": 30233,
+    "sha256": "3f1ab5e2075e601c391ec7698916e627bc84391303429e4b1ef514242e466c2e",
+    "imports": [
+      ".camera_handoff",
+      ".core",
+      ".editorial_pdf",
+      ".export_privacy",
+      ".paths",
+      ".second_curation_export",
+      ".transcription",
+      "argparse",
+      "collections",
+      "datetime",
+      "hashlib",
+      "html",
+      "json",
+      "math",
+      "pathlib",
+      "shutil",
+      "stat",
+      "uuid",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "ExportCancelled",
+      "_safe_ancestors",
+      "_logical",
+      "_json",
+      "_rows",
+      "_interval",
+      "_gaps",
+      "_transcript_files",
+      "_title",
+      "_caption_summary",
+      "_describe",
+      "_transcript_pdf",
+      "export_project",
+      "_finalize",
+      "verify_project_export",
+      "main"
+    ]
+  },
+  "src/ldporto/qa_audit.py": {
+    "bytes": 13566,
+    "sha256": "2252911e50fa87aed38bc263d6b0eff929c0c4bf132949d38f312172bc1a2f95",
+    "imports": [
+      ".semantic",
+      "collections",
+      "math",
+      "re"
+    ],
+    "top_level_functions": [
+      "_rate",
+      "_number",
+      "audit_qa",
+      "qa_audit_markdown"
+    ]
+  },
+  "src/ldporto/replay.py": {
+    "bytes": 39074,
+    "sha256": "0eae72952647a650be68851e34a4691603f059a3f81ba80632e048f84555434b",
+    "imports": [
+      ".",
+      ".active_speaker",
+      ".analysis_quality",
+      ".commercial_gate",
+      ".compact_artifacts",
+      ".core",
+      ".director_integration",
+      ".editorial",
+      ".paths",
+      ".preview_integration",
+      ".reports",
+      ".run_status",
+      ".semantic",
+      ".subtitle_review",
+      ".timeline",
+      ".understanding",
+      "copy",
+      "logging",
+      "math",
+      "pathlib",
+      "time"
+    ],
+    "top_level_functions": [
+      "replay_plan",
+      "understanding_replay_params",
+      "safe_replay_path",
+      "checkpoint_hashes",
+      "commercial_dry_run",
+      "write_reprocess_manifest",
+      "blocked_commercial_replay",
+      "resolve_replay_folder",
+      "ReplayArtifacts",
+      "replay_analysis"
+    ]
+  },
+  "src/ldporto/reports.py": {
+    "bytes": 66171,
+    "sha256": "46c50e24134946392f2505b000347903bd092453ada1a6f0b4f7459776825520",
+    "imports": [
+      ".analysis_quality",
+      ".build_provenance",
+      ".camera_handoff",
+      ".compact_artifacts",
+      ".config",
+      ".core",
+      ".editorial_outcome",
+      ".execution_receipts",
+      ".handoff",
+      ".paths",
+      ".performer_evidence",
+      ".project_export",
+      ".qa_audit",
+      ".run_status",
+      ".runtime_metrics",
+      ".second_curation",
+      ".second_curation_export",
+      ".social_output",
+      ".subtitle_review",
+      "base64",
+      "collections",
+      "copy",
+      "hashlib",
+      "html",
+      "json",
+      "logging",
+      "pathlib",
+      "textwrap",
+      "time",
+      "urllib.parse",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "_run_manifest",
+      "_editorial_review_mapping",
+      "compact_moment",
+      "summary",
+      "llm_insights",
+      "write_srt",
+      "markdown_report",
+      "safe_image_reference",
+      "html_report",
+      "ReportEngine",
+      "exports_placeholder"
+    ]
+  },
+  "src/ldporto/review_media.py": {
+    "bytes": 7575,
+    "sha256": "768b40ecc05ff42b6d394cb339473737bd97c28af5e29c715b966e6a27eeee50",
+    "imports": [
+      ".core",
+      "html",
+      "json",
+      "math",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "_sha",
+      "_interval",
+      "_relative",
+      "build_source_media_references",
+      "validate_media_references",
+      "resolve_review_media",
+      "review_player_html"
+    ]
+  },
+  "src/ldporto/review_overrides.py": {
+    "bytes": 2315,
+    "sha256": "a2057e18215dcb47d2837658e50eb73f78d10961c358a7ffda2b7e99e96deb12",
+    "imports": [
+      "copy",
+      "datetime"
+    ],
+    "top_level_functions": [
+      "new_document",
+      "add_override",
+      "undo",
+      "redo",
+      "reset",
+      "invalidated_stages"
+    ]
+  },
+  "src/ldporto/round62_audit.py": {
+    "bytes": 6259,
+    "sha256": "0c3219d038e0b6834977a8070e11576b10046b1e04bab2f8329975b7fe33ff2f",
+    "imports": [
+      "hashlib",
+      "importlib",
+      "pathlib",
+      "platform",
+      "sys",
+      "xml.etree.ElementTree"
+    ],
+    "top_level_functions": [
+      "reference",
+      "junit_summary",
+      "build_report"
+    ]
+  },
+  "src/ldporto/run_status.py": {
+    "bytes": 10171,
+    "sha256": "910e1a6d91080ab88c7df581d226b70bb762c5b6c46dafea4a649cdd8061653a",
+    "imports": [
+      ".build_provenance",
+      ".core"
+    ],
+    "top_level_functions": [
+      "_children",
+      "descendants",
+      "build_run_manifest"
+    ]
+  },
+  "src/ldporto/runtime_metrics.py": {
+    "bytes": 5810,
+    "sha256": "18c1f5f46ab9bd4ac7069d052ce41bd79d77747dea6eefa0a23716b054ef5ff0",
+    "imports": [
+      ".core",
+      ".ollama_local",
+      ".paths",
+      ".performance_acceptance",
+      "collections",
+      "ctypes",
+      "functools",
+      "math",
+      "os",
+      "pathlib",
+      "platform",
+      "resource",
+      "statistics",
+      "time"
+    ],
+    "top_level_functions": [
+      "resource_snapshot",
+      "gpu_history_profile",
+      "history_fingerprint",
+      "record_runtime_history",
+      "historical_stage_estimates"
+    ]
+  },
+  "src/ldporto/safe_area.py": {
+    "bytes": 9096,
+    "sha256": "73e40f6f98a7084ce378f2e697ac6a63579f71602acdb1fcaf8638c43c3ecfb8",
+    "imports": [
+      ".preview_renderer",
+      "math"
+    ],
+    "top_level_functions": [
+      "rect",
+      "intersects",
+      "_project",
+      "_transform",
+      "_observed_in",
+      "plan_safe_area"
+    ]
+  },
+  "src/ldporto/scenes.py": {
+    "bytes": 13190,
+    "sha256": "8149c0924dbe3016f891501807f28df132b83f9c63ee5d4456710e74db803278",
+    "imports": [
+      ".core",
+      "collections",
+      "math",
+      "scenedetect",
+      "statistics",
+      "time"
+    ],
+    "top_level_functions": [
+      "_MeasuredSceneVideo",
+      "_close_scene_video",
+      "_detect_measured_scenes",
+      "summarize_scenes",
+      "SceneEngine"
+    ]
+  },
+  "src/ldporto/second_curation.py": {
+    "bytes": 36844,
+    "sha256": "a47ef1ad643137d9e95035f01a9192152be134653db90a72fbdd48bd5289b7a7",
+    "imports": [
+      ".",
+      ".commercial_gate",
+      ".core",
+      ".editorial",
+      ".editorial_review",
+      ".integrity_contracts",
+      ".story_recovery",
+      ".temporal",
+      ".transcription",
+      "collections",
+      "math"
+    ],
+    "top_level_functions": [
+      "_rows_in",
+      "_text",
+      "_editorial_review_rows",
+      "candidate_editorial_review_plan",
+      "human_review_summary",
+      "_understanding_integrity",
+      "_candidate_source",
+      "build_second_curation_package",
+      "candidate_audio_quality",
+      "candidate_technical_quality",
+      "validate_references"
+    ]
+  },
+  "src/ldporto/second_curation_decisions.py": {
+    "bytes": 8781,
+    "sha256": "853b5915704f23e36a2d8a2d564960e67882a81e7849d2184ffe05e7cf42e9b1",
+    "imports": [
+      "abc",
+      "copy",
+      "jsonschema",
+      "math"
+    ],
+    "top_level_functions": [
+      "compile_decisions",
+      "SecondCuratorProvider",
+      "ManualJsonProvider"
+    ]
+  },
+  "src/ldporto/second_curation_export.py": {
+    "bytes": 105233,
+    "sha256": "94be27dca17a7e80e7355bcfed065e0b9832c81c284ca34dfe35351fb2c9fb79",
+    "imports": [
+      ".build_provenance",
+      ".camera_handoff",
+      ".commercial_gate",
+      ".core",
+      ".editorial",
+      ".editorial_handoff_audit",
+      ".editorial_outcome",
+      ".export_privacy",
+      ".integrity_contracts",
+      ".narrative_handoff",
+      ".ocr",
+      ".paths",
+      ".performer_evidence",
+      ".preview_renderer",
+      ".review_media",
+      ".second_curation",
+      ".second_curation_decisions",
+      ".social_output",
+      ".subtitle_review",
+      ".transcript_dossier",
+      ".transcription",
+      "copy",
+      "cv2",
+      "datetime",
+      "hashlib",
+      "json",
+      "jsonschema",
+      "math",
+      "numpy",
+      "pathlib",
+      "re",
+      "shutil",
+      "tempfile",
+      "uuid",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "_public",
+      "_identifier",
+      "_write_handoff_master",
+      "_validate_r6_handoff",
+      "_validate_transcript_contract",
+      "_write_jsonl",
+      "_final_commercial_classification",
+      "_reconcile_social_output",
+      "validate_core_package",
+      "build_core_package",
+      "generate_visuals_on_demand"
+    ]
+  },
+  "src/ldporto/semantic.py": {
+    "bytes": 92296,
+    "sha256": "116bab82ae3d8f9cbfc8a3bd9028800cd5cba3b2058c2222ca8ff0d145e4e532",
+    "imports": [
+      ".core",
+      ".editorial",
+      ".ollama_local",
+      "collections",
+      "copy",
+      "json",
+      "jsonschema",
+      "math",
+      "pathlib",
+      "re",
+      "statistics",
+      "time",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "normalized",
+      "chunks",
+      "inferred_labels",
+      "heuristic",
+      "ollama_schema",
+      "semantic_source_items",
+      "propagate_transcript_uncertainty",
+      "contextual_program_sections",
+      "call_ollama",
+      "range_schema",
+      "expand_reference_ranges",
+      "semantic_cache_key",
+      "semantic_failure_category",
+      "salvage_semantic_components",
+      "recover_semantic_evidence",
+      "propagate_semantic_degradation",
+      "repair_ollama_output",
+      "global_review_schema",
+      "_pre_score",
+      "prepare_quote_catalog",
+      "_global_request_schema",
+      "_partition_global_review",
+      "call_global_review",
+      "validate_global_review",
+      "ground_model_output",
+      "classify_question",
+      "classify_hook",
+      "_qa_terms",
+      "_qa_continuity",
+      "_qa_intervention",
+      "_qa_question_extension",
+      "questions_answers",
+      "qa_contract",
+      "inference_cost_summary",
+      "SemanticEngine"
+    ]
+  },
+  "src/ldporto/semantic_benchmark.py": {
+    "bytes": 6367,
+    "sha256": "7637e5946a94d071cc94450af448599f32debab41f6cccceea47a4d76cbe5e42",
+    "imports": [
+      ".core",
+      ".semantic",
+      "csv",
+      "jsonschema",
+      "math",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "output_contract",
+      "compare_outputs",
+      "number",
+      "parse_metrics",
+      "benchmark_hash",
+      "quality_approved",
+      "write_csv"
+    ]
+  },
+  "src/ldporto/semantic_narrative.py": {
+    "bytes": 45141,
+    "sha256": "c810a2e72a06c879f845949bc6572a8de236918549f6973bebba4f2814b7e8f5",
+    "imports": [
+      ".core",
+      "collections",
+      "copy",
+      "json",
+      "jsonschema",
+      "math",
+      "re",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "_object",
+      "task_schema",
+      "_fold",
+      "_terms",
+      "source_claim_issues",
+      "_compact_proposals",
+      "_Resolver",
+      "build_semantic_analysis"
+    ]
+  },
+  "src/ldporto/semantic_package.py": {
+    "bytes": 20919,
+    "sha256": "7048e79d7cc37cdd49b7abca0fd826874edc65c363ef1f45d6f17b1b3b3a903c",
+    "imports": [
+      ".build_provenance",
+      ".core",
+      ".second_curation_export",
+      ".semantic_runtime",
+      ".story_visual_handoff",
+      "copy",
+      "datetime",
+      "hashlib",
+      "json",
+      "jsonschema",
+      "math",
+      "pathlib",
+      "re",
+      "unicodedata",
+      "uuid",
+      "zipfile"
+    ],
+    "top_level_functions": [
+      "_claim_origin_issues",
+      "validate_embedded_schemas",
+      "read_package",
+      "decoded_documents",
+      "validate_semantic_artifacts",
+      "export_semantic_package",
+      "validate_semantic_package"
+    ]
+  },
+  "src/ldporto/semantic_replay.py": {
+    "bytes": 36713,
+    "sha256": "e692c3a4bed71b131c3a7965037474da6f8605cdaba6d3cd62e909d0660dd079",
+    "imports": [
+      ".build_provenance",
+      ".core",
+      ".export_privacy",
+      ".replay",
+      ".semantic_narrative",
+      ".semantic_package",
+      ".semantic_runtime",
+      ".story_visual_handoff",
+      "argparse",
+      "copy",
+      "datetime",
+      "html",
+      "json",
+      "pathlib",
+      "re",
+      "shutil",
+      "time",
+      "uuid"
+    ],
+    "top_level_functions": [
+      "_save_artifacts",
+      "_load_artifacts",
+      "_checkpoint",
+      "evidence_summary_schema",
+      "source_excerpt_repair",
+      "reuse_grounded_series",
+      "semantic_replay",
+      "delivery_documents",
+      "review_html",
+      "main"
+    ]
+  },
+  "src/ldporto/semantic_runtime.py": {
+    "bytes": 9372,
+    "sha256": "8f4231388509fdd9db4e80e6683e2d27086288209732370986e99bfaaefd483c",
+    "imports": [
+      ".",
+      ".core",
+      "copy",
+      "datetime",
+      "hashlib",
+      "json",
+      "jsonschema",
+      "os",
+      "pathlib",
+      "time",
+      "uuid"
+    ],
+    "top_level_functions": [
+      "atomic_json",
+      "failure_category",
+      "CachedSemanticInference",
+      "inference_history"
+    ]
+  },
+  "src/ldporto/shots.py": {
+    "bytes": 9130,
+    "sha256": "f53e34601f465899dcdc32dbb5fcc4f92b7e2d014f859e407c7df233d25cb970",
+    "imports": [
+      ".core",
+      "collections",
+      "math",
+      "statistics"
+    ],
+    "top_level_functions": [
+      "_mean",
+      "_median",
+      "_combine",
+      "classify_shot",
+      "build_shots"
+    ]
+  },
+  "src/ldporto/social_output.py": {
+    "bytes": 36958,
+    "sha256": "7a1d1ddba51eb73f1ff6a05821f953c765221a4b3838bbae87dd06ff28bff38b",
+    "imports": [
+      ".camera_handoff",
+      ".core",
+      ".editorial",
+      ".editorial_intelligence",
+      ".safe_area",
+      ".subtitle_review",
+      ".subtitle_style",
+      "__future__",
+      "collections",
+      "math",
+      "re"
+    ],
+    "top_level_functions": [
+      "_score",
+      "_words",
+      "title_plan",
+      "_title_variants",
+      "_story_diversity_next",
+      "_category",
+      "_commercial",
+      "_critical_editorial_stage_ready",
+      "_story_score",
+      "_graphics_for_interval",
+      "_normalized_rect_overlap",
+      "_caption_plan",
+      "_preset_for",
+      "select_story_set",
+      "build_social_output"
+    ]
+  },
+  "src/ldporto/speaker_goldset.py": {
+    "bytes": 6345,
+    "sha256": "325620b63d277f5980ddabc4e20cb90808e9b4d7d47e6c33f574e02bf9a46eda",
+    "imports": [
+      "csv",
+      "math",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "choose_review_windows",
+      "export_csv",
+      "load_csv",
+      "evaluate_goldset"
+    ]
+  },
+  "src/ldporto/speaker_roles.py": {
+    "bytes": 9534,
+    "sha256": "4d3c3e982ef37d7b43638272cff9aa56b98aa12a575074c21d7f5b72f1a6790b",
+    "imports": [
+      ".temporal",
+      "collections",
+      "statistics"
+    ],
+    "top_level_functions": [
+      "_candidate_for",
+      "mixed_audio_window",
+      "evidence_spans",
+      "contemporary_sync",
+      "lag_consistency",
+      "classify_people"
+    ]
+  },
+  "src/ldporto/speaker_signals.py": {
+    "bytes": 2638,
+    "sha256": "4f1e64a477675f1c107582f86679404b624429898ba8502b3527be25c8c4e9a0",
+    "imports": [
+      "math",
+      "numpy"
+    ],
+    "top_level_functions": [
+      "mouth_audio_evidence"
+    ]
+  },
+  "src/ldporto/speaker_windows.py": {
+    "bytes": 3576,
+    "sha256": "916691f58aab615417f00d299b013163de17993d27ae467855b0a0552fea9662",
+    "imports": [
+      "math"
+    ],
+    "top_level_functions": [
+      "partition_evidence_slice",
+      "mouth_sample_diagnostics"
+    ]
+  },
+  "src/ldporto/storage.py": {
+    "bytes": 21816,
+    "sha256": "137d08b98ac4ac6426c12b7a05c0d108182519225130d63a7db7b13c09bfe65d",
+    "imports": [
+      ".paths",
+      "contextlib",
+      "ctypes",
+      "datetime",
+      "hashlib",
+      "json",
+      "os",
+      "pathlib",
+      "time",
+      "uuid"
+    ],
+    "top_level_functions": [
+      "_safe_path",
+      "_project_root",
+      "_hash",
+      "_pid_alive",
+      "_project_in_use",
+      "media_in_use",
+      "media_lease",
+      "_regenerable",
+      "_removable",
+      "_files",
+      "cleanup_preview",
+      "_write_receipt",
+      "_matching",
+      "_move_no_replace",
+      "execute_cleanup",
+      "restore_preview",
+      "restore_quarantine",
+      "_document",
+      "list_quarantines",
+      "list_projects"
+    ]
+  },
+  "src/ldporto/storage_dialog.py": {
+    "bytes": 11687,
+    "sha256": "cf5938f2d2e3f4be80671e8f3086ce63b7cb4e443c2bc349e060cd4268cd452b",
+    "imports": [
+      ".project_export",
+      ".storage",
+      "os",
+      "pathlib",
+      "queue",
+      "threading",
+      "tkinter",
+      "webbrowser"
+    ],
+    "top_level_functions": [
+      "show_cleanup"
+    ]
+  },
+  "src/ldporto/story_recovery.py": {
+    "bytes": 17521,
+    "sha256": "bb1703207bee22b8f0516d5132179b8775490518428c1fe952b3f5fc766fc60e",
+    "imports": [
+      ".editorial",
+      ".qa_audit",
+      "collections",
+      "re"
+    ],
+    "top_level_functions": [
+      "candidate_recovery",
+      "candidate_recovery_queue",
+      "editorial_recovery_report",
+      "literal_outcome",
+      "_terms",
+      "outcome_continuity",
+      "_topic_ids",
+      "_part",
+      "recover_story_arcs"
+    ]
+  },
+  "src/ldporto/story_visual_handoff.py": {
+    "bytes": 52785,
+    "sha256": "20d2591cbb62b95135ce8748e82c486b3aecbe1777ba2468622a9a5bfb348c8a",
+    "imports": [
+      ".camera_handoff",
+      ".core",
+      ".export_privacy",
+      ".semantic_narrative",
+      "collections",
+      "copy",
+      "json",
+      "jsonschema",
+      "math",
+      "pathlib",
+      "re",
+      "unicodedata"
+    ],
+    "top_level_functions": [
+      "title_response_schema",
+      "_fold",
+      "_tokens",
+      "_stem",
+      "_number",
+      "_strict_same",
+      "_rows",
+      "_source",
+      "_intervals",
+      "_evidence",
+      "_check_quotes",
+      "_promotes_negated_predicate",
+      "_check_copy",
+      "_check_engagement",
+      "_checked_payload",
+      "_alignment",
+      "_highlights",
+      "_presentation_title",
+      "_instruction",
+      "_error_label",
+      "_title_context",
+      "_relevant_reels",
+      "_reel_context",
+      "_reel_titles",
+      "build_story_visual_handoff",
+      "validate_story_visual_handoff"
+    ]
+  },
+  "src/ldporto/subtitle_review.py": {
+    "bytes": 40968,
+    "sha256": "dfdfc351b46f412bcfcaa913e3b431cdfe8a5841b70d0d5f09156ef7220f1798",
+    "imports": [
+      ".asr_comparison",
+      ".subtitle_style",
+      ".timeline",
+      "__future__",
+      "collections",
+      "copy",
+      "csv",
+      "hashlib",
+      "json",
+      "math",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "_covered_intervals",
+      "_tokens",
+      "build_caption_preflight",
+      "_sha256",
+      "_safe_id",
+      "_diagnose_caption",
+      "_number",
+      "_interval",
+      "_hit",
+      "_candidate_id",
+      "_word_issues",
+      "_strip_timing",
+      "_srt_stamp",
+      "_wrap_caption",
+      "clip_karaoke_gate",
+      "_event_is_laughter",
+      "review_selected_clips",
+      "write_review_kit",
+      "apply_human_subtitle_review",
+      "_review_version",
+      "approve_reviewed_subtitles",
+      "subtitle_finalization_gate"
+    ]
+  },
+  "src/ldporto/subtitle_style.py": {
+    "bytes": 4458,
+    "sha256": "71fef2fc99798eab2f3ff3dba64b571e6738823a3761231a557f881bcd579eaf",
+    "imports": [
+      "math",
+      "re"
+    ],
+    "top_level_functions": [
+      "wrap_text",
+      "checked_text",
+      "_color",
+      "contrast_on_black",
+      "style_rules"
+    ]
+  },
+  "src/ldporto/targeted_asr.py": {
+    "bytes": 24546,
+    "sha256": "8f9e2e6a5f0a23324ecfb619cf4f3bfea53cf3a118e610e903c03eb54a20804f",
+    "imports": [
+      ".asr_comparison",
+      ".audio",
+      ".core",
+      ".ollama_local",
+      ".transcription",
+      "collections",
+      "copy",
+      "importlib.metadata",
+      "math",
+      "pathlib",
+      "urllib.parse"
+    ],
+    "top_level_functions": [
+      "_candidate_range",
+      "select_repair_windows",
+      "run_targeted_repair",
+      "on_demand_source_fingerprint",
+      "run_on_demand_review"
+    ]
+  },
+  "src/ldporto/temporal.py": {
+    "bytes": 3034,
+    "sha256": "f1c637e879eadd8878edee530f93b980f8d699f2f26f76753841340651d29ca5",
+    "imports": [
+      "bisect",
+      "collections",
+      "math"
+    ],
+    "top_level_functions": [
+      "number",
+      "IntervalCursor",
+      "VisualIndex",
+      "SampleIndex",
+      "union_duration"
+    ]
+  },
+  "src/ldporto/timeline.py": {
+    "bytes": 9262,
+    "sha256": "e1e6bd9cfea50f72fdaf8ec228ee0a768e04fce4f29a167c418ebc90c89dc75c",
+    "imports": [
+      ".core",
+      ".transcription",
+      "bisect",
+      "collections",
+      "copy"
+    ],
+    "top_level_functions": [
+      "captions",
+      "build_timeline",
+      "enrich_editorial"
+    ]
+  },
+  "src/ldporto/transcript_dossier.py": {
+    "bytes": 6930,
+    "sha256": "2c2b9f4b23d60438385b99d7915c226d39a12f54aebea8d31b1abac60e73352f",
+    "imports": [
+      "json"
+    ],
+    "top_level_functions": [
+      "review_word_ids",
+      "raw_hypothesis_dossier",
+      "validate_review_dossier"
+    ]
+  },
+  "src/ldporto/transcription.py": {
+    "bytes": 50645,
+    "sha256": "e46508716fddcaa18c86fcf6fc15d0e0a9b472e0e2a73f1e00e4524440b63cbb",
+    "imports": [
+      ".asr_comparison",
+      ".audio",
+      ".config",
+      ".core",
+      ".gpu_runtime",
+      ".model_cache",
+      ".ollama_local",
+      "copy",
+      "ctranslate2",
+      "faster_whisper",
+      "gc",
+      "math",
+      "pathlib",
+      "statistics"
+    ],
+    "top_level_functions": [
+      "word_text",
+      "recognition_options",
+      "segment_evidence",
+      "hypothesis_metadata",
+      "_require_original",
+      "validate_import",
+      "regroup_words",
+      "TranscriptionEngine",
+      "annotate_review",
+      "propagate_unlocalized_review",
+      "refresh_review_word_refs",
+      "flag_alternative_disagreements",
+      "normalize_asr_timestamps",
+      "alternative_evidence",
+      "transcription_metrics"
+    ]
+  },
+  "src/ldporto/uncertain_words_audit.py": {
+    "bytes": 9344,
+    "sha256": "d1b6ae5546d76d5a9483bbfbd103db877a0337f5e765e454c81731fa9c07298e",
+    "imports": [
+      "argparse",
+      "collections",
+      "csv",
+      "hashlib",
+      "json",
+      "math",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "_number",
+      "_interval",
+      "audit_uncertain_words",
+      "write_listening_audit",
+      "main"
+    ]
+  },
+  "src/ldporto/understanding.py": {
+    "bytes": 73372,
+    "sha256": "eaa02900285664d52d91dc60b8f759f324380c2b804c0b93732596cd773abcf5",
+    "imports": [
+      ".core",
+      ".editorial",
+      ".editorial_intelligence",
+      ".semantic",
+      ".story_recovery",
+      "collections",
+      "math",
+      "pathlib",
+      "re"
+    ],
+    "top_level_functions": [
+      "_dict_rows",
+      "_contract_issue",
+      "_sanitize_list_field",
+      "_sanitize_mapping_field",
+      "_normalize_semantic_contract",
+      "_validate_story_arcs_contract",
+      "story_support_diagnostics",
+      "_attach_story_structure_contract",
+      "recover_dialogue_links",
+      "extract_entities",
+      "_trim_entity_name",
+      "entity_name_valid",
+      "_speaker_name_evidence",
+      "build_participants",
+      "build_story_arcs",
+      "_score_class",
+      "build_main_moments",
+      "build_thumbnail_candidates",
+      "extract_moment_frames",
+      "build_video_understanding",
+      "run_understanding"
+    ]
+  },
+  "src/ldporto/vision.py": {
+    "bytes": 91855,
+    "sha256": "3da6c0cb9121bfa860e13261ba0c7fc843dc189a6762cb5d3fc233bbcc4d2a78",
+    "imports": [
+      ".audiovisual_diagnostics",
+      ".body_model_paths",
+      ".config",
+      ".core",
+      ".face_quality",
+      ".performance",
+      ".speaker_signals",
+      ".speaker_windows",
+      ".vision_checkpoint",
+      ".visual_sampling",
+      "bisect",
+      "collections",
+      "concurrent.futures",
+      "cv2",
+      "gc",
+      "hashlib",
+      "math",
+      "mediapipe",
+      "mediapipe.tasks.python",
+      "numpy",
+      "pathlib",
+      "scipy.optimize",
+      "soundfile",
+      "sys",
+      "time",
+      "torch",
+      "ultralytics"
+    ],
+    "top_level_functions": [
+      "bbox",
+      "center",
+      "iou",
+      "vertical_crop",
+      "get_scene",
+      "_yolo_box_rows",
+      "_subtask_measurements",
+      "_observation_sharpness",
+      "Tracker",
+      "yolo_device_preflight",
+      "load_local_yolo",
+      "PersonDetectionEngine",
+      "LipEngine",
+      "VisionEngine",
+      "ActiveSpeakerEngine"
+    ]
+  },
+  "src/ldporto/vision_checkpoint.py": {
+    "bytes": 7658,
+    "sha256": "9c403b3686d085e6aa6d139c65b47cf7a743f7b3a8743342731d858fcf51c3d7",
+    "imports": [
+      ".",
+      ".body_model_paths",
+      ".config",
+      ".core",
+      "math",
+      "numpy",
+      "pathlib"
+    ],
+    "top_level_functions": [
+      "VisionCheckpointStore"
+    ]
+  },
+  "src/ldporto/visual_identity_audit.py": {
+    "bytes": 7957,
+    "sha256": "a8b806fc12590199ada8b043695fc9093fd1b8821bba4bcfb6e9121e2691f2d5",
+    "imports": [
+      "collections",
+      "math"
+    ],
+    "top_level_functions": [
+      "_category",
+      "audit_embedding_gaps",
+      "compare_embedding_recovery"
+    ]
+  },
+  "src/ldporto/visual_review.py": {
+    "bytes": 15104,
+    "sha256": "b0abfe34d046c1b83e500edaedd2b8168497f090a3603c0a47641a905eebd37e",
+    "imports": [
+      ".core",
+      ".identity_goldset",
+      ".visual_identity_audit",
+      "collections",
+      "copy",
+      "itertools",
+      "math"
+    ],
+    "top_level_functions": [
+      "_sha",
+      "fallback_diagnosis",
+      "create_goldset",
+      "compare_goldset"
+    ]
+  },
+  "src/ldporto/visual_sampling.py": {
+    "bytes": 4372,
+    "sha256": "ac9930498b67e2fadf75f5082da6823947bac85bdc5964a6ebcd707b5c8875b0",
+    "imports": [
+      ".core"
+    ],
+    "top_level_functions": [
+      "speaker_sampling_fingerprint",
+      "SamplingScheduler",
+      "ShortShotSamplingPlan",
+      "ShotBoundarySamplingPlan"
+    ]
+  },
+  "src/ldporto/zoom_delivery.py": {
+    "bytes": 7521,
+    "sha256": "64d5801c6268b3adfd46f53e96f068983861ac1d3e139c6534efe6b6df1547ae",
+    "imports": [
+      ".core",
+      "collections"
+    ],
+    "top_level_functions": [
+      "timeline_zoom_span",
+      "delivery_report"
+    ]
+  }
+}

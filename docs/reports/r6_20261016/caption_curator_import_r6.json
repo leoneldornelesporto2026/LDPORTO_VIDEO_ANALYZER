@@ -1,0 +1,1031 @@
+{
+  "source": "synthetic_fixture_not_real_show",
+  "source_media_accessed": false,
+  "curator_read_package": {
+    "status": "passed",
+    "candidate_count": 3
+  },
+  "curator_smoke_import": {
+    "operation": "read_only_import_and_proposals",
+    "input_package_sha256": "a5a323f5e148fe10bd7e958630aa9769d6214a85f5e06e3dd9b08e73d6c458b6",
+    "source": {
+      "duration": 120,
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "rotation": null,
+      "sha256": "fixture",
+      "source": {
+        "title": "Synthetic episode",
+        "type": "local"
+      },
+      "analyzer_version": null,
+      "video_id": "fixture",
+      "id": "fixture",
+      "title": "Synthetic episode"
+    },
+    "provenance": {
+      "source_sha256": "fixture",
+      "input_package_sha256": "a5a323f5e148fe10bd7e958630aa9769d6214a85f5e06e3dd9b08e73d6c458b6",
+      "analyzer_version": null,
+      "analyzer_fingerprint": null,
+      "analyzer_provenance": {},
+      "curator_version": "1.3.0",
+      "evidence_adapter_version": "5.1.0",
+      "curator_fingerprint": "1f2345a2d5eb13dc98178c545a00ef315c2582f09c3aa79227154cf8a524c86f",
+      "source_hash_validation": "declared_metadata_and_manifest_consistency_not_media_rehash",
+      "analysis_status": "partial",
+      "build_mismatch": null,
+      "artifact_inventory": [
+        {
+          "path": "CURATION_INDEX.json",
+          "bytes": 15389,
+          "sha256": "55b734bd5450f746aebddeb44de9e671559b0afff6749cf9ed47368c7ec545ad"
+        },
+        {
+          "path": "HANDOFF_MASTER.json",
+          "bytes": 11166,
+          "sha256": "45cbc2046d2b3542377dcec33e7820afaa2c13cb5a1cf2c627b97a594e19ff8f"
+        },
+        {
+          "path": "README_FIRST.md",
+          "bytes": 1174,
+          "sha256": "d035f0f93566ce3f7dc047559aa17fea2509f13eec12505c7ce81d61e8455a04"
+        },
+        {
+          "path": "SECOND_CURATION_DECISIONS.template.json",
+          "bytes": 90,
+          "sha256": "39e54709b98324d32976b2c3dc589ee9f76f2f6f705313bae18df9e58875e433"
+        },
+        {
+          "path": "SECOND_CURATION_MANIFEST.json",
+          "bytes": 25851,
+          "sha256": "20600966b02256e7f4db5b8d425196a57119aad4a353f04879201992908361f5"
+        },
+        {
+          "path": "SECOND_CURATOR_BRIEF.json",
+          "bytes": 15456,
+          "sha256": "4ce1b324d7eb1ee01ab81165798c84d4c258ca4076eff2cd3d6f937eebf73e70"
+        },
+        {
+          "path": "audio/sound_events.json",
+          "bytes": 62,
+          "sha256": "80d7e08e84fbbcdc06f9b3101ad2460ec7ea7d5ecc4d410ca4336deb9f0220cf"
+        },
+        {
+          "path": "camera/camera_director_timeline.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "camera/camera_summary.json",
+          "bytes": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "path": "camera/candidate_camera_plans.json",
+          "bytes": 3064,
+          "sha256": "a4cb23d1e056e87a031923f627c015763ae946cbaa3e12c58efa1819b8b94fbd"
+        },
+        {
+          "path": "camera/shared_camera_handoff.json",
+          "bytes": 900,
+          "sha256": "b569111e94e858f04b00c84c469e229a49e343c8eff5fd6781085d01e4e3b914"
+        },
+        {
+          "path": "candidates/M1.json",
+          "bytes": 8622,
+          "sha256": "ab5f3c198c19dfa2d26a4d4fa261c69f27a8fc84db562f90127617ed6ec34b20"
+        },
+        {
+          "path": "candidates/M1_ALT.json",
+          "bytes": 8818,
+          "sha256": "a9ab26d2840bf58762c1f5e89bc81785ebea9acb76a370b9dbcb3cb7e2de71c2"
+        },
+        {
+          "path": "candidates/M2.json",
+          "bytes": 8505,
+          "sha256": "92c21ed3e0c7807018b0855f5dab374d907d5e6a595985e0c7fd7437b5cebb78"
+        },
+        {
+          "path": "editorial/alternate_groups.json",
+          "bytes": 123,
+          "sha256": "98e32b9d29a3eaafe2a0fe52a3e9f73bf5b58cf480c347effe5ffa22b680f63c"
+        },
+        {
+          "path": "editorial/audit_report.json",
+          "bytes": 3224,
+          "sha256": "bcc524a0b120297a880980ecf384b5f7787126b7537c683cbe2911bca3c1921d"
+        },
+        {
+          "path": "editorial/candidate_catalog.json",
+          "bytes": 25987,
+          "sha256": "323f97146aadf36a819da0228e542375e2d98497708b74dce034ad75bfadf200"
+        },
+        {
+          "path": "editorial/commercial_blocks_s8.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/commercial_review_s8.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/default_shortlist.json",
+          "bytes": 60,
+          "sha256": "1f0f372479697cd87c8531129a8c8000b64fae323d475ff980048c88a7bd17b2"
+        },
+        {
+          "path": "editorial/entities.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/excluded_candidates.json",
+          "bytes": 102,
+          "sha256": "d1bc6b7b9aef3fe8bca2aa9aadb969f5da5b823eeaffa90114c91003a3c73b79"
+        },
+        {
+          "path": "editorial/excluded_commercials.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/final_gate_report.json",
+          "bytes": 456,
+          "sha256": "c232e535311d10b8d7ca7ca3fdd667d9d78b095ceb0c015257d29e88dcc8418c"
+        },
+        {
+          "path": "editorial/full_source_review.json",
+          "bytes": 75,
+          "sha256": "77b9e7603f8794c8b6ad3a92e25ff67052bb71d2c133e6ed3b35d5d862552020"
+        },
+        {
+          "path": "editorial/human_review_queue.json",
+          "bytes": 6599,
+          "sha256": "309b094d8985e4db0793b4a4c3e109c9b9d4e97e76e907907cacf2c0693b5d5f"
+        },
+        {
+          "path": "editorial/program_sections.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/provisional_review_queue.json",
+          "bytes": 98,
+          "sha256": "f09626310583684da6c041a0dcd43af7191fb584cac3a301f92a135fd17a9bd4"
+        },
+        {
+          "path": "editorial/qa_pairs.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/selection_report_s3.json",
+          "bytes": 292,
+          "sha256": "8b78dae839f81d79b94065c91f84bb7d84ac2d4d7fa1a186268a3da0c0d3a073"
+        },
+        {
+          "path": "editorial/story_arcs.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "editorial/topics.json",
+          "bytes": 108,
+          "sha256": "60528948c72b267f7592167a482bc48fc778535a6fccd1162f8aab4fe4dcac8f"
+        },
+        {
+          "path": "people/instrument_observations.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "people/participants.json",
+          "bytes": 275,
+          "sha256": "967983b80ed565e8fc3c4b8b8519c2ee7b2eef8cf3143c4e6bf0bb565a4bab3a"
+        },
+        {
+          "path": "people/performer_evidence.json",
+          "bytes": 383,
+          "sha256": "7aba00916f573593da5421486bfea86356c618b2efa7a1f6d7cadf384a0fb572"
+        },
+        {
+          "path": "people/performer_review_queue.json",
+          "bytes": 342,
+          "sha256": "f1e21dfbbc2dad6b8eadf16099f8fa5979673416f63bf4b28b57685f7b9c579f"
+        },
+        {
+          "path": "people/person_appearances.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "people/person_identities.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "people/person_tracks.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "people/speaker_person_mapping.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "people/speaker_person_summary.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "people/speakers.json",
+          "bytes": 43,
+          "sha256": "5bb992815ef9bac49fb954308f3e7ba5ec909512bf32edfa2de5c7f503d737c9"
+        },
+        {
+          "path": "quality/candidate_quality.json",
+          "bytes": 2517,
+          "sha256": "95113480949719850311eef7725f1a8c4fea614556bce0cb70ab553c64f666dd"
+        },
+        {
+          "path": "schemas/camera_handoff.schema.json",
+          "bytes": 2168,
+          "sha256": "cf639f83c47703e068644ab3f8d72e091a3b5ae64c2effd2b47297c336fa838c"
+        },
+        {
+          "path": "schemas/caption_preflight_r6.schema.json",
+          "bytes": 1915,
+          "sha256": "36e83de0d41c89e8b964bb7237c7c6dfac6267bed123b2a2fe3729a82659af8c"
+        },
+        {
+          "path": "schemas/handoff_master_r6.schema.json",
+          "bytes": 1191,
+          "sha256": "c3c8f4c4c897fc42e63767c77f03ac4c7bcdbfc40b496854925073a65771bc02"
+        },
+        {
+          "path": "schemas/second_curation_decisions.schema.json",
+          "bytes": 1522,
+          "sha256": "f23ca8fb947cb137d719181814a0f4b94a09626d7d054e6e54edb85900956395"
+        },
+        {
+          "path": "social/caption_style_recommendations.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "social/render_profiles.json",
+          "bytes": 142,
+          "sha256": "03bda60065378937f0366fdeac77d0c425c9f21841c508f5edbf5973c9969c6b"
+        },
+        {
+          "path": "social/stories_candidates.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "social/stories_manifest.json",
+          "bytes": 247,
+          "sha256": "ad6aa05fe5760f82ce5582b6c1e48fb870a02c6726b586adb35684a386789526"
+        },
+        {
+          "path": "social/title_suggestions.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "source/metadata.json",
+          "bytes": 165,
+          "sha256": "8e3222937c66123ca5dc8d66ab8af2a2b051309c3152b86e5602506eef544d52"
+        },
+        {
+          "path": "subtitles/caption_preflight_r6.json",
+          "bytes": 3493,
+          "sha256": "cfd668d60f9a267a3b61d59a2910162f36fa7489d61b6577cb9256a5bc667d92"
+        },
+        {
+          "path": "subtitles/subtitle_review_s7.json",
+          "bytes": 99,
+          "sha256": "8ad5bff42fb1a89bf4902d070d8ed9277001d4cd1400e8ff736f98a8a56ca9a6"
+        },
+        {
+          "path": "summary/analysis_summary.json",
+          "bytes": 13050,
+          "sha256": "dc4a882af150aea3e84fdf34f0f84f5f4db9a0f08a45d3d51fdb96c31dbe87f1"
+        },
+        {
+          "path": "summary/final_quality_gate.json",
+          "bytes": 495,
+          "sha256": "a7079cee3909f8c41aa9a54a5aa9d5bd9c26e3ad4ab217ee0f36072fab62b3b0"
+        },
+        {
+          "path": "summary/performance_summary.json",
+          "bytes": 144,
+          "sha256": "4123c064ca333729b0e1af3955f69b2c8a9cecc22fe345c6c13b48798cc14fb7"
+        },
+        {
+          "path": "summary/preview_validation.json",
+          "bytes": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "path": "summary/privacy_redactions.json",
+          "bytes": 35,
+          "sha256": "e7fde3137ae6bd825c8a5eadbced29ae7dc47d1b00d0361b95c08c456f7b9413"
+        },
+        {
+          "path": "summary/quality_summary.json",
+          "bytes": 2467,
+          "sha256": "c5692ac60d0691f78af288126da2cef17894a00ce36919ba9fa9fecba447c6c4"
+        },
+        {
+          "path": "summary/upstream_contract_validation.json",
+          "bytes": 246,
+          "sha256": "6fcddfed0fe55780d1dfec15b17ad54c1f68228eaaab47deaba957ba77628698"
+        },
+        {
+          "path": "transcript/hypothesis_comparison.json",
+          "bytes": 99,
+          "sha256": "9936306fea67fd41cc27af7e2eeeb1e726bdd31b303f3ff4f5eb44056e5d4ddc"
+        },
+        {
+          "path": "transcript/language_hypotheses.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "transcript/original_import_segments.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "transcript/raw_hypothesis_dossier.json",
+          "bytes": 538,
+          "sha256": "b2faa6c51c312349ae29b9defcdba66340ba91439b545498ab6c84d6b7d3131e"
+        },
+        {
+          "path": "transcript/relevant_low_confidence_words.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "transcript/relevant_segments.jsonl",
+          "bytes": 1308,
+          "sha256": "90f6a9dcd56432bb4ff223f3d4fe1a1274db8b982eab20ca452d2ba2c0a88bbe"
+        },
+        {
+          "path": "transcript/relevant_words.jsonl",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "transcript/review_budget.json",
+          "bytes": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "path": "transcript/source_audio_review.json",
+          "bytes": 136,
+          "sha256": "284f00a922f0bcc14c0bf2f71ff1c94a83df5a5ad8fad6ce6a31908f8df9409d"
+        },
+        {
+          "path": "transcript/transcript.srt",
+          "bytes": 179,
+          "sha256": "e44992dfaf920b8d89334782259c29e6e9896ed2ac68a23fa136c39bc54aa04e"
+        },
+        {
+          "path": "transcript/transcript.txt",
+          "bytes": 186,
+          "sha256": "a75558eaf9577cf283ff0762780250c453b92f72db071018c3f3d5b2a4fe2acb"
+        },
+        {
+          "path": "transcript/transcription_alternatives.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "transcript/transcription_provenance.json",
+          "bytes": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "path": "transcript/translations.json",
+          "bytes": 2,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "path": "visual/broadcast_graphics_s8.json",
+          "bytes": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "path": "visual/commercial_ocr_s8.json",
+          "bytes": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        }
+      ]
+    },
+    "availability": {
+      "segments": {
+        "status": "partial",
+        "count": 3,
+        "sources": [
+          "transcript/relevant_segments.jsonl"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": "90f6a9dcd56432bb4ff223f3d4fe1a1274db8b982eab20ca452d2ba2c0a88bbe"
+      },
+      "words": {
+        "status": "partial",
+        "count": 0,
+        "sources": [
+          "transcript/relevant_words.jsonl"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scenes": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "timeline": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "chapters": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "qa": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "candidates": {
+        "status": "available",
+        "count": 3,
+        "sources": [
+          "editorial/candidate_catalog.json"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "available_inventory_only",
+        "artifact_sha256": "323f97146aadf36a819da0228e542375e2d98497708b74dce034ad75bfadf200"
+      },
+      "shortlist": {
+        "status": "available",
+        "count": 1,
+        "sources": [
+          "editorial/default_shortlist.json"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "available_inventory_only",
+        "artifact_sha256": "1f0f372479697cd87c8531129a8c8000b64fae323d475ff980048c88a7bd17b2"
+      },
+      "review_queue": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "story_arcs": {
+        "status": "available",
+        "count": 0,
+        "sources": [
+          "editorial/story_arcs.json"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "available_inventory_only",
+        "artifact_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "program_sections": {
+        "status": "available",
+        "count": 0,
+        "sources": [
+          "editorial/program_sections.json"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "available_inventory_only",
+        "artifact_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "speakers": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "participants": {
+        "status": "available",
+        "count": 1,
+        "sources": [
+          "people/participants.json"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "available_inventory_only",
+        "artifact_sha256": "967983b80ed565e8fc3c4b8b8519c2ee7b2eef8cf3143c4e6bf0bb565a4bab3a"
+      },
+      "speaker_person_mapping": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "people_observations": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "frame_samples": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "camera_timeline": {
+        "status": "available",
+        "count": 0,
+        "sources": [
+          "camera/camera_director_timeline.json"
+        ],
+        "source_sha256": "fixture",
+        "completeness_claim": "available_inventory_only",
+        "artifact_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "ocr": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "graphics": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "visual_refs": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "silences": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "excluded_intervals": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "quality": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "blockers": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      },
+      "decisions": {
+        "status": "missing",
+        "count": 0,
+        "sources": [],
+        "source_sha256": "fixture",
+        "completeness_claim": "not_complete",
+        "artifact_sha256": null
+      }
+    },
+    "media": {
+      "status": "referenced_only",
+      "source_sha256": "fixture",
+      "duration": 120,
+      "location_inferred": false
+    },
+    "candidates": 3,
+    "review_queue": 0,
+    "official_shortlist": 1,
+    "series_episodes": 3,
+    "extras": 2,
+    "review_sample": [
+      {
+        "episode_id": "PROP_64f7b338a57e29b72c9725fe",
+        "source_start": 0.0,
+        "source_end": 30.0,
+        "status": "REVIEW_REQUIRED"
+      },
+      {
+        "episode_id": "PROP_8f183202351d58169a86f91e",
+        "source_start": 30.0,
+        "source_end": 90.0,
+        "status": "REVIEW_REQUIRED"
+      },
+      {
+        "episode_id": "PROP_b05a2585299afa80a787aaf6",
+        "source_start": 90.0,
+        "source_end": 120.0,
+        "status": "REVIEW_REQUIRED"
+      }
+    ],
+    "coverage": {
+      "total_source_duration": 120.0,
+      "source_order": "narration_timestamps",
+      "historical_event_order": "not_inferred",
+      "blocks": [
+        {
+          "start": 0.0,
+          "end": 30.0,
+          "duration": 30.0,
+          "kind": "speech_evidence",
+          "segment_ids": [
+            "S0"
+          ],
+          "episode_ids": [
+            "PROP_64f7b338a57e29b72c9725fe"
+          ],
+          "reasons": [],
+          "chapter_ids": [],
+          "qa_ids": [],
+          "story_arc_ids": [],
+          "source_event_type": "speech_evidence"
+        },
+        {
+          "start": 30.0,
+          "end": 90.0,
+          "duration": 60.0,
+          "kind": "speech_evidence",
+          "segment_ids": [
+            "S1"
+          ],
+          "episode_ids": [
+            "PROP_8f183202351d58169a86f91e"
+          ],
+          "reasons": [],
+          "chapter_ids": [],
+          "qa_ids": [],
+          "story_arc_ids": [],
+          "source_event_type": "speech_evidence"
+        },
+        {
+          "start": 90.0,
+          "end": 120.0,
+          "duration": 30.0,
+          "kind": "speech_evidence",
+          "segment_ids": [
+            "S2"
+          ],
+          "episode_ids": [
+            "PROP_b05a2585299afa80a787aaf6"
+          ],
+          "reasons": [],
+          "chapter_ids": [],
+          "qa_ids": [],
+          "story_arc_ids": [],
+          "source_event_type": "speech_evidence"
+        }
+      ],
+      "covered_time_seconds": 120.0,
+      "covered_speech_seconds": 120.0,
+      "available_speech_seconds": 120.0,
+      "coverage_pct_speech": 100.0,
+      "coverage_pct_source": 100.0,
+      "gaps": [],
+      "excluded_intervals": [],
+      "coverage_denominator": "available_transcript_intervals_not_assumed_complete",
+      "series_episode_duration_sum": 120.0
+    },
+    "approved_count": 0,
+    "models_executed": false,
+    "render_executed": false,
+    "source_modified": false,
+    "limits": [
+      "Coverage is measured against available speech, not assumed full-source transcription.",
+      "Import/proposals do not constitute audiovisual or editorial homologation."
+    ]
+  },
+  "analyzer_validation": {
+    "status": "valid",
+    "errors": [],
+    "dangling_references": 0,
+    "question_reference_validation": {
+      "status": "resolved",
+      "errors": [],
+      "unresolved": []
+    },
+    "audit_report": {
+      "contract_version": "18.1",
+      "candidate_count": 3,
+      "candidates": [
+        {
+          "candidate_id": "M1",
+          "checks": [
+            {
+              "candidate_id": "M1",
+              "field": "candidate_id",
+              "id": "M1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "segment_ids",
+              "id": "S1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "speaker_ids",
+              "id": "SP1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "question_answer_linkage",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "topic_ids",
+              "id": "T1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "alternate_ref",
+              "id": "M1_ALT",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "context_before",
+              "id": "S0",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1",
+              "field": "context_after",
+              "id": "S2",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        },
+        {
+          "candidate_id": "M1_ALT",
+          "checks": [
+            {
+              "candidate_id": "M1_ALT",
+              "field": "candidate_id",
+              "id": "M1_ALT",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "segment_ids",
+              "id": "S1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "speaker_ids",
+              "id": "SP1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "question_answer_linkage",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "topic_ids",
+              "id": "T1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "alternate_ref",
+              "id": "M1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "context_before",
+              "id": "S0",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M1_ALT",
+              "field": "context_after",
+              "id": "S2",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        },
+        {
+          "candidate_id": "M2",
+          "checks": [
+            {
+              "candidate_id": "M2",
+              "field": "candidate_id",
+              "id": "M2",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "segment_ids",
+              "id": "S0",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "speaker_ids",
+              "id": "SP1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "question_answer_linkage",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "topic_ids",
+              "id": "T1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "alternate_ref",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "context_before",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "context_after",
+              "id": "S1",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "M2",
+              "field": "context_after",
+              "id": "S2",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        }
+      ],
+      "missing": [],
+      "unresolved": [],
+      "blockers": [],
+      "references_ready": true,
+      "coverage_score": 1.0,
+      "coverage_counts": {
+        "resolved": 20,
+        "applicable": 20
+      },
+      "coverage_method": "resolved_applicable_evidence_checks_not_editorial_quality",
+      "publication_ready": false
+    },
+    "checksums_valid": true,
+    "visual_count": 0,
+    "candidate_count": 3,
+    "file_count": 78,
+    "readiness": {
+      "editorial_ready": true,
+      "transcript_ready": true,
+      "commercial_ready": null,
+      "visual_ready": false,
+      "speaker_person_ready": null,
+      "camera_ready": null,
+      "preview_ready": null
+    }
+  },
+  "input_package_unchanged": true,
+  "curator_source_hashes_before": {
+    "ldporto_curator/second_curation_import.py": "caf614244e922cbc4d621182ef5cb1f86d13cd0f43898e5e4b671461d4fd79d1",
+    "ldporto_curator/import_smoke.py": "2181578ff95feb5e84a5039fe32ed9712b55a0d7ddcff05e98db4eca5e0618cf",
+    "ldporto_curator/evidence_source.py": "1f2345a2d5eb13dc98178c545a00ef315c2582f09c3aa79227154cf8a524c86f",
+    "ldporto_curator/subtitles.py": "fa2f52d487728999d4730412304f436687f4a15a5abfcd740c818c28a57c6f60"
+  },
+  "curator_source_hashes_after": {
+    "ldporto_curator/second_curation_import.py": "caf614244e922cbc4d621182ef5cb1f86d13cd0f43898e5e4b671461d4fd79d1",
+    "ldporto_curator/import_smoke.py": "2181578ff95feb5e84a5039fe32ed9712b55a0d7ddcff05e98db4eca5e0618cf",
+    "ldporto_curator/evidence_source.py": "1f2345a2d5eb13dc98178c545a00ef315c2582f09c3aa79227154cf8a524c86f",
+    "ldporto_curator/subtitles.py": "fa2f52d487728999d4730412304f436687f4a15a5abfcd740c818c28a57c6f60"
+  },
+  "independent_renderer_tested": false,
+  "r6_fields_consumed_by_installed_curator": false,
+  "limitation": "Installed importers accept additive fields; they do not enforce R6 preflight or HANDOFF_MASTER."
+}

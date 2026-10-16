@@ -19,7 +19,8 @@ DEFAULTS = {
                   "smoke_test_seconds": 30, "smoke_total_seconds": 120},
     "export": {"legacy_full_analysis": False, "chunk_records":500, "chunk_max_bytes":2097152,
                "second_curation_auto": True, "second_curation_visual_candidate_limit": 16,
-               "second_curation_output_dir": None, "include_candidate_previews": False},
+               "second_curation_output_dir": None, "include_candidate_previews": False,
+               "organized_project_auto": False, "organized_project_root": None},
     "download": {"max_height": 1080, "cookies_file": None},
     "audio": {"highpass_hz": 40, "denoise": False, "normalize": True,
               "silence_db": -40, "silence_min_seconds": 0.35,
@@ -365,7 +366,7 @@ def validate(cfg):
         raise ValueError('Tamanho de chunk de exportacao invalido')
     if not isinstance(cfg["vision"]["adaptive_sampling"], bool):
         raise ValueError("vision.adaptive_sampling deve ser booleano")
-    for key in ('second_curation_auto', 'include_candidate_previews'):
+    for key in ('second_curation_auto', 'include_candidate_previews', 'organized_project_auto'):
         if not isinstance(cfg['export'][key], bool):
             raise ValueError('export.' + key + ' deve ser booleano')
     limit = cfg['export']['second_curation_visual_candidate_limit']

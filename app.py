@@ -92,6 +92,9 @@ class App:
         self.closing_requested = False
         self.progress_model = WeightedProgress()
         self.package_path = None
+        self.project_path = None
+        self.project_busy = False
+        self.project_cancel = threading.Event()
         outer.pack(fill="both", expand=True)
         ttk.Label(outer, text="L.D.PORTO · VIDEO ANALYZER", font=("Segoe UI", 24, "bold"),
                   foreground="#fb505a").pack(anchor="w")
@@ -265,9 +268,13 @@ class App:
             ttk.Button(buttons, text="Reparar GPU", command=self.repair_gpu).pack(side="left", padx=4)
         ttk.Button(buttons, text="Abrir resultados", command=self.open_results).pack(side="left")
         ttk.Button(buttons, text="Modelos visuais", command=self.visual_models).pack(side="left", padx=4)
-        ttk.Button(buttons, text="LIMPAR ARQUIVOS PESADOS", command=self.clean_heavy).pack(side="left", padx=4)
+        ttk.Button(buttons, text="Gerenciar espaço", command=self.clean_heavy).pack(side="left", padx=4)
         ttk.Button(buttons, text="Interromper", command=self.stop).pack(side="right")
         self.status = tk.StringVar(value="Prontidao ainda nao verificada. Diagnostico verifica recursos habilitados.")
+        self.auto_project_export = tk.BooleanVar(value=False)
+        ttk.Checkbutton(outer, text='Exportar projeto completo para Vídeos ao finalizar (PDFs e evidências)',
+                        variable=self.auto_project_export).pack(anchor='w')
+        ttk.Button(outer, text='Central de resultados / reabrir projeto', command=self.open_results_center).pack(anchor='w')
         ttk.Label(outer, textvariable=self.status).pack(anchor="w", pady=(8, 3))
         self.warning_count=0
         self.run_state=tk.StringVar(value='Etapa: aguardando | Avisos: 0 | Qualidade: nao medida | Cache: nao verificado')
@@ -332,7 +339,8 @@ class App:
 
     def runtime_busy(self):
         proc = getattr(self, 'proc', None)
-        return bool(getattr(self, 'smoke_busy', False) or getattr(self, 'ocr_busy', False) or proc and proc.poll() is None)
+        return bool(getattr(self, 'project_busy', False) or getattr(self, 'smoke_busy', False) or
+                    getattr(self, 'ocr_busy', False) or proc and proc.poll() is None)
 
     def run_body_smoke(self, model=None, device=None, parent=None):
         """Explicit four-frame subprocess; no pipeline, download or GUI model import."""
@@ -485,6 +493,12 @@ class App:
         ttk.Button(final_buttons, text='Gerar plano Curator S9', command=self.prepare_curator_s9).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Ouvir/ver fila', command=self.open_review_queue).pack(side='left', padx=8)
         ttk.Button(final_buttons, text='Nova analise', command=self.new_analysis).pack(side='right')
+        project_buttons = ttk.Frame(self.final_frame)
+        project_buttons.pack(fill='x', pady=8)
+        ttk.Button(project_buttons, text='Central de resultados', command=self.open_results_center).pack(side='left')
+        ttk.Button(project_buttons, text='Exportar projeto completo para Vídeos', command=self.export_project_dossier).pack(side='left',padx=8)
+        self.project_status = tk.StringVar(value='Dossiê: ainda não gerado; PDFs e vídeos finais têm estados separados.')
+        ttk.Label(self.final_frame, textvariable=self.project_status, wraplength=970).pack(anchor='w')
 
     def show_execution(self):
         self.ocr_execution_status.set('OCR geral 13 / comercial 17c: solicitado' if self.ocr_enabled.get() else 'OCR geral 13 / comercial 17c: ignorados; not_measured / requires_review')
@@ -634,7 +648,11 @@ class App:
         self.final_heading.set('Execucao interrompida' if code == 130 else 'Analise finalizada' if code == 0 else 'Analise terminou com erro')
         self.final_summary.set('Tempo: ' + human_duration(self.progress_model.snapshot()['elapsed_seconds']) + '\nStatus: ' + str(manifest.get('analysis_status', 'unavailable')) +
             '\nCandidatos: ' + str(package.get('candidate_count', 'n/d')) + ' | Shortlist: ' + str(package.get('shortlist_count', 'n/d')) +
-            '\nSmart Camera: ' + str(quality.get('smart_camera_decision_count', 'n/d')) + ' decisoes | Smart Zoom: ' + str(quality.get('zoom_event_count', 'n/d')) + ' eventos')
+            '\nSmart Camera: ' + str(quality.get('smart_camera_decision_count', 'n/d')) + ' decisões' +
+            '\nZoom: propostos=' + str(quality.get('proposed_zoom_event_count', 'n/d')) +
+            ' | timeline=' + str(quality.get('zoom_event_count', 'n/d')) +
+            ' | renderizados=' + str(quality.get('rendered_zoom_event_count', 'não medido')) +
+            ' | confirmados em frames finais=' + str(quality.get('zoom_delivered_event_count', 'não medido')))
         editorial = package.get('editorial_result') or {}
         if editorial.get('message'):
             self.final_summary.set(self.final_summary.get() + '\nResultado editorial: ' + editorial['message'])
@@ -698,6 +716,150 @@ class App:
             '\nPublicacao pronta: ' + ('sim' if gate.get('publication_ready') is True else 'nao' if gate.get('publication_ready') is False else 'nao registrada') +
             ('\nCamera preservando source: speaker/person ou crop ainda insuficiente.' if not package.get('readiness', {}).get('camera_ready') else ''))
         self.final_package.set(str(self.package_path) + '\n' + f"{package.get('bytes', 0) / 1024 ** 2:.2f} MB | {package.get('state', 'FAILED')}" if self.package_path else 'Pacote indisponivel; artifacts locais foram preservados para diagnostico/resume.')
+        self.restore_project_pointer()
+        auto_export=getattr(self,'auto_project_export',None)
+        if code == 0 and auto_export and auto_export.get() and self.package_path and not self.project_path:
+            self.export_project_dossier(choose_directory=False)
+
+    def restore_project_pointer(self):
+        self.project_path = None
+        if self.output_folder:
+            try:
+                pointer = json.loads((Path(self.output_folder)/'project_export.json').read_text(encoding='utf-8'))
+                target = Path(pointer['path'])
+                if (target/'PROJECT_MANIFEST.json').is_file():
+                    self.project_path = target
+                    self.project_status.set('Dossiê: '+str(target)+' | '+str(pointer.get('state','não verificado')))
+            except (OSError,ValueError,KeyError):
+                pass
+
+    def _project_worker(self, operation):
+        if self.project_busy:
+            return
+        self.project_busy = True
+        self.project_cancel.clear()
+        self.project_status.set('Preparando evidências do projeto…')
+        def worker():
+            try:
+                result = operation()
+                self.messages.put(('project_result',result))
+            except Exception as exc:
+                self.messages.put(('project_result',{'state':'FAILED','error':scrub(str(exc))}))
+        threading.Thread(target=worker,daemon=True).start()
+
+    def export_project_dossier(self, choose_directory=True):
+        if getattr(self,'project_busy',False) or (self.proc and self.proc.poll() is None):
+            messagebox.showinfo('Dossiê','Aguarde a operação em curso terminar.')
+            return
+        package = self.package_path
+        analysis_folder = None
+        if not package or not Path(package).is_file():
+            value = filedialog.askopenfilename(title='ZIP existente da segunda curadoria',filetypes=[('Pacote ZIP','*.zip')])
+            if not value:
+                return
+            package = Path(value)
+            self.package_path = package
+        # Bind every export, including repeated manual selections, to its producer.
+        if self.output_folder:
+            try:
+                from ldporto.core import file_hash
+                pointer=json.loads((Path(self.output_folder)/'second_curation_export.json').read_text(encoding='utf-8'))
+                linked=Path(pointer['path'])
+                if linked.resolve()==Path(package).resolve() and file_hash(linked)==pointer.get('zip_sha256'):
+                    analysis_folder=self.output_folder
+            except (OSError,ValueError,KeyError):
+                pass
+        from ldporto.paths import videos_directory
+        destination = videos_directory()/'LDPORTO_VIDEO_ANALYZER'
+        if choose_directory:
+            value = filedialog.askdirectory(title='Destino do projeto completo',initialdir=str(videos_directory()))
+            if not value:
+                return
+            destination = Path(value)
+        def operation():
+            from ldporto.project_export import export_project
+            analysis = None
+            if analysis_folder and (Path(analysis_folder)/'analysis.json').is_file():
+                from ldporto.compact_artifacts import load_analysis_artifacts
+                analysis = load_analysis_artifacts(analysis_folder, collections=['transcript_segments','words','scenes','camera_director_timeline'])
+            result = export_project(package,destination,analysis=analysis,
+                progress=lambda name,current,total:self.messages.put(('project_progress',name+' · '+str(current)+'/'+str(total))),
+                cancelled=self.project_cancel.is_set)
+            if analysis_folder:
+                from ldporto.core import write_json
+                write_json(Path(analysis_folder)/'project_export.json',result)
+            return result
+        self._project_worker(operation)
+
+    def open_project_artifact(self, relative=''):
+        if not self.project_path:
+            messagebox.showinfo('Central de resultados','Gere ou reabra um dossiê organizado para acessar este material.')
+            return
+        target = (self.project_path/relative).resolve()
+        if not target.is_relative_to(self.project_path.resolve()) or not target.exists():
+            messagebox.showinfo('Central de resultados','Material indisponível neste projeto; consulte as limitações.')
+            return
+        if os.name == 'nt':
+            os.startfile(str(target))
+        else:
+            webbrowser.open(target.as_uri())
+
+    def open_results_center(self):
+        if not self.output_folder and not self.project_path:
+            chosen = filedialog.askdirectory(title='Reabrir pasta de análise ou projeto exportado')
+            if not chosen:
+                return
+            folder = Path(chosen)
+            if (folder/'PROJECT_MANIFEST.json').is_file():
+                self.project_path = folder
+            else:
+                self.output_folder = folder
+                self.restore_project_pointer()
+                try:
+                    result = json.loads((folder/'second_curation_export.json').read_text(encoding='utf-8'))
+                    self.package_path = Path(result['path'])
+                except (OSError,ValueError,KeyError):
+                    pass
+        dialog = tk.Toplevel(self.window)
+        dialog.title('Análise finalizada — Central de resultados')
+        dialog.geometry('940x650')
+        ttk.Label(dialog,textvariable=self.project_status,wraplength=880,padding=12).pack(anchor='w')
+        metrics = tk.Text(dialog,height=13,wrap='word')
+        metrics.pack(fill='x',padx=12,pady=8)
+        metrics.insert('end','Candidatos, legendas, foco, zoom, séries e pendências: consultar manifest/relatórios; valores ausentes são não medidos.\n')
+        if self.project_path:
+            try:
+                data = json.loads((self.project_path/'PROJECT_MANIFEST.json').read_text(encoding='utf-8'))
+                for key,label in (('state','Estado do dossiê'),('candidate_count','Candidatos'),('story_series_count','Séries propostas'),
+                    ('story_parts_proposed_count','Partes propostas (IDs únicos)'),('complete_phrase_story_count','Stories com frase completa comprovada'),
+                    ('candidates_with_geometrically_valid_interval','Candidatos com algum intervalo de crop geometricamente válido'),
+                    ('zoom_confirmed_in_final_frames_count','Zooms confirmados em frames finais'),
+                    ('transcript_coverage_ratio','Cobertura temporal transcrita'),('caption_preflight_summary','Preflight de legendas'),('pdf_status','PDF')):
+                    metrics.insert('end',label+': '+str(data.get(key) if data.get(key) is not None else 'não medido')+'\n')
+                metrics.insert('end','Preview aprovado: '+str(data.get('preview_approved'))+' | Publicação pronta: '+str(data.get('publication_ready'))+'\n')
+            except (OSError,ValueError):
+                metrics.insert('end','Manifest indisponível ou inválido.\n')
+        metrics.configure(state='disabled')
+        actions = ttk.Frame(dialog,padding=12)
+        actions.pack(fill='both',expand=True)
+        for i,(label,path) in enumerate((('Abrir projeto',''),('Guia editorial PDF','00_RESUMO/GUIA_EDITORIAL_COMPLETO.pdf'),
+            ('Transcrição disponível','01_TRANSCRICAO/TRANSCRICAO_COMPLETA.pdf'),('Reels propostos','03_REELS'),
+            ('Stories sequenciais','04_STORIES'),('Pessoas e cenas','02_PESSOAS_E_CENAS'),('Camera Director','05_CAMERAS'),
+            ('Pendências de revisão','07_RELATORIOS_TECNICOS/limitations.json'),('ZIP da segunda curadoria','06_SEGUNDA_CURADORIA'))):
+            ttk.Button(actions,text=label,command=lambda p=path:self.open_project_artifact(p)).grid(row=i//3,column=i%3,sticky='ew',padx=4,pady=4)
+        ttk.Button(actions,text='Exportar / gerar PDFs novamente',command=self.export_project_dossier).grid(row=3,column=0,sticky='ew',padx=4,pady=4)
+        def verify():
+            if self.project_path:
+                target = self.project_path
+                def operation():
+                    from ldporto.project_export import verify_project_export
+                    report=verify_project_export(target)
+                    return {'state':report['status'],'verification':report}
+                self._project_worker(operation)
+        ttk.Button(actions,text='Verificar integridade',command=verify).grid(row=3,column=1,sticky='ew',padx=4,pady=4)
+        ttk.Button(actions,text='Gerenciar espaço',command=self.clean_heavy).grid(row=3,column=2,sticky='ew',padx=4,pady=4)
+        ttk.Button(actions,text='Cancelar geração com segurança',command=self.project_cancel.set).grid(row=4,column=0,sticky='ew',padx=4,pady=4)
+        ttk.Label(dialog,text='Retomar análise parcial: use a mesma fonte e pasta na análise; checkpoints compatíveis são preservados. Câmera: analyze.py --director-only PASTA.',wraplength=880,padding=12).pack(anchor='w')
 
     def diagnose_s10(self):
         """Read-only diagnostics in worker; never turn on parallelism automatically."""
@@ -833,6 +995,8 @@ class App:
         threading.Thread(target=task, daemon=True).start()
 
     def new_analysis(self):
+        if getattr(self,'project_busy',False):
+            return
         self.final_frame.pack_forget()
         self.execution_frame.pack_forget()
         self.configuration_frame.pack(fill='both', expand=True)
@@ -1259,6 +1423,16 @@ class App:
                     if self.closing_requested:
                         self.window.destroy()
                         return
+                elif kind == 'project_progress':
+                    self.project_status.set(value)
+                elif kind == 'project_result':
+                    self.project_busy = False
+                    if value.get('path'):
+                        self.project_path = Path(value['path'])
+                    self.project_status.set('Dossiê: '+str(value.get('state'))+' | '+str(value.get('path') or value.get('error') or value.get('verification')))
+                    if self.closing_requested:
+                        self.window.destroy()
+                        return
                 elif kind == "line":
                     recent = getattr(self, '_recent_process_lines', None)
                     if isinstance(recent, list):
@@ -1354,16 +1528,35 @@ class App:
         ttk.Button(dialog, text='Copiar comando', command=copy_command).pack(pady=4)
 
     def clean_heavy(self):
-        if self.proc and self.proc.poll() is None:
+        if self.project_busy or (self.proc and self.proc.poll() is None):
             messagebox.showinfo('Limpeza', 'Aguarde o processamento terminar.')
             return
         folder = self.output_folder or filedialog.askdirectory(title='Escolha a análise para visualizar a limpeza')
         if not folder:
             return
         from ldporto.storage_dialog import show_cleanup
-        show_cleanup(self.window, folder)
+        from ldporto.project_export import verify_project_export
+        def export_selected(root):
+            if self.project_busy or (self.proc and self.proc.poll() is None):
+                return
+            self.output_folder = Path(root)
+            self.package_path = None
+            try:
+                pointer = json.loads((Path(root)/'second_curation_export.json').read_text(encoding='utf-8'))
+                if pointer.get('path'):
+                    self.package_path = Path(pointer['path'])
+            except (OSError,ValueError):
+                pass
+            self.export_project_dossier()
+        show_cleanup(self.window, folder, export_project=export_selected, export_verifier=verify_project_export,
+                     application_busy=lambda:getattr(self,'project_busy',False) or (self.proc and self.proc.poll() is None))
 
     def close(self):
+        if self.project_busy:
+            self.project_cancel.set()
+            self.closing_requested = True
+            self.project_status.set('Cancelando geração; aguardando fechamento seguro do manifest…')
+            return
         if getattr(self, 'body_smoke_busy', False):
             if messagebox.askyesno('Fechar', 'Teste corporal em curso. Interromper e fechar?'):
                 self.closing_requested = True

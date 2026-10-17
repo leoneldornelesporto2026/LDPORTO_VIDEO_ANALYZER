@@ -1,0 +1,33 @@
+{
+  "clip_id": "R62_02_guitar",
+  "source_start": 156.25,
+  "source_end": 158.25,
+  "duration": 2.0,
+  "camera_plan": {
+    "mode": "adaptive_timeline",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 2.0,
+        "mode": "full_frame_blur",
+        "analyzer_composition": "SOURCE_FIT_BLUR",
+        "source_interval": {
+          "start": 156.25,
+          "end": 158.25
+        },
+        "reason": "actual Analyzer replay unresolved; preserve entire source"
+      }
+    ],
+    "provenance": {
+      "analyzer_timeline": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_replay_r62\\timeline.json",
+      "analyzer_timeline_sha256": "eceb4d115dd2fbbd0eea330d0820f1d696df34cfc58744c6e87fc338a7a98cc6",
+      "handoff_sha256": "57a2490673357fcee19d9a357d7e06d9865b7f9ca95b3111bc74a5897d646de3",
+      "mapping": "SOURCE_FIT_BLUR -> full_frame_blur; identical spans merged"
+    },
+    "preview_approved": false,
+    "publish_ready": false
+  },
+  "title_text": "",
+  "preview_approved": false,
+  "publish_ready": false
+}

@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0",
+  "producer": "ldporto.camera_handoff",
+  "camera_engine": "ldporto.camera_director",
+  "geometry_contract": "normalized_source_coordinates",
+  "renderer_owner": "VIDEO_CURATOR",
+  "applies_to": [
+    "REEL",
+    "STORY"
+  ],
+  "available_composition_intents": [
+    "FOCUS_PERSON_9X16",
+    "SOURCE_FIT_BLUR",
+    "DUO_STAGE",
+    "INSTRUMENT_FOCUS",
+    "AUDIENCE_REACTION",
+    "SOURCE_PRESERVE"
+  ],
+  "source_intervals": [
+    {
+      "start": 113.75,
+      "end": 116.75
+    }
+  ],
+  "segments": [
+    {
+      "source_interval_index": 0,
+      "start": 113.75,
+      "end": 116.75,
+      "director_id": "DIRECTOR_000037",
+      "source_shot_id": "SHOT_00026",
+      "composition_intent": "SOURCE_FIT_BLUR",
+      "recommended_composition": "SOURCE_FIT_BLUR",
+      "fallback_composition": "SOURCE_FIT_BLUR",
+      "terminal_fallback": "SOURCE_PRESERVE",
+      "target_person_ids": [],
+      "camera_mode": "SOURCE_PRESERVE",
+      "layout": "full_frame",
+      "crop": {
+        "safe": false,
+        "rect_end": null,
+        "quality_limited_max_zoom": 1.0,
+        "max_allowed": 1.0,
+        "baseline_requires_upscale": null,
+        "upscale_ratio": null,
+        "max_upscale_ratio": 2.0,
+        "requested_zoom": 1.0,
+        "actual_zoom": 1.0,
+        "limited_by_quality": false,
+        "quality_unknown": null,
+        "preflight_reason": null,
+        "preflight_sample_count": null,
+        "full_frame_policy": "fit_with_padding"
+      },
+      "camera": {
+        "center_start": [
+          0.5,
+          0.5
+        ],
+        "center_end": [
+          0.5,
+          0.5
+        ],
+        "zoom_start": 1.0,
+        "zoom_end": 1.0,
+        "zoom_target": 1.0,
+        "movement_style": "hold",
+        "tracking_mode": "source_preserve",
+        "transition_in": "source_cut",
+        "transition_out": "source_cut",
+        "keyframes": [
+          {
+            "time": 113.542,
+            "center": [
+              0.5,
+              0.5
+            ],
+            "zoom": 1.0,
+            "target": [
+              0.5,
+              0.5,
+              1.0
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "acceleration": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "time": 117.125,
+            "center": [
+              0.5,
+              0.5
+            ],
+            "zoom": 1.0,
+            "target": [
+              0.5,
+              0.5,
+              1.0
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "acceleration": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      "split": null,
+      "keyframe_time_basis": "absolute_source_seconds",
+      "keyframes_may_extend_beyond_selected_interval": true,
+      "evidence": {
+        "visual_sample_at_start": 113.625,
+        "visual_sample_at_end": 117.042,
+        "focus_proposed": false,
+        "speaker_identity_confirmed": false,
+        "crop_geometrically_valid": false,
+        "motion_preflight_supported": false,
+        "movement_present_in_timeline": false,
+        "movement_rendered": null,
+        "movement_confirmed_in_final_frames": null,
+        "instrument_preservation_verified": null,
+        "final_safe_area_verified": null
+      },
+      "reason_codes": [
+        "source_shot_reset",
+        "INSUFFICIENT_CONFIDENCE"
+      ],
+      "review_reasons": [],
+      "review_required": true
+    }
+  ],
+  "timeline_sha256": "1c5270fed66d9d36d70abd9928baf185d1914414ab4bc984508b06d8bdf5bbe5",
+  "fallback": {
+    "composition": "SOURCE_FIT_BLUR",
+    "preserve_entire_source": true,
+    "foreground_fit": "contain",
+    "background_fit": "cover_blur",
+    "distort_source": false,
+    "terminal_fallback": "SOURCE_PRESERVE"
+  },
+  "technical_preview_policy": "existing_preview_renderer_uses_fit_with_padding",
+  "execution_scope": "recommendation_not_render_or_approval",
+  "review_required": true,
+  "preview_approved": false,
+  "publish_ready": false
+}

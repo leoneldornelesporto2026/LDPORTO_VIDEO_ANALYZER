@@ -44,7 +44,7 @@ class SmartZoomState:
 
     def decide(self, time, *, target, confidence, safe, zoom_cap, face_size,
                source_close, source_motion, speech_seconds, remaining_seconds,
-               beat, micro_interruption, cfg, max_speed=.035):
+               beat, micro_interruption, cfg, max_speed=.035, target_evidence_role=None):
         reasons = []
         while self.event_times and self.event_times[0] <= time - 60:
             self.event_times.popleft()
@@ -110,7 +110,9 @@ class SmartZoomState:
                     self.used_beats.add(beat_key)
                     self.events.append({'start': time, 'end': time + duration, 'zoom_start': self.current_zoom,
                         'zoom_end': goal, 'mode': 'SMART_ZOOM_IN', 'target_person_id': target,
-                        'reason_codes': [(beat or {})['reason'], 'ACTIVE_SPEAKER_FOCUS'], 'beat_id': beat_key[0]})
+                        'reason_codes': [(beat or {})['reason'],
+                            'ACTIVE_SPEAKER_FOCUS' if target_evidence_role == 'CONFIRMED_SPEAKER' else 'VISUAL_TARGET_FOCUS'],
+                        'target_evidence_role': target_evidence_role or 'UNSPECIFIED', 'beat_id': beat_key[0]})
                     reasons.append((beat or {})['reason'])
                 else:
                     reasons.append('NO_SAFE_ZOOM_HEADROOM')

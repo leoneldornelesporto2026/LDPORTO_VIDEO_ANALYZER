@@ -301,3 +301,5 @@ profiling_raw/
 # analyze.py, app.py, compare_runs.py, project *.bat
 # requirements*.txt, README*.md, DELIVERY_MANIFEST*.json
 # ------------------------------------------------------------
+
+/docs/reports/r6_20261016/R6_2_FINAL_HANDOFF/delivery/

@@ -1,0 +1,13 @@
+{
+  "module": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_CURATOR\\ldporto_curator\\render.py",
+  "module_sha256": "764e6c1042d74697acc201adcf00b454850e81af08e2570441b7f471689bc552",
+  "entry_point": "ldporto_curator.render._base_cmd (same graph used by render_clip)",
+  "technical_only": true,
+  "preview_approved": false,
+  "publish_ready": false,
+  "captions": "omitted: camera isolation, no caption readiness claim",
+  "titles": "omitted: camera isolation, no overlay safety claim",
+  "inference": "none",
+  "encoder": "libx264",
+  "cpu_threads": 2
+}

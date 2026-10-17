@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "reference_resolution": [
+    1920,
+    1080
+  ],
+  "orientation": "unrotated",
+  "time_origin": "absolute original source seconds",
+  "interval_semantics": "end_exclusive",
+  "proposal": {
+    "type": "static_center_portrait_for_rejection_demonstration",
+    "bbox_normalized_xywh": [
+      0.3416666666666667,
+      0.0,
+      0.31666666666666665,
+      1.0
+    ],
+    "pixel_xywh": [
+      656,
+      0,
+      608,
+      1080
+    ],
+    "observation_claim": false,
+    "status": "REJECTED",
+    "reason_codes": [
+      "source close-up already cuts upper head",
+      "source switches to wide stage within excerpt; no extrapolated target"
+    ]
+  },
+  "consumed": {
+    "mode": "SOURCE_FIT_BLUR",
+    "source_crop_normalized_xywh": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "sharp_foreground_output_xywh": [
+      0,
+      656,
+      1080,
+      608
+    ]
+  },
+  "output_size": [
+    1080,
+    1920
+  ],
+  "platform_safe_margins": "unknown; not configured/tested by camera-only demo",
+  "subtitle_safe_zones": "UNVERIFIED: no captions rendered",
+  "title_safe_zones": "UNVERIFIED: no titles rendered",
+  "preview_approved": false,
+  "publish_ready": false
+}

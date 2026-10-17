@@ -1,0 +1,97 @@
+[
+  {
+    "path": "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\01_isolated\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+    "command": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-threads",
+      "2",
+      "-i",
+      "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\01_isolated\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+      "-f",
+      "null",
+      "-"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "status": "PASS"
+  },
+  {
+    "path": "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\02_guitar\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+    "command": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-threads",
+      "2",
+      "-i",
+      "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\02_guitar\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+      "-f",
+      "null",
+      "-"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "status": "PASS"
+  },
+  {
+    "path": "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\03_full_band\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+    "command": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-threads",
+      "2",
+      "-i",
+      "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\03_full_band\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+      "-f",
+      "null",
+      "-"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "status": "PASS"
+  },
+  {
+    "path": "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\04_duo\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+    "command": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-threads",
+      "2",
+      "-i",
+      "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\04_duo\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+      "-f",
+      "null",
+      "-"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "status": "PASS"
+  },
+  {
+    "path": "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\05_difficult_light\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+    "command": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-threads",
+      "2",
+      "-i",
+      "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\05_difficult_light\\engine_r62\\TECHNICAL_PREVIEW.mp4",
+      "-f",
+      "null",
+      "-"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "status": "PASS"
+  }
+]

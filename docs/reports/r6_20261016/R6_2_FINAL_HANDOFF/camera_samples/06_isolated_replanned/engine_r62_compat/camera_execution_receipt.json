@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "plan_path": "camera_plan_consumed.json",
+  "plan_sha256": "0a18caddc8ec5d9689abea18602a2d9df44d414afd30aaa2127325a2dea5117e",
+  "mp4_sha256": "69933de8218cc9485edbbb885b4c01a4e961eb22133b55e18f9dca8991ffa4a9",
+  "consumed_by_renderer": true,
+  "FFmpeg_applied": true,
+  "transform_verification": "zoom_similarity_verification.json",
+  "visual_acceptance": "REJECTED_HAND_GESTURE_EXITS_PORTRAIT_CROP",
+  "caption_overlay_safety": "UNVERIFIED",
+  "preview_approved": false,
+  "publish_ready": false
+}

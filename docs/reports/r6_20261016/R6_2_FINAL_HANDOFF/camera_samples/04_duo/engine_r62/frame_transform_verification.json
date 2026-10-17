@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "mp4_sha256": "2725b9fcba0ec232df2d8219d83c3bfc4e6003c4ec1c57821a6d5f1397023d9f",
+  "samples": [
+    {
+      "clip_time_s": 0.0,
+      "source_time_s": 105.75,
+      "source_frame_index": 2538,
+      "source_frame_index_basis": "nominal 24 fps; exact original PTS not certified",
+      "source_frame": "source_00.png",
+      "source_frame_sha256": "94e642c9cb10b0ffa38de4b2fb2d1ba0e28a597c00f7622430a56ee51a78b9d8",
+      "final_frame": "final_00.png",
+      "final_frame_sha256": "caeb1f7e03628b25e7a24f0c6b2199c073994636439ec8de75e30b87c9442ad1",
+      "transform": {
+        "source_features": 4000,
+        "final_features": 2772,
+        "foreground_y": 656,
+        "method": "SIFT ratio .72 + RANSAC homography, 2 px threshold",
+        "ratio_matches": 1491,
+        "status": "MEASURED",
+        "reason": null,
+        "inliers": 1434,
+        "inlier_ratio": 0.9617706237424547,
+        "scale_x": 0.5625528631070408,
+        "scale_y": 0.5630051338308585,
+        "median_reprojection_error_px": 0.16772040724754333,
+        "homography_source_to_foreground": [
+          [
+            0.562552862859911,
+            5.4525217052719965e-05,
+            -0.1815437012679649
+          ],
+          [
+            1.667474603698598e-05,
+            0.5630051311905635,
+            -0.13456817823309275
+          ],
+          [
+            2.0345147384558853e-08,
+            3.084469714599221e-08,
+            0.9999999999999999
+          ]
+        ]
+      }
+    },
+    {
+      "clip_time_s": 2.0,
+      "source_time_s": 107.75,
+      "source_frame_index": 2586,
+      "source_frame_index_basis": "nominal 24 fps; exact original PTS not certified",
+      "source_frame": "source_01.png",
+      "source_frame_sha256": "09d821e64b482b4a9bbd47e2536cf02d72666fc090dbbeea375e282b7e553a38",
+      "final_frame": "final_01.png",
+      "final_frame_sha256": "0d267df11e5d40fd9beef9538208d0eeba18f5503faf4d2ca60a07225d9956a5",
+      "transform": {
+        "source_features": 4000,
+        "final_features": 3345,
+        "foreground_y": 656,
+        "method": "SIFT ratio .72 + RANSAC homography, 2 px threshold",
+        "ratio_matches": 1354,
+        "status": "MEASURED",
+        "reason": null,
+        "inliers": 1146,
+        "inlier_ratio": 0.8463810930576071,
+        "scale_x": 0.5626281127325095,
+        "scale_y": 0.5630986995557687,
+        "median_reprojection_error_px": 0.15413150191307068,
+        "homography_source_to_foreground": [
+          [
+            0.5626281093470491,
+            8.147996411722667e-05,
+            -0.2324951465765395
+          ],
+          [
+            6.17212312209359e-05,
+            0.5630986936607235,
+            -0.23724742195019316
+          ],
+          [
+            5.3643551984325844e-08,
+            9.37046994925077e-08,
+            1.0
+          ]
+        ]
+      }
+    },
+    {
+      "clip_time_s": 3.9583333333333335,
+      "source_time_s": 109.70833333333333,
+      "source_frame_index": 2633,
+      "source_frame_index_basis": "nominal 24 fps; exact original PTS not certified",
+      "source_frame": "source_02.png",
+      "source_frame_sha256": "22ed8279f055fa30fa731f4ac2e97a1b7e4e8c3345905c2b756f500b2c94f1af",
+      "final_frame": "final_02.png",
+      "final_frame_sha256": "ddedf477f2245564592a74031473bbf030867cf4e58e57f9842004ab9e07cee9",
+      "transform": {
+        "source_features": 4000,
+        "final_features": 4001,
+        "foreground_y": 656,
+        "method": "SIFT ratio .72 + RANSAC homography, 2 px threshold",
+        "ratio_matches": 1212,
+        "status": "MEASURED",
+        "reason": null,
+        "inliers": 1123,
+        "inlier_ratio": 0.9265676567656765,
+        "scale_x": 0.5624496487637615,
+        "scale_y": 0.5628051129572739,
+        "median_reprojection_error_px": 0.24273259937763214,
+        "homography_source_to_foreground": [
+          [
+            0.5624496487636697,
+            -6.932623626594395e-05,
+            -0.0864806831424381
+          ],
+          [
+            3.2140798744134204e-07,
+            0.5628051086874769,
+            -0.04794721571238511
+          ],
+          [
+            -4.302288414501649e-08,
+            -9.303882464952138e-08,
+            1.0
+          ]
+        ]
+      }
+    }
+  ],
+  "flat_frame_negative_control": {
+    "source_features": 0,
+    "final_features": 0,
+    "foreground_y": 0,
+    "method": "SIFT ratio .72 + RANSAC homography, 2 px threshold",
+    "status": "ABSTAIN",
+    "reason": "INSUFFICIENT_FEATURES"
+  },
+  "caption_overlay_safety": "UNVERIFIED: no subtitles/titles were rendered",
+  "preview_approved": false,
+  "publish_ready": false,
+  "limits": "Sparse frame matches verify geometry only; they do not certify full-clip identity, hands, instrument or editorial approval."
+}

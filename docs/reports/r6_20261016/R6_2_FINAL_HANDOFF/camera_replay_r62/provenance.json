@@ -1,0 +1,34 @@
+{
+  "inference_executed": false,
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "timestamp_basis": "absolute_source_seconds",
+  "interval_convention": "start_inclusive_end_exclusive",
+  "coordinate_convention": "normalized_source_xywh",
+  "input_observation_count": 46326,
+  "input_frame_count": 33664,
+  "input_shot_count": 2045,
+  "visibility_projection": "existing_mapped_person_observations_at_exact_sample_timestamp",
+  "execution_scope": "camera_recommendation_not_render_or_approval",
+  "source_analysis": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\analysis\\video_8adc6609911a",
+  "input_sha256": {
+    "video_analysis.json": "48191887efebc9550fb31dcf945dbde3670165d7b0f483fc98a62b77bd39a374",
+    "people_observations.json": "e696cc51fbe2570e148e20f159867820eb022ca87381d4526cd1c37d2e0fc1e5",
+    "shots.json": "d2a7d67623a5664b5dcf2e341e63c421d74f386d3f183c330cdcc9cb10a2a80a",
+    "active_speaker.json": "d20d8ec0e40f5300e473de8d7fefa1a5928c0b643f739d2f67a974c0db1d7734",
+    "person_motion.json": "921d975d5cc9b1e5c13075b66680b2420e7e40c9719d852781a36e727444aa34",
+    "main_moments.json": "c8d23adc2a373f61371f84d97c6a2d0fd3d9083e45e957517b86d0c061b7b179",
+    "story_arcs.json": "ddcba86831e19c5cdfca45ea4027d691198b61a6086dd05c20fc98c5503a3137",
+    "camera_plan.json": "8a0aff26b3c01d1a54ccaf35bef542a1b939e45c551f091751c4b803878f799e"
+  },
+  "code_sha256": {
+    "camera_director.py": "66700243380be08be73952756e470636ed91ddbba6e39dacdff7d5352671768f",
+    "camera_evidence.py": "4788d1d1421ec07972511036f3ee3695d6dca310e593eca58f3bbd4d951133c3",
+    "camera_geometry.py": "4cf6bc8bc5272207ca41d60cd7d7d79962b58160e4e4d2b29b5a248ec9f60a95",
+    "camera_preflight.py": "882a850b343634fbca33147feb5db76b97f53554346ad140108bbd62c6412c30",
+    "camera_motion.py": "61530225a7b2e108348333b21e6f0e264675190948081ae24007d2874363f26a"
+  },
+  "debug_output_disabled_only_for_size": true,
+  "elapsed_seconds": 26.930652299983194,
+  "preview_approved": false,
+  "publish_ready": false
+}

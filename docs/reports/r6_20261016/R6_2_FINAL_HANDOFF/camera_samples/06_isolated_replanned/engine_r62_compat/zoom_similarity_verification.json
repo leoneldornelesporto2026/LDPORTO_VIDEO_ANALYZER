@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.0",
+  "mp4_sha256": "69933de8218cc9485edbbb885b4c01a4e961eb22133b55e18f9dca8991ffa4a9",
+  "method": "SIFT ratio .68, RANSAC partial affine (uniform scale + rotation + translation)",
+  "method_rationale": "Installed Curator applies axis-uniform scale/crop; unconstrained homography can overfit face/hand motion.",
+  "sparse_samples": [
+    {
+      "clip_time_s": 0,
+      "source_requested_time_s": 1601.792,
+      "source_frame": "source_00.png",
+      "source_sha256": "46e56b6e96a3b377673324c05d152c4da696008c0573112b4fee2c8fe545a990",
+      "final_frame": "final_00.png",
+      "final_sha256": "1a192a23f1b3cd2fd6d49597f3aa0d0fae5f9026e3805a410021fc1428f737f3",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 436,
+        "inliers": 396,
+        "inlier_ratio": 0.908256880733945,
+        "scale": 1.7776675236864552,
+        "rotation_radians": -4.524744335512729e-05,
+        "median_reprojection_error_px": 0.34927481412887573,
+        "source_to_final_similarity": [
+          [
+            1.7776675218667182,
+            8.043491055480614e-05,
+            -1225.3491878260925
+          ],
+          [
+            -8.043491055480614e-05,
+            1.7776675218667182,
+            0.3901528405616319
+          ]
+        ],
+        "reason": null
+      }
+    },
+    {
+      "clip_time_s": 1,
+      "source_requested_time_s": 1602.792,
+      "source_frame": "source_01.png",
+      "source_sha256": "517a37cbbdbe63207531148c0b1a17c5e69c4f33a7a95c537a0d6a0c851fc1f5",
+      "final_frame": "final_01.png",
+      "final_sha256": "60c0fb890e5f2e80d8273c1d880deea70936117f9e989092d3f331ad16765ed1",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 395,
+        "inliers": 370,
+        "inlier_ratio": 0.9367088607594937,
+        "scale": 1.7798780188837067,
+        "rotation_radians": 4.783421661700318e-05,
+        "median_reprojection_error_px": 0.3781212866306305,
+        "source_to_final_similarity": [
+          [
+            1.7798780168474264,
+            -8.513907067465775e-05,
+            -1226.4874079603533
+          ],
+          [
+            8.513907067465775e-05,
+            1.7798780168474264,
+            -0.000654145131154471
+          ]
+        ],
+        "reason": null
+      }
+    },
+    {
+      "clip_time_s": 2,
+      "source_requested_time_s": 1603.792,
+      "source_frame": "source_02.png",
+      "source_sha256": "34a9adf74f9abe9fce74b9499bdcee81d8dfdc97cd340975022c72cee8a1e1e5",
+      "final_frame": "final_02.png",
+      "final_sha256": "87b01044e9c3b20bc91d6bb53492af6505386c0abb083605b6da139a2e303b60",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 402,
+        "inliers": 363,
+        "inlier_ratio": 0.9029850746268657,
+        "scale": 1.7835017241170716,
+        "rotation_radians": 6.843647174043738e-05,
+        "median_reprojection_error_px": 0.337375670671463,
+        "source_to_final_similarity": [
+          [
+            1.7835017199405114,
+            -0.00012205656524628299,
+            -1231.9019955247772
+          ],
+          [
+            0.00012205656524628299,
+            1.7835017199405114,
+            -1.9743248053961127
+          ]
+        ],
+        "reason": null
+      }
+    },
+    {
+      "clip_time_s": 3,
+      "source_requested_time_s": 1604.792,
+      "source_frame": "source_03.png",
+      "source_sha256": "f265db0d3c8e03439e358f2d891e1c5a59edfab56c103916adea0b5828a018cb",
+      "final_frame": "final_03.png",
+      "final_sha256": "7f0016db64c71ae948145b45d78da9277f7b00c34ea9e1090c5a4e99a471d2a7",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 355,
+        "inliers": 314,
+        "inlier_ratio": 0.8845070422535212,
+        "scale": 1.7926332831673544,
+        "rotation_radians": 5.769828036079646e-05,
+        "median_reprojection_error_px": 0.41105616092681885,
+        "source_to_final_similarity": [
+          [
+            1.7926332801834342,
+            -0.00010343185769889602,
+            -1237.7109715699758
+          ],
+          [
+            0.00010343185769889602,
+            1.7926332801834342,
+            -5.9564271637836494
+          ]
+        ],
+        "reason": null
+      }
+    },
+    {
+      "clip_time_s": 4,
+      "source_requested_time_s": 1605.792,
+      "source_frame": "source_04.png",
+      "source_sha256": "34c893843ca7ca02e5bb378199b4676168241d40f5efa8cb705a88e2a36f7656",
+      "final_frame": "final_04.png",
+      "final_sha256": "b95fd0e5f287693401b51b9fd324d5214b5bf43508cfd7b88c4e1c810889d03e",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 324,
+        "inliers": 298,
+        "inlier_ratio": 0.9197530864197531,
+        "scale": 1.8070136104281254,
+        "rotation_radians": -8.028592889190837e-06,
+        "median_reprojection_error_px": 0.4102989435195923,
+        "source_to_final_similarity": [
+          [
+            1.8070136103698868,
+            1.4507776623198451e-05,
+            -1252.5462672660406
+          ],
+          [
+            -1.4507776623198451e-05,
+            1.8070136103698868,
+            -13.55676981919448
+          ]
+        ],
+        "reason": null
+      }
+    },
+    {
+      "clip_time_s": 5,
+      "source_requested_time_s": 1606.792,
+      "source_frame": "source_05.png",
+      "source_sha256": "a6151f6ecfca9b0ac5b693a690b0677340be7fe0e89f751c218711473da53bee",
+      "final_frame": "final_05.png",
+      "final_sha256": "a72bac601d790c94418970af2577bfd40bac0fe1996c12d358c246a4772ba05a",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 333,
+        "inliers": 303,
+        "inlier_ratio": 0.9099099099099099,
+        "scale": 1.8219387402587843,
+        "rotation_radians": -7.100122087645322e-05,
+        "median_reprojection_error_px": 0.3705809414386749,
+        "source_to_final_similarity": [
+          [
+            1.8219387356664298,
+            0.00012935987481179327,
+            -1263.929625919195
+          ],
+          [
+            -0.00012935987481179327,
+            1.8219387356664298,
+            -19.56756523750069
+          ]
+        ],
+        "reason": null
+      }
+    },
+    {
+      "clip_time_s": 5.958333333333333,
+      "source_requested_time_s": 1607.7503333333332,
+      "source_frame": "source_06.png",
+      "source_sha256": "319853eb5ca44d45b33eac7bf571356288988d7ad83819628d78758950dfc6a9",
+      "final_frame": "final_06.png",
+      "final_sha256": "06fb3252eb5ef4a5dc309255f1d378ca16b97e443e44c40c0ba8b964c333f089",
+      "measurement": {
+        "status": "MEASURED",
+        "ratio_matches": 283,
+        "inliers": 107,
+        "inlier_ratio": 0.37809187279151946,
+        "scale": 1.8331968962881169,
+        "rotation_radians": 0.009804894036164231,
+        "median_reprojection_error_px": 1.2299813032150269,
+        "source_to_final_similarity": [
+          [
+            1.833108778934171,
+            -0.01797401332083452,
+            -1263.0774442412273
+          ],
+          [
+            0.01797401332083452,
+            1.833108778934171,
+            -41.77552796223566
+          ]
+        ],
+        "reason": null
+      }
+    }
+  ],
+  "negative_control": {
+    "status": "ABSTAIN",
+    "reason": "INSUFFICIENT_FEATURES"
+  },
+  "all_samples_measured": true,
+  "scale_strictly_monotonic": true,
+  "relative_scale_increase": 0.031237209355384543,
+  "FFmpeg_transform_observed": true,
+  "homography_cross_check": "Six of seven MEASURED; final homography ABSTAIN is retained in frame_transform_verification.json",
+  "visual_acceptance": "REJECTED_HAND_GESTURE_EXITS_PORTRAIT_CROP",
+  "delivered": false,
+  "preview_approved": false,
+  "publish_ready": false,
+  "limits": "Sparse measurements verify a digital transformation; they do not certify full body, gesture safety, exact original PTS, captions or editorial approval."
+}

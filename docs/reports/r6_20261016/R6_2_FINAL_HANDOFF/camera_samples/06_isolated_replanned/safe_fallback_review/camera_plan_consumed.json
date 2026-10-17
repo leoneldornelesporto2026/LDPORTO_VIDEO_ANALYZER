@@ -1,0 +1,14 @@
+{
+  "mode": "adaptive_timeline",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 6.0,
+      "mode": "full_frame_blur",
+      "reason": "portrait rejected: hand gesture exits crop; preserve source"
+    }
+  ],
+  "rejected_revision": "engine_r62_compat",
+  "preview_approved": false,
+  "publish_ready": false
+}

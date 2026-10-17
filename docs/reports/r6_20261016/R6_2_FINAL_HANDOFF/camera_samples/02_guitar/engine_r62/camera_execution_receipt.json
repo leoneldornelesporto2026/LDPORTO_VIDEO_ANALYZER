@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "plan_path": "camera_plan_consumed.json",
+  "plan_sha256": "bdb1f5a243e467d4cffd95d63f82addbee00a9462f1efd4602aca7b45cac54f9",
+  "mp4_sha256": "e53abacd5ca76ea10140725c212e9cf6e7531385d611854a9fb0b928e66663b9",
+  "consumed_by_renderer": true,
+  "FFmpeg_applied": true,
+  "transform_verification": "frame_transform_verification.json",
+  "visual_acceptance": "SOURCE_FIT_VERIFIED_IN_SAMPLED_FRAMES",
+  "caption_overlay_safety": "UNVERIFIED",
+  "preview_approved": false,
+  "publish_ready": false
+}

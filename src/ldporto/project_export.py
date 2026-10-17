@@ -10,6 +10,7 @@ import io
 import json
 import math
 from pathlib import Path, PurePosixPath
+import shutil
 import uuid
 import zipfile
 import jsonschema
@@ -184,6 +185,16 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
         metadata=read('source/metadata.json',{})
         manifest=read('SECOND_CURATION_MANIFEST.json',{})
         index=read('CURATION_INDEX.json',{})
+        package_master=read('HANDOFF_MASTER.json',{}) or {}
+        visual_index=read(package_master.get('visual_frame_handoff_ref') or 'VISUAL_FRAME_HANDOFF/index.json',{}) or {}
+        visual_pieces={row['piece_id']:row for row in visual_index.get('pieces') or []}
+        is_r62=index.get('delivery_profile')=='EDITORIAL_HANDOFF' or bool(visual_pieces)
+        package_name='EDITORIAL_HANDOFF.zip' if is_r62 else 'SECOND_CURATION_READY.zip'
+        active_camera_ref=package_master.get('active_camera_ref')
+        active_timeline_ref=visual_index.get('camera_timeline_ref')
+        active_timeline=read(active_timeline_ref) if active_timeline_ref else None
+        active_camera=read(active_camera_ref) if active_camera_ref else None
+        visual_caption_reviews=(read('subtitles/visual_piece_caption_preflight.json',{}) or {}).get('stories') or {}
         info=metadata.get('source') or {}
         duration=metadata.get('duration')
         source_hash=metadata.get('sha256')
@@ -203,6 +214,10 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                'contents_kind':'planning_and_review_evidence','source_video_included':False,
                'final_social_videos_rendered':False,'preview_approved':False,'publication_ready':False,
                'pdf_status':'PENDING','files':[]}
+        if is_r62:
+            state.update(package_profile='EDITORIAL_HANDOFF',package_ref='06_SEGUNDA_CURADORIA/'+package_name,
+                r62_acceptance_state=package_master.get('r62_acceptance_state','PARTIAL'),
+                active_camera_ref=active_camera_ref,visual_handoff_exports=[])
         def check():
             if cancelled and cancelled():
                 raise ExportCancelled('export_cancelled')
@@ -217,9 +232,49 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                 target.write_bytes(archive.read(name))
                 return True
             return False
+        def copy_visual(piece_id,folder,pdf=None):
+            piece=visual_pieces.get(piece_id)
+            if piece is None:
+                return None
+            reference=piece['manifest_ref']
+            _logical(reference)
+            prefix=reference.rsplit('/',1)[0]+'/'
+            target=folder/'VISUAL_FRAME_HANDOFF'
+            for name in sorted(names):
+                if name.startswith(prefix):
+                    relative=name[len(prefix):]
+                    _logical(relative)
+                    copy_entry(name,target/relative)
+            from .visual_frame_handoff import validate_visual_frame_handoff
+            checked=validate_visual_frame_handoff(target)
+            if not checked.get('valid'):
+                raise ValueError('project_visual_handoff_invalid:'+piece_id+':'+str(checked.get('errors')))
+            local_ref=(target/'visual_handoff_manifest.json').relative_to(destination).as_posix()
+            state['visual_handoff_exports'].append({'piece_id':piece_id,'manifest_ref':local_ref,
+                'package_manifest_ref':reference,'sha256':file_hash(target/'visual_handoff_manifest.json')})
+            if piece_id in visual_caption_reviews:
+                _json(folder/'caption_preflight.json',visual_caption_reviews[piece_id])
+            contact=target/'contact_sheets/timeline.jpg'
+            if pdf is not None:
+                pdf.text('Storyboard e dados espaciais: VISUAL_FRAME_HANDOFF. Safe areas e enquadramentos exigem revisão; nenhum crop final foi aprovado.')
+                if contact.is_file():
+                    pdf.image(contact.read_bytes(),'Frames esparsos da fonte com tempos/IDs e crop proposto; revisão humana pendente.')
+            return contact if contact.is_file() else None
         _json(destination/'PROJECT_MANIFEST.json',state)
         try:
             emit('Evidências canônicas')
+            if is_r62:
+                if not copy_entry('MEDIA_REFERENCE.json',destination/'MEDIA_REFERENCE.json'):
+                    raise ValueError('project_r62_media_reference_missing')
+                for name in sorted(names):
+                    if name.startswith('diagnostics/'):
+                        relative=name.removeprefix('diagnostics/')
+                        _logical(relative)
+                        copy_entry(name,destination/'07_RELATORIOS_TECNICOS/diagnostics'/relative)
+                    elif name.startswith('camera/validation/'):
+                        relative=name.removeprefix('camera/validation/')
+                        _logical(relative)
+                        copy_entry(name,destination/'05_CAMERAS/validation'/relative)
             segments=read('transcript/relevant_segments.jsonl',[])
             words=read('transcript/relevant_words.jsonl',[])
             if analysis is not None:
@@ -266,11 +321,16 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                                ('people/instrument_observations.json','instrumentos.json'),('people/performer_review_queue.json','identities_review.json')):
                 if not copy_entry(src,destination/'02_PESSOAS_E_CENAS'/target):
                     _json(destination/'02_PESSOAS_E_CENAS'/target,{'status':'UNAVAILABLE','observations':[], 'publication_ready':False})
-            _json(destination/'02_PESSOAS_E_CENAS/cenas.json',(analysis or {}).get('scenes') or {'status':'UNAVAILABLE','reference':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#camera/candidate_camera_plans.json'})
+            _json(destination/'02_PESSOAS_E_CENAS/cenas.json',(analysis or {}).get('scenes') or {'status':'UNAVAILABLE','reference':'06_SEGUNDA_CURADORIA/'+package_name+'#camera/candidate_camera_plans.json'})
             for src,target in (('camera/candidate_camera_plans.json','candidate_camera_plans.json'),
                                ('camera/shared_camera_handoff.json','camera_handoff.json'),('camera/camera_summary.json','zoom_validation.json')):
                 copy_entry(src,destination/'05_CAMERAS'/target)
-            if analysis:
+            if active_camera is not None:
+                _json(destination/'05_CAMERAS/camera_handoff.json',active_camera)
+                _json(destination/'05_CAMERAS/camera_timeline.json',active_camera)
+                if active_timeline_ref:
+                    copy_entry(active_timeline_ref,destination/'05_CAMERAS/source_camera_timeline.json')
+            elif analysis:
                 from .camera_handoff import build_camera_handoff
                 _json(destination/'05_CAMERAS/camera_timeline.json',build_camera_handoff(analysis))
                 _json(destination/'05_CAMERAS/focus_targets.json',{'status':'PROPOSALS_REQUIRE_REVIEW',
@@ -282,6 +342,15 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
             by_candidate={r['candidate_id']:r for r in candidates}
             plans=read('camera/candidate_camera_plans.json',[])
             by_plan={r['candidate_id']:r for r in _rows(plans,'plans')}
+            if active_timeline is not None:
+                from .camera_handoff import build_camera_handoff
+                for candidate in candidates:
+                    cid=candidate['candidate_id']
+                    by_plan[cid]={**(by_plan.get(cid) or {}),'candidate_id':cid,
+                        'active_camera_source_ref':active_timeline_ref,
+                        'camera_handoff':build_camera_handoff({'metadata':metadata,
+                            'camera_director_timeline':active_timeline},candidate['start'],candidate['end'])}
+                _json(destination/'05_CAMERAS/candidate_camera_plans.json',list(by_plan.values()))
             state['candidates_with_geometrically_valid_interval']=sum(any(
                 (s.get('evidence') or {}).get('crop_geometrically_valid') is True
                 for s in (p.get('camera_handoff') or {}).get('segments') or []) for p in by_plan.values())
@@ -359,14 +428,20 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                 _describe(pdf,'Viabilidade',plan.get('camera_feasibility'))
                 pdf.text('Plano estruturado: camera_plan.json. Movimento planejado exige render e verificação no Curator.')
                 image_name='visuals/'+cid+'/contact_sheet.jpg'
-                if copy_entry(image_name,folder/'visual_evidence/contact_sheet.jpg'):
+                visual_contact=copy_visual(cid,folder,pdf)
+                contact_ref=None
+                if visual_contact is not None:
+                    thumbnail_state='VISUAL_FRAME_HANDOFF_AVAILABLE_REQUIRES_HUMAN_FRAME_SELECTION'
+                    contact_ref='../VISUAL_FRAME_HANDOFF/contact_sheets/timeline.jpg'
+                elif copy_entry(image_name,folder/'visual_evidence/contact_sheet.jpg'):
                     pdf.image(archive.read(image_name),'Frames reais incluídos pelo Analyzer; não comprovam aprovação da prévia final.')
                     thumbnail_state='CONTACT_SHEET_AVAILABLE_REQUIRES_HUMAN_FRAME_SELECTION'
+                    contact_ref='../visual_evidence/contact_sheet.jpg'
                 else:
                     pdf.text('Imagens de referência: indisponíveis neste pacote.')
                     thumbnail_state='UNAVAILABLE'
                 _json(folder/'thumbnail_candidates/index.json',{'status':thumbnail_state,
-                    'contact_sheet_ref':'../visual_evidence/contact_sheet.jpg' if image_name in names else None,
+                    'contact_sheet_ref':contact_ref,
                     'final_thumbnail_created':False,'human_approved':False})
                 _transcript_pdf(pdf,selected_segments,[],info.get('url'),check)
                 pdf.section('Palavras com timestamp e lacunas')
@@ -380,6 +455,8 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                 pdf.save(folder/'RELATORIO_REEL.pdf')
                 guide.text('%s · %s–%s · %s' % (cid,stamp(candidate['start']),stamp(candidate['end']),title_text),11,'#006A75')
                 _describe(guide,'Justificativa/pendências',candidate.get('editorial_review_plan') or candidate.get('boundary_decision_reasons'))
+                if visual_contact is not None and number <= 3:
+                    guide.image(visual_contact.read_bytes(),cid+' · storyboard esparso; proposta de crop não aprovada.')
                 html_rows.append('<li><a href="../03_REELS/REEL_%03d/RELATORIO_REEL.pdf">%s</a> · %s–%s</li>' % (number,escape(title_text),stamp(candidate['start']),stamp(candidate['end'])))
             emit('Stories sequenciais')
             series=read('editorial/story_series_proposals.json',{})
@@ -391,7 +468,7 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
             units={r.get('unit_id'):r for r in _rows(read('editorial/story_units.json',{}),'units')}
             unit_titles={r.get('unit_id'):r for r in _rows(read('social/narrative_title_suggestions.json',{}),'titles')}
             _json(destination/'04_STORIES/series.json',{'status':'REVIEW_REQUIRED' if sequences else 'UNAVAILABLE',
-                'series':sequences,'story_visual_handoff_ref':'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip#social/story_visual_handoff.json',
+                'series':sequences,'story_visual_handoff_ref':'06_SEGUNDA_CURADORIA/'+package_name+'#social/story_visual_handoff.json',
                 'publication_ready':False})
             guide.section('Stories e continuidade narrativa')
             for number,sequence in enumerate(sequences,1):
@@ -424,8 +501,10 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                     _json(piece_folder/'caption_preflight.json',part_review)
                     from .camera_handoff import build_camera_handoff
                     _json(piece_folder/'camera_plan.json',build_camera_handoff({
-                        'metadata':metadata,'camera_director_timeline':read('camera/camera_director_timeline.json',[])}, intervals=intervals))
+                        'metadata':metadata,'camera_director_timeline':active_timeline if active_timeline is not None
+                            else read('camera/camera_director_timeline.json',[])}, intervals=intervals))
                     pdf.section('Parte %d · %s'%(part,uid))
+                    copy_visual(uid,piece_folder,pdf)
                     _describe(pdf,'Papel narrativo',unit.get('narrative_role'))
                     _describe(pdf,'Intervalos da fonte',intervals)
                     _titles(pdf,unit_titles.get(uid) or unit)
@@ -445,7 +524,46 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
                 _json(folder/'review.json',{'series_id':None,'canonical_story_id':sid,
                     'status':'BLOCKED' if not _interval(story,duration) or story['end']-story['start']>60 else 'REVIEW_REQUIRED',
                     'publication_ready':False})
+                if sid in visual_pieces:
+                    story_pdf=EditorialPDF(str(story.get('title') or sid),sid+' · Story independente para revisão')
+                    story_pdf.section('Fonte e storyboard')
+                    _describe(story_pdf,'Intervalo original',{'start':story.get('start'),'end':story.get('end')})
+                    copy_visual(sid,folder,story_pdf)
+                    story_segments=[row for row in segments if row['start'] < story['end'] and row['end'] > story['start']]
+                    story_words=[row for row in words if isinstance(row.get('start'),(int,float))
+                        and isinstance(row.get('end'),(int,float)) and row['start'] < story['end'] and row['end'] > story['start']]
+                    _transcript_files(folder,story_segments,story_words)
+                    _json(folder/'words.json',story_words)
+                    from .camera_handoff import build_camera_handoff
+                    _json(folder/'camera_plan.json',build_camera_handoff({'metadata':metadata,
+                        'camera_director_timeline':active_timeline or []},story['start'],story['end']))
+                    _transcript_pdf(story_pdf,story_segments,[],info.get('url'),check)
+                    story_pdf.save(folder/'RELATORIO_STORY.pdf')
                 guide.text('Story avulso '+str(sid)+' · '+str(story.get('title') or 'Título pendente'),11,'#006A75')
+            exported_visual_ids={row['piece_id'] for row in state.get('visual_handoff_exports') or []}
+            for sid,piece in visual_pieces.items():
+                if piece.get('piece_type')!='STORY' or sid in exported_visual_ids:
+                    continue
+                unit=units.get(sid)
+                if unit is None:
+                    raise ValueError('project_visual_story_canonical_unit_missing:'+sid)
+                folder=destination/'04_STORIES/AVULSOS'/windows_component(sid)
+                _json(folder/'briefing.json',unit)
+                _json(folder/'review.json',{'series_id':None,'canonical_story_id':sid,
+                    'status':'REVIEW_REQUIRED','narrative_completeness':'UNRESOLVED','publication_ready':False})
+                pdf=EditorialPDF(sid,'Unidade fonte sem série certificada · revisão pendente')
+                pdf.section('Unidade original e storyboard')
+                copy_visual(sid,folder,pdf)
+                ids=unit.get('source_segment_ids') or []
+                selected_segments=[row for row in segments if row.get('segment_id') in ids]
+                selected_words=[row for row in words if row.get('segment_id') in ids]
+                _transcript_files(folder,selected_segments,selected_words)
+                _json(folder/'words.json',selected_words)
+                _transcript_pdf(pdf,selected_segments,[],info.get('url'),check)
+                pdf.save(folder/'RELATORIO_STORY.pdf')
+                from .camera_handoff import build_camera_handoff
+                _json(folder/'camera_plan.json',build_camera_handoff({'metadata':metadata,
+                    'camera_director_timeline':active_timeline or []},intervals=piece['source_intervals']))
             if not sequences:
                 guide.text('Nenhuma série narrativa comprovada disponível neste pacote. Não foram inventadas partes ou títulos.')
             guide.section('Câmera, legendas e limitações')
@@ -475,18 +593,35 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
             emit('ZIP e índice de evidências')
             handoff=destination/'06_SEGUNDA_CURADORIA'
             handoff.mkdir(exist_ok=True)
-            (handoff/'SECOND_CURATION_READY.zip').write_bytes(package_bytes)
-            if file_hash(handoff/'SECOND_CURATION_READY.zip')!=state['package_sha256']:
+            (handoff/package_name).write_bytes(package_bytes)
+            if file_hash(handoff/package_name)!=state['package_sha256']:
                 raise ValueError('package_copy_checksum_mismatch')
-            master=read('HANDOFF_MASTER.json')
-            _json(handoff/'HANDOFF_MASTER.json',{'schema_version':'1.0','package_ref':'SECOND_CURATION_READY.zip',
+            master=package_master
+            if is_r62:
+                from .r62_delivery import verify_full_audit
+                reference=master.get('full_audit_ref') or {}
+                filename=reference.get('filename')
+                if not isinstance(filename,str) or len(_logical(filename).parts)!=1:
+                    raise ValueError('project_full_audit_sibling_reference_invalid')
+                full_source=_safe_ancestors(package_path.parent/filename)
+                if (not full_source.is_file() or file_hash(full_source)!=reference.get('sha256')
+                        or full_source.stat().st_size!=reference.get('bytes')
+                        or verify_full_audit(full_source).get('status')!='valid'):
+                    raise ValueError('project_full_audit_sibling_integrity_failed')
+                full_target=handoff/'FULL_AUDIT.zip'
+                shutil.copyfile(full_source,full_target)
+                if file_hash(full_target)!=reference['sha256']:
+                    raise ValueError('project_full_audit_copy_integrity_failed')
+                state['full_audit_ref']={'path':'06_SEGUNDA_CURADORIA/FULL_AUDIT.zip',
+                    'sha256':reference['sha256'],'bytes':reference['bytes']}
+            _json(handoff/'HANDOFF_MASTER.json',{**(master if is_r62 else {}),'schema_version':'1.0','package_ref':package_name,
                 'package_sha256':state['package_sha256'],'source_sha256':source_hash,'run_id':manifest.get('run_id'),
-                'package_handoff_ref':'SECOND_CURATION_READY.zip#HANDOFF_MASTER.json' if master else None,
+                'package_handoff_ref':package_name+'#HANDOFF_MASTER.json' if master else None,
                 'references':[{'archive_member':n} for n in sorted(names)],
                 'publication_ready':False,'preview_approved':False})
             (handoff/'HANDOFF_MASTER.md').write_text('# Índice do projeto\n\nEvidências canônicas no ZIP; IDs e referências internos foram validados.\n\nAprovações humanas pendentes.\n',encoding='utf-8')
             copy_entry('SECOND_CURATION_DECISIONS.template.json',handoff/'decisions_template.json')
-            (handoff/'IMPORT_INSTRUCTIONS.md').write_text('Importe SECOND_CURATION_READY.zip no Curator. PDFs são dossiês para leitura; JSONs são canônicos. Não há MP4 social final. Verifique pendências, direitos e aprove prévias antes da publicação.\n',encoding='utf-8')
+            (handoff/'IMPORT_INSTRUCTIONS.md').write_text('Importe '+package_name+' no Curator. PDFs são dossiês para leitura; JSONs são canônicos. Não há MP4 social final. Verifique pendências, direitos e aprove prévias antes da publicação.\n',encoding='utf-8')
             technical=destination/'07_RELATORIOS_TECNICOS'
             _json(technical/'quality_report.json',read('summary/quality_summary.json',{}))
             _json(technical/'limitations.json',{'analysis_status':index.get('analysis_status'),'readiness':manifest.get('readiness'),
@@ -498,7 +633,8 @@ def export_project(package_path, output_root=None, *, analysis=None, progress=No
             state.update(pdf_status='GENERATED',candidate_count=len(candidates),story_series_count=len(sequences),
                          standalone_story_count=len(standalone),
                          caption_preflight_summary=caption_summary,
-                         state='READY_FOR_REVIEW' if manifest.get('workflow',{}).get('review_ready') is True else 'PARTIAL')
+                         state='READY_FOR_REVIEW' if manifest.get('workflow',{}).get('review_ready') is True
+                            and state.get('r62_acceptance_state')!='PARTIAL' else 'PARTIAL')
             emit('Verificação de integridade')
         except ExportCancelled:
             state.update(state='CANCELLED',pdf_status='PARTIAL')
@@ -556,7 +692,10 @@ def verify_project_export(path):
             errors.append('project_file_set_mismatch')
         if not manifest.get('files'):
             errors.append('project_file_inventory_empty')
-        package=root/'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip'
+        package_ref=manifest.get('package_ref','06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip')
+        if package_ref not in {'06_SEGUNDA_CURADORIA/SECOND_CURATION_READY.zip','06_SEGUNDA_CURADORIA/EDITORIAL_HANDOFF.zip'}:
+            raise ValueError('project_package_reference_invalid')
+        package=_safe_ancestors(root/package_ref)
         if manifest['state'] in {'READY_FOR_REVIEW','PARTIAL'}:
             if manifest.get('pdf_status')!='GENERATED' or not package.is_file():
                 errors.append('completed_dossier_missing_package_or_pdf')
@@ -569,6 +708,42 @@ def verify_project_export(path):
                     source=json.loads(archive.read('source/metadata.json'))
                     package_manifest=json.loads(archive.read('SECOND_CURATION_MANIFEST.json'))
                     candidates=json.loads(archive.read('editorial/candidate_catalog.json')).get('candidates') or []
+                    package_master=json.loads(archive.read('HANDOFF_MASTER.json')) if 'HANDOFF_MASTER.json' in archive.namelist() else {}
+                    visual_ref=package_master.get('visual_frame_handoff_ref')
+                    visual_index=json.loads(archive.read(str(_logical(visual_ref)))) if visual_ref else {}
+                    if manifest.get('package_profile')=='EDITORIAL_HANDOFF':
+                        from .r62_delivery import verify_full_audit
+                        from .visual_frame_handoff import validate_visual_frame_handoff
+                        reference=manifest.get('full_audit_ref') or {}
+                        source_reference=package_master.get('full_audit_ref') or {}
+                        full_path=root/str(_logical(reference.get('path','')))
+                        if (reference.get('sha256')!=source_reference.get('sha256')
+                                or reference.get('bytes')!=source_reference.get('bytes')
+                                or not full_path.is_file() or file_hash(full_path)!=source_reference.get('sha256')
+                                or full_path.stat().st_size!=source_reference.get('bytes')
+                                or verify_full_audit(full_path).get('status')!='valid'):
+                            errors.append('project_full_audit_integrity_invalid')
+                        if (root/'MEDIA_REFERENCE.json').read_bytes()!=archive.read('MEDIA_REFERENCE.json'):
+                            errors.append('project_media_reference_disagrees_with_package')
+                        if manifest.get('state')=='READY_FOR_REVIEW' and package_master.get('r62_acceptance_state')=='PARTIAL':
+                            errors.append('project_review_state_exceeds_r62_gate')
+                        pieces={row['piece_id']:row for row in visual_index.get('pieces') or []}
+                        exported=set()
+                        for row in manifest.get('visual_handoff_exports') or []:
+                            piece=pieces.get(row.get('piece_id'))
+                            if piece is None:
+                                errors.append('project_visual_piece_not_in_package')
+                                continue
+                            exported.add(row['piece_id'])
+                            local=_safe_ancestors(root/str(_logical(row['manifest_ref'])))
+                            source_bytes=archive.read(piece['manifest_ref'])
+                            if (not local.is_relative_to(root) or not local.is_file()
+                                    or local.read_bytes()!=source_bytes or file_hash(local)!=row.get('sha256')):
+                                errors.append('project_visual_manifest_disagrees_with_package:'+row['piece_id'])
+                            elif not validate_visual_frame_handoff(local.parent).get('valid'):
+                                errors.append('project_visual_handoff_invalid:'+row['piece_id'])
+                        if exported!=set(pieces):
+                            errors.append('project_visual_piece_coverage_mismatch')
                 if (source.get('sha256')!=manifest['source_sha256'] or source.get('duration')!=manifest['source_duration'] or
                         (source.get('source') or {}).get('id')!=manifest.get('video_id') or package_manifest.get('run_id')!=manifest.get('package_run_id')):
                     errors.append('project_package_source_or_revision_mismatch')

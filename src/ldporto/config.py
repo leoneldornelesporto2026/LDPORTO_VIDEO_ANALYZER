@@ -21,7 +21,8 @@ DEFAULTS = {
                "second_curation_auto": True, "second_curation_visual_candidate_limit": 16,
                "second_curation_output_dir": None, "include_candidate_previews": False,
                "organized_project_auto": False, "organized_project_root": None},
-    "download": {"max_height": 1080, "cookies_file": None},
+    "download": {"max_height": 1080, "cookies_file": None, "allow_download": False,
+                 "media_library_root": None, "media_reference": None, "expected_sha256": None},
     "audio": {"highpass_hz": 40, "denoise": False, "normalize": True,
               "silence_db": -40, "silence_min_seconds": 0.35,
               "separation": "off", "demucs_python": None,
@@ -200,7 +201,10 @@ def save_ocr_options(path, changes):
         matches = [v for k, v in section.value if k.value == key]
         if len(matches) != 1 or not isinstance(matches[0], yaml.ScalarNode):
             raise ValueError('Opcao OCR unica necessaria: ' + key)
-        scalar = yaml.safe_dump(value, allow_unicode=True, default_style='"' if isinstance(value, str) else None).split('\n...')[0].rstrip('\n')
+        # Retain the existing scalar's quoting style. Forcing quotes on every
+        # string changed a plain Windows path even after restoring its value.
+        style = matches[0].style if isinstance(value, str) and matches[0].style in {'"', "'"} else None
+        scalar = yaml.safe_dump(value, allow_unicode=True, default_style=style).split('\n...')[0].rstrip('\n')
         edits.append((matches[0].start_mark.index, matches[0].end_mark.index, scalar))
     updated = original
     for start, end, scalar in sorted(edits, reverse=True):

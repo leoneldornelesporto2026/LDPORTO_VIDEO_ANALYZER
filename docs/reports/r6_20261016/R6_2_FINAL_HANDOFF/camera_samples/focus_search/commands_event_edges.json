@@ -1,0 +1,34 @@
+[
+  [
+    "ffmpeg",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-n",
+    "-ss",
+    "1601.792",
+    "-i",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\9UCGZia2p1k\\9UCGZia2p1k.mp4",
+    "-frames:v",
+    "1",
+    "-threads",
+    "2",
+    "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\focus_search\\source_1601.792000.png"
+  ],
+  [
+    "ffmpeg",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-n",
+    "-ss",
+    "1607.7503333333334",
+    "-i",
+    "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\9UCGZia2p1k\\9UCGZia2p1k.mp4",
+    "-frames:v",
+    "1",
+    "-threads",
+    "2",
+    "docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_samples\\focus_search\\source_1607.750333.png"
+  ]
+]

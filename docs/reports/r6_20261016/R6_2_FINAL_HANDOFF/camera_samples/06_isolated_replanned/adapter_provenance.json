@@ -1,0 +1,14 @@
+{
+  "timeline": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_replay_r62_curator_compat\\timeline.json",
+  "timeline_file_sha256": "ff2d32e97e10ba825d186eb639b6a33a10838feffd8ccb2635589e21e1505b4b",
+  "profile": "explicit Curator-compatible engine replay; max_zoom_factor 1.04",
+  "adapter": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\ldporto\\curator_camera_adapter.py",
+  "adapter_sha256": "8f1125bd5fba6637037b8074aaf7e98d86a724c4134a000cd3c5e2043f5ca594",
+  "render_dimensions": [
+    1080,
+    1920
+  ],
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "instrument_preservation": "not applicable to selected primary person; other background performers not focused",
+  "hands": "not certified by current Analyzer face geometry; visual review required"
+}

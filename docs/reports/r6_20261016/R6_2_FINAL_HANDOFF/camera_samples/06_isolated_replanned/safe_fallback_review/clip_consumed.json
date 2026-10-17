@@ -1,0 +1,23 @@
+{
+  "clip_id": "R62_06_isolated_replanned",
+  "source_start": 1601.7920000000001,
+  "source_end": 1607.7920000000001,
+  "duration": 6.0,
+  "camera_plan": {
+    "mode": "adaptive_timeline",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 6.0,
+        "mode": "full_frame_blur",
+        "reason": "portrait rejected: hand gesture exits crop; preserve source"
+      }
+    ],
+    "rejected_revision": "engine_r62_compat",
+    "preview_approved": false,
+    "publish_ready": false
+  },
+  "title_text": "",
+  "preview_approved": false,
+  "publish_ready": false
+}

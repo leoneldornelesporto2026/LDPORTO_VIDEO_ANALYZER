@@ -1,0 +1,24 @@
+{
+  "head": "d508c1e4a04f78d5ddbe2ebd14c6a52b5f6cff59",
+  "branch": "baseline/ldporto-20261012-prompt01",
+  "status_before_edits": "",
+  "package": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\SECOND_CURATION_READY_9UCGZia2p1k_20261016_200541_367803_f6b214.zip",
+  "package_sha256": "d090841905222237b282af8b25caa02aa8b2bfcb946baae1a6f4ae0f3ab3779c",
+  "package_members": 173,
+  "package_uncompressed_bytes": 114719289,
+  "validation_status": "valid",
+  "validation_errors": [],
+  "source": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\9UCGZia2p1k\\9UCGZia2p1k.mp4",
+  "source_bytes": 2663231970,
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "source_mtime_ns": 1792151403561495700,
+  "source_resolution": [
+    1920,
+    1080
+  ],
+  "duration": 5840.094,
+  "fps": 24.000001369843545,
+  "library_exists": false,
+  "new_model_calls": 0,
+  "full_pipeline_executed": false
+}

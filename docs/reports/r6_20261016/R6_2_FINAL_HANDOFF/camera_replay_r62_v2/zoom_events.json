@@ -1,0 +1,30 @@
+[
+  {
+    "start": 1147.25,
+    "end": 1153.25,
+    "zoom_start": 1.0,
+    "zoom_end": 1.125,
+    "mode": "SMART_ZOOM_IN",
+    "target_person_id": "PERSON_1981",
+    "reason_codes": [
+      "PAYOFF_EMPHASIS",
+      "VISUAL_TARGET_FOCUS"
+    ],
+    "target_evidence_role": "DOMINANT_FACE",
+    "beat_id": "MOMENT_PRESERVED_00003_0001_PAYOFF"
+  },
+  {
+    "start": 1601.7920000000001,
+    "end": 1607.7920000000001,
+    "zoom_start": 1.0,
+    "zoom_end": 1.125,
+    "mode": "SMART_ZOOM_IN",
+    "target_person_id": "PERSON_2629",
+    "reason_codes": [
+      "PAYOFF_EMPHASIS",
+      "VISUAL_TARGET_FOCUS"
+    ],
+    "target_evidence_role": "DOMINANT_FACE",
+    "beat_id": "MOMENT_00005_0000_PAYOFF"
+  }
+]

@@ -1,0 +1,305 @@
+{
+  "camera_director_coverage": 0.0238565669919004,
+  "camera_director_visual_sample_coverage": 0.9999999999999848,
+  "dominant_face_coverage": 0.0238565669919004,
+  "smart_zoom_enabled": true,
+  "zoom_event_count": 6,
+  "zoom_events_per_minute": 0.06164284341998605,
+  "mean_zoom_factor": 1.0000679135004888,
+  "max_zoom_factor": 1.0395106264979017,
+  "zoom_target_loss_count": 0,
+  "smart_camera_decision_count": 107,
+  "safe_zoom_fraction": 1.0,
+  "camera_director_timeline_coverage": 0.9999999999999848,
+  "unresolved_focus_fraction": 0.9760768458949309,
+  "director_switches_per_minute": 0.78080934998649,
+  "average_director_shot_seconds": 2.7534625176803393,
+  "split_fraction": 0.0,
+  "two_shot_fraction": 0.0,
+  "full_frame_fraction": 0.9761434330080844,
+  "switches_suppressed": 686,
+  "deadzone_suppressed_moves": 1152,
+  "unsafe_crop_avoided": 25,
+  "source_shot_resets": 2045,
+  "director_intervals": 4040,
+  "director_evaluation_windows": 84713,
+  "evaluation_windows_with_face_evidence": 44928,
+  "evaluation_windows_with_grounded_speaker": 0,
+  "evaluation_windows_with_conflicting_person_targets": 0,
+  "evaluation_windows_without_visual_sample": 0,
+  "editorial_beat_raw_windows": 20548,
+  "editorial_beat_eligible_windows": 12033,
+  "editorial_beat_suppressed_due_to_cut_or_overlap": 8515,
+  "editorial_beat_without_focus_windows": 11266,
+  "editorial_beat_with_speaker_focus_windows": 434,
+  "focused_windows_without_editorial_beat": 1491,
+  "observations_per_second": 7.932406567428538,
+  "conversation_modes": {
+    "NO_CLEAR_SPEAKER": 1780,
+    "MONOLOGUE": 2065,
+    "QUICK_EXCHANGE": 86,
+    "GROUP_DISCUSSION": 25,
+    "QUESTION_ANSWER": 46,
+    "OVERLAP": 38
+  },
+  "elapsed_seconds": 11.090228799992474,
+  "timeline_json_bytes": 12137106,
+  "motion_limits": {
+    "max_zoom_default": 1.35,
+    "max_zoom_hard": 1.4,
+    "max_pan_speed": 0.12,
+    "max_pan_acceleration": 0.18,
+    "max_pan_jerk": 0.6,
+    "max_zoom_speed": 0.035,
+    "max_zoom_acceleration": 0.045,
+    "max_zoom_jerk": 0.15
+  },
+  "planner_agreement_fraction": 0.9761434330080844,
+  "coverage_note": "Visual coverage is sampled; timeline coverage includes explicit full-frame fallback.",
+  "short_zoom_count": 6,
+  "rapid_zoom_reversal_count": 0,
+  "zoom_pumping_score": 0.0,
+  "zoom_jitter_score": 0.0013602188687138934,
+  "upscale_limit_violation_count": 0,
+  "zoom_metrics_method": "timeline_keyframe_diagnostics_not_render_delivery_or_perceptual_accuracy",
+  "proposed_zoom_event_count": 2,
+  "zoom_opportunity_window_count": 12033,
+  "zoom_request_window_count": 433,
+  "zoom_accepted_event_count": 2,
+  "zoom_accepted_window_count": 2,
+  "zoom_timeline_event_count": 6,
+  "zoom_event_count_scope": "timeline_keyframes_only_use_zoom_delivered_event_count_for_render",
+  "zoom_delivered_event_count": 0,
+  "zoom_delivery_verified": null,
+  "zoom_aborted_window_count": 2,
+  "zoom_raw_opportunity_window_count": 20548,
+  "zoom_opportunity_outcome_counts": {
+    "INSUFFICIENT_CONFIDENCE": 11266,
+    "CUT_OR_OVERLAP": 8515,
+    "observed_safe_path": 424,
+    "unsafe_face_in_lookahead": 5,
+    "ACCEPTED": 2,
+    "EDITORIAL_BEAT_ALREADY_USED": 330,
+    "INSUFFICIENT_ZOOM_DURATION": 3,
+    "target_lost_in_lookahead": 3
+  },
+  "zoom_accepted_push_in_event_count": 2,
+  "zoom_accepted_pull_out_event_count": 0,
+  "zoom_block_reason_counts": {
+    "INSUFFICIENT_CONFIDENCE": 11266,
+    "CROP_UNSAFE": 432,
+    "EDITORIAL_BEAT_ALREADY_USED": 330,
+    "INSUFFICIENT_ZOOM_DURATION": 3
+  },
+  "zoom_delivery_fraction": null,
+  "zoom_diagnostics_contract": "proposal_timeline_render_preview_v2",
+  "focus_evidence_funnel": {
+    "window_counts": {
+      "NO_PERSON_OBSERVATION": 18500,
+      "NO_VISIBLE_FACE": 21285,
+      "NO_CONFIRMED_AUDIO_VISUAL_TARGET": 44704,
+      "AUDIO_OVERLAP": 224
+    },
+    "duration_seconds": {
+      "NO_PERSON_OBSERVATION": 1434.7879,
+      "NO_VISIBLE_FACE": 1613.4449,
+      "NO_CONFIRMED_AUDIO_VISUAL_TARGET": 2783.2595,
+      "AUDIO_OVERLAP": 8.6017
+    },
+    "fractions_of_video": {
+      "NO_PERSON_OBSERVATION": 0.245679,
+      "NO_VISIBLE_FACE": 0.27627,
+      "NO_CONFIRMED_AUDIO_VISUAL_TARGET": 0.476578,
+      "AUDIO_OVERLAP": 0.001473
+    },
+    "method": "exclusive_predecision_buckets_not_identity_accuracy"
+  },
+  "crop_preflight_blocked_windows": 21,
+  "zoom_temporal_preflight_rejected_windows": 432,
+  "zoom_full_transition_preflight_rejected_windows": 424,
+  "visual_only_fallback_windows": 2093,
+  "split_preflight_rejected_windows": 0,
+  "zoom_zero_root_cause": null,
+  "focus_decision_audit": {
+    "method": "per_evaluation_window_sampled_evidence_not_identity_accuracy",
+    "duration_seconds": {
+      "NO_VISIBLE_FACE": 3048.232781249944,
+      "NO_CONFIRMED_ACTIVE_SPEAKER": 2552.5030312499653,
+      "SAFE_ORIGINAL_CLOSEUP_PRESERVED": 91.43187500000448,
+      "VISUAL_ONLY_FALLBACK": 139.32459374999559,
+      "AUDIO_OVERLAP": 8.60171875000242
+    },
+    "resolved_focus_seconds": {
+      "NO_VISIBLE_FACE": 0.0,
+      "NO_CONFIRMED_ACTIVE_SPEAKER": 0.0,
+      "SAFE_ORIGINAL_CLOSEUP_PRESERVED": 0.0,
+      "VISUAL_ONLY_FALLBACK": 139.32459374999559,
+      "AUDIO_OVERLAP": 0.0
+    },
+    "candidate_outcome_window_counts": {
+      "SOURCE_PRESERVED": 81812,
+      "REPLACED_BY_SOURCE": 667,
+      "ACCEPTED": 2191,
+      "SUPPRESSED": 43
+    },
+    "switch_suppression_window_counts": {
+      "minimum_hold": 686
+    },
+    "switch_suppression_seconds": {
+      "minimum_hold": 46.50215624999896
+    },
+    "window_counts": {
+      "NO_VISIBLE_FACE": 39785,
+      "NO_CONFIRMED_ACTIVE_SPEAKER": 40683,
+      "SAFE_ORIGINAL_CLOSEUP_PRESERVED": 1788,
+      "VISUAL_ONLY_FALLBACK": 2233,
+      "AUDIO_OVERLAP": 224
+    },
+    "evaluation_window_count": 84713,
+    "source_preserved_window_count": 82480,
+    "window_count_denominator": "director_evaluation_windows",
+    "fractions_of_video": {
+      "NO_VISIBLE_FACE": 0.5219492667840524,
+      "NO_CONFIRMED_ACTIVE_SPEAKER": 0.43706540190105936,
+      "SAFE_ORIGINAL_CLOSEUP_PRESERVED": 0.01565589098394726,
+      "VISUAL_ONLY_FALLBACK": 0.0238565669919004,
+      "AUDIO_OVERLAP": 0.0014728733390254368
+    }
+  },
+  "independent_target_evidence": {
+    "window_counts": {
+      "target_seen": 66213,
+      "face_seen": 44928,
+      "crop_safe": 40097,
+      "target_stable": 3495
+    },
+    "duration_seconds": {
+      "target_seen": 4405.306093749935,
+      "face_seen": 2791.8612187499675,
+      "crop_safe": 2463.5389062499753,
+      "target_stable": 229.9433750000001
+    },
+    "stability_rejection_window_counts": {
+      "NO_VISIBLE_TRACKED_FACE": 34039,
+      "DETECTION_CONFIDENCE_BELOW_ENTRANCE": 7977,
+      "INSUFFICIENT_OBSERVED_DURATION": 31535,
+      "INSUFFICIENT_DISTINCT_SAMPLES": 13430,
+      "INSUFFICIENT_SAMPLED_VISIBILITY": 6346,
+      "RECENT_CENTER_VELOCITY_EXCEEDED": 27630,
+      "AMBIGUOUS_FACE_DOMINANCE": 9440
+    },
+    "states_are_parallel_do_not_sum": true,
+    "instrument_measurement_status": "UNKNOWN_NO_LINKED_SPATIAL_OBSERVATION",
+    "identity_accuracy_measured": false,
+    "scope": "sampled_observations_not_continuous_visibility_or_render_approval"
+  },
+  "zoom_gate_diagnostics": {
+    "schema_version": "1.0",
+    "legacy_zero_root_cause": null,
+    "additional_root_causes": [
+      {
+        "code": "NO_PERSON_OBSERVATION",
+        "type": "missing_visual_evidence",
+        "stage": "target",
+        "window_count": 18500,
+        "denominator": 84713,
+        "counting_scope": "exclusive_predecision_bucket",
+        "rank": 1
+      },
+      {
+        "code": "NO_VISIBLE_FACE",
+        "type": "missing_visual_evidence",
+        "stage": "target",
+        "window_count": 21285,
+        "denominator": 84713,
+        "counting_scope": "exclusive_predecision_bucket",
+        "rank": 2
+      },
+      {
+        "code": "NO_CONFIRMED_AUDIO_VISUAL_TARGET",
+        "type": "unresolved_audio_visual_evidence",
+        "stage": "target",
+        "window_count": 44704,
+        "denominator": 84713,
+        "counting_scope": "exclusive_predecision_bucket",
+        "rank": 3
+      },
+      {
+        "code": "AUDIO_OVERLAP",
+        "type": "ambiguous_audio_evidence",
+        "stage": "target",
+        "window_count": 224,
+        "denominator": 84713,
+        "counting_scope": "exclusive_predecision_bucket",
+        "rank": 4
+      },
+      {
+        "code": "low_face_sharpness",
+        "type": "crop_safety",
+        "stage": "crop",
+        "window_count": 8251,
+        "denominator": 84713,
+        "counting_scope": "parallel_observed_geometry_not_qualified_target",
+        "rank": 5
+      },
+      {
+        "code": "missing_or_unsafe_subject_geometry",
+        "type": "crop_safety",
+        "stage": "crop",
+        "window_count": 36197,
+        "denominator": 84713,
+        "counting_scope": "parallel_observed_geometry_not_qualified_target",
+        "rank": 6
+      },
+      {
+        "code": "subjects_do_not_fit_vertical_crop",
+        "type": "crop_safety",
+        "stage": "crop",
+        "window_count": 91,
+        "denominator": 84713,
+        "counting_scope": "parallel_observed_geometry_not_qualified_target",
+        "rank": 7
+      }
+    ],
+    "causes_are_parallel_do_not_sum": true,
+    "source": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 24.000001369843545,
+      "duration": 5840.094
+    },
+    "stages": {
+      "opportunity": {
+        "raw_windows": 20548,
+        "eligible_windows": 12033
+      },
+      "target": {
+        "confirmed_crop_eligible_windows": 0,
+        "resolved_focus_windows": 2233
+      },
+      "crop": {
+        "observed_geometry_block_window_counts": {
+          "missing_or_unsafe_subject_geometry": 36197,
+          "low_face_sharpness": 8251,
+          "subjects_do_not_fit_vertical_crop": 91
+        },
+        "qualified_target_preflight_rejections": 21
+      },
+      "proposal": {
+        "requested_windows": 433,
+        "proposed_events": 2
+      },
+      "acceptance": {
+        "accepted_windows": 2,
+        "accepted_events": 2
+      },
+      "render": {
+        "delivered_events": 0,
+        "delivery_verified": null,
+        "scope": "director_recommendation_not_rendered_video"
+      }
+    },
+    "window_count_denominator": 84713,
+    "publication_approval_inferred": false
+  }
+}

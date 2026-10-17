@@ -21,6 +21,49 @@ from ldporto.progress import WeightedProgress, STAGE_WEIGHTS, STAGE_LABELS, EVEN
 from ldporto.core import scrub
 
 
+def inspect_media_selection(source, *, root, local_path='', expected_sha256='', download_config=None):
+    """Read-only local resolution; this GUI helper never invokes a downloader."""
+    from ldporto.media import youtube_id
+    from ldporto.media_library import resolve_existing_media
+    cfg = download_config or {}
+    remote = source.startswith(('http://', 'https://'))
+    if remote:
+        video_id = youtube_id(source)
+        return resolve_existing_media(video_id, expected_sha256=expected_sha256 or cfg.get('expected_sha256'),
+            explicit_path=local_path or None, project_reference=cfg.get('media_reference'),
+            library_root=cfg.get('media_library_root'), legacy_root=Path(root)/'input/youtube')
+    selected = Path(source).expanduser()
+    if not selected.is_file():
+        raise ValueError('Arquivo local ausente; selecione o original.')
+    return resolve_existing_media('LOCAL_SELECTION', expected_sha256=expected_sha256 or None,
+                                  explicit_path=selected)
+
+
+def media_selection_text(result):
+    if result.get('status') == 'FOUND_VERIFIED':
+        origins = {'explicit_selection': 'arquivo escolhido', 'project_reference': 'referência do projeto',
+                   'media_library': 'biblioteca', 'legacy_input': 'arquivo existente do YouTube'}
+        return ('Mídia encontrada: ' + origins.get(result.get('origin'), 'arquivo registrado') +
+                ' · download desnecessário · SHA256 ' + str(result.get('source_sha256') or '') +
+                ' · conteúdo será verificado antes do processamento.')
+    if result.get('status') == 'BLOCKED':
+        return 'Mídia bloqueada: ' + str(result.get('error') or 'falha na verificação local')
+    return ('Mídia não encontrada ou incompatível. Selecione o original local ou autorize o download para este link.')
+
+
+def media_cli_options(source, *, allow_download=False, local_path='', expected_sha256=''):
+    """Explicit session choices; a local original preserves the source YouTube ID."""
+    options = []
+    if source.startswith(('http://', 'https://')):
+        if local_path:
+            options += ['--media-path', local_path]
+        if allow_download:
+            options.append('--allow-download')
+    if expected_sha256:
+        options += ['--media-sha256', expected_sha256]
+    return options
+
+
 def body_diagnostic_text(report):
     """Passive checks never replace proof of a real four-frame inference."""
     reason = report.get('model_validation_reason')
@@ -106,6 +149,25 @@ class App:
         self.source = tk.StringVar()
         ttk.Entry(line, textvariable=self.source).pack(side="left", fill="x", expand=True)
         ttk.Button(line, text="Selecionar vídeo", command=self.select).pack(side="left", padx=(8, 0))
+        self.media_busy, self.media_generation, self.media_check_result = False, 0, None
+        self.allow_download = tk.BooleanVar(value=False)
+        self.local_original, self.media_sha256 = tk.StringVar(), tk.StringVar()
+        self.media_status = tk.StringVar(value='Mídia: selecione o arquivo ou verifique o link para reutilizar um original existente.')
+        media_row = ttk.Frame(outer)
+        media_row.pack(fill='x', pady=3)
+        ttk.Button(media_row, text='Verificar mídia local', command=self.verify_media).pack(side='left')
+        ttk.Button(media_row, text='Original local para este link', command=self.select_media_original).pack(side='left', padx=8)
+        ttk.Checkbutton(media_row, text='Autorizar download se o original estiver ausente',
+                        variable=self.allow_download).pack(side='left', padx=8)
+        ttk.Entry(outer, textvariable=self.local_original, state='readonly').pack(fill='x')
+        hash_row = ttk.Frame(outer)
+        hash_row.pack(fill='x', pady=3)
+        ttk.Label(hash_row, text='SHA256 esperado (opcional)').pack(side='left')
+        ttk.Entry(hash_row, textvariable=self.media_sha256).pack(side='left', fill='x', expand=True, padx=8)
+        ttk.Label(outer, textvariable=self.media_status, wraplength=980).pack(anchor='w')
+        self.source.trace_add('write', lambda *_: self.change_media_selection(clear_original=True))
+        self.local_original.trace_add('write', lambda *_: self.change_media_selection())
+        self.media_sha256.trace_add('write', lambda *_: self.change_media_selection())
         line2 = ttk.Frame(outer)
         line2.pack(fill="x", pady=8)
         ttk.Label(line2, text="Modelo ASR").pack(side="left")
@@ -340,7 +402,7 @@ class App:
     def runtime_busy(self):
         proc = getattr(self, 'proc', None)
         return bool(getattr(self, 'project_busy', False) or getattr(self, 'smoke_busy', False) or
-                    getattr(self, 'ocr_busy', False) or proc and proc.poll() is None)
+                    getattr(self, 'ocr_busy', False) or getattr(self, 'media_busy', False) or proc and proc.poll() is None)
 
     def run_body_smoke(self, model=None, device=None, parent=None):
         """Explicit four-frame subprocess; no pipeline, download or GUI model import."""
@@ -433,6 +495,59 @@ class App:
         path = filedialog.askopenfilename(filetypes=[("Vídeos", "*.mp4 *.mkv *.webm *.mov *.avi"), ("Todos", "*.*")])
         if path:
             self.source.set(path)
+
+    def change_media_selection(self, clear_original=False):
+        self.media_generation += 1
+        self.media_check_result = None
+        if clear_original:
+            self.allow_download.set(False)
+            if self.local_original.get():
+                self.local_original.set('')
+        self.media_status.set('Mídia: seleção alterada; verificação local pendente.')
+
+    def select_media_original(self):
+        path = filedialog.askopenfilename(title='Original local correspondente ao link e ao SHA256',
+            filetypes=[('Vídeos', '*.mp4 *.mkv *.webm *.mov *.avi'), ('Todos', '*.*')])
+        if path:
+            self.local_original.set(path)
+
+    def media_options(self):
+        return {'source': self.source.get().strip(), 'local_path': self.local_original.get().strip(),
+                'expected_sha256': self.media_sha256.get().strip().lower()}
+
+    def verify_media(self, start_after=False):
+        if self.runtime_busy():
+            return
+        options, generation = self.media_options(), self.media_generation
+        if not options['source']:
+            self.media_status.set('Mídia: selecione um arquivo ou informe o link.')
+            return
+        self.media_busy = True
+        self.start_button.configure(state='disabled')
+        self.media_status.set('Mídia: verificando arquivos e SHA256; nenhum download em execução…')
+        def worker():
+            try:
+                cfg = load_config(ROOT/'config'/'config.yaml').get('download') or {}
+                result = inspect_media_selection(root=ROOT, download_config=cfg, **options)
+            except (OSError, ValueError, TypeError) as exc:
+                result = {'status': 'BLOCKED', 'error': scrub(exc), 'download_authorized': False}
+            self.messages.put(('media_result', (generation, options, result, start_after)))
+        threading.Thread(target=worker, daemon=True).start()
+
+    def handle_media_result(self, value):
+        generation, options, result, start_after = value
+        self.media_busy = False
+        self.start_button.configure(state='normal')
+        if generation != self.media_generation or options != self.media_options():
+            self.media_status.set('Mídia: seleção alterada; resultado anterior ignorado.')
+            return
+        self.media_check_result = (options, result)
+        self.media_status.set(media_selection_text(result))
+        permitted = (result.get('status') == 'FOUND_VERIFIED' or
+            result.get('status') == 'OPERATOR_SELECTION_REQUIRED' and self.allow_download.get()
+            and options['source'].startswith(('http://', 'https://')))
+        if start_after and permitted and not getattr(self, 'closing_requested', False):
+            self._start_checked()
 
     def build_execution_screens(self):
         self.execution_frame = ttk.Frame(self.window, padding=24)
@@ -1012,6 +1127,9 @@ class App:
             self.window.clipboard_clear()
             self.window.clipboard_append(str(self.package_path))
     def launch(self, args):
+        if getattr(self, 'media_busy', False):
+            messagebox.showinfo('Mídia', 'Aguarde a verificação local do original.')
+            return
         if getattr(self, 'smoke_busy', False):
             messagebox.showinfo('Canario em execucao', 'Aguarde o canario sequencial terminar.')
             return
@@ -1156,9 +1274,26 @@ class App:
         if not source:
             messagebox.showinfo("Entrada", "Selecione um vídeo ou cole um link.")
             return
+        if hasattr(self, 'media_status'):
+            options = self.media_options()
+            checked = self.media_check_result
+            if checked is None or checked[0] != options:
+                self.verify_media(start_after=True)
+                return
+            result = checked[1]
+            permitted_download = (source.startswith(('http://', 'https://')) and self.allow_download.get()
+                                  and result.get('status') == 'OPERATOR_SELECTION_REQUIRED')
+            if result.get('status') != 'FOUND_VERIFIED' and not permitted_download:
+                messagebox.showinfo('Original local', media_selection_text(result))
+                return
         self.output_folder = ROOT/"analysis"/__import__("datetime").datetime.now().strftime("execucao_%Y%m%d_%H%M%S")
         args = [source, "--output", str(self.output_folder), "--model", self.model.get(),
                 "--device", self.device.get(), "--semantic", "ollama" if self.ollama.get() else "heuristic"]
+        if hasattr(self, 'media_status'):
+            options, result = self.media_check_result
+            args += media_cli_options(source, allow_download=self.allow_download.get(),
+                local_path=options['local_path'] or result.get('path', ''),
+                expected_sha256=options['expected_sha256'] or result.get('source_sha256', ''))
         if self.ollama.get():
             args += ["--ollama-model", self.ollama_model.get().strip() or "qwen3:8b",
                      "--ollama-profile", self.ollama_profile.get()]
@@ -1418,6 +1553,11 @@ class App:
                     self.handle_stage_event(value)
                 elif kind == 'ocr_result':
                     self.handle_ocr_result(value)
+                elif kind == 'media_result':
+                    self.handle_media_result(value)
+                    if self.closing_requested:
+                        self.window.destroy()
+                        return
                 elif kind == 'body_smoke_result':
                     self.handle_body_smoke_result(value)
                     if self.closing_requested:
@@ -1552,6 +1692,10 @@ class App:
                      application_busy=lambda:getattr(self,'project_busy',False) or (self.proc and self.proc.poll() is None))
 
     def close(self):
+        if getattr(self, 'media_busy', False):
+            self.closing_requested = True
+            self.media_status.set('Concluindo a leitura do SHA256 antes de fechar…')
+            return
         if self.project_busy:
             self.project_cancel.set()
             self.closing_requested = True

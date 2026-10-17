@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "event_source_interval": {
+    "start": 1601.7920000000001,
+    "end": 1607.7920000000001
+  },
+  "target_person_id": "PERSON_2629",
+  "identity_confirmed": false,
+  "proposed": true,
+  "geometric_safe": "face/head only by existing Analyzer geometry; torso/hands unverified",
+  "accepted": "technical sandbox render only",
+  "keyframed": true,
+  "serialized": true,
+  "consumed": true,
+  "FFmpeg_applied": true,
+  "final_frames_verified": "digital transform observed in source-to-output similarity; full portrait composition rejected",
+  "scale_monotonic": true,
+  "measured_scale_increase_fraction": 0.031237209355384543,
+  "final_crop_acceptance": "REJECTED_HAND_GESTURE_EXITS_PORTRAIT_CROP",
+  "delivered": false,
+  "fallback": "../safe_fallback_review/TECHNICAL_PREVIEW.mp4",
+  "preview_approved": false,
+  "publish_ready": false
+}

@@ -1,0 +1,24 @@
+{
+  "mode": "adaptive_timeline",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 4.0,
+      "mode": "full_frame_blur",
+      "analyzer_composition": "SOURCE_FIT_BLUR",
+      "source_interval": {
+        "start": 105.75,
+        "end": 109.75
+      },
+      "reason": "actual Analyzer replay unresolved; preserve entire source"
+    }
+  ],
+  "provenance": {
+    "analyzer_timeline": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\r6_20261016\\R6_2_FINAL_HANDOFF\\camera_replay_r62\\timeline.json",
+    "analyzer_timeline_sha256": "eceb4d115dd2fbbd0eea330d0820f1d696df34cfc58744c6e87fc338a7a98cc6",
+    "handoff_sha256": "f260d9c03e38fbd85c538ddf7ae68665ed569756572ade21b4fe1d181e0603fc",
+    "mapping": "SOURCE_FIT_BLUR -> full_frame_blur; identical spans merged"
+  },
+  "preview_approved": false,
+  "publish_ready": false
+}

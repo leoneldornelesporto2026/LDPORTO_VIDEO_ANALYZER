@@ -1,0 +1,58 @@
+{
+  "source": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\9UCGZia2p1k\\9UCGZia2p1k.mp4",
+  "library": "C:\\Users\\leone\\Videos\\LDPORTO_MEDIA_LIBRARY",
+  "copy": {
+    "status": "COPIED_VERIFIED",
+    "path": "C:\\Users\\leone\\Videos\\LDPORTO_MEDIA_LIBRARY\\9UCGZia2p1k\\original.mp4",
+    "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+    "source_preserved": true
+  },
+  "resolution": {
+    "status": "FOUND_VERIFIED",
+    "path": "C:\\Users\\leone\\Videos\\LDPORTO_MEDIA_LIBRARY\\9UCGZia2p1k\\original.mp4",
+    "origin": "media_library",
+    "video_id": "9UCGZia2p1k",
+    "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+    "bytes": 2663231970,
+    "download_needed": false,
+    "container_validation": "extension_only_use_media_inspect_before_render",
+    "attempts": [],
+    "publication_ready": false
+  },
+  "analyzer_resolved_path": "C:\\Users\\leone\\Videos\\LDPORTO_MEDIA_LIBRARY\\9UCGZia2p1k\\original.mp4",
+  "container_probe": {
+    "command": [
+      "C:\\Users\\leone\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1-full_build\\bin\\ffprobe.EXE",
+      "-v",
+      "error",
+      "-show_streams",
+      "-show_format",
+      "-of",
+      "json",
+      "C:\\Users\\leone\\Videos\\LDPORTO_MEDIA_LIBRARY\\9UCGZia2p1k\\original.mp4"
+    ],
+    "duration": "5840.094000",
+    "streams": [
+      {
+        "type": "video",
+        "codec": "vp9",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "type": "audio",
+        "codec": "opus",
+        "width": null,
+        "height": null
+      }
+    ]
+  },
+  "original_bytes": 2663231970,
+  "original_mtime_ns_preserved": true,
+  "original_sha256_preserved": true,
+  "source_removed": false,
+  "download_called": false,
+  "models_executed": false,
+  "publication_ready": false,
+  "rollback": "Keep legacy source selected; no automatic removal of either original."
+}

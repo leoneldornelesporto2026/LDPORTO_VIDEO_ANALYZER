@@ -1,0 +1,501 @@
+{
+  "scope": "baseline_package_contracts_no_frame_capture_no_show_reanalysis",
+  "candidate_count": 70,
+  "input_package_sha256": "d090841905222237b282af8b25caa02aa8b2bfcb946baae1a6f4ae0f3ab3779c",
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "rows": [
+    {
+      "candidate_id": "MOMENT_00012_0003",
+      "bytes": 1354639,
+      "observation_count": 809,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00015_0000",
+      "bytes": 220233,
+      "observation_count": 105,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0002",
+      "bytes": 403236,
+      "observation_count": 256,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00021_0000",
+      "bytes": 435851,
+      "observation_count": 259,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00017_0000",
+      "bytes": 133670,
+      "observation_count": 90,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00007_0002",
+      "bytes": 54938,
+      "observation_count": 25,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00020_0000",
+      "bytes": 410462,
+      "observation_count": 199,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00010_0000",
+      "bytes": 265375,
+      "observation_count": 149,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00010_0002",
+      "bytes": 740604,
+      "observation_count": 428,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0000",
+      "bytes": 780541,
+      "observation_count": 442,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0006",
+      "bytes": 773385,
+      "observation_count": 486,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00004_0002",
+      "bytes": 876968,
+      "observation_count": 461,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00015_0001",
+      "bytes": 168522,
+      "observation_count": 81,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00005_0000",
+      "bytes": 1099091,
+      "observation_count": 676,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00006_0000",
+      "bytes": 668542,
+      "observation_count": 403,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00010_0001",
+      "bytes": 819844,
+      "observation_count": 558,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00004_0000",
+      "bytes": 75767,
+      "observation_count": 47,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00012_0001",
+      "bytes": 318055,
+      "observation_count": 164,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00005_0002",
+      "bytes": 569754,
+      "observation_count": 301,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00019_0001",
+      "bytes": 235321,
+      "observation_count": 117,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00006_0002",
+      "bytes": 619216,
+      "observation_count": 366,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0004",
+      "bytes": 134210,
+      "observation_count": 72,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00019_0002",
+      "bytes": 510755,
+      "observation_count": 288,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0005",
+      "bytes": 95048,
+      "observation_count": 50,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_PRESERVED_00003_0002",
+      "bytes": 1455845,
+      "observation_count": 821,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_PRESERVED_00003_0005",
+      "bytes": 1455845,
+      "observation_count": 821,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00012_0002",
+      "bytes": 261050,
+      "observation_count": 161,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00006_0001",
+      "bytes": 385817,
+      "observation_count": 233,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00018_0002",
+      "bytes": 441069,
+      "observation_count": 259,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00008_0000",
+      "bytes": 189734,
+      "observation_count": 88,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00007_0004",
+      "bytes": 611284,
+      "observation_count": 307,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00018_0001",
+      "bytes": 498197,
+      "observation_count": 286,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00012_0004",
+      "bytes": 839403,
+      "observation_count": 559,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00019_0000",
+      "bytes": 388676,
+      "observation_count": 227,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00012_0005",
+      "bytes": 580266,
+      "observation_count": 380,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00008_0002",
+      "bytes": 274565,
+      "observation_count": 150,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00007_0005",
+      "bytes": 464613,
+      "observation_count": 252,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_PRESERVED_00003_0000",
+      "bytes": 106125,
+      "observation_count": 44,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_PRESERVED_00003_0003",
+      "bytes": 106125,
+      "observation_count": 44,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00021_0001",
+      "bytes": 27485,
+      "observation_count": 12,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00012_0000",
+      "bytes": 33299,
+      "observation_count": 12,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00007_0003",
+      "bytes": 476805,
+      "observation_count": 265,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00007_0001",
+      "bytes": 30694,
+      "observation_count": 7,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00009_0000",
+      "bytes": 388658,
+      "observation_count": 209,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00014_0000",
+      "bytes": 118056,
+      "observation_count": 76,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00016_0000",
+      "bytes": 110872,
+      "observation_count": 52,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00018_0000",
+      "bytes": 49372,
+      "observation_count": 26,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00002_0000",
+      "bytes": 172180,
+      "observation_count": 90,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00018_0004",
+      "bytes": 128421,
+      "observation_count": 77,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00000_0000",
+      "bytes": 46906,
+      "observation_count": 20,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00001_0000",
+      "bytes": 89305,
+      "observation_count": 60,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00001_0001",
+      "bytes": 85933,
+      "observation_count": 44,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00001_0003",
+      "bytes": 20985,
+      "observation_count": 3,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00001_0002",
+      "bytes": 65022,
+      "observation_count": 30,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00001_0004",
+      "bytes": 11360,
+      "observation_count": 2,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_PRESERVED_00003_0001",
+      "bytes": 240451,
+      "observation_count": 114,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_PRESERVED_00003_0004",
+      "bytes": 240451,
+      "observation_count": 114,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00004_0001",
+      "bytes": 169889,
+      "observation_count": 104,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00004_0003",
+      "bytes": 325650,
+      "observation_count": 187,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00004_0004",
+      "bytes": 469448,
+      "observation_count": 276,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00005_0001",
+      "bytes": 648241,
+      "observation_count": 343,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00007_0000",
+      "bytes": 145892,
+      "observation_count": 89,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00008_0001",
+      "bytes": 128811,
+      "observation_count": 65,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00011_0000",
+      "bytes": 85043,
+      "observation_count": 36,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0001",
+      "bytes": 313832,
+      "observation_count": 210,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0003",
+      "bytes": 92992,
+      "observation_count": 63,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00013_0007",
+      "bytes": 487927,
+      "observation_count": 298,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00014_0001",
+      "bytes": 277980,
+      "observation_count": 156,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00014_0002",
+      "bytes": 31521,
+      "observation_count": 10,
+      "captured_frames": 0,
+      "valid": true
+    },
+    {
+      "candidate_id": "MOMENT_00018_0003",
+      "bytes": 514641,
+      "observation_count": 333,
+      "captured_frames": 0,
+      "valid": true
+    }
+  ],
+  "failures": [],
+  "total_bytes": 25850763,
+  "max_bytes": 1455845
+}

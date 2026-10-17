@@ -1,6 +1,6 @@
 """Visual target evidence independent of acoustic speaker identity."""
 import math
-from collections import Counter
+from collections import Counter, deque
 
 
 def local_speaker_supported(row):
@@ -87,8 +87,37 @@ def focus_window_evidence(item, focus, layout, role, reasons, selected):
                          'crop_rejection_reasons': {person: geo.get('reason') for person, geo in
                              item.get('crop_geometry', {}).items() if not geo.get('safe')}},
             'visual_target_evidence': item.get('visual_target_evidence'),
+            'target_states': target_state_evidence(item),
             'coverage_effect': {'resolved_focus_seconds': item['end']-item['start'] if resolved else 0.,
                                 'source_preserve_seconds': item['end']-item['start'] if layout == 'full_frame' else 0.}}
+
+
+def target_state_evidence(item):
+    """Keep spatial, temporal, acoustic and named-identity evidence independent.
+
+    A face can be a valid visual target without being an identified speaker or
+    musician. Missing instrument measurements remain unknown.
+    """
+    confirmed = {row['person_id'] for row in item['confident']}
+    states = {}
+    for person, obs in item['obs'].items():
+        temporal = (item.get('visual_target_diagnostics') or {}).get(person, {})
+        confirmation = obs.get('identity_confirmation') or {}
+        name_confirmed = bool(confirmation.get('method') in {'user_verified', 'human_confirmed'}
+                              and confirmation.get('confirmed_name') and confirmation.get('evidence_refs'))
+        states[person] = {
+            'track_id': obs.get('track_id'), 'target_seen': True,
+            'face_seen': bool(obs.get('face_visible') and obs.get('face_bbox')),
+            'target_stable': temporal.get('target_stable', False),
+            'speaker_linked': person in confirmed,
+            'instrument_linked': None,
+            'instrument_measurement_status': 'UNKNOWN_NO_LINKED_SPATIAL_OBSERVATION',
+            'crop_safe': person in item['safe'], 'identity_confirmed': name_confirmed,
+            'persistent_identity_status': obs.get('identity_status', 'UNKNOWN'),
+            'stability_reason_codes': temporal.get('reason_codes', ['NOT_EVALUATED']),
+            'confidence_semantics': 'detector_score_not_calibrated_identity_probability',
+        }
+    return states
 
 
 def zoom_gate_diagnostics(records, windows, counts, metadata, metrics):
@@ -143,29 +172,54 @@ def zoom_gate_diagnostics(records, windows, counts, metadata, metrics):
 class VisualTargetEvidence:
     def __init__(self):
         self.tracks = {}
+        self.diagnostics = {}
 
     def update(self, observations, time, shot_id, cfg):
-        current = {}
+        # Keep a bounded history through a transient missing/low-confidence face.
+        # The current sample must still satisfy the entrance threshold before it
+        # can direct a crop; retained history never extrapolates a missing face.
+        current = {person: track for person, track in self.tracks.items()
+                   if track['key'][0] == shot_id and 0 <= time-track['last'] <= cfg['max_observation_gap_seconds'] * 2}
+        diagnostics = {}
         for person, obs in observations.items():
             face = obs.get('face_bbox')
+            reasons = []
             if not face or not obs.get('face_visible') or not obs.get('track_id'):
+                diagnostics[person] = {'target_stable': False, 'reason_codes': ['NO_VISIBLE_TRACKED_FACE']}
                 continue
             confidence = float(obs.get('detection_confidence') or 0)
             if confidence < cfg['minimum_target_confidence']:
+                diagnostics[person] = {'target_stable': False, 'reason_codes': ['DETECTION_CONFIDENCE_BELOW_ENTRANCE']}
                 continue
             key = (shot_id, obs['track_id'])
             center = (face['x'] + face['width'] / 2, face['y'] + face['height'] / 2)
             prior = self.tracks.get(person)
             if prior is None or prior['key'] != key or time - prior['last'] > cfg['max_observation_gap_seconds'] * 2:
-                prior = {'key': key, 'first': time, 'last': time, 'samples': 0, 'center': center, 'max_velocity': 0., 'visible_seconds': 0.}
+                prior = {'key': key, 'first': time, 'last': time, 'samples': 0, 'center': center,
+                         'velocities': deque(), 'max_velocity': 0., 'visible_seconds': 0.}
             dt = time - prior['last']
             if dt > 0:
-                prior['max_velocity'] = max(prior['max_velocity'], math.dist(center, prior['center']) / dt)
+                prior['velocities'].append((time, math.dist(center, prior['center']) / dt))
                 prior['samples'] += 1
                 prior['visible_seconds'] += min(dt, cfg['max_observation_gap_seconds'])
+            while prior['velocities'] and prior['velocities'][0][0] < time-cfg['minimum_face_duration']:
+                prior['velocities'].popleft()
+            prior['max_velocity'] = max((value for _, value in prior['velocities']), default=0.)
             prior.update(last=time, center=center)
             current[person] = prior
+            if time-prior['first'] < cfg['minimum_face_duration']:
+                reasons.append('INSUFFICIENT_OBSERVED_DURATION')
+            if prior['samples'] < 3:
+                reasons.append('INSUFFICIENT_DISTINCT_SAMPLES')
+            if prior['visible_seconds'] / max(time-prior['first'], 1e-9) < cfg['minimum_face_visibility']:
+                reasons.append('INSUFFICIENT_SAMPLED_VISIBILITY')
+            if prior['max_velocity'] > cfg['maximum_center_velocity']:
+                reasons.append('RECENT_CENTER_VELOCITY_EXCEEDED')
+            diagnostics[person] = {'target_stable': not reasons, 'reason_codes': reasons or ['STABLE_OBSERVED_TRACK'],
+                                   'persistence_seconds': time-prior['first'],
+                                   'recent_max_center_velocity': prior['max_velocity']}
         self.tracks = current
+        self.diagnostics = diagnostics
         faces = sorted(((obs['face_bbox']['width'] * obs['face_bbox']['height'], person)
                         for person, obs in observations.items() if obs.get('face_bbox') and obs.get('face_visible')), reverse=True)
         if not faces:
@@ -173,9 +227,11 @@ class VisualTargetEvidence:
         area, person = faces[0]
         margin = (area - faces[1][0]) / area if len(faces) > 1 and area > 0 else 1.
         track = current.get(person)
-        if (not track or time - track['first'] < cfg['minimum_face_duration'] or track['samples'] < 3
-                or track['visible_seconds'] / max(time - track['first'], 1e-9) < cfg['minimum_face_visibility']
-                or margin < cfg['minimum_dominance_margin'] or track['max_velocity'] > cfg['maximum_center_velocity']):
+        if margin < cfg['minimum_dominance_margin'] and person in diagnostics:
+            diagnostics[person]['reason_codes'] = list(dict.fromkeys(
+                diagnostics[person]['reason_codes'] + ['AMBIGUOUS_FACE_DOMINANCE']))
+        if (not track or not diagnostics.get(person, {}).get('target_stable')
+                or margin < cfg['minimum_dominance_margin']):
             return None
         return {'person_id': person, 'confidence': float(observations[person]['detection_confidence']),
                 'reason': 'DOMINANT_FACE', 'persistence_seconds': time - track['first'],

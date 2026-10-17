@@ -1,0 +1,54 @@
+[
+  {
+    "start": 1143.5,
+    "end": 1149.5,
+    "zoom_start": 1.0,
+    "zoom_end": 1.125,
+    "mode": "SMART_ZOOM_IN",
+    "target_person_id": "PERSON_1981",
+    "reason_codes": [
+      "PAYOFF_EMPHASIS",
+      "ACTIVE_SPEAKER_FOCUS"
+    ],
+    "beat_id": "MOMENT_PRESERVED_00003_0001_PAYOFF"
+  },
+  {
+    "start": 1601.7920000000001,
+    "end": 1607.7920000000001,
+    "zoom_start": 1.0,
+    "zoom_end": 1.125,
+    "mode": "SMART_ZOOM_IN",
+    "target_person_id": "PERSON_2629",
+    "reason_codes": [
+      "PAYOFF_EMPHASIS",
+      "ACTIVE_SPEAKER_FOCUS"
+    ],
+    "beat_id": "MOMENT_00005_0000_PAYOFF"
+  },
+  {
+    "start": 1894.708,
+    "end": 1900.708,
+    "zoom_start": 1.0,
+    "zoom_end": 1.125,
+    "mode": "SMART_ZOOM_IN",
+    "target_person_id": "PERSON_3011",
+    "reason_codes": [
+      "PAYOFF_EMPHASIS",
+      "ACTIVE_SPEAKER_FOCUS"
+    ],
+    "beat_id": "MOMENT_00006_0002_PAYOFF"
+  },
+  {
+    "start": 3619.65,
+    "end": 3625.65,
+    "zoom_start": 1.0,
+    "zoom_end": 1.125,
+    "mode": "SMART_ZOOM_IN",
+    "target_person_id": "PERSON_6458",
+    "reason_codes": [
+      "PAYOFF_EMPHASIS",
+      "ACTIVE_SPEAKER_FOCUS"
+    ],
+    "beat_id": "MOMENT_00012_0003_PAYOFF"
+  }
+]

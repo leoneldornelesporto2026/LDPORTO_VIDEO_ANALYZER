@@ -22,6 +22,36 @@ from ldporto.project_export import _safe_ancestors,_logical
 from ldporto.core import file_hash
 
 
+def _frame_reference_remap(old_atlas, new_atlas):
+    """Map old IDs to new IDs whether the original atlas was raw or reprofiled.
+
+    A first-pass atlas does not yet contain source_frame_id_map. A reprofiled
+    atlas does, and may have merged multiple source IDs into one physical frame.
+    Never silently drop an original frame ID or accept an ambiguous remapping.
+    """
+    old_frames=old_atlas.get('frames') or []
+    old_ids=[row['frame_id'] for row in old_frames]
+    if len(old_ids)!=len(set(old_ids)):
+        raise ValueError('duplicate_old_atlas_frame_id')
+    old_map=old_atlas.get('source_frame_id_map')
+    if old_map is None:
+        old_map={ident:ident for ident in old_ids}
+    new_map=new_atlas.get('source_frame_id_map') or {}
+    result={}
+    for original_id,old_id in old_map.items():
+        if original_id not in new_map:
+            raise ValueError('reprofile_source_frame_id_missing:'+str(original_id))
+        new_id=new_map[original_id]
+        if old_id in result and result[old_id]!=new_id:
+            raise ValueError('ambiguous_reprofile_frame_mapping:'+str(old_id))
+        result[old_id]=new_id
+    if set(result)!=set(old_ids):
+        raise ValueError('frame_reference_remap_incomplete')
+    if not set(result.values()) <= {row['frame_id'] for row in new_atlas.get('frames') or []}:
+        raise ValueError('remapped_frame_missing_from_final_atlas')
+    return result
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--directory',required=True,type=Path);parser.add_argument('--analysis',required=True,type=Path)
@@ -46,9 +76,7 @@ def main():
     atlas=reprofile_shared_atlas(args.atlas_cache,work,metadata,original_scenes,analysis_folder=args.analysis,
         navigation_width=320,analysis_width=640,jpeg_quality=args.image_quality,
         contact_width=args.contact_width,contact_quality=args.contact_quality)
-    old_map=old_atlas['source_frame_id_map'];new_map=atlas['source_frame_id_map']
-    remap={old_map[key]:new_map[key] for key in old_map}
-    if len(remap)!=len(old_atlas['frames']):raise ValueError('frame_reference_remap_incomplete')
+    remap=_frame_reference_remap(old_atlas,atlas)
     def rewrite(value):
         if isinstance(value,str):return remap.get(value,value)
         if isinstance(value,list):return [rewrite(x) for x in value]
@@ -96,8 +124,9 @@ def main():
         extra=[(args.analysis/name,'raw_analysis/'+name) for name in raw_names if (args.analysis/name).is_file()]
         summary['full_audit']=_zip_directory(work,output/'FULL_AUDIT.zip',extra)
     _write(output,'COMPACT_DELIVERY.json',summary)
-    report=ROOT/'docs/reports/r63_20261017';report.mkdir(parents=True,exist_ok=True)
-    _write(report,'FINAL_ARTIFACT_POINTER.json',{'delivery_manifest':str(output/'COMPACT_DELIVERY.json'),
+    # A derived revision must not modify source-controlled docs/reports or
+    # historic checkpoints. Keep the pointer beside the new ZIP only.
+    _write(output,'FINAL_ARTIFACT_POINTER.json',{'delivery_manifest':str(output/'COMPACT_DELIVERY.json'),
         'delivery_manifest_sha256':file_hash(output/'COMPACT_DELIVERY.json'),'archive':archive,
         'full_audit':summary.get('full_audit'),'state':'PARTIAL'})
     print(json.dumps({k:v for k,v in summary.items() if k!='coverage'},ensure_ascii=False,indent=2))

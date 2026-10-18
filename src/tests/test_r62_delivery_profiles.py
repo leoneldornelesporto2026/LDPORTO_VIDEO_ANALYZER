@@ -131,7 +131,15 @@ def test_delivery_profiles_keep_parent_hashes_and_separate_approval_gates(tmp_pa
                 path = piece['manifest_ref'].rsplit('/', 1)[0] + '/' + record['path']
                 assert hashlib.sha256(archive.read(path)).hexdigest() == record['sha256']
         captions = json.loads(archive.read('subtitles/visual_piece_caption_preflight.json'))
-        assert set(captions['stories']) == {'M1', 'M2', 'ST_FIXTURE'}
+        assert set(captions['reels']) == {'M1', 'M2'}
+        assert set(captions['stories']) == {'ST_FIXTURE'}
+        assert index['review_atlas_ref'] == 'VISUAL_FRAME_HANDOFF/REVISAO_VISUAL_POR_CORTE.pdf'
+        assert 'VISUAL_FRAME_HANDOFF/REVISAO_VISUAL_POR_CORTE.pdf' in archive.namelist()
+        report = json.loads(archive.read(index['coverage_report_ref']))
+        assert report['piece_count'] == 3 and len(report['pieces']) == 3
+        assert all(row['human_review_required'] for row in report['pieces'])
+        assert all(row['continuous_visual_coverage_confirmed'] is False for row in report['pieces'])
+        assert all(row['caption_preflight_ref'].split('#/')[1].split('/')[0] in ('reels','stories') for row in index['pieces'])
         assert captions['new_asr_calls'] == 0
     with zipfile.ZipFile(full) as archive:
         assert 'raw_analysis/run_manifest.json' in archive.namelist()

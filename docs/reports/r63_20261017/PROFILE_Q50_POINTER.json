@@ -1,0 +1,25 @@
+{
+  "scope": "CPU_JPEG_reprofile_no_video_decoder",
+  "target": "C:\\Users\\leone\\Videos\\LDPORTO_VIDEO_ANALYZER\\R6_3_PROFILE_Q50_20261018T010929064824Z",
+  "source_cache": "C:\\Users\\leone\\Videos\\LDPORTO_VIDEO_ANALYZER\\R6_3_SHARED_FRAMES_20261018T005200982195Z",
+  "source_atlas_sha256": "75526d04539cf3f2f727a1adf276e75f0d591a5a37cb0c9d8d20db8f214a716a",
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "statistics": {
+    "planned_requests": 2423,
+    "captured_frame_records": 2403,
+    "unique_image_files": 2403,
+    "identical_content_deduplicated": 0,
+    "stored_image_bytes": 22078836,
+    "new_decoder_reads": 0,
+    "continuous_visual_coverage_verified": false,
+    "source_cache_decoder_reads": 3025,
+    "contact_sheet_bytes": 5634044,
+    "timestamp_reconciliations": 97,
+    "unresolved_cached_timestamps": 0,
+    "indexed_scene_count": 2045,
+    "scene_ids_without_frames": []
+  },
+  "contact_sheets": 151,
+  "frames": 2403,
+  "index_sha256": "7160c2f3f11e6e9d325a69c0c97ec44792190503d5e0ac150f6ee3c1c10c4023"
+}

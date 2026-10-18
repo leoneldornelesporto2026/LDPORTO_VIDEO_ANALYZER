@@ -1,0 +1,18 @@
+{
+  "atlas_directory": "C:\\Users\\leone\\Videos\\LDPORTO_VIDEO_ANALYZER\\R6_3_SHARED_FRAMES_20261018T005200982195Z",
+  "analysis": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\analysis\\video_da9542291a6b",
+  "package": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\SECOND_CURATION_READY_5d089e1825b3_20261017_020701_253736_8b80a1.zip",
+  "package_sha256": "5e5af9a17897eb424972c4d722a818ce29ca1d75dfff5e2e96b525932872f0cb",
+  "source_sha256": "5d089e1825b396dafd6b5918274f3a785eb2d8be2f622497cb7d06fdd7b3b7ea",
+  "status": "COMPLETE",
+  "statistics": {
+    "planned_requests": 2423,
+    "captured_frame_records": 2403,
+    "unique_image_files": 2403,
+    "identical_content_deduplicated": 0,
+    "stored_image_bytes": 39954326,
+    "new_decoder_reads": 3025,
+    "continuous_visual_coverage_verified": false
+  },
+  "atlas_index_sha256": "75526d04539cf3f2f727a1adf276e75f0d591a5a37cb0c9d8d20db8f214a716a"
+}

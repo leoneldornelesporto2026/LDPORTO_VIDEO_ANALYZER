@@ -62,6 +62,21 @@ def test_new_package_has_one_actionable_queue_and_legacy_queue_still_validates(t
             row.update(bytes=(folder/row['path']).stat().st_size, sha256=file_hash(folder/row['path']))
     manifest['uncompressed_bytes'] = sum(row['bytes'] for row in manifest['files'])
     write_json(manifest_path, manifest)
+    # R6 binds the same artifact in both ledgers. Re-signing only the outer
+    # manifest must not make a stale nested HANDOFF_MASTER checksum valid.
+    validation = validate_core_package(folder)
+    assert 'r6:master_artifact_hash:editorial/human_review_queue.json' in validation['errors']
+    master_path = folder/'HANDOFF_MASTER.json'
+    master = json.loads(master_path.read_text(encoding='utf-8'))
+    for row in master['artifacts']:
+        if row['path'] == 'editorial/human_review_queue.json':
+            row.update(bytes=(folder/row['path']).stat().st_size, sha256=file_hash(folder/row['path']))
+    write_json(master_path, master)
+    for row in manifest['files']:
+        if row['path'] == 'HANDOFF_MASTER.json':
+            row.update(bytes=master_path.stat().st_size, sha256=file_hash(master_path))
+    manifest['uncompressed_bytes'] = sum(row['bytes'] for row in manifest['files'])
+    write_json(manifest_path, manifest)
     assert validate_core_package(folder)['status'] == 'valid'
 
 

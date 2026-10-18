@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="57.133" timestamp="2026-10-17T21:59:08.266376-03:00" hostname="leonelporto"><testcase classname="src.tests.test_sol_v4_post_integration" name="test_new_package_has_one_actionable_queue_and_legacy_queue_still_validates" time="1.297"><failure message="AssertionError: assert 'failed' == 'valid'&#10;  &#10;  - valid&#10;  + failed">tmp_path = WindowsPath('C:/Users/leone/Documentos/Meus Projetos/LDPORTO_VIDEO_ANALYZER/tmp/r63_legacy_three_readonly/test_new_package_has_one_actio0')
+
+    def test_new_package_has_one_actionable_queue_and_legacy_queue_still_validates(tmp_path):
+        from test_stage06_report_coherence import fixture
+        from ldporto.integrity_contracts import human_review_queue
+        analysis = fixture()
+        before = deepcopy(analysis)
+        result = build_core_package(analysis, source=None, output_dir=tmp_path/'new',
+            cfg={'second_curation_visual_candidate_limit': 0, 'include_candidate_previews': False},
+            directory_only=True)
+        folder = Path(result['path'])
+        queue = json.loads((folder/'editorial/human_review_queue.json').read_text())
+        assert queue['schema_version'] == '1.2' and queue['publication_ready'] is False
+        assert validate_core_package(folder)['status'] == 'valid'
+        assert analysis == before
+        # Reproduce the old physical contract in this synthetic derived copy only.
+        candidates = json.loads((folder/'editorial/candidate_catalog.json').read_text())['candidates']
+        write_json(folder/'editorial/human_review_queue.json', human_review_queue(candidates, schema_version='1.0'))
+        manifest_path = folder/'SECOND_CURATION_MANIFEST.json'
+        manifest = json.loads(manifest_path.read_text())
+        for row in manifest['files']:
+            if row['path'] == 'editorial/human_review_queue.json':
+                row.update(bytes=(folder/row['path']).stat().st_size, sha256=file_hash(folder/row['path']))
+        manifest['uncompressed_bytes'] = sum(row['bytes'] for row in manifest['files'])
+        write_json(manifest_path, manifest)
+&gt;       assert validate_core_package(folder)['status'] == 'valid'
+E       AssertionError: assert 'failed' == 'valid'
+E         
+E         - valid
+E         + failed
+
+src\tests\test_sol_v4_post_integration.py:65: AssertionError</failure></testcase><testcase classname="src.tests.test_v42_export" name="test_exporter_self_test" time="39.860"><failure message="AssertionError: assert 'FAIL' == 'PASS'&#10;  &#10;  - PASS&#10;  + FAIL">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001EFB5471810&gt;
+
+    def test_exporter_self_test(monkeypatch):
+        """Verify source packaging and secrets with the actual canonical exporter."""
+        from pathlib import Path
+        module=exporter_module(monkeypatch)
+        report=module.exporter_self_test(Path(__file__).resolve().parents[2])
+&gt;       assert report['status']=='PASS'
+E       AssertionError: assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+src\tests\test_v42_export.py:163: AssertionError</failure></testcase><testcase classname="src.tests.test_v4_final" name="test_work_package_has_single_derived_manifest_files" time="15.640"><failure message="subprocess.CalledProcessError: Command '['C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\exportar_ldporto.py', '--root', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER', '--mode', 'project', '--output-dir', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\tmp\\r63_legacy_three_readonly\\test_work_package_has_single_d0']' returned non-zero exit status 2.">tmp_path = WindowsPath('C:/Users/leone/Documentos/Meus Projetos/LDPORTO_VIDEO_ANALYZER/tmp/r63_legacy_three_readonly/test_work_package_has_single_d0')
+
+    def test_work_package_has_single_derived_manifest_files(tmp_path):
+        """Check canonical packaging without legacy scripts or virtual environments."""
+&gt;       subprocess.run([sys.executable,str(ROOT/'exportar_ldporto.py'),'--root',str(ROOT),
+                        '--mode','project','--output-dir',str(tmp_path)],
+                       check=True,capture_output=True,text=True)
+
+src\tests\test_v4_final.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+input = None, capture_output = True, timeout = None, check = True
+popenargs = (['C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe', 'C:\\Users\\leone...porto.py', '--root', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER', '--mode', 'project', ...],)
+kwargs = {'text': True, 'stdout': -1, 'stderr': -1}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output &amp; stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+&gt;               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\.venv\\Scripts\\python.exe', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\exportar_ldporto.py', '--root', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER', '--mode', 'project', '--output-dir', 'C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\tmp\\r63_legacy_three_readonly\\test_work_package_has_single_d0']' returned non-zero exit status 2.
+
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\subprocess.py:571: CalledProcessError</failure></testcase></testsuite></testsuites>

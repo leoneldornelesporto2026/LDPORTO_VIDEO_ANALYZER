@@ -114,7 +114,8 @@ def test_selective_delivery_keeps_long_reel_caption_gate_separate_from_story_lim
         index = json.loads(archive.read('VISUAL_FRAME_HANDOFF/index.json'))
         reviews = json.loads(archive.read('subtitles/visual_piece_caption_preflight.json'))
         reel = next(piece for piece in index['pieces'] if piece['piece_type'] == 'REEL')
-        caption = reviews['stories'][reel['piece_id']]
+        caption = reviews['reels'][reel['piece_id']]
+        assert reel['caption_preflight_ref'].endswith('#/reels/'+reel['piece_id'])
         assert 'story_assembled_duration_exceeds_60_seconds' not in caption['reason_codes']
         assert caption['human_approved'] is False and caption['publication_ready'] is False
         master = json.loads(archive.read('HANDOFF_MASTER.json'))

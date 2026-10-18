@@ -105,7 +105,7 @@ def _zip_directory(root,target,extra_raw=()):
 
 
 def build_visual_delivery(package_path,analysis_folder,media_path,output_root,*,camera_timeline_path=None,
-                          max_frames=6,global_frames=384,global_frame_bytes=40*1024**2,progress=None):
+                          max_frames=6,global_frames=1024,global_frame_bytes=96*1024**2,progress=None):
     """Keep all canonical candidates; add evidence in an exclusive derived revision."""
     from .compact_artifacts import load_analysis_artifacts
     from .visual_frame_handoff import (VisualEvidenceIndex,SparseFrameProvider,
@@ -145,7 +145,7 @@ def build_visual_delivery(package_path,analysis_folder,media_path,output_root,*,
     analysis['person_tracks']=_read(work/'people/person_tracks.json')
     analysis['person_appearances']=_read(work/'people/person_appearances.json')
     pieces=_pieces(work);index=VisualEvidenceIndex(analysis)
-    visual_results=[];caption_reviews={}
+    visual_results=[];caption_reviews={'reels':{},'stories':{}}
     canonical_captions_path=work/'subtitles/caption_preflight_r6.json'
     canonical_captions=_read(canonical_captions_path).get('candidates',{}) if canonical_captions_path.exists() else {}
     with SparseFrameProvider(media_path,metadata=metadata,max_frames=global_frames,max_bytes=global_frame_bytes) as provider:
@@ -172,17 +172,18 @@ def build_visual_delivery(package_path,analysis_folder,media_path,output_root,*,
             if piece['piece_type']=='REEL':
                 canonical=canonical_captions.get(piece['piece_id'])
                 if canonical:
-                    caption_reviews[piece['piece_id']]=canonical
+                    caption_reviews['reels'][piece['piece_id']]=canonical
                 else:
                     caption=build_caption_preflight(analysis['words'],analysis['transcript_segments'],
                         [{**piece['candidate'],'candidate_id':piece['piece_id']}],duration=metadata['duration'])
-                    caption_reviews.update(caption['candidates'])
+                    caption_reviews['reels'].update(caption['candidates'])
             else:
                 caption=build_story_interval_preflight(analysis['words'],analysis['transcript_segments'],
                     [{'story_id':piece['piece_id'],'source_intervals':piece['intervals']}],duration=metadata['duration'])
-                caption_reviews.update(caption.get('stories') or {})
-            visual_results[-1]['caption_preflight_ref']='subtitles/visual_piece_caption_preflight.json#/stories/'+piece['piece_id']
-    _write(work/'subtitles/visual_piece_caption_preflight.json',{'schema_version':'r6.2','stories':caption_reviews,
+                caption_reviews['stories'].update(caption.get('stories') or {})
+            branch='reels' if piece['piece_type']=='REEL' else 'stories'
+            visual_results[-1]['caption_preflight_ref']='subtitles/visual_piece_caption_preflight.json#/'+branch+'/'+piece['piece_id']
+    _write(work/'subtitles/visual_piece_caption_preflight.json',{'schema_version':'r6.2',**caption_reviews,
         'new_asr_calls':0,'human_approved':False,'publication_ready':False})
     from .paths import SCHEMA_DIR
     schema=SCHEMA_DIR/'visual_frame_handoff.schema.json'
@@ -197,20 +198,26 @@ def build_visual_delivery(package_path,analysis_folder,media_path,output_root,*,
         'resolution_priority':['explicit_selection','project_reference','media_library','legacy_input','registered_search'],
         'observed_origin':'legacy_input' if 'input' in Path(media_path).parts else 'explicit_selection',
         'download_needed':False,'path_is_reference_not_included_media':True,'publication_ready':False})
+    from .visual_review_atlas import build_visual_review_atlas
+    atlas = build_visual_review_atlas(work, visual_results, source_sha256=source_hash, revision=revision)
     _write(work/'VISUAL_FRAME_HANDOFF/index.json',{'schema_version':'r6.2','revision':revision,'source_sha256':source_hash,
+        'review_atlas_ref':atlas['pdf_ref'],'coverage_report_ref':atlas['coverage_ref'],
+        'review_atlas_sha256':atlas['pdf_sha256'],
         'parent_package_sha256':parent_hash,'pieces':visual_results,'profile':'EDITORIAL_HANDOFF',
         'camera_timeline_ref':'camera/r62_camera_timeline.json','new_model_calls':0,
         'status':'PARTIAL','human_review_required':True,'preview_approved':False,'publication_ready':False})
     master=_read(work/'HANDOFF_MASTER.json')
     master.update(derivation={'scope':'visual_frame_handoff','parent_master_ref':parent_ref,
         'parent_master_sha256':hashlib.sha256(original_master).hexdigest(),'parent_package_sha256':parent_hash},
-        visual_frame_handoff_ref='VISUAL_FRAME_HANDOFF/index.json',video_id=(metadata.get('source') or {}).get('id'),
+        visual_frame_handoff_ref='VISUAL_FRAME_HANDOFF/index.json',
+        visual_review_atlas_ref=atlas['pdf_ref'],visual_coverage_report_ref=atlas['coverage_ref'],video_id=(metadata.get('source') or {}).get('id'),
         analysis_revision=(_read(Path(analysis_folder)/'run_manifest.json')).get('run_id'),package_revision=revision,
         media_reference_ref='MEDIA_REFERENCE.json',active_camera_ref='camera/r62_shared_camera_handoff.json',
         package_profiles=['FULL_AUDIT','EDITORIAL_HANDOFF'],r62_acceptance_state='PARTIAL')
     _write(work/'HANDOFF_MASTER.json',master)
     idx=_read(work/'CURATION_INDEX.json')
     idx.update(delivery_profile='EDITORIAL_HANDOFF',visual_frame_handoff_ref='VISUAL_FRAME_HANDOFF/index.json',
+               visual_review_atlas_ref=atlas['pdf_ref'],visual_coverage_report_ref=atlas['coverage_ref'],
                r62_acceptance_state='PARTIAL',active_camera_ref='camera/r62_shared_camera_handoff.json')
     _write(work/'CURATION_INDEX.json',idx)
     _reindex(work)
@@ -236,7 +243,9 @@ def build_visual_delivery(package_path,analysis_folder,media_path,output_root,*,
     result={'schema_version':'r6.2','revision':revision,'source_sha256':source_hash,'parent_package_sha256':parent_hash,
         'state':'PARTIAL','editorial':editorial,'full_audit':full,'piece_count':len(pieces),
         'reel_count':sum(p['piece_type']=='REEL' for p in pieces),'story_piece_count':sum(p['piece_type']=='STORY' for p in pieces),
-        'media_reference':_read(work/'MEDIA_REFERENCE.json'),'new_model_calls':0,
+        'media_reference':_read(work/'MEDIA_REFERENCE.json'),
+        'visual_review_atlas_ref':atlas['pdf_ref'],'visual_coverage_report_ref':atlas['coverage_ref'],
+        'new_model_calls':0,
         'full_pipeline_executed':False,'preview_approved':False,'human_approved':False,'publication_ready':False}
     _write(output/'DELIVERY_MANIFEST.json',result)
     emit('complete',len(pieces),len(pieces))

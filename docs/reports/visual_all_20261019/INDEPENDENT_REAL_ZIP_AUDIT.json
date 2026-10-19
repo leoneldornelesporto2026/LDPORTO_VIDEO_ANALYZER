@@ -1,0 +1,542 @@
+{
+  "scope": "independent read-only ZIP audit; no capture, inference, camera planning or render",
+  "zip_path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\VISUAL_ALL_pc6SR_Fvdt0_20261019\\DELIVERY_20261019T034553970556Z_ce0887\\00_INICIAR_POR_AQUI.zip",
+  "zip_sha256": "b7176f0789a6faa782e45ec6f5c81e4d9fc62d5abadf138f02badd9d9b82d589",
+  "zip_bytes": 2190634,
+  "source_sha256_measured": "c264fbfd714743f2f716f3b84a9416b8e0b6a2f48a350f5375fa224208565592",
+  "parent_zip_sha256_measured": "23100dce16ca1f1fb9b8e6a8210884d714aa2fc292f794f68b5a7dedf50b51fb",
+  "visual_validation": {
+    "status": "valid",
+    "errors": [],
+    "export_status": "COMPLETE",
+    "scene_count": 40,
+    "original_scene_count": 40
+  },
+  "export_status": "COMPLETE",
+  "source_interval_ms": [
+    0.0,
+    66194.0
+  ],
+  "original_scene_count": 40,
+  "exported_original_scenes": 40,
+  "statistics": {
+    "scene_count": 40,
+    "original_scene_count": 40,
+    "micro_window_count": 46,
+    "capture_count": 92,
+    "missing_micro_windows": 0,
+    "represented_duration_ms": 66194.0,
+    "continuous_video_frame_coverage_claimed": false
+  },
+  "fallback_intervals": 0,
+  "transcript_segment_count": 13,
+  "word_count": 63,
+  "missing_segment_ids": [],
+  "missing_word_ids": [],
+  "candidate_corrections": [
+    {
+      "candidate_id": "MOMENT_00000_0000",
+      "path": "visuals/MOMENT_00000_0000/contact_sheet.jpg",
+      "old_sha256": "c894e63f1dbc9970e8bec422f0133103e9a3cc1f24a744c06088e3db1c9c48f0",
+      "new_sha256": "81cbedf72214d9b17914ad27b2a9f0e35a8e66cd2ddfc392337185e621db29cd",
+      "source_times_s": [
+        9.9,
+        10.233333333333333,
+        10.766666666666666,
+        11.833333333333334,
+        12.9,
+        13.933333333333334
+      ],
+      "six_distinct_pts": true,
+      "editorial_fields_unchanged": true
+    },
+    {
+      "candidate_id": "MOMENT_00000_0001",
+      "path": "visuals/MOMENT_00000_0001/contact_sheet.jpg",
+      "old_sha256": "f9d3c8843ed5f710dffff38320a3fe883d9dfbd2f3d3af3189d6cd90e3788729",
+      "new_sha256": "04d1d7de3f8607a65431bb71705528300d38636f5a110d46bcc1b05ae88aad0e",
+      "source_times_s": [
+        17.266666666666666,
+        17.833333333333332,
+        18.7,
+        20.433333333333334,
+        22.166666666666668,
+        23.833333333333332
+      ],
+      "six_distinct_pts": true,
+      "editorial_fields_unchanged": true
+    },
+    {
+      "candidate_id": "MOMENT_00000_0003",
+      "path": "visuals/MOMENT_00000_0003/contact_sheet.jpg",
+      "old_sha256": "bb49fd825e69209623e263faca92fd9c0820fb0f447f76625e149e7eb55c5f06",
+      "new_sha256": "43ef6e7c6d54c6cd0d8ca05c709256b9d9497fadfdc9751ea6b61a5f787cec08",
+      "source_times_s": [
+        39.666666666666664,
+        39.833333333333336,
+        40.03333333333333,
+        40.43333333333333,
+        40.8,
+        41.166666666666664
+      ],
+      "six_distinct_pts": true,
+      "editorial_fields_unchanged": true
+    },
+    {
+      "candidate_id": "MOMENT_00000_0002",
+      "path": "visuals/MOMENT_00000_0002/contact_sheet.jpg",
+      "old_sha256": "521e43576d848409a0360f6d3ce9270d3a4606faffbceb306bdf11b43d0049c0",
+      "new_sha256": "b0b95a1487953495d31ac4f6fd1cdda5d7d3a6732ed86d40965010135c932ef0",
+      "source_times_s": [
+        28.5,
+        28.766666666666666,
+        29.166666666666668,
+        29.933333333333334,
+        30.7,
+        31.433333333333334
+      ],
+      "six_distinct_pts": true,
+      "editorial_fields_unchanged": true
+    }
+  ],
+  "camera_artifacts_unchanged": true,
+  "camera_artifact_count": 4,
+  "pdfs": [
+    {
+      "path": "VISUAL_SCENES_ATLAS.pdf",
+      "bytes": 1318353,
+      "sha256": "410ccbe48aec6e7cc96248dbe44ff1fcdd21bb84fdeafe3b5b45595f41aaf29c",
+      "page_count": 22
+    }
+  ],
+  "zip_member_count": 142,
+  "manifest_entries": 141,
+  "visual_approvals_false": true,
+  "manifest_editorial_state": "partial",
+  "core_validation": {
+    "status": "valid",
+    "errors": [],
+    "dangling_references": 0,
+    "question_reference_validation": {
+      "status": "resolved",
+      "errors": [],
+      "unresolved": []
+    },
+    "audit_report": {
+      "contract_version": "18.1",
+      "candidate_count": 4,
+      "candidates": [
+        {
+          "candidate_id": "MOMENT_00000_0000",
+          "checks": [
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "candidate_id",
+              "id": "MOMENT_00000_0000",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "segment_ids",
+              "id": "SEG_00002",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "speaker_ids",
+              "id": "SPEAKER_00",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "question_answer_linkage",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "topic_ids",
+              "id": "TOPIC_00000_000",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "alternate_ref",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "context_before",
+              "id": "SEG_00000",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "context_before",
+              "id": "SEG_00001",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "context_after",
+              "id": "SEG_00003",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0000",
+              "field": "context_after",
+              "id": "SEG_00004",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        },
+        {
+          "candidate_id": "MOMENT_00000_0001",
+          "checks": [
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "candidate_id",
+              "id": "MOMENT_00000_0001",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "segment_ids",
+              "id": "SEG_00004",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "segment_ids",
+              "id": "SEG_00005",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "segment_ids",
+              "id": "SEG_00006",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "speaker_ids",
+              "id": "SPEAKER_00",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "question_answer_linkage",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "topic_ids",
+              "id": "TOPIC_00000_000",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "alternate_ref",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "context_before",
+              "id": "SEG_00002",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "context_before",
+              "id": "SEG_00003",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "context_after",
+              "id": "SEG_00007",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0001",
+              "field": "context_after",
+              "id": "SEG_00008",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        },
+        {
+          "candidate_id": "MOMENT_00000_0003",
+          "checks": [
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "candidate_id",
+              "id": "MOMENT_00000_0003",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "segment_ids",
+              "id": "SEG_00011",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "segment_ids",
+              "id": "SEG_00012",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "speaker_ids",
+              "id": "SPEAKER_00",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "question_answer_linkage",
+              "id": "Q_0003",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "topic_ids",
+              "id": "TOPIC_00000_000",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "alternate_ref",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "context_before",
+              "id": "SEG_00009",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "context_before",
+              "id": "SEG_00010",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0003",
+              "field": "context_after",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        },
+        {
+          "candidate_id": "MOMENT_00000_0002",
+          "checks": [
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "candidate_id",
+              "id": "MOMENT_00000_0002",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "segment_ids",
+              "id": "SEG_00008",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "segment_ids",
+              "id": "SEG_00009",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "segment_ids",
+              "id": "SEG_00010",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "speaker_ids",
+              "id": "SPEAKER_00",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "question_answer_linkage",
+              "id": "Q_0001",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "question_answer_linkage",
+              "id": "Q_0002",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "topic_ids",
+              "id": "TOPIC_00000_000",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "alternate_ref",
+              "id": null,
+              "status": "not_applicable",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "context_before",
+              "id": "SEG_00006",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "context_before",
+              "id": "SEG_00007",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "context_after",
+              "id": "SEG_00011",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            },
+            {
+              "candidate_id": "MOMENT_00000_0002",
+              "field": "context_after",
+              "id": "SEG_00012",
+              "status": "resolved",
+              "reason": null,
+              "blocking": false
+            }
+          ],
+          "coverage_score": 1.0
+        }
+      ],
+      "missing": [],
+      "unresolved": [],
+      "blockers": [],
+      "references_ready": true,
+      "coverage_score": 1.0,
+      "coverage_counts": {
+        "resolved": 38,
+        "applicable": 38
+      },
+      "coverage_method": "resolved_applicable_evidence_checks_not_editorial_quality",
+      "publication_ready": false
+    },
+    "checksums_valid": true,
+    "visual_count": 4,
+    "candidate_count": 4,
+    "file_count": 142,
+    "readiness": {
+      "editorial_ready": true,
+      "transcript_ready": true,
+      "commercial_ready": true,
+      "visual_ready": false,
+      "speaker_person_ready": false,
+      "camera_ready": false,
+      "preview_ready": false
+    }
+  },
+  "status": "PASS",
+  "errors": []
+}

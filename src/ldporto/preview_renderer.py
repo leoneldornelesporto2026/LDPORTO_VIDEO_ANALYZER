@@ -124,6 +124,42 @@ def _row_at(timeline, starts, timestamp):
     return row if float(row['start'])-1e-6 <= timestamp < float(row['end'])+1e-6 else None
 
 
+def decode_source_frame(cap, requested_s):
+    """Seek once and report decoder time; a seek request is never a source PTS.
+
+    OpenCV positions its frame counter after the decoded frame. A zero MSEC
+    value outside frame zero is commonly an unsupported timestamp property,
+    and must remain unknown rather than becoming frame_index/FPS evidence.
+    """
+    import cv2
+    requested = float(requested_s)
+    if not math.isfinite(requested) or requested < 0:
+        raise ValueError('invalid_source_frame_request')
+    info = {'source_time_s': None, 'source_frame_index': None,
+            'timestamp_provenance': 'unavailable', 'requested_source_time_s': requested}
+    try:
+        if not cap.set(cv2.CAP_PROP_POS_MSEC, requested * 1000.):
+            return None, {**info, 'reason': 'source_seek_not_accepted'}
+        got, frame = cap.read()
+        if not got or frame is None or frame.size == 0:
+            return None, {**info, 'reason': 'source_frame_unavailable'}
+        def property_value(key):
+            try:
+                return float(cap.get(key))
+            except (cv2.error, TypeError, ValueError, OverflowError):
+                return math.nan
+        position = property_value(cv2.CAP_PROP_POS_FRAMES)
+        if math.isfinite(position) and position >= 1 and abs(position-round(position)) < 1e-6:
+            info['source_frame_index'] = round(position)-1
+        milliseconds = property_value(cv2.CAP_PROP_POS_MSEC)
+        if (math.isfinite(milliseconds) and milliseconds >= 0
+                and (milliseconds > 0 or info['source_frame_index'] == 0)):
+            info.update(source_time_s=milliseconds/1000., timestamp_provenance='opencv_decoder_reported')
+        return frame, info
+    except (cv2.error, TypeError, ValueError, OverflowError):
+        return None, {**info, 'reason': 'source_frame_decode_error'}
+
+
 def build_contact_sheet(source, candidate, output, timeline=None):
     import cv2
     import numpy as np
@@ -135,43 +171,107 @@ def build_contact_sheet(source, candidate, output, timeline=None):
     if not cap.isOpened():
         cap.release()
         return {'status': 'unavailable', 'reason': 'source_not_decodable'}
-    start, end = candidate['start'], candidate['end']
-    fps = cap.get(cv2.CAP_PROP_FPS) or 25.
-    source_duration = (cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0) / fps
-    times = [start + (end - start) * fraction for fraction in (0., .25, .5, .75, .99)]
-    zoom_rows = [row for row in timeline or [] if row['start'] < end and row['end'] > start and row.get('camera_mode') in ('SMART_ZOOM_IN', 'SMART_ZOOM_OUT')]
-    times.append((max(start, zoom_rows[0]['start']) + min(end, zoom_rows[0]['end'])) / 2 if zoom_rows else (start + end) / 2)
-    canvas = np.full((2 * 206, 3 * 320, 3), 24, dtype=np.uint8)
-    frames = []
+    import hashlib
+    requested_start, requested_end = float(candidate['start']), float(candidate['end'])
+    if not all(math.isfinite(t) for t in (requested_start, requested_end)):
+        cap.release()
+        return {'status': 'unavailable', 'reason': 'candidate_interval_outside_source'}
+    fps, count = cap.get(cv2.CAP_PROP_FPS), cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    source_duration = count/fps if math.isfinite(fps) and fps > 0 and math.isfinite(count) and count > 0 else None
+    start, end = max(0., requested_start), min(requested_end, source_duration) if source_duration else requested_end
+    if not all(math.isfinite(t) for t in (start, end)) or end <= start:
+        cap.release()
+        return {'status': 'unavailable', 'reason': 'candidate_interval_outside_source'}
+    times = [start+(end-start)*fraction for fraction in (0., .125, .25, .5, .75, .99)]
+    zoom_rows = sorted((row for row in timeline or [] if row['start'] < end and row['end'] > start
+        and row.get('camera_mode') in ('SMART_ZOOM_IN', 'SMART_ZOOM_OUT')), key=lambda row: row['start'])
+    if zoom_rows:
+        center = (max(start, zoom_rows[0]['start'])+min(end, zoom_rows[0]['end']))/2
+        if not any(abs(center-time) < 1e-9 for time in times):
+            times[min(range(1, 5), key=lambda i: abs(times[i]-center))] = center
+    times = sorted(set(times))
+    # Only fill slots whose seeks collapse to one frame or miss a boundary.
+    # At most six small source/director tile pairs are retained in memory.
+    fallback = [start+(end-start)*index/24 for index in range(1, 24)]
+    frames, seen_indices, seen_times, seen_unknown_hashes = [], set(), set(), set()
+    attempts, duplicates, failures, attempted = 0, [], [], set()
     timeline = sorted(timeline or [], key=lambda row: row['start'])
     starts = [row['start'] for row in timeline]
     try:
-        for index, timestamp in enumerate(times):
-            timestamp = max(0., min(timestamp, max(0., source_duration - 1 / fps)))
-            cap.set(cv2.CAP_PROP_POS_MSEC, timestamp * 1000)
-            got, frame = cap.read()
-            if not got or frame.size == 0:
-                return {'status': 'unavailable', 'reason': 'candidate_frame_unavailable', 'time': timestamp}
-            source_row = _row_at(timeline, starts, timestamp)
-            if index and source_row and source_row.get('layout') in ('single_person', 'two_shot'):
+        for requested in times+fallback:
+            if len(frames) == 6:
+                break
+            if round(requested, 12) in attempted:
+                continue
+            attempted.add(round(requested, 12)); attempts += 1
+            frame, info = decode_source_frame(cap, requested)
+            if frame is None:
+                failures.append(info)
+                continue
+            timestamp, frame_index = info['source_time_s'], info['source_frame_index']
+            if timestamp is not None and not start <= timestamp < end:
+                failures.append({**info, 'reason': 'decoded_frame_outside_candidate_interval'})
+                continue
+            content_hash = hashlib.sha256(frame.tobytes()).hexdigest()
+            time_key = round(timestamp, 9) if timestamp is not None else None
+            if ((frame_index is not None and frame_index in seen_indices)
+                    or (time_key is not None and time_key in seen_times)
+                    or (frame_index is None and time_key is None and content_hash in seen_unknown_hashes)):
+                duplicates.append({**info, 'reason': 'same_decoded_source_frame'})
+                continue
+            if frame_index is not None: seen_indices.add(frame_index)
+            if time_key is not None: seen_times.add(time_key)
+            if frame_index is None and time_key is None: seen_unknown_hashes.add(content_hash)
+            source_row = _row_at(timeline, starts, timestamp) if timestamp is not None else None
+            source_tile = _fit(frame, 320, 180, cv2)
+            if source_row and source_row.get('layout') in ('single_person', 'two_shot'):
                 rect = _interpolate_keyframes(source_row, timestamp, frame.shape[1], frame.shape[0], 540, 960)
-                frame = _crop(frame, rect, 180, 320, cv2)
-            tile = _fit(frame, 320, 180, cv2)
-            column, row_index = index % 3, index // 3
-            top, left = row_index * 206, column * 320
-            canvas[top:top + 180, left:left + 320] = tile
-            label = ('source ' if index == 0 else '') + stamp(timestamp)
-            cv2.putText(canvas, label, (left + 8, top + 197), cv2.FONT_HERSHEY_SIMPLEX, .43, (230, 230, 230), 1, cv2.LINE_AA)
-            frames.append({'time': timestamp, 'camera_mode': (source_row or {}).get('camera_mode', 'SOURCE_PRESERVE')})
+                director_tile = _fit(_crop(frame, rect, 180, 320, cv2), 320, 180, cv2)
+            else:
+                director_tile = source_tile
+            frames.append({**info, 'time': timestamp, 'source_content_sha256': content_hash,
+                'camera_mode': (source_row or {}).get('camera_mode', 'SOURCE_PRESERVE'),
+                '_source_tile': source_tile, '_director_tile': director_tile})
     finally:
         cap.release()
+    if not frames:
+        return {'status': 'unavailable', 'reason': 'candidate_frame_unavailable',
+                'decode_attempts': attempts, 'capture_failures': failures}
+    frames.sort(key=lambda row: (row['source_time_s'] is None,
+        row['source_time_s'] if row['source_time_s'] is not None else row['requested_source_time_s']))
+    canvas = np.full((2 * 206, 3 * 320, 3), 24, dtype=np.uint8)
+    content_slots = {}
+    for index in range(6):
+        column, row_index = index % 3, index // 3
+        top, left = row_index * 206, column * 320
+        if index < len(frames):
+            info = frames[index]
+            tile = info.pop('_source_tile') if index == 0 else info.pop('_director_tile')
+            info.pop('_source_tile', None); info.pop('_director_tile', None)
+            canvas[top:top + 180, left:left + 320] = tile
+            label = ('source ' if index == 0 else '') + (stamp(info['source_time_s'])
+                if info['source_time_s'] is not None else 'PTS unavailable')
+            previous = content_slots.get(info['source_content_sha256'])
+            info.update(duplicate_content=previous is not None, duplicate_content_of_slot=previous)
+            content_slots.setdefault(info['source_content_sha256'], index)
+        else:
+            label = 'capture unavailable'
+        cv2.putText(canvas, label, (left + 8, top + 197), cv2.FONT_HERSHEY_SIMPLEX, .43, (230, 230, 230), 1, cv2.LINE_AA)
     output.parent.mkdir(parents=True, exist_ok=True)
     encoded, image = cv2.imencode('.jpg', canvas, [cv2.IMWRITE_JPEG_QUALITY, 84])
     if not encoded:
         return {'status': 'unavailable', 'reason': 'contact_sheet_encoding_failed'}
     output.write_bytes(image.tobytes())
-    return {'status': 'ok', 'frame_count': len(frames), 'frames': frames,
-            'source_and_director_framing': True, 'width': 960, 'height': 412}
+    chronology = all(row['source_time_s'] is not None for row in frames)
+    complete = chronology and len(frames) == 6
+    return {'status': 'ok' if complete else 'partial', 'frame_count': len(frames), 'frames': frames,
+            'reason': None if complete else ('source_timestamps_unavailable' if not chronology else 'not_enough_distinct_source_frames'),
+            'source_and_director_framing': True, 'width': 960, 'height': 412, 'slot_count': 6,
+            'source_interval': {'start': start, 'end': end}, 'interval_convention': '[start,end)',
+            'chronology_verified_from_decoder_timestamps': chronology,
+            'timestamp_status': 'decoder_reported' if chronology else 'PARTIAL',
+            'decode_attempts': attempts, 'dropped_duplicate_frames': duplicates, 'capture_failures': failures,
+            'duplicate_content_frames_count': sum(row['duplicate_content'] for row in frames)}
 
 
 def render_preview(source, timeline, metadata, output, interval=None, output_width=540, output_height=960):

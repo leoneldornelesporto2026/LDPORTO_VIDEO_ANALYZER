@@ -1,0 +1,218 @@
+{
+  "scope": "surgical all-scene visual export; actual pc6SR_Fvdt0 case",
+  "baseline_head": "fb78b717ebf45134e1c9a94a27abcd1a579cc090",
+  "primary_delivery": [
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\VISUAL_ALL_pc6SR_Fvdt0_20261019\\DELIVERY_20261019T034553970556Z_ce0887\\00_INICIAR_POR_AQUI.zip",
+      "relative_path": "pacotes_para_enviar/VISUAL_ALL_pc6SR_Fvdt0_20261019/DELIVERY_20261019T034553970556Z_ce0887/00_INICIAR_POR_AQUI.zip",
+      "sha256": "b7176f0789a6faa782e45ec6f5c81e4d9fc62d5abadf138f02badd9d9b82d589",
+      "bytes": 2190634
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\VISUAL_ALL_pc6SR_Fvdt0_20261019\\DELIVERY_20261019T034553970556Z_ce0887\\SECOND_CURATION\\VISUAL_SCENES_INDEX.json",
+      "relative_path": "pacotes_para_enviar/VISUAL_ALL_pc6SR_Fvdt0_20261019/DELIVERY_20261019T034553970556Z_ce0887/SECOND_CURATION/VISUAL_SCENES_INDEX.json",
+      "sha256": "82ca917ce2db13763c1c58c44a702fca0e7596b078049059c54381d75f62157a",
+      "bytes": 165639
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\VISUAL_ALL_pc6SR_Fvdt0_20261019\\DELIVERY_20261019T034553970556Z_ce0887\\SECOND_CURATION\\VISUAL_SCENES_ATLAS.pdf",
+      "relative_path": "pacotes_para_enviar/VISUAL_ALL_pc6SR_Fvdt0_20261019/DELIVERY_20261019T034553970556Z_ce0887/SECOND_CURATION/VISUAL_SCENES_ATLAS.pdf",
+      "sha256": "410ccbe48aec6e7cc96248dbe44ff1fcdd21bb84fdeafe3b5b45595f41aaf29c",
+      "bytes": 1318353
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\VISUAL_ALL_pc6SR_Fvdt0_20261019\\DELIVERY_20261019T034553970556Z_ce0887\\SECOND_CURATION\\SECOND_CURATION_MANIFEST.json",
+      "relative_path": "pacotes_para_enviar/VISUAL_ALL_pc6SR_Fvdt0_20261019/DELIVERY_20261019T034553970556Z_ce0887/SECOND_CURATION/SECOND_CURATION_MANIFEST.json",
+      "sha256": "fcd712306f0103e125ae6234e5e0f4dbb25df87c1fafc96bd2e31a01902ef255",
+      "bytes": 72080
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\VISUAL_ALL_pc6SR_Fvdt0_20261019\\DELIVERY_20261019T034553970556Z_ce0887\\VISUAL_EXPORT_MANIFEST.json",
+      "relative_path": "pacotes_para_enviar/VISUAL_ALL_pc6SR_Fvdt0_20261019/DELIVERY_20261019T034553970556Z_ce0887/VISUAL_EXPORT_MANIFEST.json",
+      "sha256": "13f7f692e7ba776e2948f5f185ad589090cf5f48e8ddf5c22ccc7342c1745462",
+      "bytes": 16621
+    }
+  ],
+  "statistics": {
+    "scene_count": 40,
+    "original_scene_count": 40,
+    "micro_window_count": 46,
+    "capture_count": 92,
+    "missing_micro_windows": 0,
+    "represented_duration_ms": 66194.0,
+    "continuous_video_frame_coverage_claimed": false
+  },
+  "visual_export_status": "COMPLETE",
+  "editorial_state": "partial / P1_DEGRADED",
+  "source": {
+    "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\input\\youtube\\pc6SR_Fvdt0\\pc6SR_Fvdt0.mp4",
+    "relative_path": "input/youtube/pc6SR_Fvdt0/pc6SR_Fvdt0.mp4",
+    "sha256": "c264fbfd714743f2f716f3b84a9416b8e0b6a2f48a350f5375fa224208565592",
+    "bytes": 8742196
+  },
+  "parent_package": {
+    "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\pacotes_para_enviar\\SECOND_CURATION_PARTIAL_pc6SR_Fvdt0_20261019_032257_115420_b77577.zip",
+    "relative_path": "pacotes_para_enviar/SECOND_CURATION_PARTIAL_pc6SR_Fvdt0_20261019_032257_115420_b77577.zip",
+    "sha256": "23100dce16ca1f1fb9b8e6a8210884d714aa2fc292f794f68b5a7dedf50b51fb",
+    "bytes": 542612
+  },
+  "source_and_parent_preserved": true,
+  "code_and_tests": [
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\analyze.py",
+      "relative_path": "analyze.py",
+      "sha256": "cc6285b3677ce310650b248ba96eeeef96bab1be1bb7b86d3e3c4124b024a341",
+      "bytes": 19537
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\ldporto\\preview_renderer.py",
+      "relative_path": "src/ldporto/preview_renderer.py",
+      "sha256": "c9435194b7f864adeb0b100d51e7d7e2e8fc2063d04616ab84bc517612a7a04a",
+      "bytes": 21120
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\ldporto\\second_curation_export.py",
+      "relative_path": "src/ldporto/second_curation_export.py",
+      "sha256": "0784dc3267c1f3f984750b2aa17cf86f673cb6d470595f0526d3f590cfac806f",
+      "bytes": 114639
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\ldporto\\visual_scenes_export.py",
+      "relative_path": "src/ldporto/visual_scenes_export.py",
+      "sha256": "7b48e4f7ce75ebc9d5890bcae407b3e18eaf583a67d4d7c75288e2d052e98ed0",
+      "bytes": 31414
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\ldporto\\visual_scenes_atlas.py",
+      "relative_path": "src/ldporto/visual_scenes_atlas.py",
+      "sha256": "f13589b0289d73835bc7dab4ea878089dabe4d6f4bdb62b483b4efdd8b01a084",
+      "bytes": 14467
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_contact_sheet_chronology.py",
+      "relative_path": "src/tests/test_contact_sheet_chronology.py",
+      "sha256": "d73f1380143b39cf8c89f5b3f3f2e359b8a6a69530cfe20b6fb94e4e7035f97d",
+      "bytes": 9748
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_visual_scenes_export.py",
+      "relative_path": "src/tests/test_visual_scenes_export.py",
+      "sha256": "c70e2fc58389445b16959db91fb73c51b1372fddb5be6ee377baa8270f3a8f59",
+      "bytes": 20188
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_visual_scenes_atlas.py",
+      "relative_path": "src/tests/test_visual_scenes_atlas.py",
+      "sha256": "b1e5ef64f7314eaddf8d8b0ed4c3e4242dcf736062057a74549fa41201beb881",
+      "bytes": 9287
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\src\\tests\\test_visual_scenes_package_integration.py",
+      "relative_path": "src/tests/test_visual_scenes_package_integration.py",
+      "sha256": "eef7260528e2e30e54bb686624a8db5209b1a168db88fb0145ac4f85d3e4dc15",
+      "bytes": 17408
+    }
+  ],
+  "reports": [
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\CAUSE.md",
+      "relative_path": "docs/reports/visual_all_20261019/CAUSE.md",
+      "sha256": "b91c8d2204708bb7cab80ba28f14bf38b91b3f8ef1935617eb1339fb5865d018",
+      "bytes": 13791
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\final_regression.junit.xml",
+      "relative_path": "docs/reports/visual_all_20261019/final_regression.junit.xml",
+      "sha256": "dfd77e72b781c0529d4171e2979ae3fd5a608854c055f093a8a2029cf41b1670",
+      "bytes": 11445
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\final_regression.log",
+      "relative_path": "docs/reports/visual_all_20261019/final_regression.log",
+      "sha256": "fe3c3bc254b6a0058fbf4b311d442a4a6ffb570d6a346541207286528a6c75b4",
+      "bytes": 368
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\focused_regression.junit.xml",
+      "relative_path": "docs/reports/visual_all_20261019/focused_regression.junit.xml",
+      "sha256": "31fac27407e117d794bebeac5a963b67e08816e34b0c181b71ba174daad4266f",
+      "bytes": 10778
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\INDEPENDENT_REAL_ZIP_AUDIT.json",
+      "relative_path": "docs/reports/visual_all_20261019/INDEPENDENT_REAL_ZIP_AUDIT.json",
+      "sha256": "5c1c50485c52b0a0c85fb05176df09da0f28948dbcd6f0ee4ec6eeba0b83367b",
+      "bytes": 17401
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\INDEPENDENT_TEST_REVIEW.md",
+      "relative_path": "docs/reports/visual_all_20261019/INDEPENDENT_TEST_REVIEW.md",
+      "sha256": "45bd8688931d71f1d80497a69f43fe653f17fe97121603a49e3a6c5f0eb2e089",
+      "bytes": 6071
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\PDF_ATLAS_VALIDATION.md",
+      "relative_path": "docs/reports/visual_all_20261019/PDF_ATLAS_VALIDATION.md",
+      "sha256": "175998f0bf18c6d7f3299774546d17d82a66f093f80ace20fda1398b303e05f5",
+      "bytes": 6197
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\real_export.log",
+      "relative_path": "docs/reports/visual_all_20261019/real_export.log",
+      "sha256": "a260e5e3242007efb28ffe5429b577d77bd20aa7a608f1e9ef49b381f10716df",
+      "bytes": 6248
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\real_export_resumed.log",
+      "relative_path": "docs/reports/visual_all_20261019/real_export_resumed.log",
+      "sha256": "2fcf45ef37bac49035c66ed519a9dbdee16d7b3167dbbd6204a61c969de78297",
+      "bytes": 34906
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\REAL_RESUME_PROOF.json",
+      "relative_path": "docs/reports/visual_all_20261019/REAL_RESUME_PROOF.json",
+      "sha256": "e275e691f5961c10b24d392fb1a597a1438bf49e285085a6045298a69e9fa8e1",
+      "bytes": 74708
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\REPORT.md",
+      "relative_path": "docs/reports/visual_all_20261019/REPORT.md",
+      "sha256": "1f60ea2e35a5edcfabf5d601eabbd3b3f7506424e6fdf769ca6f7b096045fb8f",
+      "bytes": 11475
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\verify_real_resume.py",
+      "relative_path": "docs/reports/visual_all_20261019/verify_real_resume.py",
+      "sha256": "434ca90e206f4d47a4b68c465701269c839bb3b0772c1e7654cc368cfb546c59",
+      "bytes": 3187
+    },
+    {
+      "path": "C:\\Users\\leone\\Documentos\\Meus Projetos\\LDPORTO_VIDEO_ANALYZER\\docs\\reports\\visual_all_20261019\\visual_scenes_unit.junit.xml",
+      "relative_path": "docs/reports/visual_all_20261019/visual_scenes_unit.junit.xml",
+      "sha256": "2f5c44c4f387f7be77284d7d8f8ce14c0f5e06ae9484ee38e2375567d1c5bbab",
+      "bytes": 5137
+    }
+  ],
+  "regression": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "76",
+    "time": "17.825",
+    "timestamp": "2026-10-19T00:51:45.950374-03:00",
+    "hostname": "leonelporto"
+  },
+  "real_resume": {
+    "status": "PASS",
+    "new_captures": 0,
+    "source_decoder_calls": 0,
+    "moment_renderer_calls": 0,
+    "protected_file_count": 242,
+    "protected_bytes_and_mtime_unchanged": true
+  },
+  "preview_approved": false,
+  "publication_ready": false,
+  "commit_created": false,
+  "push_performed": false
+}

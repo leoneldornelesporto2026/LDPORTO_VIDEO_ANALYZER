@@ -21,6 +21,21 @@ KNOWN_TIMES={'opencv_decoder_reported','persisted_source_frame_sample'}
 
 def _number(v):return isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(v)
 def _us(seconds):return round(seconds*1000000)
+
+
+def _capture_inside_micro(time, micro):
+    """Check the *persisted*, microsecond-quantized PTS against [start, end).
+
+    The decoder can return a float strictly below a boundary that rounds to
+    the boundary in our canonical integer-microsecond representation. Accepting
+    such a frame would create an internally inconsistent visual scene index and
+    cause the PDF atlas to abort the entire stage-21 handoff.
+    """
+    if not _number(time):
+        return False
+    start_us = round(micro['start_ms'] * 1000)
+    end_us = round(micro['end_ms'] * 1000)
+    return start_us <= _us(time) < end_us
 def _write(path,doc):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(doc,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8')
@@ -152,7 +167,7 @@ def export_visual_scenes(analysis,source,destination,*,cache_directory=None,resu
                             if (record['source_sha256']==source_hash and record['requested_source_time_s']==requested
                                     and candidate.is_relative_to(cache) and file_hash(candidate)==record['sha256']
                                     and cached_info.get('timestamp_provenance') in KNOWN_TIMES
-                                    and _number(cached_time) and a<=cached_time<b
+                                    and _capture_inside_micro(cached_time, micro)
                                     and cached_image_valid(candidate)):
                                 info=record['info'];image=candidate;reused+=1;break
                         except (OSError,ValueError,KeyError):continue
@@ -167,9 +182,12 @@ def export_visual_scenes(analysis,source,destination,*,cache_directory=None,resu
                         _write(image.with_suffix('.json'),{'source_sha256':source_hash,'requested_source_time_s':requested,
                             'image':image.name,'sha256':file_hash(image),'info':info})
                     time=info.get('source_time_s');provenance=info.get('timestamp_provenance')
-                    if not _number(time) or provenance not in KNOWN_TIMES or not a<=time<b:
+                    if provenance not in KNOWN_TIMES or not _capture_inside_micro(time, micro):
                         micro['failures'].append({'requested_source_time_s':requested,'source_time_s':time,
-                            'reason':'actual_source_timestamp_unknown_or_outside_micro_window','timestamp_provenance':provenance});continue
+                            'persisted_timestamp_ms':_us(time)/1000 if _number(time) else None,
+                            'micro_start_ms':micro['start_ms'],'micro_end_ms':micro['end_ms'],
+                            'reason':'actual_source_timestamp_unknown_or_outside_micro_window',
+                            'timestamp_provenance':provenance});continue
                     decoded=cv2.imread(str(image))
                     if decoded is None or not decoded.size:
                         micro['failures'].append({'requested_source_time_s':requested,'reason':'cached_image_not_decodable'});continue

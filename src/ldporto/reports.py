@@ -663,7 +663,7 @@ class ReportEngine:
                                             '../../schemas/caption_preflight_r6.schema.json',
                                             '../../schemas/handoff_master_r6.schema.json',
                                             '../../schemas/second_curation_decisions.schema.json',
-                                            'preview_renderer.py'],
+                                            'preview_renderer.py', 'visual_scenes_export.py', 'visual_scenes_atlas.py'],
                 output_version='1.2-stage06-report-contract', requires=['20_handoff'])
             ctx.states.update(producer.states)
             ctx.stage_metrics.update(producer.stage_metrics)

@@ -414,3 +414,69 @@ def test_tampered_index_cannot_claim_complete_with_a_missing_required_window(tmp
     validation = validate_visual_scene_export(directory)
     assert validation['status'] == 'failed'
     assert validation['errors']
+
+
+def test_canonical_boundary_rounding_does_not_abort_visual_pdf_handoff(tmp_path):
+    """Regression: decoder PTS just below scene end rounds onto excluded end.
+
+    Before the fix the exporter accepted this frame with a raw-float check,
+    while the atlas rejected its persisted timestamp at the [start, end) bound.
+    The valid earlier capture must survive without a fabricated/shifted PTS.
+    """
+    end = 0.123456
+    analysis = analysis_fixture(duration=end, scenes=[
+        dict(scene_id='SHORT_SCENE', start=0., end=end)])
+    provider = SyntheticFrames(transform=lambda requested:
+                               0.035 if requested < end / 2 else 0.1234556)
+    directory = tmp_path / 'rounding_boundary'
+    result = export_visual_scenes(analysis, None, directory,
+                                  frame_provider=provider, build_pdf=True)
+    assert result['export_status'] == 'COMPLETE'
+    scene = result['scenes'][0]
+    assert [row['timestamp_ms'] for row in scene['frames']] == [35.0]
+    assert any(row['reason'] == 'actual_source_timestamp_unknown_or_outside_micro_window'
+               and row['persisted_timestamp_ms'] == pytest.approx(123.456)
+               for row in scene['micro_windows'][0]['failures'])
+    assert result['pdfs']
+    assert validate_visual_scene_export(directory)['status'] == 'valid'
+
+
+def test_all_boundary_rounded_captures_stay_explicitly_missing_not_fatal(tmp_path):
+    """No invented frame, no crash: atlas exists but source coverage is FAILED."""
+    end = 0.123456
+    analysis = analysis_fixture(duration=end, scenes=[
+        dict(scene_id='TINY_SCENE', start=0., end=end)])
+    directory = tmp_path / 'no_valid_decoded_pts'
+    result = export_visual_scenes(
+        analysis, None, directory,
+        frame_provider=SyntheticFrames(transform=lambda _: 0.1234556),
+        build_pdf=True)
+    assert result['export_status'] == 'FAILED'
+    assert result['scenes'][0]['frames'] == []
+    assert result['scenes'][0]['micro_windows'][0]['status'] == 'MISSING_CAPTURE'
+    assert len(result['scenes'][0]['micro_windows'][0]['failures']) == 2
+    assert result['pdfs'] and result['pdfs'][0]['path'] == 'VISUAL_SCENES_ATLAS.pdf'
+    assert result['publication_ready'] is False
+    assert validate_visual_scene_export(directory)['status'] == 'valid'
+
+
+def test_resuming_boundary_capture_receipt_rejects_invalid_quantized_timestamp(tmp_path):
+    """A cached boundary PTS cannot reintroduce an invalid frame during resume."""
+    end = 0.123456
+    analysis = analysis_fixture(duration=end, scenes=[
+        dict(scene_id='BOUNDARY_CACHE', start=0., end=end)])
+    cache = tmp_path / 'receipt_cache'
+    directory = tmp_path / 'first'
+    initial = export_visual_scenes(
+        analysis, None, directory,
+        frame_provider=SyntheticFrames(transform=lambda _: 0.1234556),
+        cache_directory=cache, build_pdf=False)
+    assert initial['export_status'] == 'FAILED'
+    assert len(list(cache.glob('*.json'))) == 2
+    valid = SyntheticFrames(transform=lambda _: 0.04)
+    resumed = export_visual_scenes(
+        analysis, None, tmp_path / 'resumed', frame_provider=valid,
+        cache_directory=cache, build_pdf=True)
+    assert len(valid.calls) == 2  # Cached PTS was rejected instead of reused.
+    assert resumed['export_status'] == 'COMPLETE'
+    assert validate_visual_scene_export(tmp_path / 'resumed')['status'] == 'valid'

@@ -93,7 +93,9 @@ def _validate_index(index):
         for frame in scene.get('frames') or []:
             timestamp = frame.get('timestamp_ms')
             if not _millis(timestamp) or not start <= timestamp < end:
-                raise ValueError('visual_scenes_atlas_frame_outside_scene')
+                raise ValueError('visual_scenes_atlas_frame_outside_scene:'
+                    'scene=%s frame=%s time_ms=%s interval_ms=[%s,%s)' % (
+                    sid, frame.get('frame_id'), timestamp, start, end))
         for window in scene.get('micro_windows') or []:
             a, b = window.get('start_ms'), window.get('end_ms')
             if not _millis(a) or not _millis(b) or not start <= a < b <= end:

@@ -1,0 +1,117 @@
+name: Second curation ZIP - synthetic proof only
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - '.github/workflows/second-curation-synthetic.yml'
+      - 'src/ldporto/**'
+      - 'src/tests/test_v43_handoff.py'
+  workflow_dispatch:
+
+# The repository is public. No real video, audio, transcripts or private analyses.
+permissions:
+  contents: read
+
+jobs:
+  synthetic-zip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: 'src:src/tests'
+      HF_HUB_OFFLINE: '1'
+      TRANSFORMERS_OFFLINE: '1'
+      HF_DATASETS_OFFLINE: '1'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+    steps:
+      - name: Checkout without stored credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install declared CPU-only dependencies
+        run: python -m pip install -r requirements.txt -r requirements/dev.txt pillow
+      - name: Rebuild and independently verify synthetic second-curation ZIP
+        shell: bash
+        run: |
+          import hashlib
+          import json
+          import os
+          import sys
+          import zipfile
+          from pathlib import Path
+          from test_v43_handoff import analysis_fixture
+          from ldporto.second_curation_export import build_core_package, snapshot_core_package
+          from scripts.export.exportar_ldporto import inspect_package
+          
+          out = Path('outputs')
+          out.mkdir(exist_ok=True)
+          analysis = analysis_fixture()  # existing test fixture: explicitly synthetic
+          analysis['metadata']['sha256'] = 'a' * 64
+          analysis['metadata']['source'] = {
+              'type': 'synthetic_fixture', 'id': 'SYNTHETIC_ACTIONS',
+              'title': 'Synthetic-only curation workflow proof'
+          }
+          result = build_core_package(analysis, output_dir=out)
+          zip_path = Path(result['path'])
+          if not zip_path.is_file():
+              raise RuntimeError('BLOCKED: exporter did not produce ZIP')
+          if result['state'] not in {'READY', 'PARTIAL'}:
+              raise RuntimeError('BLOCKED: exporter returned unknown readiness')
+          if result.get('expensive_inference_executed') is not False or result.get('media_path'):
+              raise RuntimeError('BLOCKED: unexpected media or inference')
+          
+          original_bytes, independent = snapshot_core_package(zip_path)
+          if independent.get('status') != 'valid':
+              raise RuntimeError('BLOCKED: independent core reader rejected ZIP')
+          if hashlib.sha256(original_bytes).hexdigest() != hashlib.sha256(zip_path.read_bytes()).hexdigest():
+              raise RuntimeError('BLOCKED: immutable snapshot mismatch')
+          
+          inspected = inspect_package(zip_path)
+          if inspected['status'] != 'PASS':
+              raise RuntimeError('BLOCKED: zip inspection or secret scan failed')
+          
+          with zipfile.ZipFile(zip_path) as archive:
+              manifest = json.loads(archive.read('SECOND_CURATION_MANIFEST.json'))
+              names = archive.namelist()
+          if manifest.get('source_video_included') is not False:
+              raise RuntimeError('BLOCKED: source video inclusion is forbidden')
+          if manifest.get('publication_ready') is not False or manifest.get('preview_approved') is not False:
+              raise RuntimeError('BLOCKED: public workflow cannot grant editorial approval')
+          if any(name.lower().endswith(('.mp4', '.mov', '.webm', '.wav', '.mp3')) for name in names):
+              raise RuntimeError('BLOCKED: media member unexpectedly included')
+          
+          delivery = {
+              'source': 'SYNTHETIC_FIXTURE_ONLY', 'real_media_test': False,
+              'status': result['state'], 'zip_integrity': 'PASS',
+              'core_reader_status': independent['status'],
+              'zip_filename': zip_path.name,
+              'zip_sha256': hashlib.sha256(zip_path.read_bytes()).hexdigest(),
+              'zip_bytes': zip_path.stat().st_size,
+              'git_sha': os.environ.get('GITHUB_SHA'),
+              'publication_ready': False,
+              'windows_accepted': False
+          }
+          (out / 'delivery_manifest.json').write_text(
+              json.dumps(delivery, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+          print(json.dumps(delivery, ensure_ascii=False, indent=2))
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a', encoding='utf-8') as note:
+              note.write('### Synthetic-only second-curation ZIP\n')
+              note.write(f"Result: **{result['state']}** (not publication approval); integrity: PASS; bytes: {zip_path.stat().st_size}\n")
+              note.write('Real YouTube/video analysis requires an approved private input path and Windows/runtime tests.\n')
+      - name: Upload only synthetic ZIP and SHA manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: second-curation-synthetic-${{ github.run_id }}
+          path: |
+            outputs/*.zip
+            outputs/delivery_manifest.json
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 9
+
+# Real inputs are deliberately not supported. This proves packaging only.

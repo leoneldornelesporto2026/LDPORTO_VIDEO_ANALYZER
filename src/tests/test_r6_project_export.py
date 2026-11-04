@@ -78,7 +78,14 @@ def test_unicode_aliases_keep_distinct_text_cids_with_the_same_embedded_font_gly
     for first,second in aliases:
         a,b=unicode_to_cid[first],unicode_to_cid[second]
         assert a!=b
-        assert glyph_map[a*2:a*2+2]==glyph_map[b*2:b*2+2]
+        # Glyph identity is font-specific: Arial can share glyphs while DejaVu
+        # can provide distinct ones. Each PDF CID must match the selected font.
+        first_glyph=pdf.font.glyph(first).to_bytes(2,'big')
+        second_glyph=pdf.font.glyph(second).to_bytes(2,'big')
+        assert glyph_map[a*2:a*2+2]==first_glyph
+        assert glyph_map[b*2:b*2+2]==second_glyph
+        if first_glyph==second_glyph:
+            assert glyph_map[a*2:a*2+2]==glyph_map[b*2:b*2+2]
 
 
 def test_project_delivery_is_exclusive_verified_and_preserves_source_package(tmp_path):

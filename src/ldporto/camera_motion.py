@@ -30,7 +30,7 @@ class SmartZoomState:
         self.current_target = None
         self.current_zoom = self.target_zoom = 1.
         self.transition = None
-        self.hold_until = time
+        self.hold_until = max(self.hold_until, time)
         self.state_entered_at = time
 
     def curve(self, time):
@@ -44,10 +44,14 @@ class SmartZoomState:
 
     def decide(self, time, *, target, confidence, safe, zoom_cap, face_size,
                source_close, source_motion, speech_seconds, remaining_seconds,
-               beat, micro_interruption, cfg, max_speed=.035):
+               beat, micro_interruption, cfg, max_speed=.035, target_evidence_role=None):
         reasons = []
         while self.event_times and self.event_times[0] <= time - 60:
             self.event_times.popleft()
+        beat_key = (beat or {}).get('id'), target
+        zoom_attempted = bool(target and beat and not micro_interruption
+                              and beat_key not in self.used_beats
+                              and speech_seconds >= cfg['min_speaker_persistence'])
         if not target or not safe:
             reasons.append('CROP_UNSAFE' if target else 'INSUFFICIENT_CONFIDENCE')
             if self.current_target and self.current_zoom > 1.001:
@@ -55,13 +59,14 @@ class SmartZoomState:
             self.current_target, self.target_zoom, self.transition = None, 1., None
             self.current_camera_mode = 'SOURCE_PRESERVE'
             return {'zoom': 1., 'requested_zoom': 1., 'mode': self.current_camera_mode,
-                    'reason_codes': reasons, 'digital_motion_allowed': False}
+                    'reason_codes': reasons, 'digital_motion_allowed': False,
+                    'zoom_attempted': zoom_attempted, 'new_zoom_request': False}
         if target != self.current_target:
             self.current_target = target
             self.current_zoom = self.target_zoom = 1.
             self.transition = None
             self.state_entered_at = self.last_switch_at = time
-            self.hold_until = time
+            self.hold_until = max(self.hold_until, time)
         if not cfg['enabled']:
             reasons.append('SMART_ZOOM_DISABLED')
         if source_close or face_size >= cfg['max_face_size']:
@@ -76,8 +81,13 @@ class SmartZoomState:
         if micro_interruption:
             reasons.append('MICRO_INTERRUPTION_SUPPRESSED')
         goal = min(cfg['max_zoom_factor'], max(1., zoom_cap))
-        beat_key = (beat or {}).get('id'), target
         request = self.target_zoom
+        new_zoom_request = False
+        if beat and not blocked and not micro_interruption:
+            if beat_key in self.used_beats:
+                reasons.append('EDITORIAL_BEAT_ALREADY_USED')
+            elif speech_seconds < cfg['min_speaker_persistence']:
+                reasons.append('INSUFFICIENT_SPEAKER_PERSISTENCE')
         if beat and not blocked and not micro_interruption and beat_key not in self.used_beats and speech_seconds >= cfg['min_speaker_persistence']:
             if len(self.event_times) >= cfg['max_zoom_events_per_minute']:
                 reasons.append('ZOOM_RATE_LIMIT')
@@ -92,6 +102,7 @@ class SmartZoomState:
                     reasons.append('INSUFFICIENT_ZOOM_DURATION')
                 elif goal - self.current_zoom > .035:
                     self.transition = (time, duration, self.current_zoom, goal)
+                    new_zoom_request = True
                     self.target_zoom = goal
                     self.hold_until = time + duration + cfg['min_hold_duration']
                     self.last_zoom_event_at = time
@@ -99,8 +110,12 @@ class SmartZoomState:
                     self.used_beats.add(beat_key)
                     self.events.append({'start': time, 'end': time + duration, 'zoom_start': self.current_zoom,
                         'zoom_end': goal, 'mode': 'SMART_ZOOM_IN', 'target_person_id': target,
-                        'reason_codes': [(beat or {})['reason'], 'ACTIVE_SPEAKER_FOCUS'], 'beat_id': beat_key[0]})
+                        'reason_codes': [(beat or {})['reason'],
+                            'ACTIVE_SPEAKER_FOCUS' if target_evidence_role == 'CONFIRMED_SPEAKER' else 'VISUAL_TARGET_FOCUS'],
+                        'target_evidence_role': target_evidence_role or 'UNSPECIFIED', 'beat_id': beat_key[0]})
                     reasons.append((beat or {})['reason'])
+                else:
+                    reasons.append('NO_SAFE_ZOOM_HEADROOM')
         if blocked:
             self.target_zoom, self.transition = 1., None
         elif not beat and not micro_interruption and self.target_zoom > 1.035 and time >= self.hold_until and len(self.event_times) < cfg['max_zoom_events_per_minute']:
@@ -120,7 +135,8 @@ class SmartZoomState:
         self.current_camera_mode = mode
         return {'zoom': zoom, 'requested_zoom': request, 'mode': mode,
                 'reason_codes': reasons or ['STABLE_EDITORIAL_FRAMING'], 'digital_motion_allowed': not blocked,
-                'limited_by_quality': goal + 1e-6 < request}
+                'limited_by_quality': goal + 1e-6 < request,
+                'zoom_attempted': zoom_attempted, 'new_zoom_request': new_zoom_request}
 
 
 @dataclass
@@ -150,7 +166,7 @@ class CameraMotion:
         self.target = [x, y, zoom]
         self.outside_since = None
 
-    def move(self, target, t, dt, cfg):
+    def move(self, target, t, dt, cfg, *, intentional_zoom=False):
         dx, dy = abs(target[0]-self.target[0]), abs(target[1]-self.target[1])
         outside = dx > cfg['horizontal_deadzone'] or dy > cfg['vertical_deadzone']
         suppressed = not outside and (dx > 1e-6 or dy > 1e-6)
@@ -161,7 +177,11 @@ class CameraMotion:
                 self.target[:2] = target[:2]
         else:
             self.outside_since = None
-        if abs(target[2]-self.target[2]) > cfg['zoom_deadzone']:
+        # The tracking deadzone rejects small measurement noise. A safe editorial
+        # transition is already a deliberate command: retaining its first small
+        # increments avoids turning a short valid push into a static timeline.
+        # The same speed, acceleration and jerk limits still apply below.
+        if intentional_zoom or abs(target[2]-self.target[2]) > cfg['zoom_deadzone']:
             self.target[2] = target[2]
         before = [self.x.position, self.y.position, self.zoom.position]
         for axis, goal in zip((self.x, self.y), self.target[:2]):

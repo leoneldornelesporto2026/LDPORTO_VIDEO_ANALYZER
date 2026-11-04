@@ -2,9 +2,11 @@ from collections import Counter, defaultdict
 from pathlib import Path
 import math
 import re
-from .core import ok, overlap, run_command
+from .core import ok, overlap, run_command, write_json
 from .editorial import (GENERIC_TERMS, fold_text, normalize_moment, optimize_boundaries,
-                        rank_candidate, deduplicate_candidates, classify_content)
+                        rank_candidate, deduplicate_candidates, classify_content,
+                        _complete_story, _story_component_ids)
+from .editorial_intelligence import narrative_integrity, humor_integrity, select_editorial_shortlist
 
 _CAP = r"[A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][A-Za-zÀ-ÖØ-öø-ÿ0-9'’_-]*"
 _NAME = rf"{_CAP}(?:\s+(?:(?:de|da|do|dos|das|e)\s+)?{_CAP}){{0,4}}"
@@ -20,6 +22,416 @@ _CUES = {
     "product": r"(?:produto|suplemento|modelo)",
     "person": r"(?:senhor|senhora|doutor|doutora|professor|professora|apresentador|apresentadora)",
 }
+
+
+def _dict_rows(value):
+    """Return only mapping rows from a list-like stage contract.
+
+    Downstream editorial stages must not crash because one optional model/provider
+    returned a nested list or other non-object item.  Invalid rows are ignored here
+    and surfaced by ``run_understanding`` as a contract-normalization note instead
+    of being silently treated as evidence.
+    """
+    if not isinstance(value, list):
+        return []
+    return [row for row in value if isinstance(row, dict)]
+
+
+def _contract_issue(path, expected, value, action):
+    return {
+        "path": path,
+        "expected": expected,
+        "received": type(value).__name__,
+        "action": action,
+    }
+
+
+def _sanitize_list_field(row, key, path, diagnostics):
+    value = row.get(key, [])
+    if isinstance(value, list):
+        return value
+    diagnostics.append(_contract_issue(f"{path}.{key}", "list", value, "replaced_with_empty_list"))
+    return []
+
+
+def _sanitize_mapping_field(row, key, path, diagnostics):
+    value = row.get(key)
+    if value is None or isinstance(value, dict):
+        return value
+    diagnostics.append(_contract_issue(f"{path}.{key}", "object|null", value, "replaced_with_empty_object"))
+    return {}
+
+
+def _normalize_semantic_contract(semantic):
+    """Normalize the semantic->understanding boundary without inventing evidence.
+
+    V4.4 real runs showed that provider/model output can preserve the top-level list
+    shape while one nested control field arrives as a list instead of an object.
+    The old normalizer only filtered top-level rows, so downstream code could still
+    crash on ``.get``.  This function now validates the known control-plane fields
+    and returns path-level diagnostics suitable for replay/debugging.
+    """
+    notes, diagnostics = [], []
+    if not isinstance(semantic, dict):
+        diagnostics.append(_contract_issue("semantic", "object", semantic, "replaced_with_empty_contract"))
+        notes.append(f"semantic_contract_normalized: root={type(semantic).__name__}; expected object")
+        return {"topics": [], "moments": [], "questions_answers": [], "program_sections": [],
+                "editorial_review": None}, notes, diagnostics
+    data = dict(semantic)
+    for key in ("topics", "moments", "questions_answers", "program_sections"):
+        raw = data.get(key, [])
+        rows = _dict_rows(raw)
+        if not isinstance(raw, list) or len(rows) != len(raw):
+            raw_count = len(raw) if isinstance(raw, list) else 0
+            diagnostics.append(_contract_issue(f"semantic.{key}", "list[object]", raw,
+                                               f"kept_{len(rows)}_valid_objects"))
+            notes.append(f"semantic_contract_normalized: {key} valid_objects={len(rows)}/{raw_count}; expected list[object]")
+        clean = []
+        for index, original in enumerate(rows):
+            row = dict(original)
+            path = f"semantic.{key}[{index}]"
+            if key == "topics":
+                row["evidence_segment_ids"] = _sanitize_list_field(row, "evidence_segment_ids", path, diagnostics)
+                row["speakers"] = _sanitize_list_field(row, "speakers", path, diagnostics)
+            elif key == "moments":
+                row["evidence_segment_ids"] = _sanitize_list_field(row, "evidence_segment_ids", path, diagnostics)
+                row["categories"] = _sanitize_list_field(row, "categories", path, diagnostics)
+                row["editorial"] = _sanitize_mapping_field(row, "editorial", path, diagnostics) or {}
+            elif key == "questions_answers":
+                for field in ("answer_segment_ids", "question_segment_ids", "evidence_segment_ids"):
+                    if field in row:
+                        row[field] = _sanitize_list_field(row, field, path, diagnostics)
+            elif key == "program_sections":
+                row["topic_ids"] = _sanitize_list_field(row, "topic_ids", path, diagnostics)
+                if "evidence_segment_ids" in row:
+                    row["evidence_segment_ids"] = _sanitize_list_field(row, "evidence_segment_ids", path, diagnostics)
+            clean.append(row)
+        data[key] = clean
+    review = data.get("editorial_review")
+    if isinstance(review, list):
+        valid = _dict_rows(review)
+        data["editorial_review"] = {"top_moments": valid, "content_angles": [],
+                                    "status": "partial", "needs_review": True,
+                                    "method": "normalized_legacy_top_moments_list"}
+        diagnostics.append(_contract_issue("semantic.editorial_review", "object|null", review,
+                                           f"normalized_legacy_list_{len(valid)}_rows"))
+        notes.append(f"semantic_contract_normalized: editorial_review list -> object ({len(valid)} valid rows)")
+    elif isinstance(review, dict):
+        normalized_review = dict(review)
+        top = normalized_review.get("top_moments", [])
+        valid = _dict_rows(top)
+        if not isinstance(top, list) or len(valid) != len(top):
+            diagnostics.append(_contract_issue("semantic.editorial_review.top_moments", "list[object]", top,
+                                               f"kept_{len(valid)}_valid_objects"))
+            notes.append("semantic_contract_normalized: editorial_review.top_moments contained invalid rows")
+        normalized_review["top_moments"] = valid
+        content_angles = normalized_review.get("content_angles", [])
+        if not isinstance(content_angles, list):
+            diagnostics.append(_contract_issue("semantic.editorial_review.content_angles", "list", content_angles,
+                                               "replaced_with_empty_list"))
+            normalized_review["content_angles"] = []
+        data["editorial_review"] = normalized_review
+    elif review is not None:
+        diagnostics.append(_contract_issue("semantic.editorial_review", "object|null", review, "omitted"))
+        notes.append(f"semantic_contract_normalized: editorial_review={type(review).__name__}; omitted")
+        data["editorial_review"] = None
+    if diagnostics:
+        notes.append(f"semantic_contract_diagnostics: {len(diagnostics)} normalization event(s); see understanding_contract_diagnostics.json")
+    return data, notes, diagnostics
+
+
+def _validate_story_arcs_contract(arcs, transcript_segments):
+    """Normalize only observed IDs and invalidate unsupported story claims.
+
+    Story recovery and the duration exception use different component shapes.
+    This boundary guarantees that ranking sees a mapping with grounded
+    ``segment_ids`` or None, never a provider list masquerading as a mapping.
+    """
+    diagnostics = []
+    by_id = {segment.get('segment_id'): segment for segment in transcript_segments}
+    known = set(by_id)
+    normalized = []
+    for index, original in enumerate(arcs):
+        if not isinstance(original, dict):
+            diagnostics.append(_contract_issue(f'story_arcs[{index}]', 'object', original, 'omitted'))
+            continue
+        arc = dict(original)
+        for key in ('setup', 'development', 'payoff'):
+            part = arc.get(key)
+            if part is None:
+                continue
+            ids = _story_component_ids(arc, key)
+            valid = bool(ids) and all(item in known for item in ids)
+            if valid and isinstance(part, dict):
+                observed = [by_id[item] for item in ids]
+                if part.get('text') is not None and all(isinstance(row.get('text'), str) for row in observed):
+                    valid = isinstance(part['text'], str) and ' '.join(part['text'].split()) == ' '.join(
+                        ' '.join(row['text'] for row in observed).split())
+                for field, source in (('start', observed[0]), ('end', observed[-1])):
+                    if valid and part.get(field) is not None and source.get(field) is not None:
+                        valid = part[field] == source[field]
+            if valid and isinstance(part, list):
+                arc[key] = {'segment_ids': ids}
+                diagnostics.append(_contract_issue(f'story_arcs[{index}].{key}', 'object', part,
+                                                   'normalized_existing_segment_ids'))
+            elif not valid:
+                arc[key] = None
+                diagnostics.append(_contract_issue(f'story_arcs[{index}].{key}',
+                                                   'object_with_known_segment_ids|null', part,
+                                                   'invalid_evidence_removed'))
+        support = story_support_diagnostics(arc, transcript_segments)
+        if arc.get('kind') == 'complete_story' and (
+                not _complete_story(arc, arc.get('evidence_segment_ids') or []) or
+                support['canonical_interval_conflicts'] or support['empty_source_text_segment_ids'] or
+                (arc.get('narrative_supported') is True and not support['ordered_setup_development_payoff'])):
+            arc.update(kind='partial_story', completeness='unresolved_payoff',
+                       standalone_score=None, needs_review=True,
+                       narrative_supported=False)
+            diagnostics.append(_contract_issue(f'story_arcs[{index}].kind',
+                                               'complete_story_with_ordered_grounded_components',
+                                               original.get('kind'), 'downgraded_to_partial_story'))
+        if arc.get('narrative_supported') is True and not support['ordered_setup_development_payoff']:
+            arc.update(narrative_supported=False, needs_review=True)
+            diagnostics.append(_contract_issue(f'story_arcs[{index}].narrative_supported',
+                                               'canonical_setup_development_payoff', True,
+                                               'unsupported_narrative_claim_removed'))
+        arc['support_diagnostics'] = story_support_diagnostics(arc, transcript_segments)
+        _attach_story_structure_contract(arc, known)
+        normalized.append(arc)
+    return normalized, diagnostics
+
+
+def story_support_diagnostics(arc, transcript_segments):
+    """Explain observed story components without inventing a payoff or narrative."""
+    by_id = {row.get('segment_id'): row for row in transcript_segments}
+    components, reasons = {}, []
+    for key in ('setup', 'development', 'payoff'):
+        ids = _story_component_ids(arc, key)
+        missing = [sid for sid in ids if sid not in by_id]
+        observed = [by_id[sid] for sid in ids if sid in by_id]
+        status = 'missing_component' if not ids else 'missing_reference' if missing else 'grounded_references'
+        if not ids:
+            reasons.append('no_' + key)
+        elif missing:
+            reasons.append('missing_' + key + '_reference')
+        elif observed and not all(isinstance(row.get('text'), str) and row['text'].strip() for row in observed):
+            reasons.append('unavailable_' + key + '_source_text')
+        components[key] = {'status': status, 'segment_ids': ids, 'missing_segment_ids': missing,
+            'source_text_available': bool(observed) and all(isinstance(row.get('text'), str) and row['text'].strip() for row in observed),
+            'start': observed[0].get('start') if observed else None,
+            'end': observed[-1].get('end') if observed else None}
+    evidence = arc.get('evidence_segment_ids') or []
+    if not evidence or any(sid not in by_id for sid in evidence):
+        reasons.append('missing_arc_reference')
+    ordered_ids = _complete_story({**arc, 'kind': 'complete_story'}, evidence)
+    component_ids = list(dict.fromkeys(sid for part in components.values() for sid in part['segment_ids']))
+    observed = [by_id[sid] for sid in component_ids if sid in by_id]
+    interval_available = bool(observed) and all(
+        isinstance(row.get(field), (int, float)) and not isinstance(row[field], bool) and math.isfinite(row[field])
+        for row in observed for field in ('start', 'end'))
+    conflicts = []
+    if interval_available:
+        conflicts += [{'segment_ids': [row['segment_id']], 'reason': 'reversed_interval'}
+                      for row in observed if row['end'] < row['start']]
+        conflicts += [{'segment_ids': [left['segment_id'], right['segment_id']], 'reason': 'overlapping_or_reversed_components'}
+                      for left, right in zip(observed, observed[1:]) if right['start'] < left['end']]
+    elif observed:
+        reasons.append('canonical_interval_unavailable')
+    if conflicts:
+        reasons.append('canonical_interval_conflict')
+    empty_text_ids = [row['segment_id'] for row in observed
+                      if isinstance(row.get('text'), str) and not row['text'].strip()]
+    complete = ordered_ids and interval_available and not conflicts and bool(evidence) and all(
+        sid in by_id for sid in evidence) and all(
+        part['status'] == 'grounded_references' and part['source_text_available'] for part in components.values())
+    if all(components[key]['segment_ids'] for key in components) and not ordered_ids:
+        reasons.append('components_not_ordered_as_complete_story')
+    stop = arc.get('extension_stop_reason')
+    if stop:
+        reasons.append(stop)
+    return {'schema_version': '1.0', 'components': components,
+            'ordered_setup_development_payoff': complete,
+            'canonical_interval_conflicts': conflicts,
+            'empty_source_text_segment_ids': empty_text_ids,
+            'missing_support_reasons': list(dict.fromkeys(reasons)),
+            'context_incomplete': bool(stop or reasons),
+            'scope': 'canonical_segment_components; no_human_narrative_validation'}
+
+
+def _attach_story_structure_contract(arc, known=None):
+    """Separate topic layout from the actual, possibly missing, story components."""
+    evidence = [sid for sid in arc.get('evidence_segment_ids', [])
+                if isinstance(sid, str) and (known is None or sid in known)]
+    arc['section_layout'] = {'introduction': evidence[:1], 'development': evidence[1:-1],
+                             'ending': evidence[-1:]}
+    arc['narrative_structure'] = {
+        'introduction': _story_component_ids(arc, 'setup'),
+        'development': _story_component_ids(arc, 'development'),
+        'climax': _story_component_ids(arc, 'climax'),
+        'resolution': _story_component_ids(arc, 'payoff'),
+        'ending': _story_component_ids(arc, 'ending')}
+    arc['structure_contract'] = {'schema_version': '1.0',
+        'narrative_structure_basis': 'canonical_component_ids',
+        'section_layout_basis': 'source_position_only', 'section_layout_is_narrative_evidence': False}
+
+
+def recover_dialogue_links(transcript, records, topics=None):
+    """Reuse the existing Q&A gates with grounded asker context and reactions.
+
+    The semantic producer already searches the full transcript. This adapter repairs
+    only explicit context/reaction segmentation, preserving all question IDs and
+    unresolved ownership. It never treats an adjacent substantive turn as an answer.
+    """
+    from .semantic import (questions_answers, classify_question, _qa_terms, _qa_intervention,
+                           _qa_question_extension, propagate_transcript_uncertainty)
+    from .story_recovery import TOPIC_SHIFT
+    rows = sorted(_dict_rows(transcript.get('segments', [])), key=lambda row: (row.get('start', 0), row.get('end', 0)))
+    ids = [row.get('segment_id') for row in rows]
+    by_id = {row.get('segment_id'): row for row in rows}
+    positions = {row.get('segment_id'): index for index, row in enumerate(rows)}
+    counts, attempts, result = Counter(), [], []
+    source_valid = len(ids) == len(set(ids)) and all(isinstance(sid, str) and sid for sid in ids)
+    for original in records:
+        pair = dict(original)
+        counts['before_' + str(pair.get('answer_status', 'unknown'))] += 1
+        if not source_valid or pair.get('answer_status') != 'unresolved' or not pair.get('answer_expected'):
+            result.append(pair)
+            continue
+        question_ids = pair.get('question_segment_ids') or [pair.get('question_segment_id')]
+        question = [by_id[sid] for sid in question_ids if sid in by_id]
+        owner = pair.get('question_speaker')
+        if (not question or len(question) != len(question_ids) or not owner or
+                any(row.get('speaker') != owner for row in question) or
+                ' '.join(str(pair.get('question', '')).split()) != ' '.join(' '.join(row.get('text', '') for row in question).split()) or
+                pair.get('question_start') != question[0].get('start') or pair.get('question_end') != question[-1].get('end')):
+            counts['question_reference_or_ownership_unresolved'] += 1
+            result.append(pair)
+            continue
+        future = []
+        prefix_stop_reason = None
+        previous_future_end = question[-1]['end']
+        search_end = positions[question_ids[0]] + 33
+        for row in rows[positions[question_ids[-1]] + 1:search_end]:
+            start, end = row.get('start'), row.get('end')
+            if (not all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+                        for value in (start, end)) or end < start or start < previous_future_end):
+                prefix_stop_reason = 'source_interval_unresolved'
+            elif end-question[0]['end'] > 125:
+                prefix_stop_reason = 'answer_search_window_exhausted'
+            if prefix_stop_reason:
+                counts['source_prefix_stopped_at_invalid_interval_or_search_limit'] += 1
+                break
+            future.append(row)
+            previous_future_end = end
+        if prefix_stop_reason is None and len(rows) > search_end:
+            prefix_stop_reason = 'answer_segment_search_limit'
+        context, reactions, consumed = [], [], 0
+        previous_end = question[-1]['end']
+        anchor = ' '.join(row['text'] for row in question)
+        for row in future:
+            text = row.get('text', '')
+            gap = row.get('start', 0)-previous_end
+            if gap < 0 or gap > 10 or not row.get('speaker') or TOPIC_SHIFT.search(fold_text(text)):
+                break
+            classification = classify_question(text)
+            shared = _qa_terms(anchor) & _qa_terms(text)
+            if (row['speaker'] == owner and len(context) < 3 and gap <= 5 and
+                    (not classification['answer_expected'] or _qa_question_extension(text, anchor)) and
+                    len(shared) >= 2):
+                context.append(row)
+                anchor += ' ' + text
+            elif (row['speaker'] != owner and _qa_intervention(text, anchor) == 'reaction_cue' and
+                    row['end']-row['start'] <= 12 and len(text.split()) <= 30 and len(reactions) < 3):
+                reactions.append(row)
+            else:
+                break
+            previous_end = row['end']
+            consumed += 1
+        if not context and not reactions:
+            result.append(pair)
+            continue
+        folded = {**question[0], 'text': anchor,
+                  'end': context[-1]['end'] if context else question[-1]['end']}
+        candidates = questions_answers([folded, *future[consumed:]])
+        candidate = next((row for row in candidates if row.get('question_segment_id') == question_ids[0]), None)
+        attempt = {'question_id': pair.get('question_id'), 'question_start': pair.get('question_start'),
+                   'asker_context_segment_ids': [row['segment_id'] for row in context],
+                   'reaction_segment_ids': [row['segment_id'] for row in reactions],
+                   'previous_unresolved_reason': pair.get('unresolved_reason'),
+                   'source_window_stop_reason': prefix_stop_reason,
+                   'recovered': False, 'stop_reason': (candidate or {}).get('unresolved_reason') or prefix_stop_reason}
+        attempts.append(attempt)
+        if not candidate or candidate.get('answer_status') != 'linked_candidate':
+            result.append(pair)
+            continue
+        if pair.get('question_type') == 'yes_no_question' and any(
+                fold_text(row['text']).strip(' .!?,') in {'certo', 'verdade', 'ta', 'ok', 'entendi', 'serio'} and
+                row['speaker'] != by_id[candidate['answer_segment_ids'][0]]['speaker'] for row in reactions):
+            attempt['stop_reason'] = 'polar_reaction_response_ownership_ambiguous'
+            counts['polar_reaction_response_ownership_ambiguous'] += 1
+            result.append(pair)
+            continue
+        if prefix_stop_reason and not candidate.get('unresolved_reason'):
+            candidate.update(unresolved_reason=prefix_stop_reason, question_answer_complete=False,
+                             answer_closes_itself=False, answer_completeness='partial')
+        expanded_question_ids = list(dict.fromkeys(sid for item in candidate.get('question_segment_ids', [])
+            for sid in (question_ids + [row['segment_id'] for row in context] if item == question_ids[0] else [item])))
+        answer_ids = candidate.get('answer_segment_ids') or []
+        interruption_ids = list(dict.fromkeys(candidate.get('intervening_segment_ids', []) + [row['segment_id'] for row in reactions]))
+        used_ids = set(expanded_question_ids + answer_ids + interruption_ids)
+        observed = [row for row in rows if row['segment_id'] in used_ids]
+        if (any(sid not in by_id for sid in used_ids) or not answer_ids or
+                any(b['start'] < a['end'] for a, b in zip(observed, observed[1:]))):
+            attempt['stop_reason'] = 'source_reference_or_temporal_overlap_unresolved'
+            result.append(pair)
+            continue
+        question_rows = [by_id[sid] for sid in expanded_question_ids]
+        answer_rows = [by_id[sid] for sid in answer_ids]
+        candidate.update(question_id=pair['question_id'], stable_question_id=pair.get('stable_question_id'),
+            question=' '.join(row['text'] for row in question_rows), question_end=question_rows[-1]['end'],
+            question_segment_ids=expanded_question_ids,
+            answer=' '.join(row['text'] for row in answer_rows),
+            evidence_segment_ids=[row['segment_id'] for row in observed],
+            intervening_segment_ids=[row['segment_id'] for row in observed if row['segment_id'] in interruption_ids],
+            interruption_count=len(interruption_ids), audio_verified_complete=None,
+            method='grounded_asker_context_reaction_bridge_v1', needs_review=True, confidence=None)
+        candidate['intervention_evidence'] += [{'segment_id': row['segment_id'], 'kind': 'reaction_cue',
+            'start': row['start'], 'end': row['end'], 'speaker': row['speaker']} for row in reactions]
+        for evidence in candidate['association_evidence']:
+            evidence['intervening_segment_ids'] = list(dict.fromkeys(evidence.get('intervening_segment_ids', []) + interruption_ids))
+        topic_ids = [topic.get('topic_id') for topic in topics or [] if used_ids & set(topic.get('evidence_segment_ids') or [])]
+        support = {**attempt, 'recovered': True, 'evidence_segment_ids': candidate['evidence_segment_ids'],
+                   'topic_ids': topic_ids, 'cross_topic_references': len(set(topic_ids)) > 1,
+                   'scope': 'provisional_textual_link; no_visual_identity_or_audio_approval'}
+        candidate['dialogue_support'] = support
+        merged = {**pair, **candidate}
+        propagate_transcript_uncertainty([merged], rows)
+        result.append(merged)
+        attempt['recovered'] = True
+        counts['recovered_provisional_links'] += 1
+    for pair in result:
+        counts['after_' + str(pair.get('answer_status', 'unknown'))] += 1
+    expected = [pair for pair in result if pair.get('answer_expected')]
+    chosen = [pair for pair in expected if pair.get('dialogue_support')]
+    chosen += [pair for pair in expected if pair.get('answer_status') == 'linked_candidate' and pair not in chosen]
+    for index in range(min(16, len(expected))):
+        pair = expected[min(len(expected)-1, int((index+.5)*len(expected)/min(16, len(expected))))]
+        if pair not in chosen:
+            chosen.append(pair)
+    review_sample = [{key: pair.get(key) for key in ('question_id', 'question_segment_ids',
+        'question_speaker', 'question_start', 'question_end', 'answer_segment_ids',
+        'answer_speaker', 'answer_start', 'answer_end', 'answer_status', 'unresolved_reason')}
+        for pair in chosen[:16]]
+    for sample in review_sample:
+        sample.update(annotation_status='unreviewed', audio_verified_complete=None)
+    return result, {'schema_version': '1.0', 'counts': dict(counts), 'attempts': attempts,
+        'manual_review_sample': review_sample,
+        'distinct_associated_answer_span_count': len({tuple(pair.get('answer_segment_ids') or [])
+            for pair in result if pair.get('answer_status') == 'linked_candidate'}),
+        'unresolved_reason_counts': dict(Counter(pair.get('unresolved_reason') for pair in result if pair.get('answer_status') == 'unresolved')),
+        'source_duplicate_ids_observed': not source_valid,
+        'verified_complete_qa_count': None, 'human_accuracy_measured': False,
+        'scope': 'full_source_transcript; semantic_chunk_boundaries_not_search_limits'}
 
 
 def extract_entities(transcript):
@@ -240,21 +652,36 @@ def build_participants(transcript, diarization, vision, mapping_summary, questio
 # Generated by GitHub Copilot - Oct-05-2026
 def build_story_arcs(transcript, topics, questions_answers=None):
     """Keep marker-supported narratives and explicit unresolved discussion-arc candidates."""
+    from .story_recovery import recover_story_arcs, literal_outcome, outcome_continuity, TOPIC_SHIFT, ACTION
     by_id = {s["segment_id"]: s for s in transcript.get("segments", [])}
     arcs = []
     conflict_re = re.compile(r"\b(mas|só que|so que|porém|porem|problema|dificuldade|errado|não deu|nao deu)\b", re.I)
-    payoff_re = re.compile(r"\b(no fim|no final|acabou|consegui|deu certo|resultado|virou|aí deu|ai deu)\b", re.I)
     setup_re = re.compile(r"\b(quando|na época|na epoca|um dia|começou|comecou|aconteceu)\b", re.I)
     for topic in topics:
-        segments = [by_id[sid] for sid in topic.get("evidence_segment_ids", []) if sid in by_id]
+        segments = sorted([by_id[sid] for sid in topic.get("evidence_segment_ids", []) if sid in by_id],
+                          key=lambda s: s['start'])
         if len(segments) < 3:
             continue
         setup = next((s for s in segments if setup_re.search(s["text"])), None)
-        conflict = next((s for s in segments if conflict_re.search(s["text"])), None)
-        payoff = next((s for s in reversed(segments) if payoff_re.search(s["text"])), None)
+        conflict = next((s for s in segments if setup and s['start'] > setup['start']
+                         and conflict_re.search(s["text"])), None)
+        payoff = next((s for s in segments if conflict and s["start"] > conflict["start"]
+                       and literal_outcome(s["text"])), None)
         complete_qa = next((pair for pair in questions_answers or [] if pair.get("question_answer_complete") and
                             topic["start"] <= pair["question_start"] and pair["answer_end"] <= topic["end"]), None)
-        marker_supported = setup is not None and conflict is not None and payoff is not None and setup["start"] < conflict["start"] < payoff["start"]
+        marker_supported = (setup is not None and conflict is not None and payoff is not None and
+                            setup["start"] < conflict["start"] < payoff["start"])
+        if marker_supported:
+            span = [s for s in segments if setup['start'] <= s['start'] <= payoff['start']]
+            marker_supported = bool(ACTION.search(fold_text(setup['text'])) and setup.get('speaker')
+                                    and conflict.get('speaker') == setup['speaker']
+                                    and payoff.get('speaker') == setup['speaker']
+                                    and outcome_continuity(payoff['text'], [s for s in span if s['start'] < payoff['start'] and s.get('speaker') == setup['speaker']])['supported']
+                                    and payoff['end'] - setup['start'] <= 360
+                                    and not any(TOPIC_SHIFT.search(fold_text(s['text'])) for s in span)
+                                    and all(s.get('speaker') and (s['speaker'] == setup['speaker']
+                                            or s['end'] - s['start'] <= 12) for s in span)
+                                    and all(b['start'] - a['end'] <= 15 for a, b in zip(span, span[1:])))
         kind = "complete_story" if marker_supported else "qa_arc" if complete_qa else "partial_story" if setup and conflict else "anecdote" if setup else "discussion_segment"
         if not marker_supported:
             payoff = None
@@ -264,14 +691,27 @@ def build_story_arcs(transcript, topics, questions_answers=None):
                 payoff = by_id.get(complete_qa["answer_segment_ids"][-1])
         if classify_content(" ".join(segment["text"] for segment in segments))["eligibility"] == "excluded":
             continue
-        middle = [segment for segment in segments[1:-1] if not payoff or segment["start"] < payoff["start"]]
+        middle = [segment for segment in segments if setup and
+                  segment['start'] >= setup['end'] and
+                  (not payoff or segment['end'] <= payoff['start']) and
+                  segment.get('speaker') == setup.get('speaker')]
+        # A story's development must be independently grounded and temporally
+        # ordered between setup and outcome. The conflict can be the climax.
+        if marker_supported and not middle:
+            marker_supported = False
+            kind = 'partial_story'
         ending = segments[-1]
         start = setup["start"] if setup else segments[0]["start"]
         duration = ending["end"]-start
         if duration < 8:
             continue
         complete = ending["text"].rstrip().endswith((".", "?", "!"))
-        score = min(1.0, 0.55 + 0.10*bool(setup) + 0.15*bool(middle) + 0.15*complete)
+        # Preserve the legacy QA utility while separating its section layout
+        # from actual narrative development. This does not change shortlist gates.
+        scoring_middle = ([segment for segment in segments[1:-1]
+                           if not payoff or segment['start'] < payoff['start']]
+                          if complete_qa and not marker_supported else middle)
+        score = min(1.0, 0.55 + 0.10*bool(setup) + 0.15*bool(scoring_middle) + 0.15*complete)
         arcs.append({
             "story_arc_id": f"STORY_{len(arcs):04}", "topic_id": topic.get("topic_id"),
             "kind": kind, "narrative_supported": kind == "complete_story",
@@ -279,19 +719,39 @@ def build_story_arcs(transcript, topics, questions_answers=None):
             "title": topic.get("topic"), "summary": topic.get("summary"),
             "evidence_segment_ids": [segment["segment_id"] for segment in segments],
             "start": start, "end": ending["end"],
-            "setup": {"text": setup["text"], "segment_ids": [setup["segment_id"]]} if setup else None,
-            "conflict": {"text": conflict["text"], "segment_ids": [conflict["segment_id"]]} if conflict else None,
-            "development": {"text": " ".join(s["text"] for s in middle) or None,
-                            "segment_ids": [s["segment_id"] for s in middle]} if kind != "discussion_segment" else None,
+            "setup": {"text": setup["text"], "segment_ids": [setup["segment_id"]],
+                      "start": setup['start'], "end": setup['end']} if setup else None,
+            "conflict": {"text": conflict["text"], "segment_ids": [conflict["segment_id"]],
+                         "start": conflict['start'], "end": conflict['end']} if conflict else None,
+            "development": {"text": " ".join(s["text"] for s in middle),
+                            "segment_ids": [s["segment_id"] for s in middle],
+                            "start": middle[0]['start'] if middle else None,
+                             "end": middle[-1]['end'] if middle else None} if middle else None,
+            "climax": {"text": conflict["text"], "segment_ids": [conflict["segment_id"]],
+                       "start": conflict['start'], "end": conflict['end']} if marker_supported else None,
             "payoff": {"text": payoff["text"], "segment_ids": [payoff["segment_id"]], "start": payoff['start'], "end": payoff['end']} if payoff else None,
-            "ending": {"text": ending["text"], "segment_ids": [ending["segment_id"]]},
+            "payoff_continuity": outcome_continuity(payoff['text'], [s for s in segments if s['start'] < payoff['start'] and s.get('speaker') == payoff.get('speaker')]) if marker_supported else None,
+            "ending": {"text": ending["text"], "segment_ids": [ending["segment_id"]],
+                       "start": ending['start'], "end": ending['end']},
+            "narrative_structure": {"introduction": [setup['segment_id']] if setup else [],
+                                     "development": [s['segment_id'] for s in middle],
+                                     "climax": [conflict['segment_id']] if marker_supported else [],
+                                     "resolution": [payoff['segment_id']] if payoff else [],
+                                     "ending": [ending['segment_id']]},
             "standalone_score": score if marker_supported or complete_qa else None,
-            "completeness": "supported_setup_development_payoff" if marker_supported or complete_qa else "unresolved_payoff",
+            "completeness": "supported_setup_development_payoff" if marker_supported else "supported_question_answer" if complete_qa else "unresolved_payoff",
             "method": "narrative_marker_heuristic" if marker_supported else "grounded_qa_arc" if complete_qa else "discussion_section_candidate",
             "inference": True,
             "confidence": None, "needs_review": True,
             "missing_component_reasons": {key: "not_narrative_or_unresolved" for key, value in (("setup", setup), ("conflict", conflict), ("payoff", payoff)) if value is None},
         })
+    existing = [(a['start'], a['end']) for a in arcs if a['kind'] == 'complete_story']
+    arcs.extend(a for a in recover_story_arcs(transcript.get('segments', []), topics)
+                if not any(start <= a['start'] and end >= a['end'] for start, end in existing))
+    for arc in arcs:
+        _attach_story_structure_contract(arc)
+    from .semantic import propagate_semantic_degradation
+    propagate_semantic_degradation(arcs, topics)
     return arcs
 
 
@@ -314,16 +774,42 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
         lo = max(0.0, start-30.0, topic["start"] if topic else 0.0)
         hi = min((segments[-1]["end"] if segments else end), end+30.0,
                  topic["end"] if topic else (segments[-1]["end"] if segments else end+30.0))
-        story = next((arc for arc in story_arcs if overlap(start, end, arc["start"], arc["end"]) > 0), None)
-        boundaries = optimize_boundaries(moment, segments, cfg, story)
+        matching_stories = [arc for arc in story_arcs if overlap(start, end, arc['start'], arc['end']) > 0]
+        story = max(matching_stories, key=lambda arc: (
+                    overlap(start, end, arc['start'], arc['end']) / max(end-start, 1e-9),
+                    arc.get('kind') == 'complete_story'), default=None)
+        boundaries = optimize_boundaries(moment, segments, cfg, story, questions_answers, topic, shots)
         ideal_start, ideal_end = boundaries["ideal_start"], boundaries["ideal_end"]
-        q_complete = any(q.get("answer_end") is not None and q["question_start"] >= ideal_start and
-                         q["answer_end"] <= ideal_end for q in questions_answers)
+        segment_ids = boundaries.get('boundary_segment_ids') or moment.get('evidence_segment_ids', [])
+        narrative = narrative_integrity(story, segment_ids)
+        humor = humor_integrity(segments, ideal_start, ideal_end,
+                                hinted=bool(set(moment.get('categories') or []) & {'humor', 'punchline'}))
+        if (boundaries.get('humor_boundary_proposal') or {}).get('expansion_unresolved'):
+            humor['blockers'].append('humor_context_exceeds_topic_shot_or_duration')
+            humor['status'] = 'incomplete'
+        qa_overlap = [q for q in questions_answers if q.get('answer_expected') and
+                      overlap(start, end, q['question_start'], q.get('answer_end') or q['question_end']) > 0]
+        qa_blockers = ['question_without_complete_answer'] if any(
+            q['question_start'] >= ideal_start and q['question_start'] < ideal_end and
+            (not q.get('question_answer_complete') or not q.get('answer_end') or
+             q['answer_end'] > ideal_end) for q in qa_overlap) else []
+        editorial_blockers = sorted(set(narrative['blockers'] + humor['blockers'] + qa_blockers + boundaries.get('boundary_blockers', [])))
+        if editorial_blockers:
+            boundaries['standalone_assessment'] = 'context_required'
+            boundaries['boundary_decision'] = 'pending'
+            boundaries['boundary_decision_reasons'] = sorted(set(
+                boundaries.get('boundary_decision_reasons', []) + editorial_blockers))
+        q_complete = any(q.get("question_answer_complete") is True and q.get("answer_end") is not None and
+                         q["question_start"] >= ideal_start and q["answer_end"] <= ideal_end
+                         for q in questions_answers)
         visual = [s.get("camera_score") for s in shots if overlap(start, end, s["start"], s["end"]) > 0 and
                   isinstance(s.get("camera_score"), (int, float))]
-        ed = moment.get("editorial") or {}
+        editorial_payload = moment.get("editorial")
+        ed = editorial_payload if isinstance(editorial_payload, dict) else {}
         from .semantic import classify_hook
-        hook = classify_hook(' '.join(segment.get('text', '') for segment in segments if ideal_start <= segment['start'] < ideal_start + 15))
+        hook = classify_hook(' '.join(segment.get('text', '') for segment in segments
+                                     if ideal_start <= segment['start'] < ideal_start + 15
+                                     and segment['end'] <= ideal_end and segment['segment_id'] in segment_ids))
         cats = set(moment.get("categories") or [])
         available = [v for v in ed.values() if isinstance(v, (int, float))]
         editorial_score = review_scores.get(moment["moment_id"])
@@ -331,9 +817,13 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
             editorial_score = sum(available)/len(available) if available else None
         result.append({
             "moment_id": moment["moment_id"],
+            "degraded_reason": list(moment.get('degraded_reason') or []),
             "text": " ".join(segment.get("text", "") for segment in segments if ideal_start <= segment["start"] and segment["end"] <= ideal_end),
             "topic_id": topic.get("topic_id") if topic else None,
             "story_arc_id": story.get("story_arc_id") if story else None,
+            "story_type": story.get("kind") if story else None,
+            "speaker_ids": sorted({s['speaker'] for s in segments
+                                   if s.get('speaker') and s['end'] > ideal_start and s['start'] < ideal_end}),
             "core_moment": {"start": start, "end": end, "text": moment.get("text")},
             "possible_start": max(lo, start-10.0), "ideal_start": ideal_start,
             "possible_end": min(hi, end+10.0), "ideal_end": ideal_end,
@@ -344,11 +834,15 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
             "commercial_classification": moment["commercial_classification"],
             "metadata_locale": "pt-BR", **boundaries,
             "recommended_context_seconds": max(0.0, ideal_end-ideal_start),
-            "standalone_score": _score_class(moment.get("standalone_class")),
+            "standalone_score": None if editorial_blockers else _score_class(moment.get("standalone_class")),
+            "original_standalone_class": moment.get('standalone_class'),
             "hook_strength": hook['hook_strength'], "hook_type": hook['hook_type'],
-            "ending_strength": 1.0 if moment.get("complete_sentence") else 0.35,
-            "story_completeness": story.get("standalone_score") if story else None,
+            "ending_strength": float(boundaries['clean_ending']) if isinstance(boundaries.get('clean_ending'), bool) else None,
+            "story_completeness": story.get("standalone_score") if story and narrative["status"] == "complete_candidate" else None,
             "question_answer_complete": q_complete,
+            "qa_integrity_status": 'complete_candidate' if q_complete else 'unresolved' if qa_overlap else 'not_applicable',
+            "editorial_blockers": editorial_blockers, "narrative_integrity": narrative,
+            "humor_integrity": humor,
             "editorial_score": editorial_score,
             "story_score": story.get("standalone_score") if story else None,
             "hook_score": min(hook['hook_strength'], ed.get('hook_strength')) if hook['hook_strength'] is not None and isinstance(ed.get('hook_strength'), (int, float)) else hook['hook_strength'],
@@ -362,7 +856,15 @@ def build_main_moments(transcript, topics, moments, questions_answers, story_arc
             "categories": sorted(cats), "method": "grounded_sentence_story_boundaries_and_weighted_utility",
             "inference": True, "needs_review": True,
         })
-    ranked = [rank_candidate(candidate, cfg) for candidate in result]
+    from .story_recovery import candidate_recovery
+    from .semantic import propagate_semantic_degradation, propagate_transcript_uncertainty
+    propagate_semantic_degradation(result, topics)
+    propagate_transcript_uncertainty(result, segments)
+    ranked = []
+    for candidate in result:
+        evaluated = rank_candidate(candidate, cfg)
+        evaluated['recovery'] = candidate_recovery(evaluated, candidate.get('editorial_score'))
+        ranked.append(evaluated)
     return deduplicate_candidates(ranked)[0]
 
 
@@ -484,27 +986,92 @@ def build_video_understanding(metadata, transcript, topics, participants, entiti
 
 
 def run_understanding(ctx, metadata, transcript, diarization, vision, active_data, semantic, shots, cfg):
+    semantic, contract_notes, contract_diagnostics = _normalize_semantic_contract(semantic)
+    active_data = active_data if isinstance(active_data, dict) else {}
+    transcript = dict(transcript) if isinstance(transcript, dict) else {}
+    transcript["segments"] = _dict_rows(transcript.get("segments", []))
+    transcript["words"] = _dict_rows(transcript.get("words", []))
+    diarization = dict(diarization) if isinstance(diarization, dict) else {}
+    diarization["speakers"] = _dict_rows(diarization.get("speakers", []))
+    vision = dict(vision) if isinstance(vision, dict) else {}
+    vision["people"] = _dict_rows(vision.get("people", []))
+    vision["observations"] = _dict_rows(vision.get("observations", []))
+    vision["thumbnails"] = _dict_rows(vision.get("thumbnails", []))
+    shots = _dict_rows(shots)
+    diagnostics_path = ctx.output / "understanding_contract_diagnostics.json"
+    write_json(diagnostics_path, {
+        "schema_version": "1.0",
+        "normalization_event_count": len(contract_diagnostics),
+        "events": contract_diagnostics,
+        "semantic_counts": {key: len(semantic.get(key, [])) for key in ("topics", "moments", "questions_answers", "program_sections")},
+        "input_types": {
+            "transcript_segments": type(transcript.get("segments")).__name__,
+            "diarization_speakers": type(diarization.get("speakers")).__name__,
+            "vision_people": type(vision.get("people")).__name__,
+            "shots": type(shots).__name__,
+        },
+    })
     entities = extract_entities(transcript)
-    qas = semantic.get("questions_answers", [])
+    qas, dialogue_diagnostics = recover_dialogue_links(transcript, semantic["questions_answers"], semantic["topics"])
     participants = build_participants(transcript, diarization, vision,
-                                      active_data.get("mapping_summary", []), qas, cfg, shots)
+                                      _dict_rows(active_data.get("mapping_summary", [])), qas, cfg, shots)
     participant_catalog = build_participants(transcript, diarization, vision,
-                                      active_data.get("mapping_summary", []), qas, cfg, shots, include_background=True)
-    story_arcs = build_story_arcs(transcript, semantic.get("topics", []), qas)
-    section_by_topic = {topic_id: section["section_id"] for section in semantic.get("program_sections", []) for topic_id in section["topic_ids"]}
+                                      _dict_rows(active_data.get("mapping_summary", [])), qas, cfg, shots, include_background=True)
+    story_arcs = build_story_arcs(transcript, semantic["topics"], qas)
+    story_arcs, arc_diagnostics = _validate_story_arcs_contract(story_arcs, transcript['segments'])
+    dialogue_diagnostics['story_missing_support_counts'] = dict(Counter(
+        reason for arc in story_arcs for reason in arc['support_diagnostics']['missing_support_reasons']))
+    dialogue_diagnostics['story_narrative_supported_count'] = sum(bool(arc.get('narrative_supported')) for arc in story_arcs)
+    if arc_diagnostics:
+        contract_diagnostics.extend(arc_diagnostics)
+        contract_notes.append(f'story_arc_contract_normalized: {len(arc_diagnostics)} events')
+    section_by_topic = {topic_id: section["section_id"] for section in semantic["program_sections"]
+                        if isinstance(section.get("topic_ids"), list) and section.get("section_id")
+                        for topic_id in section["topic_ids"]}
     for arc in story_arcs:
         arc["section_id"] = section_by_topic.get(arc.get("topic_id"))
-    main_moments = build_main_moments(transcript, semantic.get("topics", []), semantic.get("moments", []),
+    main_moments = build_main_moments(transcript, semantic["topics"], semantic["moments"],
                                       qas, story_arcs, shots, semantic.get("editorial_review"), cfg)
+    for index, candidate in enumerate(main_moments):
+        if candidate.get('duration_exception_proof_rejected'):
+            contract_diagnostics.append(_contract_issue(
+                f'main_moments[{index}].duration_exception_evidence',
+                'ordered_source_segment_ids', candidate.get('duration_exception_evidence'),
+                'duration_exception_revoked'))
+    # Save contract facts only: never dump transcription/prompt bodies into logs.
+    write_json(diagnostics_path, {
+        'schema_version': '1.0',
+        'normalization_event_count': len(contract_diagnostics),
+        'events': contract_diagnostics,
+        'semantic_counts': {key: len(semantic.get(key, [])) for key in
+                            ('topics', 'moments', 'questions_answers', 'program_sections')},
+        'input_types': {
+            'transcript_segments': type(transcript.get('segments')).__name__,
+            'diarization_speakers': type(diarization.get('speakers')).__name__,
+            'vision_people': type(vision.get('people')).__name__,
+            'shots': type(shots).__name__,
+        },
+        'story_arc_count': len(story_arcs),
+        'candidate_count': len(main_moments),
+    })
     for candidate in main_moments:
         candidate["program_section_id"] = section_by_topic.get(candidate.get("topic_id"))
+    shortlist_rows, selection_report = select_editorial_shortlist(
+        main_moments, cfg.get('max_moments', 12), cfg.get('min_editorial_score', .50),
+        cfg.get('max_candidates_per_topic', 2))
+    shortlist_ids = [row['moment_id'] for row in shortlist_rows]
+    # Keep excluded primaries and dedup alternates addressable without adding
+    # any of them to the shortlist. Priority uses the post-context evaluation.
+    from .story_recovery import candidate_recovery_queue
+    recovery_queue = candidate_recovery_queue(main_moments)
     candidate_metrics = {"candidates_before_dedup": len(semantic.get("moments", [])),
                          "candidates_after_dedup": len(main_moments),
                          "alternate_count": sum(len(candidate.get("alternates", [])) for candidate in main_moments),
                          "excluded_commercial_count": sum((candidate.get('commercial_classification') or {}).get('eligibility') == 'excluded' for candidate in main_moments),
                          "excluded_eligibility_count": sum(not candidate.get('default_shortlist_eligible', True) for candidate in main_moments),
                          "editorial_participant_count": len(participants),
-                         "final_shortlist_count": min(cfg.get('max_moments', 12), sum(candidate.get('default_shortlist_eligible', True) for candidate in main_moments))}
+                         "final_shortlist_count": len(shortlist_ids),
+                         "selection_report": selection_report}
     candidate_metrics.update(complete_story_arc_count=sum(arc.get('kind') == 'complete_story' for arc in story_arcs),
                              partial_story_arc_count=sum(arc.get('kind') == 'partial_story' for arc in story_arcs),
                              discussion_block_count=sum(arc.get('kind') == 'discussion_segment' for arc in story_arcs),
@@ -513,25 +1080,28 @@ def run_understanding(ctx, metadata, transcript, diarization, vision, active_dat
                                           max(1, sum(arc.get('kind') in {'complete_story', 'partial_story', 'anecdote'} for arc in story_arcs)),
                              duration_violation_count=sum(not candidate.get('duration_in_target_range', False) and not candidate.get('duration_exception') for candidate in main_moments))
     thumbnails = build_thumbnail_candidates(vision, shots, cfg.get("max_thumbnail_candidates", 80),
-                    [moment for moment in main_moments if moment.get('default_shortlist_eligible',True)][:cfg.get('max_moments',12)])
+                    shortlist_rows)
     moment_frames = []
     try:
         moment_frames = extract_moment_frames(ctx, main_moments, thumbnails, cfg)
     except Exception as exc:
         ctx.logger.warning("Frames dos momentos: %s: %s", type(exc).__name__, exc)
-    video_understanding = build_video_understanding(metadata, transcript, semantic.get("topics", []),
+    video_understanding = build_video_understanding(metadata, transcript, semantic["topics"],
                                                    participants, entities, story_arcs, main_moments, qas, shots)
     notes = ["Entidades são extraídas apenas de evidência textual; nomes não são inferidos por rosto.",
-             "Story arcs e papéis host/guest são heurísticas conservadoras e permanecem needs_review."]
+             "Story arcs e papéis host/guest são heurísticas conservadoras e permanecem needs_review.",
+             *contract_notes]
     artifacts = []
     for row in moment_frames:
         for relative in (row.get("frames") or {}).values():
             artifacts.append(ctx.output / relative)
+    from .semantic import qa_contract
     return ok({"entities": entities, "participants": participants, "story_arcs": story_arcs,
+               'questions_answers': qas, **qa_contract(qas), 'dialogue_diagnostics': dialogue_diagnostics,
                "participant_catalog": participant_catalog,
                "participant_metrics": dict(Counter(row["participant_category"] for row in participant_catalog)),
                "candidate_metrics": candidate_metrics,
-               "editorial_shortlist": [candidate["moment_id"] for candidate in main_moments if candidate.get("default_shortlist_eligible", True)][:cfg.get("max_moments", 12)],
+               "editorial_shortlist": shortlist_ids, "candidate_recovery_queue": recovery_queue,
                "main_moments": main_moments, "thumbnail_candidates": thumbnails,
                "moment_frames": moment_frames, "video_understanding": video_understanding},
-              "ok" if transcript.get("segments") else "partial", notes, artifacts)
+              "ok" if transcript.get("segments") else "partial", notes, [*artifacts, diagnostics_path])

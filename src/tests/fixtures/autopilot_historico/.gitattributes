@@ -1,0 +1,4 @@
+# Preserve the historical Git blob bytes used by ORIGEM.json SHA-256 checks.
+# Windows core.autocrlf must not rewrite these reference documents on checkout.
+/MAPA_ETAPAS.json -text
+/prompts/ETAPA_*.txt -text

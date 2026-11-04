@@ -2,12 +2,13 @@ from pathlib import Path
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import re
-from . import __version__
+from . import __version__, __build__
 from .config import ROOT, configure_local_mode
-from .core import Context, file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok
+from .core import file_hash, setup_logging, output_lock, logging_session, external_fingerprints, ok, digest
 from .media import resolve_input, inspect
 from .audio import extract_audio, audio_metrics, sound_events
 from .transcription import TranscriptionEngine
+from .uncertain_words_audit import audit_uncertain_words
 from .diarization import DiarizationEngine, align_speakers
 from .scenes import SceneEngine
 from .vision import VisionEngine, ActiveSpeakerEngine
@@ -18,6 +19,7 @@ from .active_speaker import build_active_speaker
 from .shots import build_shots
 from .camera_timeline import build_camera_timeline
 from .ocr import OcrEngine
+from .ocr_execution import execution_summary
 from .semantic import SemanticEngine
 from .timeline import build_timeline, captions, enrich_editorial
 from .understanding import run_understanding
@@ -26,7 +28,27 @@ from .analysis_quality import build_analysis_quality
 from .reports import ReportEngine
 from .director_integration import run_planner_stage, run_director_stage, attach_director
 from .preview_integration import run_preview_stage
+from .build_provenance import ProvenanceContext as Context
 from .preflight import require_preflight
+
+
+
+def _dialogue_evidence(understanding, semantic):
+    """Use refined canonical dialogue downstream; legacy checkpoints keep their QA."""
+    fields = ('questions_answers', 'question_candidates', 'question_answer_pairs',
+              'question_diagnostics', 'qa_metrics')
+    return {key: understanding.get(key, semantic.get(key, {} if key == 'qa_metrics' else []))
+            for key in fields}
+
+
+def _optional_visual_result(payload):
+    """Propagate optional backend status to the checkpoint and final integrity gate."""
+    status = (payload or {}).get('status', 'partial')
+    if status == 'measured':
+        return ok(payload)
+    if status in {'skipped', 'unavailable', 'partial'}:
+        return ok(payload, status, [f'Visual evidence: {payload.get("reason", status)}'])
+    return ok(payload, 'partial', [f'Unknown visual status: {status}'])
 
 
 def _active_stage(ctx, audio, diarization, vision, metadata, cfg):
@@ -37,6 +59,9 @@ def _active_stage(ctx, audio, diarization, vision, metadata, cfg):
     raw_result = ActiveSpeakerEngine().run(ctx, audio, diarization, vision, metadata)
     raw = raw_result.get("data", {})
     refined = build_active_speaker(diarization, vision, raw.get("mappings", []), cfg)
+    for key in ('window_planning', 'measurement_failure_counts', 'observed_mouth_samples'):
+        if key in raw:
+            refined['data'][key] = raw[key]
     refined["notes"] = list(raw_result.get("notes", [])) + list(refined.get("notes", []))
     raw_status = raw_result.get("status", "partial")
     if raw_status in ("unavailable", "failed"):
@@ -73,16 +98,20 @@ def analyze(source, cfg, output=None, force=False):
     model_fingerprints={'asr':capabilities['asr']['checks'].get('configuration',{}).get('model_fingerprint'),
                         'diarization':capabilities['diarization']['checks'].get('model_access',{}).get('model_fingerprint'),
                         'semantic':capabilities['semantic']['checks'].get('model',{}).get('model_fingerprint')}
+    ctx.asr_model_fingerprint = model_fingerprints['asr']
 
-    with logging_session(logger), output_lock(destination):
+    from .storage import media_lease
+    with logging_session(logger), output_lock(destination), media_lease(video):
         metadata = ctx.step("01_metadata", {}, lambda: inspect(video), required=True,
                             code_files=["media.py", "core.py"])
         metadata.update(
             source=provenance, sha256=signature, analyzer_version=__version__,
-            schema_version='2.0', camera_director_version='4.3.0',
+            schema_version='2.0', camera_director_version='4.4.0',
             analyzed_at_utc=datetime.now(timezone.utc).isoformat(),
         )
-        ctx.progress('01_metadata', status='ok', metadata=metadata)
+        from .runtime_metrics import historical_stage_estimates
+        ctx.progress('01_metadata', status='ok', metadata=metadata,
+                     historical_stage_estimates=historical_stage_estimates(metadata, cfg))
 
         audio = ctx.step("02_audio", {"audio": cfg["audio"], "external": external['02_audio']},
                          lambda: extract_audio(ctx, metadata), required=True,
@@ -96,7 +125,7 @@ def analyze(source, cfg, output=None, force=False):
              "compute": cfg["compute_type"], "language":cfg['language'],"offline": cfg["offline"], "external": external['04_transcription'],
              "model_fingerprint":model_fingerprints['asr']},
             lambda: TranscriptionEngine(ctx).run(audio, metrics, metadata), required=True,
-            code_files=["transcription.py", "gpu_runtime.py", "audio.py", "core.py"])
+            code_files=["transcription.py", "asr_comparison.py", "gpu_runtime.py", "audio.py", "core.py"])
         # Generated by GitHub Copilot - Oct-05-2026
         raw_transcript = transcript
 
@@ -107,7 +136,7 @@ def analyze(source, cfg, output=None, force=False):
              "token_available": bool(__import__("os").environ.get("HF_TOKEN") or
                                      __import__("os").environ.get("HUGGING_FACE_HUB_TOKEN"))},
             lambda: DiarizationEngine().run(ctx, audio, metadata),
-            code_files=["diarization.py", "core.py"])
+            code_files=["diarization.py", "transcription.py", "asr_comparison.py", "model_cache.py", "core.py"])
         transcript = align_speakers(transcript, diarization)
 
         scene_data = ctx.step("06_scenes", cfg["scenes"],
@@ -118,43 +147,45 @@ def analyze(source, cfg, output=None, force=False):
             "duration": metadata["duration"], "scene_type": "unknown", "detected": False,
             "keyframe": None, "visible_people": [], "predominant_person": None,
         }]
+        scene_metrics = scene_data.get("scene_metrics", {})
 
         vision = ctx.step(
             "07_people_tracking", {"config": cfg["vision"], "external": external['07_people_tracking'],
                                    "speaker_sampling_fingerprint": speaker_sampling_fingerprint(transcript)},
             lambda: VisionEngine().run(ctx, metadata, scenes, transcript),
-            code_files=["vision.py", "visual_sampling.py", "core.py"])
+            code_files=["vision.py", "body_model_paths.py", "visual_sampling.py", "face_quality.py", "vision_checkpoint.py", "performance.py", "core.py"])
         # Generated by GitHub Copilot - Oct-05-2026
         reid_cfg = {key: cfg["vision"][key] for key in ("reid_threshold", "reid_margin", "track_max_gap_seconds",
-                "tracklet_min_visual_seconds", "tracklet_min_observations", "identity_min_visual_seconds", "reid_candidate_limit")}
+                "tracklet_min_visual_seconds", "tracklet_min_observations", "identity_min_visual_seconds", "reid_candidate_limit",
+                "micro_reid_threshold", "micro_reid_margin")}
         reid = ctx.step("08_person_reid", reid_cfg,
                 lambda: build_person_identities(vision, reid_cfg),
                         code_files=["person_reid.py", "vision.py", "core.py"], requires=["07_people_tracking"])
         vision = apply_person_identities(vision, reid)
         motion = ctx.step("09_person_motion", cfg["person_motion"],
                           lambda: build_person_motion(vision, cfg["person_motion"]),
-                          code_files=["person_motion.py", "core.py"], requires=["07_people_tracking"])
+                          code_files=["person_motion.py", "core.py"], requires=["08_person_reid"])
         active = ctx.step(
             "10_active_speaker",
             {"vision": cfg["vision"], "active_speaker": cfg["active_speaker"], "external": external['10_active_speaker']},
             lambda: _active_stage(ctx, audio, diarization, vision, metadata, cfg["active_speaker"]),
-            code_files=["vision.py", "active_speaker.py", "temporal.py", "core.py"],
-            requires=["07_people_tracking"])
+            code_files=["vision.py", "active_speaker.py", "audiovisual_diagnostics.py", "speaker_windows.py", "speaker_signals.py", "speaker_roles.py", "perception_diagnostics.py", "temporal.py", "core.py", "checkpoint_storage.py"],
+            requires=["05_diarization", "08_person_reid"])
 
         shot_data = ctx.step("11_shots", cfg["shots"],
                              lambda: build_shots(scenes, vision, metadata, cfg["shots"]),
-                             code_files=["shots.py", "core.py"], requires=["06_scenes", "07_people_tracking"])
+                             code_files=["shots.py", "core.py"], requires=["06_scenes", "08_person_reid"])
         shots = shot_data.get("shots", [])
         camera_data = ctx.step(
             "12_camera_timeline", cfg["camera_timeline"],
             lambda: build_camera_timeline(metadata, vision, shots, active.get("intervals", []),
                                           motion.get("people", []), cfg["camera_timeline"]),
             code_files=["camera_timeline.py", "temporal.py", "core.py"],
-            requires=["07_people_tracking", "09_person_motion", "11_shots"])
+            requires=["08_person_reid", "09_person_motion", "10_active_speaker", "11_shots"])
         camera_timeline = camera_data.get("timeline", [])
 
         ocr = ctx.step("13_ocr", cfg["ocr"], lambda: OcrEngine().run(ctx, vision),
-                       code_files=["ocr.py", "core.py"])
+                       code_files=["ocr.py", "ocr_execution.py", "ocr_runtime.py", "ocr_diagnostics.py", "core.py"])
         events = ctx.step("14_audio_events", {"config": cfg["audio_events"], "external": external['14_audio_events']},
                           lambda: sound_events(ctx, audio, transcript),
                           code_files=["audio.py", "core.py"])
@@ -168,21 +199,70 @@ def analyze(source, cfg, output=None, force=False):
                                   vision, mappings, diarization)
         semantic = enrich_editorial(semantic, timeline, mappings, transcript)
         enrich_scenes(scenes, vision, metadata)
-        captions_data = captions(transcript["words"], cfg["captions"])
 
         understanding = ctx.step(
             "16_understanding", cfg["understanding"],
             lambda: run_understanding(ctx, metadata, transcript, diarization, vision, active,
                                       semantic, shots, cfg["understanding"]),
-            code_files=["understanding.py", "semantic.py", "editorial.py", "core.py"])
+            code_files=["understanding.py", "story_recovery.py", "semantic.py", "editorial.py", "editorial_intelligence.py", "core.py",
+                        "narrative_relations.py"])
+        dialogue = _dialogue_evidence(understanding, semantic)
         master_data = ctx.step(
             "17_master_timeline", {"schema": "2.0"},
             lambda: build_master_timeline(metadata, transcript, scenes, semantic.get("topics", []),
-                                          semantic.get("questions_answers", []),
+                                          dialogue['questions_answers'],
                                           understanding.get("story_arcs", []), camera_timeline,
                                           active.get("intervals", [])),
-            code_files=["master_timeline.py", "core.py"])
+            code_files=["master_timeline.py", "pipeline.py", "core.py"])
         master_timeline = master_data.get("timeline", [])
+        from .broadcast_graphics import inspect_candidate_graphics
+        graphics_candidates = understanding.get('main_moments', [])
+        graphics = ctx.step('17b_broadcast_graphics',
+            {'ranges': digest([{k: r.get(k) for k in ('moment_id', 'start', 'end', 'editorial_score')} for r in graphics_candidates]),
+             'limit': cfg['export']['second_curation_visual_candidate_limit']},
+            lambda: _optional_visual_result(inspect_candidate_graphics(ctx.video, graphics_candidates,
+                       cfg['export']['second_curation_visual_candidate_limit'])),
+            code_files=['broadcast_graphics.py', 'pipeline.py'], requires=['16_understanding'])
+        vision['broadcast_graphics'] = graphics
+        from .commercial_gate import targeted_ocr, apply_commercial_refinement, commercial_visual_params, ocr_runtime_fingerprint
+        commercial_visual = ctx.step('17c_commercial_visual',
+            commercial_visual_params(ctx.signature, graphics_candidates, cfg['ocr'],
+                cfg['export']['second_curation_visual_candidate_limit'], ocr_runtime_fingerprint(cfg['ocr']),
+                {name: state.get('key') for name, state in ctx.states.items()}),
+            lambda: _optional_visual_result(targeted_ocr(ctx.video, graphics_candidates, cfg['ocr'], cfg['export']['second_curation_visual_candidate_limit'])),
+            code_files=['commercial_gate.py', 'ocr.py', 'ocr_execution.py', 'ocr_runtime.py', 'ocr_diagnostics.py', 'editorial.py', 'pipeline.py'], requires=['16_understanding'])
+        understanding = apply_commercial_refinement(understanding, transcript['segments'],
+            [{**r, 'source': 'ocr'} for r in ocr.get('texts', [])] + commercial_visual.get('texts', []), cfg['understanding'],
+            commercial_visual=commercial_visual, graphics=graphics)
+        from .targeted_asr import run_on_demand_review, on_demand_source_fingerprint
+        targeted_asr = ctx.step('17d_targeted_asr',
+            {'config': cfg['transcription'],
+             'queued_audio_sha256': on_demand_source_fingerprint(cfg, audio),
+             'candidate_ranges': digest(understanding['main_moments']), 'arcs': digest(understanding.get('story_arcs', [])),
+             'questions': digest(dialogue['questions_answers']), 'selected': digest(understanding.get('editorial_shortlist', [])),
+             'overlaps': digest(diarization.get('overlaps', []))},
+            lambda: ok(run_on_demand_review(ctx, audio, transcript, understanding['main_moments'],
+                      understanding.get('story_arcs', []), dialogue['questions_answers'], metadata['duration'],
+                      speech_overlaps=diarization.get('overlaps', []), events=events.get('events', []))),
+            code_files=['targeted_asr.py', 'transcription.py', 'asr_comparison.py', 'pipeline.py'], requires=['04_transcription', '16_understanding'])
+        transcript.setdefault('transcription_alternatives', []).extend(targeted_asr.get('alternatives', []))
+        if targeted_asr.get('source_audio_review'):
+            transcript['source_audio_review'] = targeted_asr['source_audio_review']
+        from .subtitle_review import review_selected_clips
+        subtitle_review = ctx.step('17e_subtitle_review_s7',
+            {'selection': digest(understanding.get('editorial_shortlist', [])),
+             'targeted': digest(targeted_asr), 'captions': cfg['captions'],
+             'events': digest(events.get('events', []))},
+            lambda: ok(review_selected_clips(transcript['words'], understanding.get('main_moments', []),
+                     selected_ids=understanding.get('editorial_shortlist', []),
+                     alternatives=targeted_asr.get('alternatives', []),
+                     targeted_report=targeted_asr,
+                     events=events.get('events', []), caption_config=cfg['captions'],
+                     threshold=cfg['transcription']['low_confidence'])),
+            code_files=['subtitle_review.py', 'asr_comparison.py', 'timeline.py'],
+            requires=['04_transcription', '16_understanding', '17d_targeted_asr'])
+        # Caption rendering remains a draft pending verification of the original audio.
+        captions_data = captions(transcript['words'], cfg['captions'])
 
         for window in metrics.get("quality_windows", []):
             selected = [word for word in transcript["words"]
@@ -195,7 +275,7 @@ def analyze(source, cfg, output=None, force=False):
             "18_analysis_quality", {"schema": "2.0"},
             lambda: build_analysis_quality(metadata, transcript, diarization, vision, active, shots,
                                            semantic, camera_timeline, list(ctx.issues)),
-            code_files=["analysis_quality.py", "core.py"])
+            code_files=["analysis_quality.py", "causal_diagnostics.py", "core.py"])
 
         camera_plan = run_planner_stage(ctx, metadata, vision, shots, camera_timeline,
                                         active.get("intervals", []), semantic, understanding)
@@ -207,7 +287,14 @@ def analyze(source, cfg, output=None, force=False):
             delivered_zoom, _ = zoom_diagnostics(preview['repaired_timeline'], metadata['duration'], cfg['camera_director']['smart_zoom']['min_zoom_duration'])
             director = {**director, "timeline": preview["repaired_timeline"],
                         'metrics': {**director.get('metrics', {}), **delivered_zoom,
+                                    'zoom_timeline_event_count': delivered_zoom.get('zoom_event_count', 0),
                                     'proposed_zoom_event_count': len(director.get('zoom_events', []))}}
+
+        delivery = preview.get('zoom_delivery') or {}
+        director.setdefault('metrics', {}).update({key: delivery.get(key, 0 if key == 'zoom_delivered_event_count' else None)
+            for key in ('zoom_delivered_event_count', 'zoom_delivery_verified', 'zoom_delivery_fraction',
+                        'rendered_zoom_event_count', 'render_transform_receipts_verified')})
+        director['metrics']['zoom_delivery_report'] = delivery
 
         analysis_status = "partial" if any(
             s["status"] in ("partial", "unavailable", "failed", "blocked", "cancelled") for s in ctx.states.values()) else "complete"
@@ -224,26 +311,37 @@ def analyze(source, cfg, output=None, force=False):
             # Legacy contract
             "speakers": diarization.get("speakers", []), "speaker_turns": diarization.get("turns", []),
             "people": vision.get("people", []), "people_observations": vision.get("observations", []),
-            "scenes": scenes, "topics": semantic.get("topics", []),
+            "scenes": scenes, "scene_metrics": scene_metrics, "topics": semantic.get("topics", []),
             "words": transcript["words"], "transcript_segments": transcript["segments"],
+            'transcript_translations': transcript.get('translations', []),
+            'transcript_original_import_segments': transcript.get('original_import_segments', []),
+            'transcription_language_hypotheses': transcript.get('language_hypotheses', []),
+            'transcription_review_budget': transcript.get('review_budget', {}),
+            'source_audio_review': transcript.get('source_audio_review', {}),
+            'transcription_hypothesis_comparison': transcript.get('hypothesis_comparison', {}),
             "speaker_person_mapping": mappings, "speech_overlaps": diarization.get("overlaps", []),
-            "questions_answers": semantic.get("questions_answers", []),
-            "question_candidates": semantic.get("question_candidates", []),
-            "question_answer_pairs": semantic.get("question_answer_pairs", []),
-            "qa_metrics": semantic.get("qa_metrics", {}),
+            **dialogue,
+            'dialogue_diagnostics': understanding.get('dialogue_diagnostics', {}),
             "program_sections": semantic.get("program_sections", []),
             "primary_editorial_theme": semantic.get("primary_editorial_theme"),
             "secondary_editorial_themes": semantic.get("secondary_editorial_themes", []),
             "topic_quality": semantic.get("topic_quality", {}),
             "semantic_metrics": semantic.get("semantic_metrics", {}),
+            "semantic_chunk_profile": semantic.get("semantic_chunk_profile", []),
             "editorial_moments": semantic.get("moments", []),
             "ollama_editorial_review": semantic.get("editorial_review"),
             "candidate_hooks": semantic.get("candidate_hooks", []),
             "candidate_endings": semantic.get("candidate_endings", []),
             "silences": metrics.get("silences", []), "audio_events": events.get("events", []),
             "ocr_text": ocr.get("texts", []), "timeline": timeline,
+            "ocr_execution": execution_summary(ocr, commercial_visual),
+            "broadcast_graphics": graphics,
+            "commercial_visual_s8": commercial_visual,
+            "commercial_blocks": understanding.get('commercial_blocks', []),
             "low_confidence_words": transcript.get("low_confidence_words", []),
             "transcription_alternatives": transcript.get("transcription_alternatives", []),
+            "targeted_asr_repair": targeted_asr,
+            "subtitle_review_s7": subtitle_review,
             "unaligned_segments": transcript.get("unaligned_segments", []),
             # v2 perception/understanding contract
             "person_identities": reid.get("identities", []),
@@ -251,9 +349,12 @@ def analyze(source, cfg, output=None, force=False):
             "tracklet_observations": vision.get("tracklet_observations", []),
             "reid_merge_decisions": reid.get("merge_decisions", []),
             "transcription_quality": transcript.get("quality_metrics", {}),
+            "uncertain_words_audit": audit_uncertain_words(
+                transcript, cfg['transcription']['low_confidence'], diarization.get('overlaps', [])),
             "diarization_quality": diarization.get("alignment_metrics", {}),
             "person_motion": motion.get("people", []),
             "speaker_person_summary": active.get("mapping_summary", []),
+            "speaker_person_diagnostics": active.get("speaker_person_diagnostics", []),
             "speaker_person_affinity": active.get("affinity", []),
             "active_speaker_evidence": active.get("active_speaker_evidence", []),
             "active_speaker": active.get("intervals", []),
@@ -279,6 +380,7 @@ def analyze(source, cfg, output=None, force=False):
             "analysis_quality": quality,
             "transcription_provenance": {k: transcript.get(k) for k in
                 ("engine", "model", "device", "compute_type", "source", "source_comparisons",
+                 'task', 'text_kind', 'configured_language', 'language_mode', 'raw_hypotheses_ref', 'import_provenance',
                  "timestamp_method", "confidence_is_calibrated", "word_timestamps_are_estimates")},
             "semantic_provenance": {k: semantic.get(k) for k in
                 ("requested_backend", "resolved_model", "profile", "ollama_reachable_at_start",
@@ -294,14 +396,18 @@ def analyze(source, cfg, output=None, force=False):
         analysis['analysis_quality'].update(understanding.get('candidate_metrics',{}))
         analysis['analysis_quality']['editorial_participant_count']=len(analysis.get('participants',[]))
         analysis['vision_performance']=vision.get('performance',{})
-        analysis['provenance']={'producer_version':__version__,'config_digest':__import__('ldporto.core',fromlist=['digest']).digest(cfg),
+        analysis['provenance']={'producer_version':__version__,'build_label':__build__,'config_digest':__import__('ldporto.core',fromlist=['digest']).digest(cfg),
                     'source_hash':signature,'python':__import__('sys').version.split()[0],
                     'platform':__import__('platform').platform(),'model_names':{
                     'asr':cfg['transcription']['model'],'diarization':cfg['diarization']['model'],'semantic':cfg['semantic_analysis']['model']},
                     'external_fingerprints':external,'runtime_target':{'os':'Windows 10/11','python':'3.11.x'}}
         analysis['provenance']['model_fingerprints']=model_fingerprints
         from .run_status import build_run_manifest
-        analysis["run_manifest"] = build_run_manifest(metadata, analysis["stage_status"], analysis["issues"])
+        from .build_provenance import attest_execution, exporter_identity
+        identity = exporter_identity()
+        analysis["run_manifest"] = build_run_manifest(
+            metadata, analysis["stage_status"], analysis["issues"],
+            previous={**identity, 'execution_attestation': attest_execution(ctx)})
         analysis["analysis_status"] = analysis["run_manifest"]["analysis_status"]
 
         # Exports are cheap and rewritten even after cache reuse; never trust missing old reports.

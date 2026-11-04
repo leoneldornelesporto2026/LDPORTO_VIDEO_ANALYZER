@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Shared Director handoff for Reels and Stories",
+  "type": "object",
+  "required": ["schema_version", "camera_engine", "renderer_owner", "source_intervals", "segments", "fallback", "execution_scope", "preview_approved", "publish_ready"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "camera_engine": {"const": "ldporto.camera_director"},
+    "renderer_owner": {"const": "VIDEO_CURATOR"},
+    "geometry_contract": {"const": "normalized_source_coordinates"},
+    "source_intervals": {"type": "array", "items": {"$ref": "#/$defs/interval"}},
+    "segments": {"type": "array", "items": {
+      "type": "object",
+      "required": ["start", "end", "director_id", "composition_intent", "recommended_composition", "fallback_composition", "evidence", "review_required"],
+      "properties": {
+        "start": {"type": "number", "minimum": 0},
+        "end": {"type": "number", "exclusiveMinimum": 0},
+        "composition_intent": {"$ref": "#/$defs/mode"},
+        "recommended_composition": {"$ref": "#/$defs/mode"},
+        "fallback_composition": {"const": "SOURCE_FIT_BLUR"},
+        "terminal_fallback": {"const": "SOURCE_PRESERVE"},
+        "keyframe_time_basis": {"const": "absolute_source_seconds"},
+        "evidence": {"type": "object", "required": ["crop_geometrically_valid", "movement_present_in_timeline", "movement_rendered", "movement_confirmed_in_final_frames"], "properties": {
+          "crop_geometrically_valid": {"type": "boolean"},
+          "movement_present_in_timeline": {"type": "boolean"},
+          "movement_rendered": {"type": "null"},
+          "movement_confirmed_in_final_frames": {"type": "null"}
+        }},
+        "review_required": {"const": true}
+      }
+    }},
+    "fallback": {"type": "object", "required": ["composition", "preserve_entire_source", "terminal_fallback"], "properties": {
+      "composition": {"const": "SOURCE_FIT_BLUR"},
+      "preserve_entire_source": {"const": true},
+      "terminal_fallback": {"const": "SOURCE_PRESERVE"}
+    }},
+    "execution_scope": {"const": "recommendation_not_render_or_approval"},
+    "preview_approved": {"const": false},
+    "publish_ready": {"const": false}
+  },
+  "$defs": {
+    "interval": {"type": "object", "required": ["start", "end"], "properties": {"start": {"type": "number", "minimum": 0}, "end": {"type": "number", "exclusiveMinimum": 0}}},
+    "mode": {"enum": ["FOCUS_PERSON_9X16", "SOURCE_FIT_BLUR", "DUO_STAGE", "INSTRUMENT_FOCUS", "AUDIENCE_REACTION", "SOURCE_PRESERVE"]}
+  }
+}

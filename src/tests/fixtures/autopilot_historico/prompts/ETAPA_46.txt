@@ -1,0 +1,22 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 46/52 — Replay 17c real com hash de mídia e sem refazer etapas caras
+
+OBJETIVO: corrigir a falsa promessa do --from-stage commercial. Atualmente replay.py executa understanding downstream mas não chama targeted_ocr no 17c.
+CÓDIGO: src/ldporto/replay.py, src/ldporto/commercial_gate.py (targeted_ocr), src/ldporto/pipeline.py (ctx.step 17c), analyze.py, src/ldporto/compact_artifacts.py, src/ldporto/core.py.
+IMPLEMENTE:
+1. Novo fluxo explícito '17c_commercial_visual' ou 'commercial_visual' no replay, mantendo alias legado 'commercial' se possível; o plano precisa discriminar 'reprocessado', 'snapshot_reused' e 'not_available' por etapa.
+2. Requerer mídia-fonte cujo SHA-256 bate com metadata; recursos de imagem/OCR rastreáveis; habilitação e binário Tesseract/idiomas medidos e reportados. Quando o snapshot não tem thumbnails/fonte e OCR precisa deles, retornar blocked com instrução clara, não simular 'ok'.
+3. Executar efetivamente targeted_ocr e refinamento de classificação, depois downstream dependente e reexportação; conservar ASR/diarização/vision/person_reid/Ollama como snapshots validados, sem gastar GPU/LLM se não necessário. Cache fingerprint inclua fonte, cfg OCR, executável/versão, upstream hashes e algoritmos. Criar output separada, não sobrescrever análise original.
+4. Não aceitar resultados OCR de fonte diferente, caminho traversal/symlink e checksum modificado. Documentar flags reais de analyze.py e exemplos PowerShell.
+5. Testes offline com mock de OCR e mídia sintética de hash conhecido verificam chamada real 17c, prova de cache hit / miss, invalidação só descendentes, mismatch bloqueado; não afirmar sucesso de Tesseract real sem Windows.
+CRITÉRIO: replay semantic=0 e ASR=0 se snapshot válido; OCR chamado apenas com suporte real, com stage_status corrigido e logs honestos.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_46.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

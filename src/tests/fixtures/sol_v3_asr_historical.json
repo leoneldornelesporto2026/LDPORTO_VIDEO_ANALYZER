@@ -1,0 +1,812 @@
+{
+  "provenance": {
+    "source_package": "SECOND_CURATION_PARTIAL_jNQXAC9IVRw_20261013_035536_877801_09f678.zip",
+    "source_sha256": "843b5c05376f5c8a63845e225ad3069bd5778efd5afe888e1135ae63ecb7ac2d",
+    "kind": "historical_real_asr_output_not_human_ground_truth"
+  },
+  "words": [
+    {
+      "word_id": "WORD_0000000",
+      "word": "Alright,",
+      "raw": " Alright,",
+      "start": 0.94,
+      "end": 1.38,
+      "confidence": 0.541015625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "missing_or_low_model_probability"
+      ],
+      "segment_id": "SEG_00000"
+    },
+    {
+      "word_id": "WORD_0000001",
+      "word": "so",
+      "raw": " so",
+      "start": 1.44,
+      "end": 1.52,
+      "confidence": 0.96826171875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000002",
+      "word": "here",
+      "raw": " here",
+      "start": 1.52,
+      "end": 1.66,
+      "confidence": 0.98486328125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000003",
+      "word": "we",
+      "raw": " we",
+      "start": 1.66,
+      "end": 1.78,
+      "confidence": 0.99560546875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000004",
+      "word": "are",
+      "raw": " are",
+      "start": 1.78,
+      "end": 2.02,
+      "confidence": 0.998046875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000005",
+      "word": "in",
+      "raw": " in",
+      "start": 2.02,
+      "end": 2.18,
+      "confidence": 0.8642578125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000006",
+      "word": "front",
+      "raw": " front",
+      "start": 2.18,
+      "end": 2.4,
+      "confidence": 0.9990234375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000007",
+      "word": "of",
+      "raw": " of",
+      "start": 2.4,
+      "end": 2.5,
+      "confidence": 0.99755859375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000008",
+      "word": "the",
+      "raw": " the",
+      "start": 2.5,
+      "end": 2.58,
+      "confidence": 0.97509765625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000009",
+      "word": "elephants.",
+      "raw": " elephants.",
+      "start": 2.58,
+      "end": 3.08,
+      "confidence": 0.86083984375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00001"
+    },
+    {
+      "word_id": "WORD_0000010",
+      "word": "The",
+      "raw": " The",
+      "start": 4.6,
+      "end": 5.04,
+      "confidence": 0.57861328125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "missing_or_low_model_probability"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000011",
+      "word": "cool",
+      "raw": " cool",
+      "start": 5.04,
+      "end": 5.3,
+      "confidence": 0.9951171875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000012",
+      "word": "thing",
+      "raw": " thing",
+      "start": 5.3,
+      "end": 5.5,
+      "confidence": 0.98681640625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000013",
+      "word": "about",
+      "raw": " about",
+      "start": 5.5,
+      "end": 5.82,
+      "confidence": 0.9873046875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000014",
+      "word": "these",
+      "raw": " these",
+      "start": 5.82,
+      "end": 6.1,
+      "confidence": 0.9833984375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000015",
+      "word": "guys",
+      "raw": " guys",
+      "start": 6.1,
+      "end": 6.32,
+      "confidence": 0.98291015625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000016",
+      "word": "is",
+      "raw": " is",
+      "start": 6.32,
+      "end": 6.54,
+      "confidence": 0.95654296875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000017",
+      "word": "that",
+      "raw": " that",
+      "start": 6.54,
+      "end": 6.68,
+      "confidence": 0.91552734375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000018",
+      "word": "they",
+      "raw": " they",
+      "start": 6.68,
+      "end": 7.26,
+      "confidence": 0.974609375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000019",
+      "word": "have",
+      "raw": " have",
+      "start": 7.26,
+      "end": 7.42,
+      "confidence": 0.97265625,
+      "needs_review": false,
+      "review_reasons": [],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000020",
+      "word": "really,",
+      "raw": " really,",
+      "start": 7.42,
+      "end": 8.04,
+      "confidence": 0.974609375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000021",
+      "word": "really,",
+      "raw": " really,",
+      "start": 8.24,
+      "end": 9.32,
+      "confidence": 0.98779296875,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000022",
+      "word": "really",
+      "raw": " really",
+      "start": 9.38,
+      "end": 9.72,
+      "confidence": 0.97412109375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000023",
+      "word": "long",
+      "raw": " long",
+      "start": 9.72,
+      "end": 10.24,
+      "confidence": 0.94287109375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000024",
+      "word": "trunks.",
+      "raw": " trunks.",
+      "start": 10.24,
+      "end": 12.32,
+      "confidence": 0.6593017578125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00002"
+    },
+    {
+      "word_id": "WORD_0000025",
+      "word": "And",
+      "raw": " And",
+      "start": 12.42,
+      "end": 12.86,
+      "confidence": 0.8359375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00003"
+    },
+    {
+      "word_id": "WORD_0000026",
+      "word": "that's",
+      "raw": " that's",
+      "start": 12.86,
+      "end": 13.12,
+      "confidence": 0.978515625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00003"
+    },
+    {
+      "word_id": "WORD_0000027",
+      "word": "cool.",
+      "raw": " cool.",
+      "start": 13.12,
+      "end": 13.5,
+      "confidence": 0.84814453125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00003"
+    },
+    {
+      "word_id": "WORD_0000028",
+      "word": "And",
+      "raw": " And",
+      "start": 16.48,
+      "end": 16.92,
+      "confidence": 0.94189453125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000029",
+      "word": "that's",
+      "raw": " that's",
+      "start": 16.92,
+      "end": 17.26,
+      "confidence": 0.991455078125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000030",
+      "word": "pretty",
+      "raw": " pretty",
+      "start": 17.26,
+      "end": 17.36,
+      "confidence": 0.98486328125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000031",
+      "word": "much",
+      "raw": " much",
+      "start": 17.36,
+      "end": 17.54,
+      "confidence": 0.9990234375,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000032",
+      "word": "all",
+      "raw": " all",
+      "start": 17.54,
+      "end": 17.74,
+      "confidence": 0.9970703125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000033",
+      "word": "there",
+      "raw": " there",
+      "start": 17.74,
+      "end": 17.92,
+      "confidence": 0.95751953125,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000034",
+      "word": "is",
+      "raw": " is",
+      "start": 17.92,
+      "end": 18.04,
+      "confidence": 0.994140625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000035",
+      "word": "to",
+      "raw": " to",
+      "start": 18.04,
+      "end": 18.12,
+      "confidence": 0.99853515625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    },
+    {
+      "word_id": "WORD_0000036",
+      "word": "say.",
+      "raw": " say.",
+      "start": 18.12,
+      "end": 18.34,
+      "confidence": 0.9697265625,
+      "needs_review": true,
+      "review_reasons": [
+        "acoustic_hypotheses_disagree",
+        "source_hypotheses_disagree"
+      ],
+      "segment_id": "SEG_00004"
+    }
+  ],
+  "transcription_alternatives": [
+    {
+      "start": 0,
+      "end": 7.04,
+      "selected_text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they",
+      "hypotheses_disagree": true,
+      "alternatives": [
+        {
+          "text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that...",
+          "words": [
+            {
+              "word": "Alright,",
+              "raw": " Alright,",
+              "start": 0.94,
+              "end": 1.38,
+              "confidence": 0.420654296875
+            },
+            {
+              "word": "so",
+              "raw": " so",
+              "start": 1.44,
+              "end": 1.52,
+              "confidence": 0.9580078125
+            },
+            {
+              "word": "here",
+              "raw": " here",
+              "start": 1.52,
+              "end": 1.68,
+              "confidence": 0.98291015625
+            },
+            {
+              "word": "we",
+              "raw": " we",
+              "start": 1.68,
+              "end": 1.78,
+              "confidence": 0.99462890625
+            },
+            {
+              "word": "are",
+              "raw": " are",
+              "start": 1.78,
+              "end": 2.02,
+              "confidence": 0.998046875
+            },
+            {
+              "word": "in",
+              "raw": " in",
+              "start": 2.02,
+              "end": 2.18,
+              "confidence": 0.830078125
+            },
+            {
+              "word": "front",
+              "raw": " front",
+              "start": 2.18,
+              "end": 2.42,
+              "confidence": 0.99853515625
+            },
+            {
+              "word": "of",
+              "raw": " of",
+              "start": 2.42,
+              "end": 2.5,
+              "confidence": 0.99658203125
+            },
+            {
+              "word": "the",
+              "raw": " the",
+              "start": 2.5,
+              "end": 2.58,
+              "confidence": 0.94384765625
+            },
+            {
+              "word": "elephants.",
+              "raw": " elephants.",
+              "start": 2.58,
+              "end": 3.08,
+              "confidence": 0.8388671875
+            },
+            {
+              "word": "The",
+              "raw": " The",
+              "start": 4.42,
+              "end": 4.86,
+              "confidence": 0.364013671875
+            },
+            {
+              "word": "cool",
+              "raw": " cool",
+              "start": 4.86,
+              "end": 5.3,
+              "confidence": 0.9921875
+            },
+            {
+              "word": "thing",
+              "raw": " thing",
+              "start": 5.3,
+              "end": 5.5,
+              "confidence": 0.98681640625
+            },
+            {
+              "word": "about",
+              "raw": " about",
+              "start": 5.5,
+              "end": 5.72,
+              "confidence": 0.98876953125
+            },
+            {
+              "word": "these",
+              "raw": " these",
+              "start": 5.72,
+              "end": 6.1,
+              "confidence": 0.9833984375
+            },
+            {
+              "word": "guys",
+              "raw": " guys",
+              "start": 6.1,
+              "end": 6.32,
+              "confidence": 0.98828125
+            },
+            {
+              "word": "is",
+              "raw": " is",
+              "start": 6.32,
+              "end": 6.5,
+              "confidence": 0.90478515625
+            },
+            {
+              "word": "that...",
+              "raw": " that...",
+              "start": 6.5,
+              "end": 6.78,
+              "confidence": 0.572998046875
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "start": 7.720000000000001,
+      "end": 19.014,
+      "selected_text": "really, really, really long trunks. And that's cool. And that's pretty much all there is to say.",
+      "hypotheses_disagree": true,
+      "alternatives": [
+        {
+          "text": "really, really, really long front, and that's, that's cool. And that's pretty much all there is to say.",
+          "words": [
+            {
+              "word": "really,",
+              "raw": " really,",
+              "start": 7.720000000000001,
+              "end": 8.200000000000001,
+              "confidence": 0.40185546875
+            },
+            {
+              "word": "really,",
+              "raw": " really,",
+              "start": 8.200000000000001,
+              "end": 9.22,
+              "confidence": 0.98583984375
+            },
+            {
+              "word": "really",
+              "raw": " really",
+              "start": 9.360000000000001,
+              "end": 9.72,
+              "confidence": 0.98095703125
+            },
+            {
+              "word": "long",
+              "raw": " long",
+              "start": 9.72,
+              "end": 10.24,
+              "confidence": 0.9091796875
+            },
+            {
+              "word": "front,",
+              "raw": " front,",
+              "start": 10.24,
+              "end": 11.96,
+              "confidence": 0.277587890625
+            },
+            {
+              "word": "and",
+              "raw": " and",
+              "start": 12.32,
+              "end": 12.88,
+              "confidence": 0.97998046875
+            },
+            {
+              "word": "that's,",
+              "raw": " that's,",
+              "start": 12.88,
+              "end": 13.18,
+              "confidence": 0.986572265625
+            },
+            {
+              "word": "that's",
+              "raw": " that's",
+              "start": 13.18,
+              "end": 13.46,
+              "confidence": 0.995361328125
+            },
+            {
+              "word": "cool.",
+              "raw": " cool.",
+              "start": 13.46,
+              "end": 13.52,
+              "confidence": 0.998046875
+            },
+            {
+              "word": "And",
+              "raw": " And",
+              "start": 16.380000000000003,
+              "end": 16.9,
+              "confidence": 0.9560546875
+            },
+            {
+              "word": "that's",
+              "raw": " that's",
+              "start": 16.9,
+              "end": 17.259999999999998,
+              "confidence": 0.985107421875
+            },
+            {
+              "word": "pretty",
+              "raw": " pretty",
+              "start": 17.259999999999998,
+              "end": 17.36,
+              "confidence": 0.9931640625
+            },
+            {
+              "word": "much",
+              "raw": " much",
+              "start": 17.36,
+              "end": 17.560000000000002,
+              "confidence": 0.9990234375
+            },
+            {
+              "word": "all",
+              "raw": " all",
+              "start": 17.560000000000002,
+              "end": 17.740000000000002,
+              "confidence": 0.99755859375
+            },
+            {
+              "word": "there",
+              "raw": " there",
+              "start": 17.740000000000002,
+              "end": 17.9,
+              "confidence": 0.89501953125
+            },
+            {
+              "word": "is",
+              "raw": " is",
+              "start": 17.9,
+              "end": 18.060000000000002,
+              "confidence": 0.99169921875
+            },
+            {
+              "word": "to",
+              "raw": " to",
+              "start": 18.060000000000002,
+              "end": 18.12,
+              "confidence": 0.99853515625
+            },
+            {
+              "word": "say.",
+              "raw": " say.",
+              "start": 18.12,
+              "end": 18.32,
+              "confidence": 0.96435546875
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source_comparisons": [
+    {
+      "start": 0.0,
+      "end": 12.0,
+      "needs_review": false,
+      "hypotheses": {
+        "original": {
+          "text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they have really, really, really long..."
+        },
+        "speech_clean": {
+          "text": "Alright, so here we are in front of the elephants. The cool thing about these guys is that they have really, really, really long..."
+        }
+      }
+    },
+    {
+      "start": 10.0,
+      "end": 19.014,
+      "needs_review": true,
+      "hypotheses": {
+        "original": {
+          "text": "And that's pretty much all there is to say."
+        },
+        "speech_clean": {
+          "text": "long, um, front. And that's, that's cool. And that's pretty much all there is to say."
+        }
+      }
+    }
+  ]
+}

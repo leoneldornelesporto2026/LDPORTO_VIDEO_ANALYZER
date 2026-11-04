@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "L.D.PORTO semantic narrative handoff 1.0",
+  "type": "object",
+  "required": ["schema_version", "contract", "project_id", "run_id", "source_sha256", "analyzer_version", "semantic_schema_version", "original_build_fingerprint", "replay_build_fingerprint", "model_provenance", "artifact_refs", "story_visual_handoff_ref", "story_visual_schema_ref", "status", "human_editorial_approval", "publication_ready", "readiness", "limitations"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract": {"const": "ldporto.semantic_narrative_handoff"},
+    "project_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "semantic_schema_version": {"const": "1.0"},
+    "original_build_fingerprint": {"type": ["string", "null"]},
+    "replay_build_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "model_provenance": {"type": "object"},
+    "artifact_refs": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string"}},
+    "status": {"enum": ["SEMANTIC_HANDOFF_READY", "SEMANTIC_HANDOFF_PARTIAL", "SEMANTIC_REPAIR_REQUIRED"]},
+    "human_editorial_approval": {"const": false},
+    "publication_ready": {"const": false},
+    "requires_curator_review": {"const": true},
+    "no_final_render": {"const": true},
+    "readiness": {"type": "object"},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}

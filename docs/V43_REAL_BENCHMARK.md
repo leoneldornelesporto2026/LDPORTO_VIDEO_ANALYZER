@@ -1,5 +1,10 @@
 # V4.3 Real Benchmark Status
 
+Atualização da evidência local: há um full run V4.3 real, ainda com qualidade
+partial, em `analysis/video_31329be78ca4`. As pendências descritas abaixo são do
+ambiente anterior. Consulte [reconciliação](V44_BASELINE_RECONCILIATION.md) para
+métricas, contadores e limites. Isto não homologa V4.4.
+
 ## Official V4.2 baseline
 
 Source duration ~8245 s, 1920x1080 at 30 fps. The official review baseline records severe track fragmentation (8603 raw tracks, 5998 micro-tracks, median ~0.166 s), 2213 persistent identities, zero speaker-person/active-speaker resolved coverage, ~11606 s semantic runtime, 329 question candidates with only 10 answered, source-preserving camera fallback and a degraded/partial overall status.

@@ -49,8 +49,11 @@ def resolve_smart_zoom(raw=None):
     return cfg
 
 DEFAULTS = {
+    'dominant_face_fallback': False, 'minimum_face_duration': 2., 'minimum_dominance_margin': .35,
+    'minimum_target_confidence': .85, 'minimum_face_visibility': .8, 'maximum_center_velocity': .10,
     'smart_zoom': deepcopy(SMART_ZOOM_DEFAULTS),
     'enabled': True, 'profile': 'natural', 'lookahead_seconds': 1.8,
+    'crop_preflight_seconds': .75, 'split_preflight_seconds': 1.0,
     'min_hold_seconds': 3.0, 'preferred_hold_seconds': 6.0,
     'switch_cooldown_seconds': 3.0, 'speaker_confirm_seconds': .9,
     'short_interruption_seconds': 1.0, 'switch_margin': .15,
@@ -112,6 +115,7 @@ def resolve_config(raw=None):
             if isinstance(default, int) and (not isinstance(value, int) or value < 1):
                 raise ValueError(f'camera_director.{key} deve ser inteiro positivo')
     for key in ('switch_margin', 'switch_cost', 'persistence_bonus', 'enter_confidence',
+                'minimum_dominance_margin', 'minimum_target_confidence', 'minimum_face_visibility',
                 'exit_confidence', 'horizontal_deadzone', 'vertical_deadzone', 'zoom_deadzone',
                 'min_face_height', 'headroom', 'lead_room', 'reaction_threshold', 'reaction_delta'):
         if not 0 <= cfg[key] <= 1:
@@ -120,7 +124,7 @@ def resolve_config(raw=None):
         raise ValueError('camera_director.tick_seconds deve estar entre .1 e 1')
     if not 0 < cfg['max_observation_gap_seconds'] <= 2:
         raise ValueError('camera_director.max_observation_gap_seconds deve estar em (0, 2]')
-    for key in ('min_hold_seconds', 'speaker_confirm_seconds', 'max_pan_speed',
+    for key in ('crop_preflight_seconds', 'split_preflight_seconds', 'min_hold_seconds', 'speaker_confirm_seconds', 'max_pan_speed',
                 'max_pan_acceleration', 'max_pan_jerk', 'max_zoom_speed',
                 'max_zoom_acceleration', 'max_zoom_jerk', 'quick_exchange_window_seconds',
                 'reaction_seconds'):
@@ -135,6 +139,8 @@ def resolve_config(raw=None):
     for key in ('normal_zoom', 'breathing_zoom', 'payoff_zoom'):
         if not 1 <= cfg[key] <= cfg['max_zoom_hard']:
             raise ValueError(f'camera_director.{key} fora dos limites de zoom')
+    if cfg['crop_preflight_seconds'] > 3 or cfg['split_preflight_seconds'] > 3:
+        raise ValueError('Crop lookahead limitado a 3 segundos')
     if cfg['lookahead_seconds'] > 5:
         raise ValueError('lookahead_seconds deve ser <= 5')
     limits = {'min_hold_seconds': 60, 'preferred_hold_seconds': 120,

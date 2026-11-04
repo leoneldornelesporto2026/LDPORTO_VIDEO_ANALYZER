@@ -145,6 +145,8 @@ def test_detector_cascade_reduces_redundant_work_and_refreshes_on_shot_cut():
 
     detector = object.__new__(PersonDetectionEngine)
     detector.cv2, detector.cfg = cv2, deepcopy(DEFAULTS["vision"])
+    detector.cfg["face_quality_gate"] = False  # mocked flat-black frame
+    detector.cfg["face_rescue_upsample"] = False  # mock detector does not scale rows
     detector.face, detector.sface, detector.hog, detector.yolo = Face(), Embedding(), Body(), None
     detector.phase_seconds = defaultdict(float)
     frame = np.zeros((180, 240, 3), dtype=np.uint8)
@@ -207,7 +209,9 @@ def test_global_affinity_retains_candidates_from_locally_unresolved_windows():
     diarization, vision, raw = affinity_fixture()
     result = build_active_speaker(diarization, vision, raw, DEFAULTS["active_speaker"])["data"]
     assert result["mapping_summary"][0]["person_id"] == "P1"
-    assert result["metrics"]["active_speaker_coverage"] > 0
+    # S5 separates global identity coverage from locally verified active speech.
+    assert result["metrics"]["speaker_person_mapping_coverage"] > 0
+    assert result["metrics"]["active_speaker_coverage"] == 0
     assert len(result["affinity"]) == 2
     assert next(pair for pair in result["affinity"] if pair["person_id"] == "P2")["negative_windows"] == 2
 
@@ -280,3 +284,25 @@ def test_audio_mouth_windows_split_at_real_shot_boundaries(tmp_path):
     assert all(row["candidates"] for row in raw)
     result = build_active_speaker(diarization, vision, raw, cfg["active_speaker"])["data"]
     assert result["mapping_summary"][0]["person_id"] == "P1"
+
+def test_face_supported_micro_tracklet_can_reenter_established_identity_without_position():
+    from ldporto.person_reid import build_person_identities
+    from test_v42_perception import track_fixture
+    vision = track_fixture([('T1', 'P1', 0, 2, [1, 0]), ('T2', 'P2', 5, 5.2, [1, 0])])
+    data = build_person_identities(vision)['data']
+    assert data['metrics']['micro_track_count'] == 1
+    assert data['metrics']['micro_reid_attachment_count'] == 1
+    assert data['tracklet_to_person']['T2'] == data['tracklet_to_person']['T1']
+    decision = [d for d in data['merge_decisions'] if d.get('tracklet_id') == 'T2' and d.get('accepted')]
+    assert decision and decision[0]['reason'] == 'strict_face_supported_micro_reentry'
+    assert decision[0]['screen_position_used'] is False
+
+
+def test_micro_tracklet_never_reenters_identity_during_temporal_conflict():
+    from ldporto.person_reid import build_person_identities
+    from test_v42_perception import track_fixture
+    vision = track_fixture([('T1', 'P1', 0, 2, [1, 0]), ('T2', 'P2', 1, 1.2, [1, 0])])
+    data = build_person_identities(vision)['data']
+    assert data['metrics']['micro_track_count'] == 1
+    assert data['tracklet_to_person']['T2'] is None
+    assert any(d.get('tracklet_id') == 'T2' and d.get('temporal_conflict') for d in data['merge_decisions'])

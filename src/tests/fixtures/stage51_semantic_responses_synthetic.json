@@ -1,0 +1,14 @@
+{
+  "0": {
+    "legacy": {"locale": "pt-BR", "topics": [{"topic": "Teste sintetico", "summary": "Texto sintetico para teste offline", "context_required": "none", "start_segment_id": "SYNTHETIC_1", "end_segment_id": "SYNTHETIC_1"}], "moments": []},
+    "compact": {"locale": "pt-BR", "topics": [{"topic": "Teste sintetico", "summary": "Texto sintetico para teste offline", "context_required": "none", "start_segment_id": "SYNTHETIC_1", "end_segment_id": "SYNTHETIC_1"}], "moments": []}
+  },
+  "1": {
+    "legacy": {"locale": "pt-BR", "topics": [{"topic": "Teste sintetico", "summary": "Outro texto sintetico para teste offline", "context_required": "none", "start_segment_id": "SYNTHETIC_2", "end_segment_id": "SYNTHETIC_2"}], "moments": []},
+    "compact": {"locale": "pt-BR", "topics": [{"topic": "Teste sintetico", "summary": "Outro texto sintetico para teste offline", "context_required": "none", "start_segment_id": "SYNTHETIC_2", "end_segment_id": "SYNTHETIC_2"}], "moments": []}
+  },
+  "2": {
+    "legacy": {"locale": "pt-BR", "topics": [{"topic": "Teste sintetico", "summary": "Ultimo texto sintetico para teste offline", "context_required": "none", "start_segment_id": "SYNTHETIC_3", "end_segment_id": "SYNTHETIC_3"}], "moments": []},
+    "compact": {"locale": "pt-BR", "topics": [{"topic": "Teste sintetico", "summary": "Ultimo texto sintetico para teste offline", "context_required": "none", "start_segment_id": "SYNTHETIC_3", "end_segment_id": "SYNTHETIC_3"}], "moments": []}
+  }
+}

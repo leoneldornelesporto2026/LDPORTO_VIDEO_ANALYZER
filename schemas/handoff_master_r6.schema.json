@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "R6 second-curation reference index",
+  "type": "object",
+  "required": ["schema_version", "run_id", "source_sha256", "state", "canonical_id_sources", "caption_preflight_ref", "candidates", "stories", "artifacts", "preview_approved", "human_approved", "publication_ready"],
+  "properties": {
+    "schema_version": {"const": "r6.1"}, "run_id": {"type": "string"},
+    "source_sha256": {"type": ["string", "null"]},
+    "state": {"enum": ["PARTIAL", "READY_FOR_REVIEW"]},
+    "canonical_id_sources": {"type": "object", "additionalProperties": {"type": "string"}},
+    "caption_preflight_ref": {"const": "subtitles/caption_preflight_r6.json"},
+    "candidates": {"type": "array", "items": {"type": "object", "required": ["candidate_id", "file_ref", "caption_status"]}},
+    "stories": {"type": "array", "items": {"type": "object", "required": ["story_id", "candidate_id", "caption_status"]}},
+    "artifacts": {"type": "array", "items": {
+      "type": "object", "required": ["path", "bytes", "sha256"],
+      "properties": {"path": {"type": "string"}, "bytes": {"type": "integer", "minimum": 0},
+                     "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+    }},
+    "preview_approved": {"const": false}, "human_approved": {"const": false}, "publication_ready": {"const": false}
+  }
+}

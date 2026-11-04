@@ -37,6 +37,17 @@ def test_second_curation_propagates_topic_context_quality_and_explicit_null_pers
     assert candidate['generated_copy']['status'] == 'not_generated_by_analyzer'
 
 
+def test_second_curation_tolerates_legacy_editorial_review_list():
+    analysis = analysis_fixture()
+    analysis['ollama_editorial_review'] = [{
+        'moment_id': 'M1', 'hook_text': 'Hook revisado', 'title_idea': 'Titulo revisado',
+        'editorial_score': .9, 'why': 'fixture'
+    }]
+    candidate = build_second_curation_package(analysis)['candidates'][0]
+    assert candidate['generated_copy']['hook_idea'] == 'Hook revisado'
+    assert candidate['generated_copy']['title_idea'] == 'Titulo revisado'
+
+
 def test_second_curation_propagates_resolved_person_and_smart_camera_metadata():
     analysis = analysis_fixture()
     analysis['people'] = [{'person_id': 'P1'}]
@@ -69,6 +80,9 @@ def test_core_package_includes_all_candidates_transcript_context_and_no_dangling
         brief = __import__('json').loads(archive.read('SECOND_CURATOR_BRIEF.json'))
         assert brief['task'] == 'second_editorial_curation' and brief['candidate_count'] == 2
         assert brief['target_duration_seconds'] == {'preferred_min': 30, 'preferred_max': 90}
+        assert brief['capability_reasons']['visual_ready'] == 'shortlist_visual_evidence_incomplete'
+        index = __import__('json').loads(archive.read('CURATION_INDEX.json'))
+        assert index['second_curation_readiness_reasons']['visual_ready'] == 'shortlist_visual_evidence_incomplete'
         assert 'CURATION_INDEX.json' in brief['recommended_entrypoints']
         assert not any(name.endswith('.mp4') or '.venv' in name for name in archive.namelist())
 

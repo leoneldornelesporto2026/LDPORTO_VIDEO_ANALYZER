@@ -1,0 +1,22 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 49/52 — ASR/legendas sob demanda com escuta humana e cache
+
+OBJETIVO: lidar com 4.080/19.299 palavras sinalizadas, sem reprocessar tudo automaticamente.
+CÓDIGO: src/ldporto/targeted_asr.py, subtitle_review_s7.py, subtitle_alignment.py, caption_style.py (confirmar paths reais), reports.py e testes stage19...23.
+IMPLEMENTE:
+1. Propor revisão bounded por cortes efetivamente colocados na fila humana: palavra suspeita, sobreposição, ruído, discrepância ASR, timecodes; exportar JSON de revisão manual com áudio/intervalo/hash, ORIGINAL e alternativas preservadas.
+2. Separar 'needs_review', 'verified_by_audio', 'correction_approved' e 'subtitle_publish_ready'; sem aceitar confiança heurística como comprovação de escuta real.
+3. Se áudio fonte SHA-validado disponível e usuário optou por revisão targeted, executar só intervalos de candidatos; nunca sobrescrever transcript canônico apenas pelo multipass. Cache local por hash da janela, modelo/versão/config.
+4. Não confundir taxa de flags com taxa de palavras incorretas; métricas por candidato, orçamento de revisão e motivos p95. Preservar PT-BR, pontuação, sobreposição, limites de legibilidade em 9:16.
+5. Testes com audio fake/mocks: número exato de janelas elegíveis, custos limitados, falha de fonte não consome ASR, revisão manual não forjada, alinhamento e exports.
+CRITÉRIO: pipeline de corrigir candidatos preservando áudio e audit trail, custo previsível, sem tentar corrigir 19k palavras à força.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_49.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

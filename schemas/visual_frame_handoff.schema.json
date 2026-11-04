@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ldporto:visual-frame-handoff:1.0",
+  "title": "Sparse visual handoff: executable camera suggestions and observed evidence",
+  "$ref": "#/$defs/manifest",
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "bbox": {"type": "object", "required": ["x", "y", "width", "height"], "properties": {
+      "x": {"type": "number", "minimum": 0, "maximum": 1},
+      "y": {"type": "number", "minimum": 0, "maximum": 1},
+      "width": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+      "height": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+    }},
+    "artifact": {"type": "object", "required": ["schema_version", "candidate_id"], "properties": {
+      "schema_version": {"const": "1.0"}, "candidate_id": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"}
+    }},
+    "span": {"type": "object", "required": ["interval_index", "start", "end", "clip_start", "clip_end"], "properties": {
+      "interval_index": {"type": "integer", "minimum": 0}, "start": {"type": "number", "minimum": 0},
+      "end": {"type": "number", "exclusiveMinimum": 0}, "clip_start": {"type": "number", "minimum": 0},
+      "clip_end": {"type": "number", "exclusiveMinimum": 0}
+    }},
+    "file_record": {"type": "object", "required": ["path", "sha256", "bytes"], "properties": {
+      "path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/hash"},
+      "bytes": {"type": "integer", "minimum": 0}
+    }},
+    "manifest": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": [
+      "producer", "revision", "source_sha256", "input_package_sha256", "profile", "source_intervals",
+      "time_convention", "coordinate_convention", "media", "target", "files", "coverage", "gaps",
+      "limits", "dependencies", "editorial_state", "review_required", "preview_approved", "publish_ready"
+    ], "properties": {
+      "producer": {"const": "ldporto.visual_frame_handoff"}, "revision": {"type": "string", "minLength": 1},
+      "source_sha256": {"$ref": "#/$defs/hash"}, "input_package_sha256": {"$ref": "#/$defs/hash"},
+      "profile": {"enum": ["EDITORIAL_HANDOFF", "FULL_AUDIT"]},
+      "source_intervals": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/span"}},
+      "target": {"type": "object", "required": ["width", "height"], "properties": {"width": {"const": 1080}, "height": {"const": 1920}}},
+      "limits": {"type": "object", "required": ["max_frames", "max_bytes"], "properties": {
+        "max_frames": {"type": "integer", "minimum": 1}, "max_bytes": {"type": "integer", "minimum": 1}
+      }},
+      "files": {"type": "array", "minItems": 8, "items": {"$ref": "#/$defs/file_record"}},
+      "editorial_state": {"const": "PARTIAL"}, "review_required": {"const": true},
+      "preview_approved": {"const": false}, "publish_ready": {"const": false}
+    }},
+    "frame_index": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["source_sha256", "frames", "missing_frames", "contact_sheet"], "properties": {
+      "source_sha256": {"$ref": "#/$defs/hash"}, "missing_frames": {"type": "array"},
+      "frames": {"type": "array", "items": {"type": "object", "required": ["frame_id", "captured", "source_time_s", "clip_time_s", "source_frame_index", "relative_path", "sha256", "sampling_reasons", "final_render_frame"], "properties": {
+        "captured": {"const": true}, "final_render_frame": {"const": false},
+        "source_time_s": {"type": "number", "minimum": 0}, "clip_time_s": {"type": "number", "minimum": 0},
+        "source_frame_index": {"type": ["integer", "null"], "minimum": 0},
+        "sha256": {"$ref": "#/$defs/hash"}, "relative_path": {"type": "string", "minLength": 1},
+        "sampling_reasons": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }}}
+    }},
+    "visual_tracks": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["tracks", "observation_count", "heavy_evidence_ref", "coordinate_space"], "properties": {
+      "coordinate_space": {"const": "normalized_oriented_source"}, "observation_count": {"type": "integer", "minimum": 0},
+      "tracks": {"type": "array", "items": {"type": "object", "required": ["visual_track_id", "track_id", "scene_id", "class", "role", "identity_confirmed", "observations", "interpolation_allowed", "cross_cut_identity_propagation"], "properties": {
+        "identity_confirmed": {"const": false}, "interpolation_allowed": {"const": false}, "cross_cut_identity_propagation": {"const": false},
+        "observations": {"type": "array"}
+      }}}
+    }},
+    "safe_areas": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["protected_regions", "protected_regions_scope", "overlay_zones", "platform_margins_status", "final_render_verified"], "properties": {
+      "protected_regions": {"type": "array"}, "protected_regions_scope": {"const": "observed_samples_only"},
+      "final_render_verified": {"const": false}, "overlay_approval": {"const": false},
+      "overlay_zones": {"type": "object", "required": ["title", "caption", "cta"]}
+    }},
+    "camera_keyframes": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["camera_engine", "adapter", "timeline_sha256", "renderer_owner", "segments", "execution_scope", "preview_approved", "publish_ready"], "properties": {
+      "camera_engine": {"const": "ldporto.camera_director"}, "adapter": {"const": "ldporto.camera_handoff"},
+      "timeline_sha256": {"$ref": "#/$defs/hash"}, "renderer_owner": {"const": "VIDEO_CURATOR"},
+      "execution_scope": {"const": "recommendation_not_render_or_approval"}, "preview_approved": {"const": false}, "publish_ready": {"const": false},
+      "segments": {"type": "array", "items": {"type": "object", "required": ["source_start_s", "source_end_s", "clip_start_s", "clip_end_s", "source_shot_id", "source_camera", "mode", "keyframes", "fallback", "render_status"], "properties": {
+        "render_status": {"const": "UNVERIFIED"}, "mode": {"enum": ["FOCUS_PERSON_9X16", "SOURCE_FIT_BLUR", "DUO_STAGE", "INSTRUMENT_FOCUS", "AUDIENCE_REACTION", "SOURCE_PRESERVE"]},
+        "fallback": {"const": "SOURCE_FIT_BLUR"}, "keyframes": {"type": "array", "minItems": 2}
+      }}}
+    }},
+    "scene_transitions": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["transitions"], "properties": {"transitions": {"type": "array"}}},
+    "thumbnail_candidates": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["candidates", "selection_status"], "properties": {
+      "selection_status": {"const": "human_review_required"}, "candidates": {"type": "array", "items": {"type": "object", "required": ["frame_id", "sha256", "eligibility", "score", "text_region"], "properties": {"eligibility": {"const": "UNVERIFIED"}, "score": {"type": "null"}, "text_region": {"type": "null"}}}}
+    }},
+    "storyboard": {"allOf": [{"$ref": "#/$defs/artifact"}], "required": ["beats", "transcript_is_existing_candidate_data", "editorial_state", "preview_approved", "publish_ready"], "properties": {
+      "beats": {"type": "array", "minItems": 1}, "transcript_is_existing_candidate_data": {"const": true},
+      "editorial_state": {"const": "PARTIAL"}, "preview_approved": {"const": false}, "publish_ready": {"const": false}
+    }}
+  }
+}

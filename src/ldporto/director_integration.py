@@ -5,18 +5,25 @@ from .core import Context, digest, read_json, write_json, setup_logging, output_
 from .camera_director import build_camera_director
 from .global_camera_planner import build_global_camera_plan
 
-PLANNER_CODE = ['global_camera_planner.py', 'director_config.py', 'camera_geometry.py', 'temporal.py', 'director_integration.py']
+PLANNER_CODE = ['global_camera_planner.py', 'camera_evidence.py', 'director_config.py', 'camera_geometry.py', 'camera_preflight.py', 'temporal.py', 'director_integration.py']
 DIRECTOR_CODE = ['camera_director.py', 'director_config.py', 'camera_motion.py',
-                 'camera_geometry.py', 'temporal.py', 'director_integration.py']
+                 'camera_evidence.py', 'interview_layout.py', 'broadcast_graphics.py',
+                 'preview_verifier.py',
+                 'camera_geometry.py', 'camera_preflight.py', 'temporal.py', 'director_integration.py']
 
 
 def run_planner_stage(ctx, metadata, vision, shots, camera_timeline, active, semantic, understanding):
+    from copy import deepcopy
+    from .build_provenance import ProvenanceContext
+    metadata, vision, shots, camera_timeline, active, semantic, understanding = deepcopy(
+        (metadata, vision, shots, camera_timeline, active, semantic, understanding))
     params = {'config': ctx.config['camera_director'], 'schema': '4.0',
               'inputs': digest({'metadata': {k: metadata.get(k) for k in ('duration','width','height','rotation')},
                                 'camera_timeline': camera_timeline, 'shots': shots,
                                 'active': active, 'vision': {'frames': vision.get('frames', []),
-                                'observations': vision.get('observations', [])}})}
-    scoped = Context(ctx.video, ctx.output, ctx.config, ctx.signature, ctx.logger, ctx.force)
+                                'observations': vision.get('observations', [])},
+                                'semantic': semantic, 'understanding': understanding})}
+    scoped = ProvenanceContext(ctx.video, ctx.output, ctx.config, ctx.signature, ctx.logger, ctx.force)
     scoped.states.update(ctx.states)
     result = scoped.step('18b_global_camera_planner', params,
         lambda: build_global_camera_plan(metadata, vision, shots, camera_timeline,
@@ -29,7 +36,11 @@ def run_planner_stage(ctx, metadata, vision, shots, camera_timeline, active, sem
 
 
 def run_director_stage(ctx, metadata, vision, shots, active, motion, semantic, understanding, camera_plan=None):
-    vision = {'frames': vision.get('frames', []), 'observations': vision.get('observations', [])}
+    from copy import deepcopy
+    from .build_provenance import ProvenanceContext
+    metadata, vision, shots, active, motion, semantic, understanding, camera_plan = deepcopy(
+        (metadata, vision, shots, active, motion, semantic, understanding, camera_plan))
+    vision = {k: vision.get(k, [] if k != 'broadcast_graphics' else {}) for k in ('frames', 'observations', 'broadcast_graphics')}
     params = {'config': ctx.config['camera_director'], 'schema': '3.0',
               'inputs': digest({'metadata': {k: metadata.get(k) for k in ('duration', 'width', 'height', 'rotation')},
                                'vision': vision, 'shots': shots, 'active': active, 'motion': motion,
@@ -38,7 +49,7 @@ def run_director_stage(ctx, metadata, vision, shots, active, motion, semantic, u
                                'moments': understanding.get('main_moments', []),
                                'camera_plan': (camera_plan or {}).get('selected_global_path', [])})}
     # Only actual inputs determine this cheap stage. Does not alter upstream checkpoint keys.
-    scoped = Context(ctx.video, ctx.output, ctx.config, ctx.signature, ctx.logger, ctx.force)
+    scoped = ProvenanceContext(ctx.video, ctx.output, ctx.config, ctx.signature, ctx.logger, ctx.force)
     scoped.states.update(ctx.states)
     result = scoped.step('19_camera_director', params,
         lambda: build_camera_director(metadata, vision, shots, active, motion,
@@ -65,6 +76,7 @@ def attach_director(analysis, director):
         rows, analysis.get('metadata', {}).get('duration', 0), director.get('metrics', {}).get('switches_suppressed'))}
     analysis['camera_director_schema_version'] = '4.3'
     analysis['camera_director_timeline'] = rows
+    analysis['camera_director_focus_window_audit'] = director.get('focus_window_audit', [])
     analysis['camera_director_debug'] = director.get('debug')
     analysis['camera_director_config'] = director.get('config')
     analysis['smart_zoom_events'] = director.get('zoom_events', [])

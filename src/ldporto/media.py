@@ -31,10 +31,31 @@ def resolve_input(source, cfg, root):
         video = Path(source).expanduser().resolve()
         if not video.is_file():
             raise FileNotFoundError(f"Vídeo não encontrado: {video}")
+        expected=(cfg.get('download') or {}).get('expected_sha256')
+        if expected and file_hash(video)!=expected:
+            raise ValueError('selected_media_hash_mismatch')
         return video, {"type": "local", "filename": video.name}
-    if cfg["offline"]:
-        raise ValueError("Modo offline: selecione um arquivo local.")
     vid = youtube_id(source)
+    from .media_library import resolve_existing_media
+    download=cfg.get('download') or {}
+    resolved=resolve_existing_media(vid,expected_sha256=download.get('expected_sha256'),
+        explicit_path=(download.get('media_reference') or {}).get('local_path'),
+        project_reference=download.get('media_reference'),library_root=download.get('media_library_root'),
+        legacy_root=Path(root)/'input/youtube')
+    if resolved['status']=='FOUND_VERIFIED':
+        path=Path(resolved['path'])
+        record=Path(root)/'input/youtube'/vid/'download.json'
+        try:
+            old=read_json(record) if record.is_file() else {}
+        except (ValueError,OSError):
+            old={}
+        metadata=old.get('source') if isinstance(old.get('source'),dict) and old['source'].get('id')==vid else None
+        metadata=metadata or {'type':'youtube','id':vid,'url':source,'filename':path.name}
+        return path,{**metadata,'media_resolution':{k:v for k,v in resolved.items() if k!='path'}}
+    if cfg["offline"]:
+        raise ValueError("Modo offline: original local ausente ou incompatível; selecione um arquivo pelo SHA256.")
+    if not download.get('allow_download',False):
+        raise Unavailable('Original não encontrado/incompatível. Selecione mídia local ou autorize explicitamente --allow-download.')
     directory = Path(root) / "input" / "youtube" / vid
     directory.mkdir(parents=True, exist_ok=True)
     record = directory / "download.json"
@@ -52,7 +73,7 @@ def resolve_input(source, cfg, root):
         path = directory / (filename or '__missing_cache_file__')
         if path.is_symlink() or path.resolve().parent!=directory.resolve():
             raise ValueError('Cache de download nao pode seguir links para fora da pasta do video.')
-        if path.is_file() and previous.get("max_height") == height:
+        if path.is_file():
             if previous.get("sha256") == file_hash(path):
                 return path.resolve(), previous["source"]
     try:

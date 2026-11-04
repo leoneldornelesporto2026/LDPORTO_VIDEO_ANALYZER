@@ -1,0 +1,23 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 44/52 — Proveniência verificável e status de análise honesto
+
+OBJETIVO: retirar armadilha lógica em que execution_complete nunca pode ser True, sem criar atestação falsa.
+CÓDIGO: src/ldporto/build_provenance.py, src/ldporto/run_status.py, src/ldporto/reports.py, src/ldporto/pipeline.py, src/ldporto/replay.py, src/ldporto/second_curation_export.py; testes test_build_manifest_truth.py e test_stage04_ready_capabilities.py (verificar nome exato).
+PONTO ATUAL: build_provenance retorna False/None e run_status marca análise partial salvo True, logo full-run completa não possui caminho legítimo para 'complete'.
+IMPLEMENTE:
+1. Atestado de execução completo gerado SOMENTE pelo produtor que conhece todas etapas obrigatórias, fonte SHA, fingerprint efetivo por módulo, checkpoints com hashes verificáveis, política de etapas opcionais e código de execução. Não inferir sucesso por 'ok' isolado nem apenas build label, schema ou exporter SHA.
+2. Desacoplar statuses: 'execution_evidence' (prova, unknown, mismatch), 'stage_status_summary' (operacional), 'analysis_status' (execução), 'editorial_readiness', 'preview_approved' e 'publication_ready'. Cache compatível validado não deve equivaler automaticamente a mismatch; snapshot histórico deve preservar sua origem.
+3. Replay misto permanece partial como execução nova, com metadados do processamento upstream intactos. Atestado faltante permanece unknown; arquivos legados preservam null.
+4. Testar full-run sintética com etapas obrigatórias e hashes verificáveis gerando complete somente com atestado; full-run sem prova = partial; replay com mismatches = partial; fonte divergente = rejeição; round-trip manifests e schema.
+5. Não invalidar caches pesados nem renomear versão para insinuar que módulos não executados rodaram.
+CRITÉRIO: atingir caminho real de complete apenas com prova independente, nunca liberar preview/publicação sem revisão humana.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_44.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

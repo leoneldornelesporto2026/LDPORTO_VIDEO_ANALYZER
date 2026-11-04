@@ -1,0 +1,15 @@
+{
+  "schema_version": "55.1",
+  "origin": "Authored synthetic text and frame recipe; no programme images or measured TV OCR",
+  "annotation_kind": "synthetic_fixture",
+  "cases": [
+    {"id": "offer", "speech": "Openbox: compre agora por R$ 79 com desconto.", "ocr": "Openbox 60% OFF QR CODE R$ 79 COMPRE AGORA", "gc": "banner", "expected": "confirmed_ad", "expected_ad": true},
+    {"id": "institutional", "speech": "Assista a Copa na Jovem Pan.", "ocr": "JOVEM PAN COPA ASSISTA", "gc": "vinheta", "expected": "confirmed_ad", "expected_ad": true},
+    {"id": "brand_discussion", "speech": "Na reportagem discutimos a Openbox e a historia dos moveis.", "ocr": "HISTORIA DOS MOVEIS", "gc": "lower_third", "expected": "measured_no_ad_evidence", "expected_ad": false},
+    {"id": "qr_only", "speech": "Uma conversa sobre a infancia.", "ocr": "QR CODE", "gc": "qr_code", "expected": "requires_review", "expected_ad": false},
+    {"id": "absent", "speech": "Uma conversa sobre a infancia.", "ocr": null, "gc": null, "expected": "not_measured", "expected_ad": null},
+    {"id": "partial", "speech": "Uma conversa sobre a infancia.", "ocr": "HISTORIA DOS MOVEIS", "fail_sample": 2, "gc": "lower_third", "expected": "requires_review", "expected_ad": null},
+    {"id": "probable", "speech": "Compre agora.", "ocr": "Openbox 60% OFF QR CODE R$ 79", "gc": "banner", "expected": "probable_ad", "expected_ad": true},
+    {"id": "ocr_only", "speech": "Uma conversa sobre a infancia.", "ocr": "Openbox 60% OFF QR CODE R$ 79 COMPRE AGORA", "gc": "banner", "expected": "requires_review", "expected_ad": null}
+  ]
+}

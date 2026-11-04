@@ -342,6 +342,62 @@ def is_generated_package_name(name: str) -> bool:
     return False
 
 
+def report_checkpoint_snapshot(rel: Path) -> bool:
+    """Raw stage snapshots are analysis data; report summaries remain project docs."""
+    return (len(rel.parts) >= 3 and
+            tuple(part.casefold() for part in rel.parts[:2]) == ('docs', 'reports') and
+            re.fullmatch(r'\d{2}[a-z]?_[a-z0-9_]+\.json', rel.name, flags=re.IGNORECASE) is not None)
+
+
+GENERATED_REPORT_MARKERS = {
+    'SECOND_CURATION_MANIFEST.json', 'visual_handoff_manifest.json',
+    'CAMERA_SAMPLE_ARTIFACT_INDEX.json', 'PROJECT_MANIFEST.json', 'COMPACT_DELIVERY.json',
+}
+REPORT_IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
+REPORT_DATA_SUFFIXES = {'.json', '.jsonl', '.csv', '.tsv'}
+REPORT_DATA_LIMIT_BYTES = 1024 * 1024
+
+
+def generated_report_folder(root: Path, folder: Path, names=None) -> bool:
+    """Recognize derivative evidence contracts only beneath docs/reports.
+
+    The directory is retained. Only image payloads and large machine-data files
+    are omitted from the sources ZIP; readable reports, indices and code remain.
+    """
+    rel = safe_relative(folder, root)
+    if rel is None or tuple(p.casefold() for p in rel.parts[:2]) != ('docs', 'reports'):
+        return False
+    if names is None:
+        try:
+            names = {p.name for p in folder.iterdir() if p.is_file() and not linked(p)}
+        except OSError:
+            return False
+    else:
+        names = set(names)
+    return bool(names & GENERATED_REPORT_MARKERS or
+                {'timeline.json', 'provenance.json', 'config.json'} <= names)
+
+
+def generated_report_payload(root: Path, path: Path, *, inside_generated=None) -> bool:
+    rel = safe_relative(path, root)
+    if rel is None or tuple(p.casefold() for p in rel.parts[:2]) != ('docs', 'reports'):
+        return False
+    if inside_generated is None:
+        reports = root/'docs'/'reports'
+        inside_generated = False
+        for folder in path.parents:
+            if safe_relative(folder, reports) is None:
+                break
+            if generated_report_folder(root, folder):
+                inside_generated = True
+                break
+    if not inside_generated:
+        return False
+    suffix = path.suffix.casefold()
+    return (suffix in REPORT_IMAGE_SUFFIXES or
+            suffix in REPORT_DATA_SUFFIXES and path.stat().st_size > REPORT_DATA_LIMIT_BYTES)
+
+
 def looks_like_project_root(root: Path) -> bool:
     return (root / "src" / "ldporto" / "pipeline.py").is_file()
 
@@ -378,7 +434,7 @@ def safe_relative(path: Path, root: Path) -> Path | None:
         return None
 
 
-def project_file_allowed(root: Path, path: Path, output_dir: Path) -> bool:
+def project_file_allowed(root: Path, path: Path, output_dir: Path, *, inside_generated=None) -> bool:
     rel = safe_relative(path, root)
     if rel is None or not path.is_file() or linked(path):
         return False
@@ -391,6 +447,14 @@ def project_file_allowed(root: Path, path: Path, output_dir: Path) -> bool:
         return False
 
     if rel.parts[0].lower() == "analysis":
+        return False
+
+    # Benchmarks retain their complete raw checkpoints locally. A sources ZIP
+    # carries their reports/manifests, not hundreds of MB of analysis snapshots.
+    if report_checkpoint_snapshot(rel):
+        return False
+
+    if generated_report_payload(root, path, inside_generated=inside_generated):
         return False
 
     if any(part in EXCLUDED_DIR_NAMES for part in parts_lower[:-1]):
@@ -422,8 +486,9 @@ def project_file_allowed(root: Path, path: Path, output_dir: Path) -> bool:
     return False
 
 
-def collect_project_files(root: Path, output_dir: Path) -> list[Path]:
+def collect_project_files(root: Path, output_dir: Path, *, excluded_report_payloads=None) -> list[Path]:
     selected: list[Path] = []
+    generated_roots = set()
 
     # Arquivos normais do projeto.
     for base, dirs, files in os.walk(root, followlinks=False):
@@ -432,6 +497,9 @@ def collect_project_files(root: Path, output_dir: Path) -> list[Path]:
         if rel_folder is None:
             dirs[:] = []
             continue
+        if generated_report_folder(root, folder, files):
+            generated_roots.add(folder)
+        inside_generated = any(parent in generated_roots for parent in [folder, *folder.parents])
 
         # Poda agressiva para nao caminhar por input/analysis/.venv etc.
         kept_dirs = []
@@ -456,7 +524,11 @@ def collect_project_files(root: Path, output_dir: Path) -> list[Path]:
 
         for name in sorted(files):
             p = folder / name
-            if project_file_allowed(root, p, output_dir):
+            if (excluded_report_payloads is not None and p.is_file() and not linked(p)
+                    and generated_report_payload(root, p, inside_generated=inside_generated)):
+                excluded_report_payloads.append({'path':p.relative_to(root).as_posix(),
+                    'bytes':p.stat().st_size,'reason':'generated_report_payload_retained_locally'})
+            if project_file_allowed(root, p, output_dir, inside_generated=inside_generated):
                 selected.append(p)
 
     # Metadados/documentacao pequenos de models, nunca pesos/binarios.
@@ -474,7 +546,14 @@ def collect_project_files(root: Path, output_dir: Path) -> list[Path]:
             selected.append(p)
 
     unique = {p.resolve(): p for p in selected}
-    return sorted(unique.values(), key=lambda p: p.relative_to(root).as_posix().lower())
+    def source_order(path):
+        rel=path.relative_to(root)
+        core={'src','tests','config','configs','schemas','scripts','requirements','.github'}
+        priority=0 if len(rel.parts)==1 or rel.parts[0].casefold() in core else 1
+        if tuple(p.casefold() for p in rel.parts[:2])==('docs','reports'):
+            priority=2
+        return priority,rel.as_posix().casefold()
+    return sorted(unique.values(), key=source_order)
 
 
 def analysis_activity_time(folder: Path) -> float:
@@ -770,6 +849,8 @@ def inspect_package(path: Path) -> dict:
                     problems.append('forbidden_project_path:'+name)
             if project and (rel.suffix.casefold() in HEAVY_EXTENSIONS or sensitive_name(rel)):
                 problems.append('forbidden_project_file:'+name)
+            if project and report_checkpoint_snapshot(rel):
+                problems.append('raw_report_checkpoint_in_project:'+name)
             if entry.is_dir():
                 continue
             carry=b''
@@ -910,7 +991,8 @@ def build_project_package(
     max_file_mb: int,
     max_total_mb: int,
 ) -> tuple[Path, dict]:
-    source_files = collect_project_files(root, output_dir)
+    excluded_report_payloads=[]
+    source_files = collect_project_files(root, output_dir, excluded_report_payloads=excluded_report_payloads)
     files = [
         (p, p.relative_to(root).as_posix(), "project")
         for p in source_files
@@ -941,6 +1023,8 @@ Exclui propositalmente:
 - caches
 - previews/proxies
 - ZIPs antigos e arquivos derivados de pacotes
+- snapshots brutos de checkpoints de etapas em docs/reports/ (relatorios e resumos permanecem)
+- imagens e JSONs grandes em revisoes de evidencias com manifest (indices/relatorios leves e fontes permanecem)
 - scripts exportadores antigos substituidos por exportar_ldporto.py
 - credenciais/tokens detectados
 
@@ -957,11 +1041,14 @@ Use este ZIP quando a tarefa for alterar, revisar ou evoluir o codigo.
         extra_manifest={
             "analysis_included": False,
             "legacy_exporters_excluded": sorted(LEGACY_EXPORTER_NAMES),
+            "report_checkpoint_snapshots": "retained_locally_excluded_from_sources_package",
+            "generated_report_payloads_retained_locally": excluded_report_payloads,
+            "source_priority": "root/code/config/tests/schemas/scripts before report evidence",
         },
         readme_text=readme,
-        manifest_name="PROJECT_EXPORT_MANIFEST.json",
-        tree_name="PROJECT_EXPORT_TREE.txt",
-        readme_name="PROJECT_EXPORT_README.txt",
+        manifest_name=".package/PROJECT_EXPORT_MANIFEST.json",
+        tree_name=".package/PROJECT_EXPORT_TREE.txt",
+        readme_name=".package/PROJECT_EXPORT_README.txt",
     )
 
 
@@ -1069,6 +1156,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--root", help="Raiz do projeto; auto-detectada por padrao.")
     parser.add_argument('--self-test',action='store_true',help='Validar exportador em pasta temporaria sem incluir dados pesados')
     parser.add_argument('--inspect-zip',help='Inspecionar integridade, colisoes e segredos de um ZIP existente sem modifica-lo')
+    parser.add_argument('--visuals-on-demand', metavar='ZIP', help='Novo pacote com visuais de candidatos promovidos')
+    parser.add_argument('--source-video', help='Fonte local para os visuais sob demanda')
+    parser.add_argument('--candidate', action='append', default=[], help='Candidate ID solicitado; repetir para vários')
+    parser.add_argument('--candidate-preview', action='store_true')
     parser.add_argument(
         "--mode",
         choices=("both", "project", "analysis"),
@@ -1120,6 +1211,14 @@ def main() -> int:
             else (root / "pacotes_para_enviar").resolve()
         )
         output_dir.mkdir(parents=True, exist_ok=True)
+        if args.visuals_on_demand:
+            if not args.source_video or not args.candidate:
+                raise ValueError('--visuals-on-demand exige --source-video e --candidate')
+            sys.path.insert(0, str(root / 'src'))
+            from ldporto.second_curation_export import generate_visuals_on_demand
+            report = generate_visuals_on_demand(args.visuals_on_demand, args.source_video, args.candidate, output_dir, args.candidate_preview)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+            return 0
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
         print("=" * 76)

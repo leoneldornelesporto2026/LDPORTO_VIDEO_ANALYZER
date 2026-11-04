@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "technical_tests_passed", "real_media_homologated", "publication_approved", "checks", "runtime", "ocr", "vision", "replay_17c", "commercial", "goldset", "canary", "baseline", "ab_provenance"],
+  "properties": {
+    "schema_version": {"const": "62.1"},
+    "technical_tests_passed": {"type": "boolean"},
+    "real_media_homologated": {"const": false},
+    "publication_approved": {"const": false},
+    "publication_ready": {"const": false},
+    "checks": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"type": "object", "required": ["stage", "checkpoint", "test_module", "tested_cases", "technical_status", "real_media_status"], "properties": {"stage": {"type": "integer", "minimum": 53, "maximum": 62}, "tested_cases": {"type": "integer", "minimum": 0}, "technical_status": {"enum": ["passed", "partial", "not_measured"]}, "real_media_status": {"const": "not_measured"}}}}
+  }
+}

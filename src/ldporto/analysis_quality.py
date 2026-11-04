@@ -20,7 +20,8 @@ def camera_quality_metrics(rows, duration, suppressed=None):
                 ((row.get('split') or {}).get('left_person') and (row.get('split') or {}).get('right_person'))]
     source = [row for row in rows if row.get('layout') == 'full_frame']
     safe = [row for row in rows if (row.get('crop') or {}).get('safe')]
-    known = [row for row in resolved if row.get('focus_person') and row.get('focus_confidence') is not None]
+    known = [row for row in resolved if row.get('focus_person') and row.get('focus_confidence') is not None
+             and row.get('camera_evidence_role', 'CONFIRMED_SPEAKER') in {'CONFIRMED_SPEAKER', 'PROBABLE_SPEAKER'}]
     switches = 0
     previous = None
     for row in rows:
@@ -93,14 +94,14 @@ def build_analysis_quality(metadata, transcript, diarization, vision, active_dat
     visual_tracking_coverage = min(1.0, len({o.get('time') for o in observations})/max(1,len(frames))) if frames else 0.0
     active_rows=active_data.get('intervals',[])
     mapping_cov = active_data.get('coverage') if isinstance(active_data.get('coverage'), (int,float)) else 0.0
-    active_known=_coverage(active_rows,duration,lambda r:r.get('state')=='KNOWN_PERSON') if duration else mapping_cov
+    active_known=_coverage(active_rows,duration,lambda r:bool(r.get('active_person')) if 'active_person' in r else r.get('state')=='KNOWN_PERSON') if duration else 0.0
     shot_coverage = _coverage(shots, duration)
     semantic_coverage = _coverage(semantic.get('topics', []), duration)
     camera_coverage = _coverage(camera_timeline, duration)
     missing=[]
     if not turns: missing.append('diarization')
     if not observations: missing.append('visual_tracking')
-    if not any(r.get('person_id') for r in active_rows): missing.append('active_speaker_known_person')
+    if not any(r.get('active_person') if 'active_person' in r else r.get('person_id') for r in active_rows): missing.append('active_speaker_known_person')
     if not camera_timeline: missing.append('camera_timeline')
     quality = {
         'measurement_type': 'runtime_measurements_and_explicit_heuristic_proxies',
@@ -141,9 +142,12 @@ def quality_gate(analysis, cfg=None):
         required_missing.append('diarization_unavailable')
     if cfg.get('vision',{}).get('enabled',True) and not analysis.get('people_observations'):
         required_missing.append('visual_tracking_unavailable')
+    understanding_status = (analysis.get('stage_status') or {}).get('16_understanding', {}).get('status')
+    if understanding_status in {'failed', 'blocked', 'unavailable', 'cancelled'}:
+        required_missing.append('understanding_unavailable')
     issues.extend({'code':name,'severity':'high'} for name in required_missing)
     flags={
-        'active_speaker_unavailable':cfg.get('vision',{}).get('active_speaker',True) and not any(row.get('person_id') for row in analysis.get('active_speaker',[])),
+        'active_speaker_unavailable':cfg.get('vision',{}).get('active_speaker',True) and not any(row.get('active_person') if 'active_person' in row else row.get('person_id') for row in analysis.get('active_speaker',[])),
         'fragmented_tracking':(quality.get('micro_track_ratio') or 0)>.5,
         'participant_explosion':len(analysis.get('participants',[]))>50,
         'qa_unresolved':(analysis.get('qa_metrics',{}).get('unresolved_question_count') or 0)>0,
@@ -154,9 +158,19 @@ def quality_gate(analysis, cfg=None):
         'preview_skipped':not analysis.get('preview_validation',{}).get('verifier_uses_rendered_frames',False),
         'cross_file_references_unresolved':analysis.get('second_curation_package',{}).get('reference_validation',{}).get('status')=='unresolved',
         'primary_theme_unresolved':analysis.get('topic_quality',{}).get('primary_theme_status')=='unresolved_no_qualified_theme',
+        'social_output_blocked':(analysis.get('social_output') or {}).get('story_readiness') == 'BLOCKED',
     }
     issues.extend({'code':name,'severity':'medium' if name!='preview_skipped' else 'info'} for name,present in flags.items() if present)
     degraded=any(issue['severity'] in ('high','medium') for issue in issues)
     status='P0_FAIL' if required_missing else 'P1_DEGRADED' if degraded else 'PASS_WITH_WARNINGS' if issues else 'PASS'
+    preview = analysis.get('preview_validation') or {}
+    from .integrity_contracts import preview_technical_readiness
+    technically_verified = preview_technical_readiness(preview)
+    from .causal_diagnostics import quality_causal_diagnostics
+    causal = quality_causal_diagnostics(analysis, issues)
     return {'schema_version':'1.0','status':status,'issues':issues,'required_missing_capabilities':required_missing,
-            'preview_validated':not flags['preview_skipped'],'not_accuracy_certification':True}
+            'preview_validated':technically_verified, 'preview_technical_verified':technically_verified,
+            'preview_approved':False, 'publication_ready':False,
+            'preview_validation_scope':'technical_canary_not_editorial_approval',
+            'not_accuracy_certification':True,
+            'causal_diagnostics': causal, 'root_causes': causal['root_causes']}

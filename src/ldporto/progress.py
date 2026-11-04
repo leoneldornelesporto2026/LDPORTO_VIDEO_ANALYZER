@@ -22,7 +22,7 @@ STAGE_WEIGHTS = {
 STAGE_LABELS = {
     '00_preflight': 'Preflight', '00_source': 'Obtendo midia', '01_metadata': 'Metadata', '02_audio': 'Audio',
     '03_audio_quality': 'Qualidade de audio', '04_transcription': 'Transcricao',
-    '05_diarization': 'Diarizacao', '06_scenes': 'Shots visuais',
+    '05_diarization': 'Diarizacao', '06_scenes': 'Cenas visuais',
     '07_people_tracking': 'Tracking visual', '08_person_reid': 'Re-ID',
     '09_person_motion': 'Movimento', '10_active_speaker': 'Active Speaker',
     '11_shots': 'Shot classification', '12_camera_timeline': 'Camera timeline',
@@ -33,6 +33,7 @@ STAGE_LABELS = {
     '20_handoff': 'Artefatos de analise', '21_second_curation_handoff': 'Pacote segunda curadoria',
 }
 TERMINAL = {'ok', 'partial', 'degraded', 'skipped', 'unavailable', 'failed', 'blocked', 'cancelled', 'complete'}
+FINALIZATION_RESERVE = .05
 
 
 def emit_event(event):
@@ -63,8 +64,14 @@ class WeightedProgress:
         self.finished = False
         self.succeeded = False
         self.completion = None
+        self.historical = {}
 
     def update(self, event):
+        if event.get('historical_stage_estimates'):
+            self.historical = event['historical_stage_estimates']
+            for stage, row in self.historical.items():
+                if stage in self.weights:
+                    self.weights[stage] = row['median_seconds']
         if event.get('event') in {'run_completed', 'run_failed', 'run_cancelled'}:
             self.finished = True
             self.succeeded = event['event'] == 'run_completed'
@@ -76,13 +83,21 @@ class WeightedProgress:
         self.weights.setdefault(stage, 1.)
         state = {**self.states.get(stage, {}), **event}
         state.setdefault('started_at', self.clock())
+        if event.get('substage') and event['substage'] != self.states.get(stage, {}).get('substage'):
+            # Chunk throughput does not estimate a later single inference/export.
+            self.samples.pop(stage, None)
+            self.last_units.pop(stage, None)
         self.states[stage] = state
-        if state.get('status') == 'running':
-            self.current_stage = stage
+        self.current_stage = stage
         current, elapsed = state.get('current'), state.get('elapsed_seconds')
-        if isinstance(current, (int, float)) and isinstance(elapsed, (int, float)):
+        valid = lambda value: isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0
+        if valid(current) and valid(elapsed):
             previous = self.last_units.get(stage)
-            if previous and current > previous[0] and elapsed >= previous[1]:
+            if previous and (current < previous[0] or elapsed < previous[1]):
+                self.samples.pop(stage, None)
+                self.last_units.pop(stage, None)
+                previous = None
+            if previous and current > previous[0] and elapsed > previous[1]:
                 self.samples.setdefault(stage, deque(maxlen=12)).append((elapsed - previous[1]) / (current - previous[0]))
             if not previous or current > previous[0]:
                 self.last_units[stage] = current, elapsed
@@ -93,38 +108,52 @@ class WeightedProgress:
         stage = self.current_stage
         state = self.states.get(stage, {})
         total, current = state.get('total'), state.get('current')
-        stage_fraction = min(1., max(0., current / total)) if isinstance(total, (int, float)) and total > 0 and isinstance(current, (int, float)) else None
+        valid = lambda value: isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0
+        stage_fraction = min(1., max(0., current / total)) if valid(total) and total > 0 and valid(current) else None
+        if valid(state.get('progress_fraction')):
+            stage_fraction = min(1., state['progress_fraction'])
         completed = sum(self.weights[name] for name, value in self.states.items() if value.get('status') in TERMINAL)
         partial = self.weights.get(stage, 0) * (stage_fraction or 0) if state.get('status') not in TERMINAL else 0.
         fraction = (completed + partial) / max(1e-9, sum(self.weights.values()))
-        self.last_fraction = max(self.last_fraction, min(.999 if not self.finished else 1., fraction))
+        # Only a successful run completion confirms final files/checksums exist.
+        self.last_fraction = max(self.last_fraction, min(1. - FINALIZATION_RESERVE, fraction))
         if self.finished and self.succeeded:
             self.last_fraction = 1.
         samples = list(self.samples.get(stage, []))
         stage_eta = eta_range = None
-        if len(samples) >= 3 and stage_fraction is not None and total > current:
+        if (not self.finished and state.get('status') == 'running' and len(samples) >= 3
+                and valid(total) and valid(current) and total > current):
             center = median(samples)
             ordered = sorted(samples)
             lower, upper = ordered[int((len(ordered) - 1) * .1)], ordered[int((len(ordered) - 1) * .9)]
-            robust = [sample for sample in samples if sample <= max(center * 4, 1e-6)]
-            typical = median(robust) if robust else center
+            typical = center
             stage_eta = typical * (total - current)
             if upper > max(1e-6, lower) * 1.8:
                 eta_range = [lower * (total - current), upper * (total - current)]
         ordered_stages = list(self.weights)
         next_stage = next((name for name in ordered_stages[ordered_stages.index(stage) + 1:] if self.states.get(name, {}).get('status') not in TERMINAL), None) if stage in ordered_stages else None
         remaining = [name for name in ordered_stages if name != stage and self.states.get(name, {}).get('status') not in TERMINAL]
-        scale = 1.
-        if stage_eta is not None and stage_fraction is not None and stage_fraction < 1:
-            scale = (stage_eta / (1 - stage_fraction)) / max(self.weights.get(stage, 1), 1e-9)
-        total_eta = stage_eta + sum(self.weights[name] for name in remaining) * scale if stage_eta is not None else None
+        future = sum(self.weights[name] for name in remaining)
+        total_eta = stage_eta + future if stage_eta is not None else None
+        total_range = [(eta_range or [stage_eta, stage_eta])[0] + .6*future,
+                       (eta_range or [stage_eta, stage_eta])[1] + 1.8*future] if stage_eta is not None else None
         return {'overall_fraction': self.last_fraction, 'stage': stage, 'stage_label': STAGE_LABELS.get(stage, stage),
                 'stage_fraction': stage_fraction, 'current': current, 'total': total,
                 'elapsed_seconds': now - self.started,
                 'stage_elapsed_seconds': now - state.get('started_at', now),
                 'stage_eta_seconds': stage_eta, 'total_eta_seconds': total_eta,
                 'stage_eta_range_seconds': eta_range,
+                'total_eta_range_seconds': total_range,
+                'historical_stage_count': len(self.historical),
+                'eta_sample_count': len(samples),
+                'future_eta_basis': 'matching_runtime_history' if all(name in self.historical for name in remaining) else 'baseline_weights_unvalidated_on_current_hardware',
+                'progress_basis': 'empirical_runtime_weights' if self.historical else 'baseline_runtime_weights',
+                'completion_reserved_fraction': FINALIZATION_RESERVE,
+                'remaining_stage_count': sum(self.states.get(name, {}).get('status') not in TERMINAL for name in ordered_stages),
+                'finalization_pending': not self.finished and bool(self.states) and all(self.states.get(name, {}).get('status') in TERMINAL for name in ordered_stages),
+                'blocking_reason': state.get('cause') if state.get('status') in {'blocked', 'failed', 'unavailable', 'cancelled'} else None,
                 'eta_basis': 'rolling_unit_median_and_empirical_range' if stage_eta is not None else 'calculating',
                 'next_stage': next_stage, 'next_stage_label': STAGE_LABELS.get(next_stage),
                 'status': state.get('status', 'waiting'), 'substage': state.get('substage'),
+                'performance': state.get('performance'),
                 'stage_states': self.states, 'finished': self.finished, 'completion': self.completion}

@@ -1,0 +1,41 @@
+MICROETAPA 41/42 — Visão serial/paralelo, cache e recursos GUI
+REFERÊNCIA: D11 | LOTE: 07_RENDER_PERF_HOMOLOG
+
+CONTEXTO: L.D.PORTO VIDEO ANALYZER — código acumulado S1–S11; benchmark João Gordo: export que reporta build R4.9-S4-TRACKING-FACIAL, 55 candidatos, 52 após dedup, shortlist 1; saída partial/P1_DEGRADED. Esses números são BASELINE observado, não metas nem prova da versão integrada.
+
+ANEXOS: (a) ZIP DO CÓDIGO MAIS RECENTE do último checkpoint (na primeira etapa: `LDPORTO_VIDEO_ANALYZER_R4_9_S9_S10_S11_INTEGRADO.zip`); (b) este prompt; (c) nos passos que dependem da execução, `SECOND_CURATION_READY_tpcF5ri6GS4_20261008_041938_332406_8ae5ce(2).zip` ou relatório de auditoria anterior. Se o pacote de análise já estiver nesta conversa, não solicite novo envio desnecessário.
+
+OBJETIVO ÚNICO:
+Evitar RAM/VRAM excessivas e reduzir custo de visão somente com medição comparável.
+
+ARQUIVOS PROVÁVEIS PARA INSPEÇÃO (confirme nomes/uso no ZIP antes de editar):
+scripts/dev/benchmark_vision_r3b.py; src/ldporto/performance.py; src/ldporto/progress.py; src/ldporto/runtime_metrics.py
+
+TAREFAS EM ESCOPO:
+1. Planejar benchmark HOG/face serial vs paralelo em Windows, frames idênticos, logs CPU/RAM/VRAM e tempo.
+2. Auditar checkpoint/restart e resumable tasks para não perder horas após falha.
+3. GUI deve mostrar motivo de bloqueio, progresso e ETA estimado com evidências; desligar autotuning não medido.
+
+CRITÉRIOS DE ACEITE E TESTES:
+- Smoke sem GPU passa, indicando indisponibilidade e nenhuma otimização ativada.
+- Reexecutar etapa com checkpoint preserva outputs anteriores válidos.
+
+ATENÇÃO ESPECÍFICA:
+Nunca prometer ganho de desempenho sem A/B no hardware alvo.
+
+REGRAS PARA CHATGPT NORMAL (válidas nesta microetapa):
+- Use o ZIP MAIS RECENTE do projeto como única base de código. O SECOND_CURATION_READY é evidência de execução (build S4), não o código para atualizar. Nunca sobrescreva uma versão posterior por S8 ou S4.
+- Execute SOMENTE esta microetapa. Inspecione o mínimo necessário, implemente no código existente, acrescente testes focados e rode a regressão pertinente; não comece a próxima etapa.
+- Preserve compatibilidade de JSON/IDs/checkpoints e cache caro. Não rerode ASR, visão, CUDA ou Ollama para corrigir lógica downstream sem necessidade técnica comprovada.
+- Não fabrique transcrição, perguntas, payoff, falante ativo, pessoa, crop, qualidade editorial ou sucesso de teste. Estado inseguro = null / pendente + motivo.
+- Não considere `READY` como publish_ready; aprovação humana e hashes reais são indispensáveis. Qualquer alteração em decisão, fonte ou preview invalida a aprovação associada.
+- Se faltar vídeo, áudio, GPU, modelo ou aplicativo Curator independente, faça os testes offline/sintéticos possíveis e registre o que deve ser validado no Windows. Não afirme ter testado aquilo que não executou.
+- Não peça nova arquitetura, não crie projeto do zero. Evite chamadas externas, ferramentas pagas, downloads de modelos e reanálise integral.
+
+ENTREGA OBRIGATÓRIA NESTA CONVERSA:
+1. Implementação real no workspace, se viável, não apenas plano.
+2. ZIP COMPLETO atualizado do projeto, preservando tudo que já funciona, mais link verificável.
+3. `CHECKPOINT_ETAPA_NNN.md` com arquivos alterados, mudanças, comandos, resultados observados, limitações, cache invalidado e próximos passos.
+4. Resumo curto dos achados e evidência de testes. Quando não puder completar, detalhe exatamente qual insumo bloqueou e não alegue concluído.
+
+AO FINAL: pare nesta etapa. Eu enviarei a próxima depois de baixar seu ZIP.

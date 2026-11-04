@@ -1,0 +1,22 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 52/52 — Homologação final e relatório de comparação auditável
+
+OBJETIVO: validar funcionalmente as correções pós42 sem repetir 2h17 de vídeo por padrão.
+CÓDIGO: reports.py, second_curation_export.py, run_status.py, homologation_s11.py, scripts/dev/* (se existem), docs/VALIDACAO.md; testes stage42 e regressão geral.
+IMPLEMENTE:
+1. Ferramenta de auditoria offline da SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (read-only) que verifique manifesto/hash, IDs, duplicates, comercial Openbox/Copa, estados de fila, OCR skipped, Q&A, upload de feedback humano e saída ZIP; não fingir que o pacote histórico foi reprocessado.
+2. Comparação mensurável baseline vs novos outputs do MESMO vídeo/fonte/config (quando disponíveis): 217/193/0/0, 4.080 flags, 7,05% speaker/person, active 0,058%, camera 4,31%, 6 propostas/0 entregas, 2 clips de cabeça. Para ausência pós, null e 'not_measured'.
+3. Regredir toda suíte Python e formatos antigos; testes de regressão export, replays, previews, approval hash, injection/symlink ZIP; reportar skipped e testes que requerem Windows/mídia/Ollama sem inventar passes.
+4. Criar checklist de homologação no Windows com passos manuais de Tesseract, 10-20 goldsets, escuta, segurança de QR/GC, canários render e aprovação por hash. O documento deve separar 'offline_verified', 'requires_real_media' e 'human_review_pending'.
+5. Não mudar vídeos antigos, não publicar, não marcar publication_ready por conta própria; construir diff de regressões e bugs abertos. Critérios de sucesso reais: ao menos uma fila humana não vazia e auditável sem propaganda auto-aprovada, caso media/code o permitam, nenhum SHA inconsistente, teste completo verde.
+CRITÉRIO: relatório final produzido com evidências e lacunas; a homologação automática nunca substitui parecer humano.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_52.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

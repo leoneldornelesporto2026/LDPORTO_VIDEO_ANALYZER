@@ -4,7 +4,7 @@ import json
 import math
 import shutil
 import subprocess
-from .core import ok, finite_or_none
+from .core import ok, finite_or_none, file_hash
 from .media_runtime import find_media_tool
 
 
@@ -14,7 +14,8 @@ def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
     for row in timeline or []:
         keys = (row.get('camera') or {}).get('keyframes', [])
         samples.extend((key.get('time', row['start']), float(key.get('zoom', 1))) for key in keys)
-        if row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'}:
+        # A state/request is not delivered motion. Count only observed zoom deltas.
+        if row.get('camera_mode') in {'SMART_ZOOM_IN', 'SMART_ZOOM_OUT'} and keys and max(float(k.get('zoom', 1)) for k in keys) - min(float(k.get('zoom', 1)) for k in keys) > .001:
             events.append(row)
         target_loss += int('TARGET_LOST_DURING_ZOOM' in (row.get('decision') or {}).get('reasons', []))
         crop = row.get('crop') or {}
@@ -35,17 +36,137 @@ def zoom_diagnostics(timeline, duration=None, min_zoom_duration=6.):
     short = sum(row['end'] - row['start'] < min_zoom_duration - .5 for row in events)
     duration = duration or max((row['end'] for row in timeline or []), default=0)
     metrics = {'zoom_event_count': len(events), 'zoom_events_per_minute': len(events) * 60 / duration if duration else None,
+               'mean_zoom_factor': sum((float((r.get('camera') or {}).get('zoom_start', 1)) + float((r.get('camera') or {}).get('zoom_end', 1))) / 2 * (r['end'] - r['start']) for r in timeline or []) / duration if duration else None,
+               'max_zoom_factor': max((z for _, z in samples), default=1.),
                'short_zoom_count': short, 'rapid_zoom_reversal_count': reversals,
                'zoom_pumping_score': reversals / max(1, len(directions)),
                'zoom_jitter_score': sum(abs(second - first) for first, second in zip(slopes, slopes[1:])) / max(1, len(slopes) - 1),
                'zoom_target_loss_count': target_loss, 'upscale_limit_violation_count': upscale_violations,
-               'zoom_metrics_method': 'delivered_keyframe_temporal_diagnostics_not_perceptual_accuracy'}
+               'zoom_metrics_method': 'timeline_keyframe_diagnostics_not_render_delivery_or_perceptual_accuracy'}
     issues = []
     for count, kind in ((short, 'SHORT_ZOOM'), (reversals, 'ZOOM_PUMPING'), (target_loss, 'ZOOM_TARGET_LOST'), (upscale_violations, 'UPSCALE_LIMIT_VIOLATION')):
         if count:
             issues.append({'issue_type': kind, 'severity': 'error' if kind in {'ZOOM_TARGET_LOST', 'UPSCALE_LIMIT_VIOLATION'} else 'warning',
                            'evidence': {'count': count}, 'suggested_repair': 'DISABLE_ZOOM_OR_FORCE_SOURCE'})
     return metrics, issues
+
+
+def border_geometry_evidence(gray, np, *, dark_level=8, min_dark_fraction=.94,
+                             min_inner_brightness=34, min_luma_jump=23):
+    """Detect geometric matte candidates, not mere dark pixels at frame edges.
+
+    Requires a nearly solid dark stripe and a sharper/brighter neighboring band.
+    This is a heuristic candidate, not proof a crop failed. A normal black studio
+    background remains unflagged unless a straight rail boundary is visible.
+    Pixels alone cannot distinguish a source matte from a rendering defect.
+    """
+    h, w = gray.shape[:2]
+    if min(w, h) < 40:
+        return {'possible_padding': False, 'rails': [], 'reason': 'small_frame'}
+    rails = []
+    unresolved_edge = False
+    # Walk inward from all four sides, rather than assuming one bar thickness.
+    for side, pixels in [('top', gray), ('bottom', gray[::-1]),
+                         ('left', gray.T), ('right', gray.T[::-1])]:
+        fractions = np.mean(pixels < dark_level, axis=1)
+        limit = max(2, int(len(pixels) * .40))
+        depth = 0
+        while depth < limit and fractions[depth] >= min_dark_fraction:
+            depth += 1
+        if depth == 1 or depth >= limit:
+            unresolved_edge = True
+        if depth < 2 or depth >= limit:
+            continue
+        outer = pixels[:depth]
+        inner = pixels[depth:depth + max(2, min(6, depth))]
+        internal_brightness = float(np.median(inner))
+        jump = internal_brightness - float(np.median(outer))
+        # A straight boundary must have contrast along most of its length.
+        # Opposite-axis bars intersect at corners; compare the central span.
+        margin = max(1, round(pixels.shape[1] * .10))
+        boundary_fraction = float(np.mean(
+            np.median(inner[:, margin:-margin], axis=0) -
+            np.median(outer[:, margin:-margin], axis=0) >= min_luma_jump))
+        if internal_brightness >= min_inner_brightness and jump >= min_luma_jump and boundary_fraction >= .90:
+            rails.append({'side': side, 'width_px': depth,
+                          'width_fraction': round(depth / len(pixels), 5),
+                          'dark_fraction': round(float(np.mean(outer < dark_level)), 3),
+                          'boundary_fraction': round(boundary_fraction, 3),
+                          'inner_median': round(internal_brightness, 1), 'luma_jump': round(jump, 1)})
+    return {'possible_padding': bool(rails), 'rails': rails,
+            'reason': 'hard_dark_rail_with_interior_contrast' if rails else (
+                'ambiguous_edge_geometry' if unresolved_edge else
+                'insufficient_luminance' if float(np.percentile(gray, 95)) < min_inner_brightness else 'no_geometric_bar_evidence')}
+
+
+def _border_crop_context(row, timestamp, expected, width, height):
+    """Use the same effective transform as the technical renderer; no source inference."""
+    from .preview_renderer import _interpolate_keyframes
+    sw, sh = expected.get('source_width'), expected.get('source_height')
+    known_size = all(isinstance(v, (int, float)) and math.isfinite(v) and v > 0 for v in (sw, sh))
+    rect = None
+    if row and row.get('layout') != 'full_frame':
+        if row.get('layout') == 'split_candidate' and row.get('split'):
+            return {'mode': 'split', 'effective_crop': None, 'expected_rails_px': None}
+        if known_size:
+            rect = _interpolate_keyframes(row, timestamp, sw, sh, width, height)
+        elif not (row.get('camera') or {}).get('keyframes'):
+            rect = (row.get('crop') or {}).get('rect_end')
+        else:
+            return {'mode': 'unknown', 'effective_crop': None, 'expected_rails_px': None}
+    if rect:
+        return {'mode': 'crop_resize', 'effective_crop': rect,
+                'expected_rails_px': dict.fromkeys(('top', 'bottom', 'left', 'right'), 0)}
+    padding = None
+    if known_size:
+        scale = min(width / sw, height / sh)
+        nw, nh = max(1, round(sw * scale)), max(1, round(sh * scale))
+        x, y = (width - nw) // 2, (height - nh) // 2
+        padding = {'left': x, 'right': width - nw - x, 'top': y, 'bottom': height - nh - y}
+    return {'mode': 'fit_with_padding', 'effective_crop': None, 'expected_rails_px': padding}
+
+
+def border_temporal_report(samples):
+    """Proved refers to recurring geometric rails, never their source/render origin."""
+    unexpected, intended = [], []
+    for sample in samples:
+        padding = sample['crop_context']['expected_rails_px']
+        for rail in sample['rails']:
+            entry = {**rail, 'frame': sample['frame'], 'time': sample['time'],
+                     'crop_context': sample['crop_context'], 'segment': sample['segment']}
+            if padding is not None and padding[rail['side']] > 0 and abs(rail['width_px'] - padding[rail['side']]) <= 2:
+                intended.append(entry)
+            else:
+                unexpected.append(entry)
+    stable = {}
+    # Match width, transform mode and segment; retain the effective crop per sample.
+    for entry in unexpected:
+        matches = [r for r in unexpected if r['side'] == entry['side'] and
+                   abs(r['width_px'] - entry['width_px']) <= 2 and
+                   r['crop_context']['mode'] == entry['crop_context']['mode'] and
+                   r['segment'] == entry['segment']]
+        if len(matches) >= 3:
+            stable[entry['side']] = max(stable.get(entry['side'], 0), len(matches))
+    pairs = [('top', 'bottom'), ('left', 'right')]
+    paired = False
+    for a, b in pairs:
+        for entry in unexpected:
+            if entry['side'] != a:
+                continue
+            frames = {x['frame'] for x in unexpected if x['side'] == a and
+                      x['segment'] == entry['segment'] and abs(x['width_px'] - entry['width_px']) <= 2}
+            opposite = {x['frame'] for x in unexpected if x['side'] == b and
+                        x['segment'] == entry['segment'] and abs(x['width_px'] - entry['width_px']) <= 2}
+            paired |= len(frames & opposite) >= 3
+    insufficient = len(samples) < 3 or any(s['reason'] in (
+        'small_frame', 'insufficient_luminance', 'ambiguous_edge_geometry') for s in samples)
+    state = ('proved' if paired else 'borderline') if unexpected else ('unknown' if insufficient else 'clear')
+    return {'status': state, 'proof_scope': 'sampled_recurring_bar_geometry_only_not_render_origin',
+            'render_origin_proved': None, 'review_required': bool(unexpected) or insufficient,
+            'sampled_frames': len(samples), 'stable_sides': sorted(stable),
+            'matching_frame_counts': stable, 'unexpected_rail_samples': len(unexpected),
+            'expected_padding_rail_samples': len(intended),
+            'samples': samples, 'preview_approved': None, 'publish_ready': False}
 
 
 def _ffprobe(path):
@@ -67,10 +188,13 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
         import cv2
         import numpy as np
     except ImportError as exc:
-        return ok({}, 'unavailable', [f'OpenCV/Numpy indisponível no Preview Verifier: {exc}'])
+        return ok({'preview': str(Path(path).resolve()), 'border_report': border_temporal_report([]),
+                   'preview_approved': None, 'publish_ready': False}, 'unavailable', [f'OpenCV/Numpy indisponível no Preview Verifier: {exc}'])
     path = Path(path)
     if not path.is_file():
-        return ok({}, 'unavailable', ['Preview renderizado não encontrado.'])
+        return ok({'preview': str(path.resolve()), 'border_report': border_temporal_report([]),
+                   'preview_approved': None, 'publish_ready': False},
+                  'unavailable', ['Preview renderizado não encontrado.'])
     expected = expected or {}
     thresholds = {'border_fraction': .12, 'edge_face_margin': .015, 'face_width_fraction': .75,
                   'max_flow_px_per_second': 900., 'duration_tolerance': .25, 'av_sync_tolerance': .20}
@@ -80,7 +204,8 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     if not cap.isOpened():
         cap.release()
         return ok({'schema_version':'1.0', 'issues':[{'severity':'error', 'issue_type':'UNDECODABLE_PREVIEW'}],
-                   'verifier_uses_rendered_frames':False, 'sampled_frames':0}, 'unavailable')
+                   'verifier_uses_rendered_frames':False, 'sampled_frames':0,
+                   'border_report': border_temporal_report([]), 'preview_approved': None, 'publish_ready': False}, 'unavailable')
     width, height = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = float(cap.get(cv2.CAP_PROP_FPS) or expected.get('fps') or 25.)
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
@@ -90,6 +215,7 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     face_sizes, headrooms = [], []
     face = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
     previous = None
+    border_candidates = []
     stride = max(1, round(fps/5))
     index = 0
     try:
@@ -102,16 +228,13 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
                 continue
             sampled += 1
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            edge = max(2, round(min(width,height)*.02))
-            border = np.concatenate([gray[:edge,:].ravel(), gray[-edge:,:].ravel(), gray[:, :edge].ravel(), gray[:, -edge:].ravel()])
-            black_fraction = float(np.mean(border < 8)) if border.size else 0.0
-            source_time = expected.get('source_start',0) + index / fps
+            source_time = expected.get('source_start', 0) + index / fps
             source_row = next((row for row in timeline or [] if row['start'] <= source_time < row['end']), {})
-            intentional_padding = source_row.get('layout') == 'full_frame'
-            if black_fraction > thresholds['border_fraction'] and not intentional_padding:
-                issues.append({'interval': None, 'severity': 'warning', 'issue_type': 'UNEXPECTED_BORDER',
-                               'evidence': {'frame': index, 'black_edge_fraction': black_fraction},
-                               'suggested_repair': 'FORCE_SOURCE_OR_REDUCE_CROP'})
+            geometry_evidence = border_geometry_evidence(gray, np)
+            border_candidates.append({'frame': index, 'time': round(source_time, 4),
+                                      'segment': [source_row.get('start'), source_row.get('end')],
+                                      'rails': geometry_evidence['rails'], 'reason': geometry_evidence['reason'],
+                                      'crop_context': _border_crop_context(source_row, source_time, expected, width, height)})
             faces = face.detectMultiScale(gray, 1.1, 5, minSize=(24,24)) if not face.empty() else []
             face_frames += int(len(faces) > 0)
             focused_frames += int(bool(source_row.get('focus_person')))
@@ -144,6 +267,16 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
             index += 1
     finally:
         cap.release()
+    border_report = border_temporal_report(border_candidates)
+    if border_report['review_required']:
+        issues.append({'interval': None, 'severity': 'warning',
+                       'issue_type': 'UNEXPECTED_BORDER' if border_report['stable_sides'] else 'BORDER_REVIEW_REQUIRED',
+                       'evidence': {'detector': 'four_side_width_crop_temporal_v3',
+                                    'status': border_report['status'],
+                                    'sides': border_report['stable_sides'],
+                                    'matching_frame_counts': border_report['matching_frame_counts'],
+                                    'sampled_frames': sampled},
+                       'suggested_repair': 'REVIEW_SOURCE_MATTE_AND_EFFECTIVE_CROP_BEFORE_APPROVAL'})
     if not sampled:
         issues.append({'interval':None,'severity':'error','issue_type':'NO_RENDERED_FRAMES'})
     if focused_frames and not focused_face_frames:
@@ -184,6 +317,7 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
     issues = list(unique.values())
     status = 'partial' if issues else 'ok'
     return ok({'schema_version':'1.0','preview':str(path.resolve()),'sampled_frames':sampled,
+               'preview_sha256': file_hash(path),
                **zoom_metrics,
                'face_visible_fraction': face_frames / sampled if sampled else None,
                'target_visible_fraction': None,
@@ -192,9 +326,18 @@ def verify_preview(path, expected=None, timeline=None, severity_thresholds=None)
                'mean_face_size': sum(face_sizes) / len(face_sizes) if face_sizes else None,
                'mean_headroom': sum(headrooms) / len(headrooms) if headrooms else None,
                'edge_cutoff_count': clipped_frames,
+               'border_detector_method': 'contrast_and_temporal_bar_geometry_v2',
+               # Legacy identifier retained for existing consumers; precise method follows.
+               'border_geometry_method': 'four_side_width_crop_temporal_v3',
+               'border_report': border_report,
+               'preview_approved': False if 'FACE_OR_HEAD_CLIPPED' in unique else None,
+               'publish_ready': False,
+               'unconfirmed_border_candidates': sum(bool(s['rails']) for s in border_candidates),
                'output_dimensions':[width,height],'duration':finite_or_none(duration),
                'av_duration_delta':finite_or_none(av_delta),'estimated_pan_flow_peak_px_per_second':finite_or_none(flow_peak),
-               'issues':issues,'issue_count':len(issues),'verifier_uses_rendered_frames':True}, status,
+               'issues':issues,'issue_count':len(issues),'verifier_uses_rendered_frames':True,
+               'safe_area_approved':None, 'safe_area_validation_scope':'technical_camera_preview_without_social_overlays',
+               'social_safe_area_post_render_validation_required':True}, status,
               ['Face clipping depende do detector visual disponível; ausência de detecção não prova ausência de erro.'])
 
 

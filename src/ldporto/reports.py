@@ -11,10 +11,72 @@ from pathlib import PurePosixPath
 from .core import write_json, stamp, overlap, ok, digest
 from .handoff import build_chatgpt_handoff, handoff_markdown
 from .second_curation import build_second_curation_package
+from .social_output import build_social_output
 from .run_status import build_run_manifest
 from .compact_artifacts import compact_analysis_document, create_compact_artifacts
 from .analysis_quality import quality_gate
+from .build_provenance import exporter_identity
+from .qa_audit import audit_qa
+from .editorial_outcome import classify_editorial_outcome
 
+
+def _run_manifest(analysis, ctx, issues=None):
+    """Read checkpoint identities without changing cache keys or inference sources."""
+    from copy import deepcopy
+    from .core import read_json, file_hash
+    stages = deepcopy(analysis.get('stage_status') or {})
+    for name, state in stages.items():
+        if state.get('artifact_snapshot_reused'):
+            continue
+        metrics = getattr(ctx, 'stage_metrics', {}).get(name) or {}
+        origin = deepcopy(state.get('execution_provenance') or {})
+        origin.pop('checkpoint_sha256', None)
+        if 'cache_hit' in metrics:
+            origin['origin'] = 'cache' if metrics['cache_hit'] else 'executed'
+        # Stage names are internal, but reject paths in imported analyses.
+        if Path(name).name == name and '/' not in name and '\\' not in name:
+            checkpoint = Path(ctx.output) / 'cache' / ctx.signature[:16] / (name + '.json')
+            try:
+                from .execution_receipts import snapshot_json, verify_receipt
+                record, checksum = snapshot_json(checkpoint)
+                if state.get('key') and record.get('key') == state['key']:
+                    origin['checkpoint_sha256'] = checksum
+                    receipt = record.get('execution_receipt') or {}
+                    origin['effective_module_fingerprint'] = receipt.get('module_fingerprint')
+                    origin['receipt_evidence'] = verify_receipt(name, record)
+                    origin['cache_compatible_verified'] = metrics.get('cache_hit') is True
+            except (OSError, ValueError, TypeError):
+                pass
+        if name == '20_handoff':
+            identity = exporter_identity()
+            origin.update(origin='executed', analyzer_build=identity['analyzer_build'],
+                          code_fingerprint=identity['code_fingerprint'])
+        state['execution_provenance'] = origin
+    manifest = build_run_manifest(analysis.get('metadata') or {}, stages,
+                              analysis.get('issues', []) if issues is None else issues,
+                              analysis.get('analysis_quality'), analysis.get('run_manifest'),
+                              analysis.get('provenance'))
+    manifest['export_receipt_ref'] = {'path': 'report_execution_receipt.json', 'schema_version': '2.0',
+                                    'scope': 'final_serialized_report_bytes', 'hash_location': 'external_only'}
+    return manifest
+
+
+
+
+def _editorial_review_mapping(value):
+    """Return a safe editorial-review mapping for reports/handoffs.
+
+    Provider or legacy payloads can occasionally surface a list.  Reports must
+    remain a read-only consumer and never crash the completed analysis because
+    of an optional editorial-review shape.
+    """
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, list):
+        return {"top_moments": [row for row in value if isinstance(row, dict)],
+                "status": "partial", "needs_review": True,
+                "method": "normalized_legacy_top_moments_list"}
+    return {}
 
 def compact_moment(moment):
     return {key: value for key, value in moment.items() if key != "layout_intervals"}
@@ -42,6 +104,7 @@ def summary(analysis):
         "main_participants": sorted(analysis.get("participants",[]), key=lambda participant: participant.get("speech_seconds") or participant.get("total_visual_seconds") or 0, reverse=True)[:8],
         "editorial_participant_count":len(analysis.get("participants",[])),
         "analysis_status":analysis.get("analysis_status"),
+        "editorial_result":analysis.get("editorial_result", {}),
         "missing_capabilities":analysis.get("analysis_quality",{}).get("missing_capabilities",[]),
         "camera_resolved_focus_coverage":analysis.get("analysis_quality",{}).get("resolved_focus_coverage"),
         "qa_metrics":analysis.get("qa_metrics",{}), "candidate_metrics":analysis.get("candidate_metrics",{}),
@@ -99,6 +162,7 @@ def llm_insights(analysis):
         "candidate_hooks": analysis["candidate_hooks"], "candidate_endings": analysis["candidate_endings"],
         "silences": analysis["silences"], "audio_events": analysis["audio_events"],
         "ocr_text": analysis["ocr_text"], "low_confidence_words": analysis["low_confidence_words"],
+        "ocr_execution": analysis.get('ocr_execution', {}),
         "transcription_alternatives": analysis["transcription_alternatives"],
         "person_identities": analysis.get("person_identities", []),
         "speaker_person_summary": analysis.get("speaker_person_summary", []),
@@ -142,7 +206,8 @@ def markdown_report(analysis):
     lines += ["", "## Limitações e avisos", ""]
     lines.extend(f"- {issue['stage']}: {issue['message']}" for issue in analysis["issues"])
     lines += ["", "## Resumo geral", "", f"Assunto principal candidato: {s['main_topic'] or 'Indeterminado'}",
-              f"Método: {s['main_topic_method'] or 'Indeterminado'}", "",
+              f"Método: {s['main_topic_method'] or 'Indeterminado'}",
+              (s.get('editorial_result') or {}).get('message', ''), "",
               "## Participantes", ""]
     for participant in analysis.get('participants',[]):
         lines.append(f"- {participant.get('participant_id')}: pessoa={participant.get('person_id')}; "
@@ -171,7 +236,7 @@ def markdown_report(analysis):
     for t in analysis["transcript_segments"]:
         lines += [f"[{stamp(t['start'])}–{stamp(t['end'])}] {t.get('speaker') or 'SPEAKER_UNKNOWN'}",
                   t["text"], ""]
-    review = analysis.get("ollama_editorial_review")
+    review = _editorial_review_mapping(analysis.get("ollama_editorial_review"))
     lines += ["## Revisão editorial local (Ollama)", ""]
     if review:
         lines += [review.get("overview") or "Sem overview.", ""]
@@ -246,7 +311,7 @@ def html_report(analysis):
     portraits = "".join(f'<figure><img src="{escape(person["portrait"], quote=True)}" alt="{escape(person["person_id"],quote=True)}">'
                         f'<figcaption>{escape(person["person_id"])}</figcaption></figure>'
                         for person in analysis["people"] if safe_image_reference(person.get("portrait")))
-    review = analysis.get("ollama_editorial_review") or {}
+    review = _editorial_review_mapping(analysis.get("ollama_editorial_review"))
     review_cards = []
     for row in review.get("top_moments", [])[:12]:
         review_cards.append(
@@ -280,6 +345,9 @@ a{color:#ff9299}footer{margin-top:35px;color:#aaa}[hidden]{display:none}
         '<a href="report.md">Relatório completo</a> · <a href="transcript.srt">SRT</a> · <a href="transcript.txt">Transcrição</a></p>'
         f"<details><summary>Limitações e avisos ({len(analysis['issues'])})</summary><ul>{notices}</ul></details>"
         f'<h2>Pessoas rastreadas</h2><div class="people">{portraits or "Nenhum track disponível."}</div>'
+        '<h2>Diagnóstico V4.4</h2><p><a href="diagnostic_dashboard.json">Dashboard e dependências</a> · '
+        '<a href="speaker_person_diagnostics.json">Speaker/person</a> · <a href="semantic_chunk_profile.json">Chunks semânticos</a> · '
+        '<a href="broadcast_graphics.json">Gráficos broadcast</a></p><p>Coverage amostrada não mede acurácia de identidade.</p>'+
         '<h2>Revisão editorial local (Ollama)</h2>'+review_html+
         '<h2>Transcrição</h2><input id="search" placeholder="Buscar uma palavra ou frase…" '
         'aria-label="Buscar na transcrição">'
@@ -301,10 +369,37 @@ class ReportEngine:
         serialization_started=time.monotonic()
         ctx.progress('20_handoff', substage='local_artifacts')
         analysis.setdefault("stage_status", {})["20_handoff"] = {"status": "ok", "method": "uncached_export"}
-        analysis["run_manifest"] = build_run_manifest(analysis.get("metadata", {}), analysis["stage_status"], analysis.get("issues", []), analysis.get('analysis_quality', {}))
+        analysis["run_manifest"] = _run_manifest(analysis, ctx)
         analysis["analysis_status"] = analysis["run_manifest"]["analysis_status"]
+        if analysis.get('reprocess_manifest'):
+            analysis['reprocess_manifest']['report_analysis_status'] = analysis['analysis_status']
+        analysis['editorial_result'] = classify_editorial_outcome(analysis, getattr(ctx, 'config', {}))
         analysis["summary"] = summary(analysis)
+        source_hash = (analysis.get('metadata') or {}).get('sha256')
+        narrative_source_available = (isinstance(source_hash, str) and len(source_hash) == 64 and
+                                      set(source_hash) <= set('0123456789abcdef'))
+        analysis['narrative_handoff_enabled'] = getattr(ctx, 'config', {}).get('export', {}).get(
+            'narrative_handoff_enabled', narrative_source_available)
+        if not analysis['narrative_handoff_enabled']:
+            analysis['narrative_handoff_unavailable_reason'] = ('disabled_by_config' if narrative_source_available
+                                                              else 'canonical_source_sha256_required')
         analysis["second_curation_package"] = build_second_curation_package(analysis)
+        # Cheap evidence projections reuse existing identity and camera engines.
+        from .camera_handoff import build_camera_handoff
+        from .performer_evidence import build_performer_evidence
+        r6_people = build_performer_evidence(analysis)
+        analysis['camera_handoff_r6'] = build_camera_handoff(analysis)
+        analysis["social_output"] = build_social_output(analysis, getattr(ctx, "config", {}), analysis["second_curation_package"])
+        story_by_candidate = {row["candidate_id"]: row for row in analysis["social_output"].get("stories", [])}
+        for candidate in analysis["second_curation_package"].get("candidates", []):
+            if candidate.get("candidate_id") in story_by_candidate:
+                candidate["story_recommendation"] = story_by_candidate[candidate["candidate_id"]]
+        analysis["second_curation_package"]["social_output_summary"] = {
+            "mode": analysis["social_output"].get("mode"),
+            "story_count": len(analysis["social_output"].get("stories", [])),
+            "selected_aspect_ratio": analysis["social_output"].get("selected_aspect_ratio"),
+            "selected_caption_preset": analysis["social_output"].get("selected_caption_preset"),
+        }
         analysis['quality_gate']=quality_gate(analysis,getattr(ctx,'config',{}))
         analysis.setdefault('analysis_quality',{})['quality_status']=analysis['quality_gate']['status']
         analysis['analysis_quality']['quality_gate_issues']=analysis['quality_gate']['issues']
@@ -312,11 +407,23 @@ class ReportEngine:
         export_cfg=getattr(ctx,'config',{}).get('export',{})
         chatgpt_handoff = build_chatgpt_handoff(analysis,compact=not export_cfg.get('legacy_full_analysis',False))
         exports = {
+            'person_tracks.json': r6_people['person_tracks'],
+            'person_appearances.json': r6_people['person_appearances'],
+            'instrument_observations.json': r6_people['instrument_observations'],
+            'performer_review_queue.json': r6_people['performer_review_queue'],
+            'camera_handoff_r6.json': analysis['camera_handoff_r6'],
             # v1 compatibility
             "video_summary.json": analysis["summary"],
+            "editorial_result.json": analysis['editorial_result'],
             "llm_insights.json": insights, "timeline.json": analysis["timeline"],
             "words.json": analysis["words"], "speakers.json": analysis["speakers"],
             "transcript_segments.json":analysis.get("transcript_segments",[]),
+            "translations.json":analysis.get("transcript_translations",[]),
+            "original_import_segments.json":analysis.get("transcript_original_import_segments",[]),
+            "transcription_provenance.json":analysis.get("transcription_provenance",{}),
+            "transcription_language_hypotheses.json":analysis.get("transcription_language_hypotheses",[]),
+            "source_audio_review.json":analysis.get("source_audio_review",{}),
+            "transcription_hypothesis_comparison.json":analysis.get("transcription_hypothesis_comparison",{}),
             "speaker_turns.json":analysis.get("speaker_turns",[]), "speech_overlaps.json":analysis.get("speech_overlaps",[]),
             "raw_tracks.json":analysis.get("raw_tracks",[]), "raw_people.json":analysis.get("raw_people",[]),
             "tracklet_observations.json":analysis.get("tracklet_observations",[]),
@@ -327,11 +434,15 @@ class ReportEngine:
             "question_candidates.json":analysis.get("question_candidates",analysis["questions_answers"]),
             "question_answer_pairs.json":analysis.get("question_answer_pairs",[]),
             "qa_summary.json":analysis.get("qa_metrics",{}), "program_sections.json":analysis.get("program_sections",[]),
+            "qa_audit.json": audit_qa(analysis, candidates=analysis['second_curation_package']['candidates']),
             "editorial_moments.json": analysis["editorial_moments"],
             "ollama_editorial_review.json": analysis.get("ollama_editorial_review"),
             "caption_segments.json": caption_segments,
             "speaker_person_mapping.json": analysis["speaker_person_mapping"],
             "transcription_alternatives.json": analysis["transcription_alternatives"],
+            "targeted_asr_repair.json": analysis.get('targeted_asr_repair', {}),
+            "targeted_manual_review.json": analysis.get('targeted_asr_repair', {}).get('manual_review', {}),
+            "subtitle_review_s7.json": analysis.get('subtitle_review_s7', {}),
             "low_confidence_words.json": analysis["low_confidence_words"],
             "ocr_text.json": analysis["ocr_text"], "audio_analysis.json": analysis["audio_analysis"],
             "video_analysis.json": analysis["video_analysis"],
@@ -340,9 +451,15 @@ class ReportEngine:
             "person_motion.json": analysis.get("person_motion", []),
             "active_speaker.json": analysis.get("active_speaker", []),
             "speaker_person_summary.json": analysis.get("speaker_person_summary", []),
+            "speaker_person_diagnostics.json": analysis.get("speaker_person_diagnostics", []),
+            "diagnostic_dashboard.json": __import__('ldporto.diagnostic_dashboard', fromlist=['build_dashboard']).build_dashboard(analysis),
             "speaker_person_affinity.json": analysis.get("speaker_person_affinity", []),
             "active_speaker_evidence.json": analysis.get("active_speaker_evidence", []),
             "shots.json": analysis.get("shots", []),
+            "broadcast_graphics.json": analysis.get("broadcast_graphics", {}),
+            "commercial_blocks_s8.json": analysis.get('commercial_blocks', []),
+            "commercial_visual_s8.json": analysis.get('commercial_visual_s8', {}),
+            "ocr_execution.json": analysis.get('ocr_execution', {}),
             "participants.json": analysis.get("participants", []),
             "participant_catalog.json": analysis.get("participant_catalog", []),
             "participant_metrics.json": analysis.get("participant_metrics", {}),
@@ -359,12 +476,25 @@ class ReportEngine:
             "thumbnail_candidates.json": analysis.get("thumbnail_candidates", []),
             "moment_frames.json":analysis.get('moment_frames',[]),
             "analysis_quality.json": analysis.get("analysis_quality", {}),
+            "semantic_chunk_profile.json": analysis.get("semantic_chunk_profile", []),
             "run_manifest.json": analysis.get("run_manifest", {}),
             "second_curation_package.json": analysis.get("second_curation_package", {}),
+            "stories_candidates.json": analysis.get("social_output", {}).get("stories", []),
+            "stories_manifest.json": analysis.get("social_output", {}),
+            "caption_style_recommendations.json": analysis.get("social_output", {}).get("caption_style_recommendations", []),
+            "title_suggestions.json": analysis.get("social_output", {}).get("title_suggestions", []),
+            "social_render_profiles.json": {
+                "selected_aspect_ratio": analysis.get("social_output", {}).get("selected_aspect_ratio"),
+                "available_aspect_ratios": analysis.get("social_output", {}).get("available_aspect_ratios", {}),
+                "available_caption_presets": analysis.get("social_output", {}).get("available_caption_presets", {}),
+                "render_contract": analysis.get("social_output", {}).get("render_contract", {}),
+            },
             "quality_issues.json": {"schema_version":"1.0","issues":analysis.get("issues",[])},
             "quality_gate.json":analysis['quality_gate'],
             "CHATGPT_ANALYSIS_HANDOFF.json": chatgpt_handoff,
         }
+        if analysis.get('reprocess_manifest'):
+            exports['reprocess_manifest.json'] = analysis['reprocess_manifest']
         if analysis.get("camera_director_debug") is not None:
             exports["camera_director_debug.json"] = analysis["camera_director_debug"]
         else:
@@ -380,8 +510,23 @@ class ReportEngine:
             "run_manifest_schema_version": "1.0",
             "no_final_video_rendered": True,
         }
+        exports['manifest.json'].update(
+            run_id=analysis['run_manifest']['run_id'],
+            analyzer_build=analysis['run_manifest']['analyzer_build'],
+            code_fingerprint=analysis['run_manifest']['code_fingerprint'],
+            build_provenance=analysis['run_manifest']['build_provenance'])
+        for field in ('execution_attestation', 'execution_evidence', 'stage_status_summary',
+                      'editorial_readiness', 'preview_approved', 'publication_ready'):
+            exports['manifest.json'][field] = analysis['run_manifest'][field]
+        exports['manifest.json']['second_curation_schema_version'] = analysis['second_curation_package'].get('schema_version')
+        exports['manifest.json']['run_manifest_schema_version'] = analysis['run_manifest'].get('schema_version')
         for filename, data in exports.items():
             write_json(ctx.output/filename, data)
+        stories_dir = ctx.output / "STORIES_PACKAGE"
+        stories_dir.mkdir(parents=True, exist_ok=True)
+        write_json(stories_dir / "stories_manifest.json", analysis.get("social_output", {}))
+        for row in analysis.get("social_output", {}).get("stories", []):
+            write_json(stories_dir / (row["story_id"].lower() + ".json"), row)
         # Generated by GitHub Copilot - Oct-05-2026
         export_cfg=getattr(ctx,'config',{}).get('export',{})
         compact_paths=create_compact_artifacts(analysis,ctx.output,export_cfg)
@@ -402,6 +547,8 @@ class ReportEngine:
                       segment["text"], ""]
         (ctx.output/"transcript.txt").write_text("\n".join(lines), encoding="utf-8")
         write_srt(ctx.output/"transcript.srt", caption_segments)
+        from .subtitle_review import write_review_kit
+        write_review_kit(ctx.output / 'subtitle_review_s7', analysis.get('subtitle_review_s7', {}))
         (ctx.output/"report.md").write_text(markdown_report(analysis), encoding="utf-8")
         (ctx.output/"report.html").write_text(html_report(analysis), encoding="utf-8")
         (ctx.output/"CHATGPT_ANALYSIS_HANDOFF.md").write_text(handoff_markdown(analysis), encoding="utf-8")
@@ -422,6 +569,8 @@ class ReportEngine:
             ctx.output/n for n in ("transcript.txt", "transcript.srt", "report.md", "report.html",
                                   "CHATGPT_ANALYSIS_HANDOFF.md", "PARA_ENVIAR_AO_CHATGPT.txt", "second_curation_package.md")]
         outputs.extend(compact_paths)
+        outputs.extend(sorted((ctx.output / 'subtitle_review_s7').glob('*')))
+        outputs.extend(sorted(path for path in stories_dir.glob("*.json") if path.is_file()))
         sizes=sorted(({'path':path.relative_to(ctx.output).as_posix(),'bytes':path.stat().st_size} for path in outputs if path.is_file()),
                      key=lambda record:(-record['bytes'],record['path']))
         storage = {
@@ -439,8 +588,48 @@ class ReportEngine:
         final_manifest={**exports['manifest.json'],'files':list(dict.fromkeys(path.relative_to(ctx.output).as_posix() for path in outputs))}
         write_json(ctx.output/'manifest.json',final_manifest)
         ctx.states.update(analysis['stage_status'])
-        ctx.stage_metrics['20_handoff'] = {'cache_hit':False, 'elapsed_seconds':storage['serialization_seconds']}
+        # Keep the exact stage-21 input in an isolated, immutable producer snapshot.
+        # The final report is rewritten after stage 21, so it cannot be this input.
+        from .execution_receipts import create_receipt, module_hashes, dependency_snapshots
+        from .run_status import DEPENDENCIES
+        snapshot_started = time.monotonic()
+        input_fingerprint = digest(analysis)
+        storage['input_snapshot_fingerprint_seconds'] = time.monotonic() - snapshot_started
+        input_path = ctx.output / 'execution_inputs' / '20_handoff' / (input_fingerprint + '.json')
+        snapshot_write_started = time.monotonic()
+        # Finish serialization before final-gate mutations. Stage 21 consumes
+        # independently verified, isolated bytes, never this live object.
+        write_json(input_path, analysis)
+        storage['input_snapshot_write_seconds'] = time.monotonic() - snapshot_write_started
+        from .core import file_hash
+        snapshot_hash_started = time.monotonic()
+        input_snapshot_sha256 = file_hash(input_path)
+        storage['input_snapshot_file_hash_seconds'] = time.monotonic() - snapshot_hash_started
+        receipt_started = time.monotonic()
+        dependencies = {dep: {'key': ctx.states[dep].get('key'), 'status': ctx.states[dep].get('status')}
+                        for dep in DEPENDENCIES['20_handoff'] if dep in ctx.states}
+        handoff = {'status': 'ok', 'data': {'input_snapshot_sha256': input_snapshot_sha256},
+                   'input_hash': ctx.signature, 'config_hash': digest(export_cfg),
+                   'output_version': '2.0', 'key': digest({'input': input_fingerprint, 'export': export_cfg}),
+                   'cache_manifest': {'input': ctx.signature, 'params': digest(export_cfg),
+                       'code': digest(module_hashes(['reports.py', 'execution_receipts.py'])),
+                       'dependencies': digest(dependencies), 'versions': digest({}), 'output_version': '2.0'},
+                   'artifact_checksums': {str(input_path.resolve()): input_snapshot_sha256}}
+        handoff['data_checksum'] = digest(handoff['data'])
+        handoff['execution_receipt'] = create_receipt('20_handoff', handoff,
+            module_hashes(['reports.py', 'execution_receipts.py']),
+            dependency_snapshots(ctx, DEPENDENCIES['20_handoff']), producer='ReportEngine.run',
+            input_fingerprint=input_fingerprint)
+        write_json(ctx.cache / '20_handoff.json', handoff)
+        storage['initial_handoff_receipt_and_checkpoint_seconds'] = time.monotonic() - receipt_started
+        ctx.states['20_handoff'] = {'key': handoff['key'], 'status': 'ok'}
+        analysis['stage_status']['20_handoff'].update(key=handoff['key'])
+        ctx.stage_metrics['20_handoff'] = {'cache_hit':False,
+            'elapsed_seconds': time.monotonic() - serialization_started,
+            'initial_artifact_serialization_seconds': storage['serialization_seconds'],
+            'input_snapshot_write_seconds': storage['input_snapshot_write_seconds']}
         ctx.progress('20_handoff', status='ok')
+        finalization_started = time.monotonic()
         package_result = None
         if export_cfg.get('second_curation_auto', True):
             from .second_curation_export import build_core_package
@@ -448,22 +637,104 @@ class ReportEngine:
             from .config import asset_path
             package_dir = asset_path(export_cfg['second_curation_output_dir']) if export_cfg.get('second_curation_output_dir') else PACKAGE_OUTPUT_DIR
             def create_package():
-                result = build_core_package(analysis, ctx.video, package_dir, export_cfg, ctx.progress, analysis['second_curation_package'])
+                from .execution_receipts import snapshot_json
+                isolated, _ = snapshot_json(input_path, handoff['data']['input_snapshot_sha256'])
+                if digest(isolated) != handoff['execution_receipt']['input_fingerprint']:
+                    raise ValueError('handoff_input_fingerprint_mismatch')
+                result = build_core_package(isolated, ctx.video, package_dir, export_cfg, ctx.progress, isolated['second_curation_package'])
                 return ok(result, 'ok' if result['state'] == 'READY' else 'partial',
                           [] if result['state'] == 'READY' else ['Second curation package is partial; inspect capability readiness.'],
-                          [result['path']] + ([result['media_path']] if result.get('media_path') else []))
-            package_result = ctx.step('21_second_curation_handoff', {'schema':'1.0', 'config':export_cfg,
+                          ([result['path']] if result.get('path') else []) + ([result['media_path']] if result.get('media_path') else []))
+            from .build_provenance import ProvenanceContext
+            producer = ctx
+            if not isinstance(ctx, ProvenanceContext):
+                producer = ProvenanceContext(ctx.video, ctx.output, ctx.config, ctx.signature, ctx.logger, ctx.force)
+                producer.states.update(ctx.states)
+                producer.progress = ctx.progress
+            package_result = producer.step('21_second_curation_handoff', {'schema':'1.0', 'config':export_cfg,
                 'evidence':digest(analysis['second_curation_package']), 'preview':digest(analysis.get('preview_validation', {}))},
-                create_package, code_files=['second_curation.py', 'second_curation_export.py', 'preview_renderer.py'], output_version='1.0', requires=['20_handoff'])
+                create_package, code_files=['second_curation.py', 'second_curation_export.py', 'export_privacy.py', 'second_curation_decisions.py',
+                                            'integrity_contracts.py', 'commercial_gate.py', 'social_output.py',
+                                            'analysis_quality.py', 'causal_diagnostics.py', 'transcript_dossier.py',
+                                            'editorial_outcome.py', 'transcription.py', 'asr_comparison.py',
+                                            'subtitle_review.py', 'timeline.py', 'camera_handoff.py', 'performer_evidence.py',
+                                            'narrative_handoff.py', 'narrative_relations.py', 'commercial_context.py',
+                                            '../../schemas/narrative_handoff.schema.json',
+                                            '../../schemas/caption_preflight_r6.schema.json',
+                                            '../../schemas/handoff_master_r6.schema.json',
+                                            '../../schemas/second_curation_decisions.schema.json',
+                                            'preview_renderer.py', 'visual_scenes_export.py', 'visual_scenes_atlas.py'],
+                output_version='1.2-stage06-report-contract', requires=['20_handoff'])
+            ctx.states.update(producer.states)
+            ctx.stage_metrics.update(producer.stage_metrics)
+            if producer is not ctx:
+                ctx.issues.extend(producer.issues)
             if package_result.get('path'):
                 from .second_curation_export import validate_core_package
                 if validate_core_package(package_result['path'])['status'] != 'valid':
                     raise ValueError('Cached second curation package failed integrity validation.')
+                # The *final* ZIP is authoritative. Reflect its decisions in the
+                # local reports instead of leaving pre-export commercial counts,
+                # Stories or shortlist in conflict with the package.
+                from zipfile import ZipFile
+                with ZipFile(package_result['path']) as finalized:
+                    def final(name):
+                        return json.loads(finalized.read(name))
+                    canonical_summary = final('summary/analysis_summary.json')
+                    canonical_quality = final('summary/quality_summary.json')
+                    canonical_shortlist = final('editorial/default_shortlist.json')['candidate_ids']
+                    canonical_candidates = final('editorial/candidate_catalog.json')['candidates']
+                    canonical_qa = final('editorial/qa_pairs.json')
+                    canonical_social = final('social/stories_manifest.json')
+                write_json(ctx.output / 'qa_audit.json', audit_qa(
+                    analysis, exported_rows=canonical_qa, candidates=canonical_candidates))
+                analysis['candidate_metrics'] = canonical_summary['candidate_metrics']
+                analysis['editorial_result'] = canonical_summary['editorial_result']
+                analysis['editorial_shortlist'] = canonical_shortlist
+                analysis['second_curation_package']['candidates'] = canonical_candidates
+                analysis['second_curation_package']['filtering_summary']['default_shortlist_ids'] = canonical_shortlist
+                analysis['second_curation_package']['filtering_summary'].update(
+                    commercial_candidates=canonical_summary['candidate_metrics']['excluded_commercial_count'],
+                    default_ineligible_candidates=sum(not row.get('default_shortlist_eligible') for row in canonical_candidates),
+                    commercial_eligibility_invariant_violations=sum(
+                        (row.get('commercial_classification') or {}).get('eligibility') == 'excluded'
+                        and bool(row.get('default_shortlist_eligible')) for row in canonical_candidates))
+                analysis['second_curation_package']['social_output_summary']['story_count'] = len(canonical_social['stories'])
+                analysis['second_curation_package']['candidate_catalog_mode'] = 'final_export_validated'
+                analysis['social_output'] = canonical_social
+                analysis['quality_gate'] = canonical_quality['quality_gate']
+                analysis['final_package_gate'] = canonical_quality['final_package_gate']
+                analysis['subtitle_review_metrics'] = canonical_summary['subtitle_review_metrics']
+                analysis['analysis_quality']['quality_status'] = analysis['quality_gate']['status']
+                analysis['analysis_quality']['quality_gate_issues'] = analysis['quality_gate']['issues']
+                analysis['second_curation_package']['candidate_count'] = len(canonical_candidates)
+                analysis['second_curation_package'].setdefault('benchmark_metrics', {})['candidate_metrics'] = analysis['candidate_metrics']
+                analysis['summary']['candidate_metrics'] = canonical_summary['candidate_metrics']
+                analysis['summary'].update(quality_gate=analysis['quality_gate'],
+                    final_package_gate=analysis['final_package_gate'], subtitle_review_metrics=analysis['subtitle_review_metrics'],
+                    editorial_result=analysis['editorial_result'])
+                write_json(ctx.output / 'editorial_result.json', analysis['editorial_result'])
+                write_json(ctx.output / 'video_summary.json', analysis['summary'])
+                write_json(ctx.output / 'second_curation_package.json', analysis['second_curation_package'])
+                write_json(ctx.output / 'quality_gate.json', analysis['quality_gate'])
+                write_json(ctx.output / 'stories_manifest.json', canonical_social)
+                write_json(ctx.output / 'stories_candidates.json', canonical_social['stories'])
+                write_json(ctx.output / 'title_suggestions.json', canonical_social.get('title_suggestions', []))
+                write_json(ctx.output / 'caption_style_recommendations.json', canonical_social.get('caption_style_recommendations', []))
+                write_json(stories_dir / 'stories_manifest.json', canonical_social)
+                selected_story_files = {story['story_id'].lower() + '.json' for story in canonical_social['stories']}
+                for stale in stories_dir.glob('story_*.json'):
+                    if stale.name not in selected_story_files:
+                        stale.unlink()
+                for story in canonical_social['stories']:
+                    write_json(stories_dir / (story['story_id'].lower() + '.json'), story)
             analysis['second_curation_export'] = package_result
             analysis['stage_status'].update(ctx.states)
             analysis['stage_runtime'].update(ctx.stage_metrics) if 'stage_runtime' in analysis else analysis.update(stage_runtime=dict(ctx.stage_metrics))
-            analysis['run_manifest'] = build_run_manifest(analysis.get('metadata', {}), analysis['stage_status'], analysis.get('issues', []) + ctx.issues, analysis.get('analysis_quality', {}))
+            analysis['run_manifest'] = _run_manifest(analysis, ctx, analysis.get('issues', []) + ctx.issues)
             analysis['analysis_status'] = analysis['run_manifest']['analysis_status']
+            analysis['summary']['analysis_status'] = analysis['analysis_status']
+            write_json(ctx.output / 'video_summary.json', analysis['summary'])
             metrics = analysis['analysis_quality']
             metrics.update(second_curation_package_bytes=package_result.get('bytes'), second_curation_file_count=package_result.get('file_count'),
                            second_curation_dangling_refs=(package_result.get('validation') or {}).get('dangling_references'),
@@ -475,33 +746,106 @@ class ReportEngine:
             write_json(ctx.output / 'second_curation_export.json', package_result)
             write_json(ctx.output / 'run_manifest.json', analysis['run_manifest'])
             write_json(ctx.output / 'analysis_quality.json', metrics)
+            # Rebuild every consumer after final selection, causes and export status settle.
+            create_compact_artifacts(analysis, ctx.output, export_cfg)
+            write_json(ctx.output / 'CHATGPT_ANALYSIS_HANDOFF.json', build_chatgpt_handoff(
+                analysis, compact=not export_cfg.get('legacy_full_analysis', False)))
+            (ctx.output / 'CHATGPT_ANALYSIS_HANDOFF.md').write_text(handoff_markdown(analysis), encoding='utf-8')
+            write_json(ctx.output / 'llm_insights.json', llm_insights(analysis))
+            (ctx.output / 'report.md').write_text(markdown_report(analysis), encoding='utf-8')
+            (ctx.output / 'report.html').write_text(html_report(analysis), encoding='utf-8')
             summary_path = ctx.output / 'analysis_summary.json'
             from .core import read_json
             compact_summary = read_json(summary_path)
             compact_summary.update(stage_runtime=analysis['stage_runtime'], stage_status=analysis['stage_status'],
-                                   analysis_status=analysis['analysis_status'], analysis_quality=metrics, second_curation_export=package_result)
+                                   ocr_execution=analysis.get('ocr_execution', {}),
+                                   analysis_status=analysis['analysis_status'], analysis_quality=metrics, second_curation_export=package_result,
+                                   candidate_metrics=analysis.get('candidate_metrics', {}), quality_gate=analysis.get('quality_gate', {}),
+                                   editorial_shortlist=analysis.get('editorial_shortlist', []))
             write_json(summary_path, compact_summary)
             if export_cfg.get('legacy_full_analysis', False):
                 write_json(ctx.output / 'analysis.json', analysis)
             else:
+                # The compact document was created BEFORE the final ZIP. Keep
+                # every reference checksum in sync after applying final gates.
+                from .core import file_hash
+                document = compact_analysis_document(analysis, ctx.output)
+                source_ref = (document.get('collection_refs') or {}).get('second_curation_package')
+                if source_ref:
+                    source_ref['sha256'] = file_hash(ctx.output / 'second_curation_package.json')
+                    document['second_curation_package_ref'] = source_ref
                 document.update(stage_runtime=analysis['stage_runtime'], stage_status=analysis['stage_status'],
                                 analysis_status=analysis['analysis_status'], analysis_quality=metrics,
+                                candidate_metrics=analysis.get('candidate_metrics', {}),
+                                editorial_shortlist=analysis.get('editorial_shortlist', []),
+                                social_output=analysis.get('social_output', {}), quality_gate=analysis.get('quality_gate', {}),
                                 run_manifest=analysis['run_manifest'], second_curation_export=package_result)
                 write_json(ctx.output / 'analysis.json', document)
             outputs.append(ctx.output / 'second_curation_export.json')
             final_manifest.update(stage_status=analysis['stage_status'], analysis_status=analysis['analysis_status'],
-                                  second_curation_export=package_result, files=list(dict.fromkeys(final_manifest['files'] + ['second_curation_export.json'])))
+                                  build_provenance=analysis['run_manifest']['build_provenance'],
+                                  second_curation_export=package_result, files=[name for name in dict.fromkeys(final_manifest['files'] + ['second_curation_export.json'])
+                                                                            if (ctx.output / name).is_file()])
+            for field in ('execution_attestation', 'execution_evidence', 'stage_status_summary',
+                          'editorial_readiness', 'preview_approved', 'publication_ready'):
+                final_manifest[field] = analysis['run_manifest'][field]
             write_json(ctx.output / 'manifest.json', final_manifest)
             (ctx.output / 'PARA_ENVIAR_AO_CHATGPT.txt').write_text('Pacote core: ' + str(package_result.get('path') or 'FAILED') + '\nReadiness: ' + json.dumps(package_result.get('readiness', {})) + '\n', encoding='utf-8')
         reference_hashes = {reference['path']:reference['sha256'] for reference in document.get('collection_refs', {}).values()} if isinstance(document, dict) else {}
-        replay_files = ('analysis_quality.json', 'analysis_summary.json', 'camera_timeline.compact.json', 'people_summary.json',
-                        'CHATGPT_ANALYSIS_HANDOFF.compact.json', 'transcription_alternatives.json', 'active_speaker_evidence.json')
+        if analysis.get('reprocess_manifest'):
+            analysis['reprocess_manifest']['report_analysis_status'] = analysis['analysis_status']
+            write_json(ctx.output / 'reprocess_manifest.json', analysis['reprocess_manifest'])
+        replay_files = ('reprocess_manifest.json', 'analysis_quality.json', 'analysis_summary.json', 'camera_timeline.compact.json', 'people_summary.json',
+                        'CHATGPT_ANALYSIS_HANDOFF.compact.json', 'transcription_alternatives.json', 'active_speaker_evidence.json',
+                        'transcription_provenance.json', 'source_audio_review.json',
+                        'transcription_hypothesis_comparison.json', 'editorial_result.json')
         reference_hashes.update({name: __import__('ldporto.core', fromlist=['file_hash']).file_hash(ctx.output / name)
                                  for name in replay_files if (ctx.output / name).is_file()})
+        # Reconcile the no-auto-export path too; all final hashes live outside analysis.json.
+        if not export_cfg.get('second_curation_auto', True):
+            analysis['run_manifest'] = _run_manifest(analysis, ctx)
+            write_json(ctx.output / 'run_manifest.json', analysis['run_manifest'])
+            create_compact_artifacts(analysis, ctx.output, export_cfg)
+            document = analysis if export_cfg.get('legacy_full_analysis', False) else compact_analysis_document(analysis, ctx.output)
+            write_json(ctx.output / 'analysis.json', document)
+            final_manifest.update(stage_status=analysis['stage_status'], build_provenance=analysis['run_manifest']['build_provenance'])
+        reference_hashes = {name: file_hash(ctx.output / name) for name in reference_hashes}
+        reference_hashes.update({name: file_hash(ctx.output / name) for name in ('analysis.json', 'run_manifest.json')})
         final_manifest['artifact_checksums'] = reference_hashes
+        final_manifest['export_receipt_ref'] = analysis['run_manifest']['export_receipt_ref']
         write_json(ctx.output / 'manifest.json', final_manifest)
+        from .execution_receipts import finalize_report_receipt
+        final_receipt_started = time.monotonic()
+        finalize_report_receipt(ctx, [ctx.output / name for name in reference_hashes] + [ctx.output / 'manifest.json'],
+            dependencies={'20_handoff': {'checkpoint_sha256': file_hash(ctx.cache / '20_handoff.json')},
+                          '21_second_curation_handoff': {'checkpoint_sha256': file_hash(ctx.cache / '21_second_curation_handoff.json')}
+                          if (ctx.cache / '21_second_curation_handoff.json').is_file() else {'evidence': 'not_applicable'}})
+        storage.update(final_receipt_seconds=time.monotonic() - final_receipt_started,
+                       post_handoff_finalization_seconds=time.monotonic() - finalization_started,
+                       report_wall_seconds_until_metrics_write=time.monotonic() - serialization_started,
+                       finalization_timing_scope='includes_stage21_and_final_receipt_excludes_this_diagnostic_write',
+                       timing_receipt_scope='artifact_metrics_is_external_diagnostic_not_in_report_receipt')
+        # This existing diagnostic is outside the receipt's signed collections;
+        # record finalization after the final receipt closes without rewriting it.
+        write_json(ctx.output / 'artifact_metrics.json', storage)
+        ctx.stage_metrics['20_handoff'].update(
+            report_wall_seconds_until_metrics_write=storage['report_wall_seconds_until_metrics_write'],
+            post_handoff_finalization_seconds=storage['post_handoff_finalization_seconds'],
+            final_receipt_seconds=storage['final_receipt_seconds'])
         if getattr(ctx, 'config', {}).get('export'):
             record_runtime_history(analysis.get('metadata', {}), ctx.config, ctx.stage_metrics)
+        if export_cfg.get('organized_project_auto') and (package_result or {}).get('path'):
+            from .project_export import export_project
+            try:
+                project = export_project(package_result['path'], export_cfg.get('organized_project_root'), analysis=analysis,
+                    progress=lambda name, current, total: ctx.progress('21_second_curation_handoff',
+                        substage='dossier: '+name, current=current, total=total),
+                    cancelled=lambda: (ctx.output/'CANCEL_REQUESTED').exists())
+                write_json(ctx.output/'project_export.json',project)
+                analysis['project_export'] = project
+            except Exception as exc:
+                write_json(ctx.output/'project_export.json',{'state':'FAILED','error':str(exc),
+                    'publication_ready':False,'analysis_artifacts_preserved':True})
         return ok({"insights": str((ctx.output/"CHATGPT_ANALYSIS_HANDOFF.json").resolve()),
                    'second_curation_package_path':(package_result or {}).get('path'),
                    "report": str((ctx.output/"report.html").resolve())}, artifacts=outputs)
@@ -509,11 +853,14 @@ class ReportEngine:
 
 def exports_placeholder():
     return (
-        "analysis.json", "video_summary.json", "llm_insights.json", "timeline.json",
+        "analysis.json", "video_summary.json", "llm_insights.json", "timeline.json", "editorial_result.json",
         "words.json", "speakers.json", "people.json", "people_observations.json",
-        "scenes.json", "topics.json", "questions_answers.json", "editorial_moments.json",
+        "scenes.json", "topics.json", "questions_answers.json", "qa_audit.json", "editorial_moments.json",
         "ollama_editorial_review.json", "caption_segments.json", "speaker_person_mapping.json",
         "transcription_alternatives.json", "low_confidence_words.json", "ocr_text.json",
+        "translations.json", "original_import_segments.json", "transcription_provenance.json",
+        "transcription_language_hypotheses.json",
+        "source_audio_review.json", "transcription_hypothesis_comparison.json",
         "audio_analysis.json", "video_analysis.json",
         "person_identities.json", "person_motion.json", "active_speaker.json",
         "speaker_person_summary.json", "shots.json", "participants.json", "entities.json",
@@ -521,5 +868,7 @@ def exports_placeholder():
         "preview_canaries.json", "master_timeline.json", "run_manifest.json", "second_curation_package.json",
         "quality_issues.json",
         "video_understanding.json", "thumbnail_candidates.json", "analysis_quality.json",
+        "stories_candidates.json", "stories_manifest.json", "caption_style_recommendations.json",
+        "title_suggestions.json", "social_render_profiles.json",
         "CHATGPT_ANALYSIS_HANDOFF.json", "manifest.json", "transcript.txt", "transcript.srt",
         "report.md", "report.html", "CHATGPT_ANALYSIS_HANDOFF.md", "PARA_ENVIAR_AO_CHATGPT.txt")

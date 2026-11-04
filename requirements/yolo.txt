@@ -1,2 +1,5 @@
-# Optional improved full-body detection. Review Ultralytics' license for commercial use.
+# Optional local person detection; never installed automatically.
+# Manual/offline installation and trusted .pt selection: docs/YOLO_LOCAL_57.md.
+# Review AGPL-3.0 / Enterprise terms for code AND weights before production.
+# YOLO11 detect class 0 must be person; compatibility is checked at load/runtime.
 ultralytics>=8.3,<9

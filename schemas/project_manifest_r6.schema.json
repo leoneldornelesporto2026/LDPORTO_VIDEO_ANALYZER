@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "contract", "revision", "source_sha256", "source_duration", "package_sha256", "state", "preview_approved", "publication_ready", "source_video_included", "final_social_videos_rendered", "files"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract": {"const": "ldporto.project_dossier"},
+    "revision": {"type": "string", "minLength": 1},
+    "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_duration": {"type": "number", "exclusiveMinimum": 0},
+    "package_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "state": {"enum": ["PARTIAL", "READY_FOR_REVIEW", "CANCELLED", "FAILED"]},
+    "preview_approved": {"const": false},
+    "publication_ready": {"const": false},
+    "source_video_included": {"const": false},
+    "final_social_videos_rendered": {"const": false},
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "bytes", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "bytes": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": true
+}

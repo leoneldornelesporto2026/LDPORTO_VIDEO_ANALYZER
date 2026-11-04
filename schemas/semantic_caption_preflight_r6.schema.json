@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "R6 semantic Story preflight for independent source intervals",
+  "type": "object",
+  "required": ["schema_version", "scope", "source_duration", "timing_policy", "confidence_threshold", "story_count", "stories", "new_asr_calls", "audio_listening_performed", "publication_ready"],
+  "properties": {
+    "schema_version": {"const": "r6.1"}, "scope": {"const": "canonical_story_source_intervals"},
+    "story_count": {"type": "integer", "minimum": 0},
+    "new_asr_calls": {"const": 0}, "audio_listening_performed": {"const": false}, "publication_ready": {"const": false},
+    "stories": {"type": "object", "additionalProperties": {
+      "type": "object",
+      "required": ["id", "start", "end", "source_intervals", "interval_reviews", "status", "reason_codes", "allowed_caption_mode", "karaoke_allowed", "human_approved", "subtitle_publish_ready", "publication_ready", "review_required"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "start": {"type": "null"}, "end": {"type": "null"},
+        "status": {"enum": ["CAPTION_READY", "PHRASE_SUBTITLE_ONLY", "INSTRUMENTAL_NO_CAPTION", "ALIGNMENT_REVIEW_REQUIRED", "AUDIO_REVIEW_REQUIRED", "BLOCKED"]},
+        "source_intervals": {"type": "array", "items": {"type": "object", "required": ["start", "end"]}},
+        "interval_reviews": {"type": "array", "items": {"type": "object", "required": ["source_interval_index", "source_interval", "preflight"]}},
+        "human_approved": {"const": false}, "subtitle_publish_ready": {"const": false},
+        "publication_ready": {"const": false}, "review_required": {"const": true}
+      }
+    }}
+  }
+}

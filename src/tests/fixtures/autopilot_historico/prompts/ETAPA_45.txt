@@ -1,0 +1,23 @@
+L.D.PORTO VIDEO ANALYZER | ETAPA 45/52 — Classificação comercial ASR mais OCR/GC com regressões reais
+
+OBJETIVO: capturar Openbox/60% OFF e chamada Jovem Pan/Copa sem confundir discussão legítima sobre marcas com anúncio.
+CÓDIGO: src/ldporto/commercial_gate.py, src/ldporto/ocr.py, src/ldporto/broadcast_graphics.py, src/ldporto/understanding.py, src/ldporto/second_curation_export.py e testes relacionados.
+EVIDÊNCIA: zip do Clóvis, candidatos/MOMENT_00011_0003.json (38:26–38:47), candidatos/MOMENT_00044_0002.json (2:15:15–2:15:49), contact_sheets. Ground truth inicial: promoções visuais forte suspeita; ASR contextual; não fabricar OCR se o zip não contiver observação OCR validada.
+IMPLEMENTE:
+1. Consolidação temporal ASR, OCR e GC: desconto, preço, QR, calls-to-action, vinheta, patrocínio, repetição/cena, janelas de precursor; armazenamento de evidências por timestamp e fonte.
+2. Normalização do OCR sem copiar texto inferido de imagem para 'evidence' sem executar OCR; OCR não medido => 'review' e reason 'commercial_visual_unmeasured' em candidato suspeito.
+3. Estados 'excluded' somente com evidência forte, 'review' se incerto, 'eligible' somente quando as verificações configuradas sustentarem. Nunca reduzir exclusões herdadas. Overlap e janelas comerciais conservadores; sem falso positivo numa conversa histórica/editorial sobre marca.
+4. Integrar observações em relatórios, manifests e audit logs; permitir rastrear a frase/QR/clipe que motivou decisão e a confiança/limitação.
+5. Testes contrafactuais de propaganda com split ASR em turnos, descontos e QR, vinheta institucional, falso positivo para marcas e OCR desligado; usar fixtures derivadas de JSON real mas não reclassificar screenshot manualmente como OCR executado.
+CRITÉRIO: candidatos Openbox e vinheta nunca ficarem auto-eligible sem revisão/evidência; não gerar Shorts/Stories promocionais como aprovados.
+
+REGRAS FIXAS:
+- Projeto existente, NÃO iniciar outro projeto nem substituir módulos anteriores.
+- Não alterar .env, credenciais, vídeos, modelos, .git, automacao/evidencias, orquestrador.py, AGENTS.md, plano/prompts antigos nem os próprios prompts desta rodada.
+- Fonte real de evidência: proximas_etapas_codex/evidencias/AUDITORIA_CLOVIS_20261009.md e SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip (SOMENTE LEITURA). Sem vídeo fonte nesse ZIP; imagens de contact sheets não são OCR executado.
+- Antes de editar: ler implementações e testes existentes, confirmar nomes reais dos módulos referidos e declarar dependências. Fazer alterações focadas, compatíveis com Python 3.11 e Windows, minimizando diffs.
+- Resultados antigos e gates desconhecidos não podem ser convertidos em sucesso presumido. Se faltar prova: null, requires_review ou blocked conforme o contrato. Publicação requer validação e aprovação humana por hash.
+- Testes focados + pytest -q completo; reportar falhas reais, skipped e condições não validadas. Não rodar Whisper, Ollama, rastreamento pesado ou ffmpeg em vídeo real por padrão.
+- Checkpoint: proximas_etapas_codex/execucao/checkpoints/CHECKPOINT_ETAPA_45.md (código alterado, testes e saídas verdadeiras, pendências, riscos e métricas anteriores/posteriores).
+- Não gerar ZIP: o executor gera snapshots verificáveis após pytest completo.
+- Implementar, não ficar só no plano. Se ALREADY_OK, demonstrar com testes. Nunca inventar resultados.

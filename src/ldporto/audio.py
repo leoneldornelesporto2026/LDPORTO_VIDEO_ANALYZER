@@ -142,6 +142,63 @@ def separate_review_region(ctx, mono, start, end, folder):
     return isolated
 
 
+def plan_clip_audio(candidates, events, start, end, *, instrumental=False, gain=0.10,
+                    track_title='Eu Não Vou Parar'):
+    """Downstream evidence plan; never infers stems, origin or effective ducking."""
+    if isinstance(gain, bool) or not isinstance(gain, (int, float)) or not math.isfinite(gain) or not 0 <= gain <= .25:
+        raise ValueError('INSTRUMENTAL_GAIN_MUST_BE_FINITE_0_TO_025')
+    performance = any(any(token in ' '.join(str(c.get(k) or '').lower()
+        for k in ('content_type', 'story_type', 'category', 'categories'))
+        for token in ('performance', 'show_musical', 'concert', 'musical', 'live_music'))
+        for c in candidates)
+    evidence = []
+    for event in events or []:
+        if not isinstance(event, dict):
+            continue
+        left, right = event.get('start'), event.get('end')
+        if (isinstance(left, bool) or isinstance(right, bool) or
+            not isinstance(left, (int, float)) or not isinstance(right, (int, float)) or
+            not math.isfinite(left) or not math.isfinite(right) or right <= left or
+            left >= end or right <= start):
+            continue
+        label = str(event.get('type') or event.get('label') or event.get('event') or '').lower()
+        kind = {'speech': 'voice', 'laughter': 'reaction', 'laugh': 'reaction',
+                'risada': 'reaction', 'applause': 'reaction', 'aplauso': 'reaction',
+                'music': 'source_music', 'sound_effect': 'effect'}.get(label, 'unknown')
+        origin = event.get('origin') if event.get('origin_verified') is True else None
+        if origin not in ('audience', 'studio', 'speaker', 'performance', 'original_background', 'effect'):
+            origin = None
+        evidence.append({'start': max(start, left), 'end': min(end, right),
+                         'type': label, 'role': kind, 'origin': origin,
+                         'confidence': event.get('confidence'), 'method': event.get('method'),
+                         'inference': event.get('inference'), 'listen_required': True})
+    source_music = any(e['role'] == 'source_music' for e in evidence)
+    mode = ('original_performance' if performance else 'source_original'
+            if source_music or not instrumental or gain == 0 else 'source_plus_instrumental')
+    return {'policy_version': '24.1', 'audio_mode': mode, 'source_preserved': True,
+            'source_music_role': 'performance' if performance else None,
+            'events': evidence, 'humor_reaction_evidence': [e for e in evidence if e['role'] in ('reaction', 'effect')],
+            'reaction_is_payoff_proof': False, 'stems_separated': False,
+            'instrumental_title': track_title if instrumental else None,
+            'instrumental_gain': gain if mode == 'source_plus_instrumental' else 0.,
+            'instrumental_reason': 'preserve_performance' if performance else
+                'source_music_hypothesis_requires_listening' if source_music else
+                'optional_background' if mode == 'source_plus_instrumental' else 'disabled',
+            'ducking_applied': False, 'ducking_verified': None,
+            'ducking_reason': 'no_measured_and_listened_safe_ducking_evidence',
+            'listening_verified': None, 'publication_ready': False}
+
+
+def delivery_audio_filter(audio_plan):
+    if audio_plan['audio_mode'] != 'source_plus_instrumental':
+        return '[0:a:0]anull[a]'
+    # No amix normalization or automatic makeup gain. Limiting is not ducking.
+    gain = audio_plan['instrumental_gain']
+    return (f'[0:a:0]anull[a0];[1:a:0]volume={gain:.6f}[bed];'
+            '[a0][bed]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,'
+            'alimiter=limit=0.95:level=0:latency=1[a]')
+
+
 def sound_events(ctx, audio, transcript):
     cfg = ctx.config["audio_events"]
     if not cfg["enabled"]:

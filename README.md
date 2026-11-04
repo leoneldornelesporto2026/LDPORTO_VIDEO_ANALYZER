@@ -1,142 +1,121 @@
-> **V4.2:** [relatorio atual](docs/V4_2_IMPLEMENTATION_REPORT.md), [matriz](docs/V4_2_REQUIREMENT_MATRIX.md),
-> [auditoria independente](docs/WORKER_DISCOVERY_AUDIT.md), [benchmark](docs/V4_2_BENCHMARK_COMPARISON.md).
-> Alvo: Windows 10/11 + Python 3.11.x. Testes auxiliares em 3.13 NAO homologam 3.11.
-> **Camera Director v3:** leia [docs/CAMERA_DIRECTOR_V3.md](docs/CAMERA_DIRECTOR_V3.md).
-> Novo `camera_director_timeline.json`, perfis na GUI e `--director-only` para ajustar câmera sem repetir percepção.
-> Relatório atual: [docs/TEST_REPORT_V3.md](docs/TEST_REPORT_V3.md). Documentação v1/v2 abaixo preservada como referência.
+# L.D.PORTO VIDEO ANALYZER / Perception Engine
 
-# L.D.PORTO VIDEO ANALYZER
+Aplicação local para analisar vídeo, preservar a fala original e produzir evidências
+para revisão editorial e segunda curadoria. Integra ASR, diarização, visão, OCR,
+semântica, planejamento de câmera, previews e exportação com referências verificáveis.
+Identidades visuais são anônimas; resultados incertos permanecem explícitos.
 
-Analisador Python local para a primeira fase de uma plataforma de cortes:
-**entender o vídeo inteiro antes de editar**.
+## Ambiente
 
-Comece por **[docs/setup/LEIA_PRIMEIRO.md](docs/setup/LEIA_PRIMEIRO.md)**.
+O alvo é Windows 10/11 e Python 3.11.x, com Tcl/Tk para a GUI. Utilize a `.venv`
+existente. A base está em `requirements.txt`; grupos opcionais estão em
+[requirements/README.md](requirements/README.md). FFmpeg e FFprobe precisam estar
+disponíveis. A configuração compartilhada fica em `config/config.yaml`.
 
+Em uma instalação nova, execute `INSTALAR_WINDOWS.bat` e, quando necessário,
+`INSTALAR_AVANCADO_WINDOWS.bat`. Esses comandos alteram o ambiente quando acionados
+pelo usuário; não fazem parte da regressão. Pesos e credenciais não são versionados.
+Diarização Community-1 requer acesso ao modelo; o token da GUI permanece em memória.
+Para uso offline, prepare previamente os modelos necessários.
 
-## V4.3 — Hardening profissional
+## Iniciar e diagnosticar
 
-A V4.3 adiciona tracking/Re-ID mais estáveis, afinidade global speaker-person, filtros comerciais e editoriais mais fortes, cache/repair semântico, Smart Zoom com safety, Preview Verifier, progresso/ETA estruturado, replay downstream e geração automática do pacote compacto de segunda curadoria.
+Abra `ABRIR_ANALYZER.bat` ou execute no PowerShell:
 
-Documentos atuais: [arquitetura V4.3](docs/V43_ARCHITECTURE.md), [benchmark/status](docs/V43_REAL_BENCHMARK.md), [performance](docs/V43_PERFORMANCE.md), [ledger](docs/V43_IMPLEMENTATION_LEDGER.md) e [auditoria](docs/WORKER_DISCOVERY_AUDIT_V43.md).
+```powershell
+.\.venv\Scripts\python.exe app.py
+.\.venv\Scripts\python.exe analyze.py --help
+.\.venv\Scripts\python.exe analyze.py --doctor --offline
+```
 
-Ao final de uma análise, o fluxo pode gerar em `pacotes_para_enviar/` um `SECOND_CURATION_READY_*.zip` ou `SECOND_CURATION_PARTIAL_*.zip`, além de mídia opcional separada. O pacote inclui `SECOND_CURATOR_BRIEF.json`, índice, catálogo completo de candidatos, transcrição, evidências e readiness por capacidade.
+O diagnóstico verifica recursos configurados; não comprova inferência audiovisual.
+YOLO usa checkpoint **local `.pt`**, tarefa `detect`, classe 0 `person`.
+Configure `vision.body_backend`, `vision.yolo_model` e `vision.yolo_device` conforme
+[YOLO local](docs/YOLO_LOCAL_57.md). Sem modelo válido, o fallback HOG e a qualidade
+degradada são declarados. Diagnóstico e `--help` não devem baixar pesos.
 
-## V4.2: Readiness E Artefatos
+Ollama é local, em loopback. O perfil `max` conserva seu orçamento original;
+consulte [configuração Ollama](docs/setup/OLLAMA_MAXIMO.md). A falta de um recurso
+habilitado aparece no preflight. Desabilite-o explicitamente quando adequado.
 
-A instalacao recomendada inclui base + diarizacao + visao; OCR/YOLO/audio-events
-continuam opt-in. Community-1 online requer token HF em memoria e aceite do modelo.
-O preflight verifica imports reais, assets/carregamento, CUDA quando solicitada,
-Ollama/modelo e escrita ANTES de resolver/download da midia. Falha em recurso
-habilitado nao vira downgrade silencioso; desative-o explicitamente quando apropriado.
+## Analisar
 
-O pipeline continua Analyzer -> Perception -> Semantic/Understanding -> Global
-Planner -> Camera Director -> Preview/Verifier -> pacote de segunda curadoria.
-Nao ha render social final nem segunda curadoria automatica nesta entrega.
+Na GUI, selecione a entrada e os recursos, acompanhe as etapas e abra os resultados.
+Para iniciar uma análise explicitamente pela CLI:
 
-`analysis.json` usa referencias com checksum por padrao. Colecoes originais
-permanecem em arquivos separados. `--director-only` carrega e valida as referencias,
-sem precisar do video original. Para consumidores legados, use
-`export.legacy_full_analysis: true`. A GUI/CLI distinguem tracks, identidades
-anonimas persistentes, participantes editoriais e locutores acusticos.
+```powershell
+.\.venv\Scripts\python.exe analyze.py 'C:\Videos\entrevista.mp4' --offline --output analysis/minha_analise
+.\.venv\Scripts\python.exe analyze.py 'C:\Videos\entrevista.mp4' --semantic ollama --ollama-model qwen3:14b --ollama-profile max
+```
 
-O review inclui `analysis_summary.json`, `people_summary.json`,
-`camera_plan.compact.json`, `camera_timeline.compact.json`,
-`master_timeline.compact.json`, `CHATGPT_ANALYSIS_HANDOFF.compact.json` e chunks
-indexados em `review_evidence/`. Fonte original e projecao compacta nao sao sinonimos;
-os indices registram esse limite. O exportador retorna READY, IN_PROGRESS,
-PARTIAL_EXPORT, EMPTY ou ERROR; um ZIP valido nao garante analise completa.
+A detecção de idioma é automática por padrão; `language: pt` ou `en` é uma escolha
+explícita para fontes conhecidas. ASR usa `transcribe`. Traduções ficam separadas da
+fala original; alternativas, proveniência e incertezas acompanham os artefatos.
+Idioma detectado para um bloco não comprova o idioma de cada palavra desse bloco.
+Revisões acústicas seletivas têm limites de chamadas e segundos de áudio.
 
-Comandos adicionais: `.venv\Scripts\python.exe exportar_ldporto.py --self-test`,
-`.venv\Scripts\python.exe exportar_ldporto.py --inspect-zip PACOTE.zip` e
-`.venv\Scripts\python.exe compare_runs.py OLD NEW --output-dir comparison`.
-Veja defaults novos e limitacoes em docs/V4_2_IMPLEMENTATION_REPORT.md.
+A interrupção da GUI solicita parada na próxima unidade segura e preserva checkpoints.
+Replays seletivos reutilizam artefatos validados:
 
-## Terminal
+```powershell
+.\.venv\Scripts\python.exe analyze.py --director-only analysis/minha_analise
+.\.venv\Scripts\python.exe analyze.py --replay-analysis analysis/minha_analise --from-stage understanding
+```
 
-No Windows, após instalar:
+## Resultados e exportação
 
-    .\.venv\Scripts\python.exe analyze.py "C:\Videos\entrevista.mp4"
-    .\.venv\Scripts\python.exe analyze.py "https://www.youtube.com/watch?v=VIDEO_ID"
-    .\.venv\Scripts\python.exe analyze.py "input/video.mp4" --output "analysis/minha_analise"
-    .\.venv\Scripts\python.exe analyze.py "input/video.mp4" --semantic ollama
-    .\.venv\Scripts\python.exe analyze.py "input/video.mp4" --device cpu --model medium
-    .\.venv\Scripts\python.exe analyze.py "input/video.mp4" --offline
-    .\.venv\Scripts\python.exe analyze.py --doctor
+`analysis/` contém relatórios HTML/Markdown, transcrição, palavras, alternativas,
+traduções separadas, decisões de câmera e manifestos. `analysis.json` usa referências
+com SHA-256; o leitor valida caminhos e checksums. Pacotes destinados à segunda
+curadoria ficam em `pacotes_para_enviar/`. Preserve os artefatos de cada referência.
 
-No Linux/macOS:
+```powershell
+.\.venv\Scripts\python.exe exportar_ldporto.py --help
+.\.venv\Scripts\python.exe exportar_ldporto.py --inspect-zip 'PACOTE.zip'
+.\.venv\Scripts\python.exe compare_runs.py OLD NEW --output-dir comparison
+```
 
-    python3.12 install.py
-    .venv/bin/python analyze.py input/video.mp4
-    .venv/bin/python analyze.py --doctor
+`PARTIAL`, `READY_FOR_REVIEW`, `PREVIEW_APPROVED` e `PUBLISH_READY` são estados
+separados. Pacote íntegro não comprova qualidade nem aprovação humana. O Analyzer
+não publica automaticamente. Instrumental autoral, marcas d'água, áudio musical
+original e exportação vertical permanecem no fluxo editorial/renderização, conforme
+[segunda curadoria](docs/V4_SECOND_CURATION.md) e [áudio](docs/AUDIO_AVANCADO.md).
 
-Instale FFmpeg/FFprobe no sistema. Apple Silicon é detectado pelo diagnóstico; o
-backend de transcrição desta versão usa CPU/int8, não Metal/MPS.
+## Desenvolver e testar
 
-## Fluxo
+Trabalhe diretamente com Git, alterações incrementais e testes. Preserve mudanças
+preexistentes, dados locais, modelos e segredos. Não há commits automáticos.
 
-1. Entrada local ou download unitário YouTube com yt-dlp.
-2. Inspeção FFprobe e assinatura SHA-256 completa.
-3. Áudio original PCM, trilha mono 16 kHz e speech_clean conservador, alinhados a t=0 do vídeo.
-4. Comparação de pequenas amostras original/clean para escolher a fonte ASR.
-5. faster-whisper em blocos sobrepostos, com ownership temporal único por palavra.
-6. Revisão multipass de regiões de baixa confiança e alternativas sem reescrita.
-7. Diarização community-1 no áudio original mono; sobreposições preservadas.
-8. Cenas visuais, rostos/corpos, tracking e reidentificação anônima opcional.
-9. Associação voz/rosto por evidência conservadora e revisão manual opcional.
-10. OCR e classificação de sons opcionais.
-11. Tópicos e candidatos editoriais via regras ou Ollama local.
-12. Timeline integral, legendas e relatórios.
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m pytest -q src/tests/test_transcription_fidelity.py
+```
 
-## Organização
+A regressão é offline e usa mocks, fixtures históricas e canários sintéticos.
+Ela não homologa Whisper, YOLO, diarização ou Qwen em conteúdo real.
+O baseline `2f4634f` e **1627 passed / 4 skipped** são referências históricas
+fornecidas; resultados atuais ficam no
+[relatório da reestruturação](docs/reports/restructuring_20261012/RELATORIO_TECNICO.md).
 
-| Pasta | Conteúdo |
-|---|---|
-| src/ldporto/ | Engines e pipeline |
-| config/ | Configuração YAML |
-| scripts/ | Ferramentas Windows, export, benchmark e utilitários |
-| input/ | Vídeos locais e downloads |
-| analysis/ | Resultados por vídeo |
-| models/ | Modelos baixados ou fornecidos localmente |
-| docs/ | Arquitetura, validação, contrato e áudio avançado |
-| examples/ | Exemplos de formato explicitamente sintéticos |
-| src/tests/ | Verificação de regras e pipeline |
+## Estrutura e documentação
 
-O programa mantém áudio, cache e logs dentro da pasta de análise de cada vídeo.
-Não sobrescreve o arquivo de entrada.
+| Caminho | Responsabilidade |
+| --- | --- |
+| `app.py`, `analyze.py` | GUI e CLI públicas |
+| `src/ldporto/` | Engines, pipeline, contratos e exportação |
+| `src/tests/`, `src/tests/fixtures/` | Regressão e evidências com proveniência |
+| `scripts/windows/`, `scripts/dev/`, `scripts/export/` | Ferramentas por finalidade |
+| `requirements/`, `config/`, `schemas/` | Dependências, configuração e contratos |
+| `docs/` | Guias ativos e índice por finalidade |
+| `docs/reports/`, `docs/archive/`, `docs/briefings/` | Auditorias, histórico e requisitos |
+| `models/`, `input/`, `analysis/`, `pacotes_para_enviar/` | Dados locais protegidos, fora do Git |
 
-## Testes
+Consulte o [índice de documentação](docs/README.md), a
+[arquitetura](docs/ARQUITETURA.md) e a [estrutura existente](docs/REPOSITORY_STRUCTURE.md).
+Caminhos públicos e módulos foram preservados para evitar migrações cosméticas.
 
-    python -m pip install -r requirements.txt -r requirements/dev.txt
-    python -m pytest src/tests -q
-
-Os testes com mídia precisam de FFmpeg. Não precisam de conta nem de download de modelos.
-
-## Extensões
-
-- requirements/diarization.txt: community-1 via pyannote.audio 4.
-- requirements/vision.txt: landmarks para correlação boca/áudio.
-- requirements/yolo.txt: corpos com YOLO em vez de HOG; ativar no YAML.
-- requirements/ocr.txt: wrapper Tesseract; executável externo e idiomas necessários.
-- requirements/audio-events.txt: PANNs, com checkpoint local explícito.
-- requirements/demucs.txt: separação **em outro ambiente Python**.
-
-Não instale todos os extras sem necessidade. Demucs e pyannote 4 possuem
-dependências diferentes de PyTorch; por isso o processo de separação fica separado.
-
-Semântica e scores são inferências editoriais, não garantia de viralização.
-As limitações constam em cada relatório.
-
-## Fontes
-
-Documentação primária consultada e links de implantação: docs/FONTES.md.
-
-
-## Ollama local — potência máxima
-
-No Windows, depois da instalação base/avançada, execute:
-
-    CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat
-
-O launcher detecta os modelos locais, inicia por padrão com Ollama habilitado e `profile=max`.
-A análise semântica usa saída estruturada e produz uma revisão editorial global aterrada em IDs.
-Veja `docs/setup/LEIA_PRIMEIRO.md` para perfis, diagnóstico e fallback.
+Limitações: HOG perde pessoas sentadas/ocultas; qualidade facial e sincronismo limitam
+Active Speaker; identidade pode permanecer `null`; câmera preserva a fonte sem ganho
+e evidência suficientes. Vídeos curtos podem não produzir shortlist. ASR, LLM e
+scores editoriais não são fatos garantidos. Ganhos reais de qualidade e latência
+exigem homologação comparável documentada.

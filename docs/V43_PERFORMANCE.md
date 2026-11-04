@@ -1,5 +1,9 @@
 # V4.3 Performance
 
+Atualização: o full run local V4.3 já foi executado. Tracking medido 2670.282s,
+semântica 6053.453s e Global Review 454.406s, concluído. A afirmação “não executado”
+abaixo é histórica. [Reconciliação e limites](V44_BASELINE_RECONCILIATION.md).
+
 ## V4.2 baseline hotspots
 
 - Semantic: ~11606 s (~3 h 13 min)

@@ -1,0 +1,9 @@
+{
+  "origin": "User-supplied stage 48 summary; original Clovis audit and ZIP absent from workspace",
+  "transcript_evidence_available": false,
+  "candidates": [
+    {"moment_id": "MOMENT_00034_0001", "reported_rank": 1, "reported_time": "1:44:48", "reported_start": 6288, "end": null, "transcript": null},
+    {"moment_id": "MOMENT_00028_0004", "reported_rank": 2, "reported_time": "1:27:46", "reported_start": 5266, "end": null, "transcript": null},
+    {"moment_id": "MOMENT_00024_0002", "reported_rank": 7, "reported_time": "1:16:02", "reported_start": 4562, "end": null, "transcript": null}
+  ]
+}

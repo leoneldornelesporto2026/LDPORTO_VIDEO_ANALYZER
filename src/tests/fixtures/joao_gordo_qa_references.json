@@ -1,0 +1,9 @@
+{
+  "fixture_kind": "synthetic_times_with_historical_ids_and_no_transcript",
+  "questions_answers": [
+    {"question_id": "Q_0114", "question": null, "answer": null, "question_start": 35, "question_end": 36, "answer_expected": false, "answer_status": "not_expected", "unresolved_reason": "answer_not_expected"},
+    {"question_id": "Q_0115", "question": null, "answer": null, "question_start": 37, "question_end": 38, "answer_expected": false, "answer_status": "not_expected", "unresolved_reason": "answer_not_expected"},
+    {"question_id": "Q_0007", "question": null, "answer": null, "question_start": 40, "question_end": 41}
+  ],
+  "question_answer_pairs": [{"question_id": "Q_0007", "question": null, "answer": null, "question_start": 40, "question_end": 41}]
+}

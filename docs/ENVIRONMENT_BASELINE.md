@@ -33,7 +33,8 @@ Snapshot date: 2026-11-04. Source: remote GitHub ref, commit, tree and root-file
 ## Resumption commands — on user's existing Windows checkout (read-only)
 
 ```bat
-cd /d "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER"
+REM Execute these commands from the existing Windows Analyzer repository folder.
+REM Do not guess a local path, copy or change the working directory.
 git status --short --branch
 git branch -avv
 git remote -v

@@ -218,6 +218,7 @@ def test_missing_candidates_blocks_and_decode_failure_never_reports_ok(visual_ca
 def test_runtime_probe_reports_binary_hash_and_missing_languages(tmp_path, monkeypatch):
     binary = tmp_path / 'fake_tesseract.exe'
     binary.write_bytes(b'synthetic-executable-not-run')
+    binary.chmod(0o755)  # Linux fixture: executable permission, though never executed
     monkeypatch.setattr(commercial_gate.shutil, 'which', lambda _: str(binary))
     api = types.SimpleNamespace(tesseract_cmd=None)
     monkeypatch.setitem(sys.modules, 'pytesseract', types.SimpleNamespace(pytesseract=api,

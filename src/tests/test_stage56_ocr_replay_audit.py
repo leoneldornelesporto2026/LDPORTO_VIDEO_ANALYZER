@@ -105,6 +105,7 @@ def test_runtime_recovers_local_traineddata_hash(tmp_path, monkeypatch):
     import types
     binary = tmp_path / 'tesseract.exe'
     binary.write_bytes(b'not executable; mock probe')
+    binary.chmod(0o755)  # Required by the production fail-closed executable probe
     data = tmp_path / 'tessdata'
     data.mkdir()
     model = data / 'eng.traineddata'

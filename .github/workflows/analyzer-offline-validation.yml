@@ -75,7 +75,7 @@ jobs:
         shell: bash
         run: |
           if [ ! -f src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip ]; then
-            echo 'BLOCKED — The historic CHATGPT_REVIEW.zip fixture is not versioned; verify its exact SHA256 on the original Windows workstation. CI must not invent it.' >> "$GITHUB_STEP_SUMMARY"
+            echo 'BLOCKED — Historic CHATGPT_REVIEW.zip and SECOND_CURATION_READY.zip are not versioned. Seven exact historical tests are deselected ONLY on this runner. Verify original SHA256 files on Windows; CI must not invent them.' >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Exporter synthetic self-test
         run: python exportar_ldporto.py --self-test
@@ -83,10 +83,19 @@ jobs:
         run: |
           mkdir -p test-results
           extra_args=()
-          if [ ! -f src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip ]; then
-            extra_args=(-k 'not test_relocated_historical_zip_bytes_match_original_provenance')
+          if [ ! -f src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip ] || [ ! -f src/tests/fixtures/historical_evidence/SECOND_CURATION_READY.zip ]; then
+            # Exact tests requiring two unversioned historical ZIPs. Synthetic tests remain enabled.
+            extra_args=(
+              --deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance
+              --deselect=src/tests/test_stage13_explainability.py::test_all_52_historical_candidates_receive_stable_diagnostics
+              --deselect=src/tests/test_stage17_editorial_replay.py::test_real_same_52_ids_reproducible_and_unapproved
+              --deselect=src/tests/test_stage17_editorial_replay.py::test_mismatched_run_rejected
+              --deselect=src/tests/test_stage17_editorial_replay.py::test_missing_upstream_does_not_promote
+              --deselect=src/tests/test_stage18_handoff_audit.py::test_real_historical_fixture_hashes_links_and_contact_sheets
+              --deselect=src/tests/test_stage19_uncertain_words.py::test_historical_flags_are_not_the_prompt_percentage
+            )
           fi
-          python -m pytest src/tests -q --disable-warnings --maxfail=5 --junitxml=test-results/pytest.xml "${extra_args[@]}"
+          python -m pytest src/tests -q --disable-warnings --maxfail=10 --junitxml=test-results/pytest.xml "${extra_args[@]}"
       - name: Upload test JUnit only
         if: always()
         uses: actions/upload-artifact@v4

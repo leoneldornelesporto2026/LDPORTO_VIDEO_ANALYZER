@@ -37,6 +37,7 @@ jobs:
       - name: Rebuild and independently verify synthetic second-curation ZIP
         shell: bash
         run: |
+          python - <<'PY'
           import hashlib
           import json
           import os
@@ -103,6 +104,7 @@ jobs:
               note.write('### Synthetic-only second-curation ZIP\n')
               note.write(f"Result: **{result['state']}** (not publication approval); integrity: PASS; bytes: {zip_path.stat().st_size}\n")
               note.write('Real YouTube/video analysis requires an approved private input path and Windows/runtime tests.\n')
+          PY
       - name: Upload only synthetic ZIP and SHA manifest
         uses: actions/upload-artifact@v4
         with:

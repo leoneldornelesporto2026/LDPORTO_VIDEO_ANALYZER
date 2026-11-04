@@ -7,7 +7,7 @@ O [README principal](../README.md) é a referência operacional atual.
 | Arquitetura e contratos | [ARQUITETURA](ARQUITETURA.md), [CONTRATO_DADOS](CONTRATO_DADOS.md), [estrutura](REPOSITORY_STRUCTURE.md) |
 | Ambiente | [requirements](../requirements/README.md), [Ollama](setup/OLLAMA_MAXIMO.md), [YOLO local](YOLO_LOCAL_57.md), [OCR](OCR_GUI_54.md) |
 | Validação | [VALIDACAO](VALIDACAO.md), [canários](INFERENCE_SMOKE_60.md) |
-| Auditoria atual | [SOL V3 de 2026-10-13](reports/sol_v3_20261013/RELATORIO_TECNICO.md), [reestruturação de 2026-10-12](reports/restructuring_20261012/RELATORIO_TECNICO.md) |
+| Auditoria atual | [SOL V3 de 2026-10-13](https://github.com/leoneldornelesporto2026/LDPORTO_VIDEO_ANALYZER/blob/b28c78cc4c6f8b91196ebecfc7f36ac5dbea2e0d/docs/reports/sol_v3_20261013/RELATORIO_TECNICO.md), [reestruturação de 2026-10-12](https://github.com/leoneldornelesporto2026/LDPORTO_VIDEO_ANALYZER/blob/b28c78cc4c6f8b91196ebecfc7f36ac5dbea2e0d/docs/reports/restructuring_20261012/RELATORIO_TECNICO.md) |
 | Requisitos preservados | [briefings](briefings/README.md) |
 | Histórico | [arquivo](archive/README.md), releases e relatórios V3/V4/R3/R4/S1–S11/etapas |
 

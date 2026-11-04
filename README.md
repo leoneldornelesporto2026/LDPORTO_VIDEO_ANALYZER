@@ -95,7 +95,7 @@ A regressão é offline e usa mocks, fixtures históricas e canários sintético
 Ela não homologa Whisper, YOLO, diarização ou Qwen em conteúdo real.
 O baseline `2f4634f` e **1627 passed / 4 skipped** são referências históricas
 fornecidas; resultados atuais ficam no
-[relatório da reestruturação](docs/reports/restructuring_20261012/RELATORIO_TECNICO.md).
+[relatório da reestruturação](https://github.com/leoneldornelesporto2026/LDPORTO_VIDEO_ANALYZER/blob/b28c78cc4c6f8b91196ebecfc7f36ac5dbea2e0d/docs/reports/restructuring_20261012/RELATORIO_TECNICO.md).
 
 ## Estrutura e documentação
 

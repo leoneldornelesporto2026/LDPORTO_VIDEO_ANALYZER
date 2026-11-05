@@ -78,3 +78,43 @@ O Analyzer exibe a confirmação de pacote entregue somente quando a cópia rece
 DELIVERED ou ALREADY_DELIVERED. Inclui vídeo, ZIP, SHA256, destino, contagens
 e CURATOR_IMPORT_PENDING. Erros geram DELIVERY_BLOCKED com o motivo,
 sem eliminar o ZIP original do Analyzer.
+
+## Evidência recebida — execução Windows em 2026-11-05
+
+**Baseline executada:** Analyzer `36bdfbb` (`develop`), Curator `69e5e43` (`develop`).
+**Ambiente:** Windows, Python 3.11.9, pytest 9.1.1.
+
+| Etapa | Resultado |
+| --- | --- |
+| Integração Analyzer (`test_local_curator_handoff.py`) | 18 passed, 1 skipped (criação de symlink no Windows) |
+| P0-01 GUI | 15 passed |
+| P0-02 shell | 6 passed |
+| P0-03 mídia | 8 passed |
+| P0-04 perfis | 11 passed |
+| Fixture LF | 6 passed |
+| Regressão GUI | 39 passed + 14 subtests passed |
+| Inspetor Curator (`test_analyzer_inbox.py`) | 3 passed |
+
+**Total não duplicado no gate:** 106 testes passaram, 14 subtestes passaram, 1 teste
+ignorado, 0 falhas. `VALIDAR_ENTREGA_CURATOR.ps1` terminou com mensagem
+'Gates concluidos. Nenhum render ou aprovacao humana foi acionado.'
+
+**Atenção:** a validação executada foi exclusivamente automática e sintética;
+o operador não forneceu `-AnalysisDir`. Portanto **não há evidência ainda** de que um
+ZIP oficial de análise real tenha sido copiado para `input/analyzer/<video_id>/<run_id>/`.
+Não registrar DELIVERY_SUCCESS nem CURATOR_IMPORT_SUCCESS para uma entrega física
+antes do recibo e inspeção no Windows.
+
+**Próximo gate físico:** localizar `second_curation_export.json` de uma análise
+existente (no diretório `analysis/`), conferir a existência do ZIP oficial e executar:
+
+~~~powershell
+.\scripts\windows\testing\VALIDAR_ENTREGA_CURATOR.ps1 -AnalysisDir "<pasta-real-da-analise>"
+~~~
+
+Depois verificar `curator_delivery.json`, conferir SHA256 e o resultado do inspetor
+`ldporto_studio.analyzer_inbox` no Curator. Mesmo com `DELIVERED`, o estado editorial
+permanece `CURATOR_IMPORT_PENDING` até adaptador R57 validado.
+
+A alteração local em `src/tests/fixtures/stage55_commercial_synthetic.json`
+foi preservada no Windows; não executar `git reset --hard` ou descarte automático.

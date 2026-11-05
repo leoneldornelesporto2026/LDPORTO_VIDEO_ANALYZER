@@ -1,0 +1,91 @@
+name: Analyzer - Windows native smoke
+
+on:
+  pull_request:
+    branches: [develop, release]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: analyzer-windows-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-native:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      HF_HUB_OFFLINE: '1'
+      TRANSFORMERS_OFFLINE: '1'
+      HF_DATASETS_OFFLINE: '1'
+      PYTHONUNBUFFERED: '1'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+    steps:
+      - name: Checkout without stored credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up canonical Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: 'x64'
+      - name: Create Windows venv and exercise real CHECK_RUNTIME.bat
+        shell: pwsh
+        run: |
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { throw 'Windows virtual environment creation failed' }
+          cmd /d /c 'call scripts\windows\CHECK_RUNTIME.bat'
+          if ($LASTEXITCODE -ne 0) { throw 'CHECK_RUNTIME.bat rejected expected Python 3.11 venv' }
+          .\.venv\Scripts\python.exe -c "import platform,sys; assert sys.version_info[:2]==(3,11); assert platform.system()=='Windows'; print(sys.version)"
+          if ($LASTEXITCODE -ne 0) { throw 'Python 3.11 Windows runtime mismatch' }
+      - name: Install declared CPU runtime and test dependencies
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements/dev.txt pillow
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed' }
+      - name: Assert real Windows BAT CRLF, entrypoint links and config parsing
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe -m compileall -q app.py analyze.py src scripts
+          if ($LASTEXITCODE -ne 0) { throw 'Windows syntax check failed' }
+          @'
+          from pathlib import Path
+          import json
+          import sys
+          root = Path('.')
+          scripts = [*root.glob('*.bat'), *root.glob('scripts/windows/**/*.bat')]
+          assert len(scripts) >= 10, f'expected Windows launchers, found {len(scripts)}'
+          for file in scripts:
+              data = file.read_bytes()
+              assert b'\r\n' in data, f'missing CRLF: {file}'
+              assert b'\n' not in data.replace(b'\r\n', b''), f'mixed EOL: {file}'
+              assert b'\r\r\n' not in data, f'double CR: {file}'
+          for name in ('DIAGNOSTICO_GPU_WINDOWS', 'DIAGNOSTICO_WINDOWS'):
+              assert (root/'scripts'/'windows'/'diagnostics'/(name+'.bat')).is_file(), name
+          schemas = list((root/'schemas').glob('*.json'))
+          assert schemas, 'no schemas'
+          for item in schemas:
+              assert isinstance(json.loads(item.read_text(encoding='utf-8-sig')), dict), item
+          print(f'PASS: {len(scripts)} Windows BATs with correct CRLF, {len(schemas)} parsed schemas')
+          '@ | .\.venv\Scripts\python.exe -
+          if ($LASTEXITCODE -ne 0) { throw 'Windows launcher and schema smoke failed' }
+      - name: Targeted Windows contract and entrypoint regression (no video or model calls)
+        shell: pwsh
+        run: |
+          New-Item -Force -ItemType Directory -Path test-results | Out-Null
+          .\.venv\Scripts\python.exe -m pytest -q --disable-warnings --maxfail=8 --junitxml=test-results/windows.xml src/tests/test_v43_runtime.py src/tests/test_r6_project_export.py src/tests/test_r63_compact_handoff_reader.py src/tests/test_r62_delivery_integrity.py src/tests/test_director_integration.py::test_bats_real_crlf_and_python311_syntax
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve JUnit result only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analyzer-windows-native-junit
+          path: test-results/windows.xml
+          if-no-files-found: warn
+          retention-days: 7
+
+# Hosted Windows CI is not acceptance on the owner's Windows 11 machine.
+# No media, Ollama, GPU inference, Windows installer build or deployment.

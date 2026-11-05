@@ -6,6 +6,7 @@ Reuses the official build_core_package ZIP and validate_core_package contracts.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from hashlib import sha256
 import json
 import os
 from pathlib import Path
@@ -22,6 +23,7 @@ from .second_curation_export import validate_core_package
 CONTRACT_VERSION = "1.0"
 HANDOFF_NAME = "ANALYZER_TO_CURATOR_HANDOFF.json"
 GUIDE_NAME = "README_HANDOFF.md"
+EVIDENCE_INDEX_NAME = "VIDEO_EVIDENCE_INDEX.json"
 DELIVERY_SUCCESS = "DELIVERED"
 DELIVERY_BLOCKED = "DELIVERY_BLOCKED"
 _WINDOWS_RESERVED = {"CON", "PRN", "AUX", "NUL", *(f"COM{x}" for x in range(1, 10)),
@@ -149,6 +151,59 @@ def _facts(package):
     }
 
 
+def _evidence_index(package, facts, zip_sha):
+    """Full, bounded inventory of the ORIGINAL exported ZIP (no media extracted).
+
+    The canonical Analyzer validator runs before this function. We separately
+    enumerate all members to make every included piece of evidence discoverable
+    by the independent Curator or a human reviewer.
+    """
+    artifacts = []
+    with zipfile.ZipFile(package) as archive:
+        infos = archive.infolist()
+        if len(infos) > 5000 or sum(info.file_size for info in infos) > 256 * 1024 ** 2:
+            raise ValueError("evidence_index_size_budget_exceeded")
+        for info in sorted(infos, key=lambda row: row.filename):
+            if info.is_dir():
+                continue
+            name = info.filename
+            if (not name or name.startswith("/") or "\\" in name or ":" in name
+                or ".." in name.split("/")):
+                raise ValueError("unsafe_evidence_index_member")
+            digest = sha256()
+            with archive.open(info, "r") as stream:
+                for chunk in iter(lambda: stream.read(4 * 1024 * 1024), b""):
+                    digest.update(chunk)
+            artifacts.append({"path": name, "bytes": info.file_size,
+                              "sha256": digest.hexdigest(),
+                              "category": name.split("/", 1)[0] if "/" in name else "root"})
+    available = {row["path"] for row in artifacts}
+    optional = (
+        "HANDOFF_MASTER.json", "transcript/transcript.txt",
+        "transcript/transcript.srt", "transcript/relevant_segments.jsonl",
+        "transcript/relevant_words.jsonl", "editorial/candidate_catalog.json",
+        "social/stories_manifest.json", "camera/shared_camera_handoff.json",
+        "camera/candidate_camera_plans.json", "audio/sound_events.json",
+        "subtitles/caption_preflight_r6.json",
+    )
+    return {
+        "schema_version": "1.0", "kind": "ANALYZER_NATIVE_SECOND_CURATION_EVIDENCE",
+        "scope": "ALL_FILES_IN_VALIDATED_SOURCE_ZIP",
+        "video_id": facts["video_id"], "run_id": facts["run_id"],
+        "source_sha256": facts["source_sha256"],
+        "source_video": facts["source_video"],
+        "analysis_state": facts["analysis_state"],
+        "zip_sha256": zip_sha,
+        "artifact_count": len(artifacts),
+        "categories": sorted({row["category"] for row in artifacts}),
+        "missing_review_references": [name for name in optional if name not in available],
+        "artifacts": artifacts,
+        "video_file_included": False,
+        "human_approval": False, "publication_ready": False,
+        "curator_import_status": "CURATOR_IMPORT_PENDING",
+    }
+
+
 def _existing(folder, sha):
     """Return prior validated receipt for same bytes; never trust a name alone."""
     if not folder.exists() and not folder.is_symlink():
@@ -169,6 +224,12 @@ def _existing(folder, sha):
         raise ValueError("existing_delivery_corrupted")
     if not (folder / GUIDE_NAME).is_file():
         raise ValueError("existing_delivery_readme_missing")
+    indexed = receipt.get("evidence_index")
+    if indexed is not None:
+        if (not isinstance(indexed, dict) or indexed.get("name") != EVIDENCE_INDEX_NAME
+            or not (folder / EVIDENCE_INDEX_NAME).is_file()
+            or file_hash(folder / EVIDENCE_INDEX_NAME) != indexed.get("sha256")):
+            raise ValueError("existing_evidence_index_corrupted")
     return receipt
 
 
@@ -180,6 +241,8 @@ def _readme(receipt):
         "Estado: " + state + " (não significa aprovação humana)\n"
         "ZIP original: " + receipt["zip"]["name"] + "\n"
         "SHA256: " + receipt["zip"]["sha256"] + "\n\n"
+        "0. Consulte VIDEO_EVIDENCE_INDEX.json para o inventário completo de arquivos do ZIP, "
+        "e as lacunas explicitadas em missing_review_references.\n"
         "1. Confirme o recibo ANALYZER_TO_CURATOR_HANDOFF.json e o SHA256 do ZIP.\n"
         "2. Inspecione o pacote pelo CLI do Curator: python -m ldporto_studio.analyzer_inbox --path <esta_pasta>.\n"
         "3. Abra SECOND_CURATOR_BRIEF.json, CURATION_INDEX.json e HANDOFF_MASTER.json, "
@@ -251,6 +314,7 @@ def deliver_package(package_path, *, curator_root=None, config=None, expected_sh
                 "video_id": facts["video_id"], "video_title": facts["source_video"].get("title"),
                 "destination": str(folder),
                 "zip": prior["zip"], "receipt_path": str(folder / HANDOFF_NAME),
+                "evidence_index": prior.get("evidence_index"),
                 "sha256_verified": True, "reel_candidate_count": facts["reel_candidate_count"],
                 "story_candidate_count": facts["story_candidate_count"],
                 "pending_reviews": facts["pending_reviews"], "human_approval": False,
@@ -259,6 +323,14 @@ def deliver_package(package_path, *, curator_root=None, config=None, expected_sh
     with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=video_dir) as temp:
         staging = Path(temp)
         copied_sha, copied_validation = _write_atomic_stage(staging, package, original_sha, facts)
+        index_document = _evidence_index(staging / package.name, facts, copied_sha)
+        index_file = staging / EVIDENCE_INDEX_NAME
+        index_file.write_text(
+            json.dumps(index_document, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+            encoding="utf-8")
+        index_receipt = {"name": EVIDENCE_INDEX_NAME,
+                         "sha256": file_hash(index_file),
+                         "artifact_count": index_document["artifact_count"]}
         receipt = {
             "handoff_contract_version": CONTRACT_VERSION, "delivery_status": DELIVERY_SUCCESS,
             "curator_import_status": "CURATOR_IMPORT_PENDING", "analysis_state": facts["analysis_state"],
@@ -274,6 +346,7 @@ def deliver_package(package_path, *, curator_root=None, config=None, expected_sh
             "reel_candidate_count": facts["reel_candidate_count"],
             "story_candidate_count": facts["story_candidate_count"],
             "available_internal_references": facts["available_internal_references"],
+            "evidence_index": index_receipt,
             "pending_reviews": facts["pending_reviews"], "readiness": facts["readiness"],
             "checks": {"original_zip": validation.get("status"),
                        "copied_zip": copied_validation.get("status"),
@@ -299,6 +372,7 @@ def deliver_package(package_path, *, curator_root=None, config=None, expected_sh
             "video_id": facts["video_id"], "video_title": facts["source_video"].get("title"),
                 "destination": str(folder),
             "zip": receipt["zip"], "receipt_path": str(folder / HANDOFF_NAME),
+            "evidence_index": index_receipt,
             "sha256_verified": True, "reel_candidate_count": facts["reel_candidate_count"],
             "story_candidate_count": facts["story_candidate_count"],
             "pending_reviews": facts["pending_reviews"],

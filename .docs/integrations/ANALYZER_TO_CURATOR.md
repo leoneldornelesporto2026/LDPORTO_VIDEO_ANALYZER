@@ -11,7 +11,7 @@ e após finalize_report_receipt, sem reabrir/editar o ZIP oficial.
 - Desabilitar explicitamente: export.curator_delivery_auto: false.
 - Entrega: <Curator>/input/analyzer/<video_id>/<run_id>/.
 - Colisão de mesmo run_id e hashes distintos: pasta <run_id>--sha-<12 hex>.
-- O Curator deve conter .gitignore e ldporto_studio/core.py; input/ ignorado pelo Git.
+- O Curator deve conter .gitignore e ldporto_studio/core.py. `input/analyzer/`, `input/curadorias/` e `input/videos/` ficam ignorados; `input/README.md` e `input/scripts/` podem aparecer no Git.
 
 ## Segurança
 
@@ -69,7 +69,7 @@ Para reutilizar um ZIP oficial ja exportado, sem inferencia de video:
 ~~~
 
 Opcional: -CuratorRoot aponta para o repo existente fora da pasta irma.
-O script recusa outras branches, verifica /input/ ignorado e Git sem arquivos de input rastreados.
+O script recusa outras branches, verifica que os ZIPs do Analyzer e os vídeos em `input/` são ignorados pelo Git, tolera `input/README.md` e os roteiros em `input/scripts/`, e bloqueia arquivos brutos indevidamente rastreados.
 Sinteticos nao sao entrega fisica; somente -AnalysisDir faz copia real e verifica SHA no Curator.
 
 ## Confirmação na GUI e no CLI
@@ -81,7 +81,7 @@ sem eliminar o ZIP original do Analyzer.
 
 ## Evidência recebida — execução Windows em 2026-11-05
 
-**Baseline executada:** Analyzer `36bdfbb` (`develop`), Curator `69e5e43` (`develop`).
+**Baseline histórica executada:** Analyzer `36bdfbb` (`develop`), Curator `69e5e43` (`develop`). A configuração do Git e do diretório `input/` mudou depois; requer nova execução do gate atualizado.
 **Ambiente:** Windows, Python 3.11.9, pytest 9.1.1.
 
 | Etapa | Resultado |
@@ -118,3 +118,28 @@ permanece `CURATOR_IMPORT_PENDING` até adaptador R57 validado.
 
 A alteração local em `src/tests/fixtures/stage55_commercial_synthetic.json`
 foi preservada no Windows; não executar `git reset --hard` ou descarte automático.
+
+## Insumos completos por vídeo — escopo da etapa P0
+
+O ZIP oficial entregue ao Curator contém os **artefatos canônicos exportáveis** disponíveis: metadados da fonte (ID/título/URL, duração, SHA256), transcrição original e segmentos/palavras, catálogo e shortlist de candidatos, propostas de Stories, observações de pessoas, câmera/zoom, áudio, evidências visuais/OCR, prévias e verificações **quando de fato produzidos**. O `SECOND_CURATION_MANIFEST.json` dentro do ZIP lista os membros e hashes; o `HANDOFF_MASTER.json` vincula IDs e referências. O validador bloqueia ZIP com membros inseguros/inconsistentes. Arquivos brutos temporários de inferência, modelos e o MP4 original **não estão incluídos** por padrão.
+
+Diretório por execução:
+
+```
+LDPORTO_VIDEO_CURATOR/input/analyzer/<video_id>/<run_id>/
+    SECOND_CURATION_*.zip
+    ANALYZER_TO_CURATOR_HANDOFF.json
+    README_HANDOFF.md
+```
+
+O caminho `input/videos/` é reservado aos vídeos baixados/associados pelo Curator e está inteiramente ignorado no Git. Nenhum material audiovisual é commitado.
+
+**Critério de fechamento P0:** uma análise REAL já exportada deve passar por `VALIDAR_ENTREGA_CURATOR.ps1 -AnalysisDir <pasta-da-analise>`, conferir ZIP/manifesto SHA256 original e cópia, ler o ZIP pelo Curator e confirmar `DELIVERED`/`ALREADY_DELIVERED` e `CURATOR_IMPORT_PENDING`. Não afirmar homologação física apenas com testes sintéticos.
+
+### Inventário integral e fronteira de mídia
+
+O novo arquivo `VIDEO_EVIDENCE_INDEX.json` acompanha cada entrega nova. Ele enumera **todos os membros do ZIP oficial validado**, com nome, categoria, tamanho, SHA256, identificação do vídeo e da execução, e `missing_review_references` para evidências opcionais não disponíveis. É um catálogo auditável, **não uma cópia descompactada**; o material continua em um ZIP íntegro e imutável. O recibo registra o SHA256 do índice. O Curator confere esse vínculo, mantendo suporte a entregas legadas sem índice.
+
+**Limite de escopo:** o Analyzer exporta evidências canônicas suficientes para a segunda curadoria; os arquivos de modelos, mídia original e artefatos temporários/brutos fora do pacote canônico não são copiados. A mídia original continua separada do handoff e pode ser obtida/associada pelo Curator em `input/videos/`. Um pacote complementar opcional de prévias, quando gerado pelo Analyzer (`media_path`), também **não faz parte da entrega automática atual**; essa extensão exige contrato e homologação específicos. Não anunciar que esses arquivos extras chegaram quando não chegaram.
+
+A entrega completa de **evidências incluídas no ZIP** é atestada apenas após o ZIP e o índice passarem no inspetor do Curator. Isso não atesta processamento editorial, aprovação ou renderização.

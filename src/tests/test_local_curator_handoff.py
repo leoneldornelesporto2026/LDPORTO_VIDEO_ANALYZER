@@ -81,6 +81,16 @@ def test_01_validated_synthetic_zip_copied_with_matching_sha_and_receipt(tmp_pat
     assert receipt["human_approval"] is False and receipt["publication_ready"] is False
     assert receipt["checks"]["copied_zip"] == "valid"
     assert "R57" in (target / "README_HANDOFF.md").read_text(encoding="utf-8")
+    evidence_path = target / "VIDEO_EVIDENCE_INDEX.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    assert evidence["zip_sha256"] == original_hash
+    assert evidence["run_id"] == "RUN_1"
+    assert evidence["source_sha256"] == "a" * 64
+    with zipfile.ZipFile(target / source.name) as archived:
+        assert {x["path"] for x in evidence["artifacts"]} == set(archived.namelist())
+    assert receipt["evidence_index"]["sha256"] == delivery.file_hash(evidence_path)
+    assert evidence["video_file_included"] is False
+    assert evidence["publication_ready"] is False
     assert not list((root / "input" / "analyzer" / "VIDEO123").glob(".analyzer-pending-*"))
 
 
@@ -209,7 +219,20 @@ def test_13_git_ignores_runtime_media_and_zip_outputs():
     assert "analysis/" in gitignore and "pacotes_para_enviar/" in gitignore
 
 
-def test_14_integration_is_after_final_report_receipt_and_nonblocking():
+def test_14_corrupted_evidence_index_blocks_idempotent_retry(tmp_path, stubbed_validator):
+    root = fake_curator(tmp_path)
+    package = fake_zip(tmp_path / "run")
+    first = delivery.deliver_package(package, curator_root=root)
+    evidence_path = Path(first["destination"]) / "VIDEO_EVIDENCE_INDEX.json"
+    evidence_path.write_text("{}", encoding="utf-8")
+    repeated = delivery.auto_delivery({"path": str(package)}, curator_root=root)
+    assert repeated["delivery_status"] == "DELIVERY_BLOCKED"
+    assert "existing_evidence_index_corrupted" in repeated["reason"]
+    assert package.exists()
+    assert evidence_path.read_text(encoding="utf-8") == "{}"
+
+
+def test_15_integration_is_after_final_report_receipt_and_nonblocking():
     code = (Path(__file__).resolve().parents[1] / "ldporto" / "reports.py").read_text(encoding="utf-8")
     assert code.index("finalize_report_receipt(ctx,") < code.index("auto_delivery(package_result, export_cfg)")
     assert code.index("auto_delivery(package_result, export_cfg)") < code.index("return ok({")
@@ -260,7 +283,18 @@ def test_18_auto_delivery_can_be_explicitly_disabled(tmp_path):
     assert not (tmp_path / "input").exists()
 
 
-def test_19_cli_reports_verified_delivery_and_not_unverified_import():
+def test_19_windows_handoff_gate_accepts_script_only_input_layout():
+    gate = (Path(__file__).resolve().parents[2] /
+            "scripts/windows/testing/VALIDAR_ENTREGA_CURATOR.ps1").read_text(encoding="utf-8")
+    assert "git.exe check-ignore --no-index -q" in gate
+    assert "input/videos/abcdefghijk/source.mp4" in gate
+    assert "input/analyzer/__git_gate__/run/SECOND_CURATION.zip" in gate
+    assert "git.exe ls-files -- input/analyzer input/videos input/curadorias" in gate
+    assert "input/scripts/__git_gate__/REVISION.json" in gate
+    assert "Select-String -LiteralPath \".gitignore\" -Pattern '^\\s*/input/\\s*$'" not in gate
+
+
+def test_20_cli_reports_verified_delivery_and_not_unverified_import():
     root = Path(__file__).resolve().parents[2]
     code = (root / "analyze.py").read_text(encoding="utf-8")
     assert "ANÁLISE FINALIZADA — PACOTE ENTREGUE AO VIDEO CURATOR" in code

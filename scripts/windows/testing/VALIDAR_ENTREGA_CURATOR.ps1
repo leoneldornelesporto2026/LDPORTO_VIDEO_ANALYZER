@@ -35,12 +35,30 @@ try {
     $branch = (& git.exe branch --show-current).Trim()
     Assert-Exit "Git Curator branch"
     if ($branch -ne "develop") { throw "Curator deve usar develop, encontrado: $branch" }
-    if (-not (Select-String -LiteralPath ".gitignore" -Pattern '^\s*/input/\s*$' -Quiet)) {
-        throw "Curator .gitignore nao protege /input/"
+    # Current Curator intentionally tracks input/README.md and input/scripts/.
+    # The actual Analyzer ZIP and downloaded media remain excluded by Git.
+    $protected = @(
+        "input/analyzer/__git_gate__/run/SECOND_CURATION.zip",
+        "input/analyzer/__git_gate__/run/ANALYZER_TO_CURATOR_HANDOFF.json",
+        "input/videos/abcdefghijk/source.mp4",
+        "input/videos/abcdefghijk/download_report.json",
+        "input/curadorias/__git_gate__/run/EDITORIAL.zip"
+    )
+    foreach ($sample in $protected) {
+        & git.exe check-ignore --no-index -q -- $sample
+        if ($LASTEXITCODE -ne 0) {
+            throw "Arquivo local nao protegido pelo Git: $sample"
+        }
     }
-    $tracked = @(& git.exe ls-files -- input)
-    Assert-Exit "Curator tracked input"
-    if ($tracked.Count -ne 0) { throw "Arquivos de input estao no Git. Pare para investigar." }
+    & git.exe check-ignore --no-index -q -- "input/scripts/__git_gate__/REVISION.json"
+    if ($LASTEXITCODE -eq 0) {
+        throw "Curator input/scripts/ deve permitir roteiros versionaveis"
+    }
+    $tracked = @(& git.exe ls-files -- input/analyzer input/videos input/curadorias)
+    Assert-Exit "Curator tracked source/media inputs"
+    if ($tracked.Count -ne 0) {
+        throw "Foram encontrados arquivos Analyzer/midia no indice Git: $($tracked -join ', ')"
+    }
     Write-Host "[3/4] Inspetor de inbox Curator - somente leitura"
     & $python -m unittest discover -s tests -p test_analyzer_inbox.py -v
     Assert-Exit "Inspetor Curator"

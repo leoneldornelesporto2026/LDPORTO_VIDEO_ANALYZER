@@ -1009,7 +1009,7 @@ class App:
                     self.final_heading.set('ANÁLISE FINALIZADA — PACOTE ENTREGUE AO VIDEO CURATOR')
                 self.final_summary.set(self.final_summary.get() +
                     '\n\nCurator: ' + status +
-                    '\nVídeo: ' + str(receipt.get('video_id') or 'n/d') +
+                    '\nVídeo: ' + str(receipt.get('video_title') or receipt.get('video_id') or 'n/d') +
                     '\nZIP: ' + str((receipt.get('zip') or {}).get('name') or 'n/d') +
                     '\nDestino: ' + str(receipt.get('destination') or 'n/d') +
                     '\nSHA256 conferido: ' + str((receipt.get('zip') or {}).get('sha256') or 'n/d') +

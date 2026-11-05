@@ -20,7 +20,8 @@ DEFAULTS = {
     "export": {"legacy_full_analysis": False, "chunk_records":500, "chunk_max_bytes":2097152,
                "second_curation_auto": True, "second_curation_visual_candidate_limit": 16,
                "second_curation_output_dir": None, "include_candidate_previews": False,
-               "organized_project_auto": False, "organized_project_root": None},
+               "organized_project_auto": False, "organized_project_root": None,
+                "curator_delivery_auto": True, "curator_delivery_root": None},
     "download": {"max_height": 1080, "cookies_file": None, "allow_download": False,
                  "media_library_root": None, "media_reference": None, "expected_sha256": None},
     "audio": {"highpass_hz": 40, "denoise": False, "normalize": True,
@@ -370,9 +371,13 @@ def validate(cfg):
         raise ValueError('Tamanho de chunk de exportacao invalido')
     if not isinstance(cfg["vision"]["adaptive_sampling"], bool):
         raise ValueError("vision.adaptive_sampling deve ser booleano")
-    for key in ('second_curation_auto', 'include_candidate_previews', 'organized_project_auto'):
+    for key in ('second_curation_auto', 'include_candidate_previews', 'organized_project_auto', 'curator_delivery_auto'):
         if not isinstance(cfg['export'][key], bool):
             raise ValueError('export.' + key + ' deve ser booleano')
+    curator_root = cfg['export']['curator_delivery_root']
+    if curator_root is not None and (not isinstance(curator_root, str) or
+                                     not curator_root.strip() or len(curator_root) > 1024):
+        raise ValueError('export.curator_delivery_root deve ser caminho nao vazio ou null')
     limit = cfg['export']['second_curation_visual_candidate_limit']
     if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
         raise ValueError('second_curation_visual_candidate_limit deve estar entre 1 e 100')

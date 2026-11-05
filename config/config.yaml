@@ -11,6 +11,10 @@ export:
   legacy_full_analysis: false
   chunk_records: 500
   chunk_max_bytes: 2097152
+  # Entrega local: copia do ZIP validado para segunda curadoria (sem importacao).
+  curator_delivery_auto: true
+  # null = descobre LDPORTO_VIDEO_CURATOR na pasta irmã do Analyzer.
+  curator_delivery_root: null
 transcription:
   model: large-v3
   chunk_seconds: 240

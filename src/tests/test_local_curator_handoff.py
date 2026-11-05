@@ -180,7 +180,10 @@ def test_11_refuses_destination_symlinks(tmp_path, stubbed_validator):
     root = fake_curator(tmp_path)
     external = tmp_path / "elsewhere"
     external.mkdir()
-    (root / "input").symlink_to(external, target_is_directory=True)
+    try:
+        (root / "input").symlink_to(external, target_is_directory=True)
+    except OSError:
+        pytest.skip("Windows symlink creation requires Developer Mode or elevated privileges")
     source = fake_zip(tmp_path / "run")
     assert delivery.auto_delivery({"path": str(source)}, curator_root=root)["delivery_status"] == "DELIVERY_BLOCKED"
     assert not list(external.rglob("*.zip"))
@@ -221,7 +224,7 @@ def test_15_real_core_package_validator_accepts_synthetic_export(tmp_path):
     root = fake_curator(tmp_path)
     analysis = analysis_fixture()
     analysis["metadata"]["source"]["id"] = "SYNTHETIC_VALIDATED"
-    analysis["run_manifest"] = {"run_id": "VALIDATED_SYNTHETIC_RUN"}
+    analysis.setdefault("run_manifest", {})["run_id"] = "VALIDATED_SYNTHETIC_RUN"
     package = build_core_package(analysis, output_dir=tmp_path / "official_core")
     assert validate_core_package(package["path"])["status"] == "valid"
     result = delivery.deliver_package(package["path"], curator_root=root, expected_sha=package["zip_sha256"])
@@ -229,3 +232,29 @@ def test_15_real_core_package_validator_accepts_synthetic_export(tmp_path):
     assert result["curator_import_status"] == "CURATOR_IMPORT_PENDING"
     assert delivery.file_hash(result["zip"]["path"]) == package["zip_sha256"]
     assert Path(result["receipt_path"]).is_file()
+
+
+def test_16_config_accepts_local_curator_options_without_unknown_field_errors():
+    from ldporto.config import DEFAULTS, merge, validate
+    cfg = merge(DEFAULTS, {"export": {"curator_delivery_auto": False,
+                                     "curator_delivery_root": "C:/Meus Projetos/Curator"}})
+    validate(cfg)
+    assert cfg["export"]["curator_delivery_auto"] is False
+    assert cfg["export"]["curator_delivery_root"] == "C:/Meus Projetos/Curator"
+
+
+def test_17_config_rejects_wrong_types_and_empty_curator_path():
+    from ldporto.config import DEFAULTS, merge, validate
+    for invalid in (123, True, "  "):
+        cfg = merge(DEFAULTS, {"export": {"curator_delivery_root": invalid}})
+        with pytest.raises(ValueError, match="curator_delivery_root"):
+            validate(cfg)
+    cfg = merge(DEFAULTS, {"export": {"curator_delivery_auto": "sim"}})
+    with pytest.raises(ValueError, match="curator_delivery_auto"):
+        validate(cfg)
+
+
+def test_18_auto_delivery_can_be_explicitly_disabled(tmp_path):
+    result = delivery.auto_delivery(None, config={"curator_delivery_auto": False})
+    assert result["delivery_status"] == "DELIVERY_DISABLED"
+    assert not (tmp_path / "input").exists()

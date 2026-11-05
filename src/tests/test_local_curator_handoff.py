@@ -258,3 +258,14 @@ def test_18_auto_delivery_can_be_explicitly_disabled(tmp_path):
     result = delivery.auto_delivery(None, config={"curator_delivery_auto": False})
     assert result["delivery_status"] == "DELIVERY_DISABLED"
     assert not (tmp_path / "input").exists()
+
+
+def test_19_cli_reports_verified_delivery_and_not_unverified_import():
+    root = Path(__file__).resolve().parents[2]
+    code = (root / "analyze.py").read_text(encoding="utf-8")
+    assert "ANÁLISE FINALIZADA — PACOTE ENTREGUE AO VIDEO CURATOR" in code
+    assert "delivery.get('curator_import_status')" in code
+    assert "delivery.get('destination')" in code
+    assert "delivery.get('analysis_state')" in code
+    assert "delivery.get('delivery_status') in ('DELIVERED', 'ALREADY_DELIVERED')" in code
+    assert "VIDEO CURATOR: DELIVERY_BLOCKED" in code

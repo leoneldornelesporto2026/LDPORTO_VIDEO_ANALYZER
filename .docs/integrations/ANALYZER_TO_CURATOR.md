@@ -71,3 +71,10 @@ Para reutilizar um ZIP oficial ja exportado, sem inferencia de video:
 Opcional: -CuratorRoot aponta para o repo existente fora da pasta irma.
 O script recusa outras branches, verifica /input/ ignorado e Git sem arquivos de input rastreados.
 Sinteticos nao sao entrega fisica; somente -AnalysisDir faz copia real e verifica SHA no Curator.
+
+## Confirmação na GUI e no CLI
+
+O Analyzer exibe a confirmação de pacote entregue somente quando a cópia recebeu
+DELIVERED ou ALREADY_DELIVERED. Inclui vídeo, ZIP, SHA256, destino, contagens
+e CURATOR_IMPORT_PENDING. Erros geram DELIVERY_BLOCKED com o motivo,
+sem eliminar o ZIP original do Analyzer.

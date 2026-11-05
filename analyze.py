@@ -276,6 +276,25 @@ def main():
         print(" | ".join(counts))
         print("Qualidade:", analysis.get("quality_gate", {}).get("status", "not_measured"))
         print("Para enviar ao ChatGPT:", (analysis.get('second_curation_export') or {}).get('path') or 'Pacote indisponivel; confira o diagnostico.')
+        # Curator receives evidence only; this does not attest an R57 import.
+        try:
+            delivery = json.loads((folder / 'curator_delivery.json').read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            delivery = {}
+        if delivery.get('delivery_status') in ('DELIVERED', 'ALREADY_DELIVERED'):
+            print("ANÁLISE FINALIZADA — PACOTE ENTREGUE AO VIDEO CURATOR")
+            print("Vídeo:", delivery.get('video_title') or delivery.get('video_id') or 'n/d')
+            print("ZIP:", (delivery.get('zip') or {}).get('name'))
+            print("Destino:", delivery.get('destination'))
+            print("SHA256:", (delivery.get('zip') or {}).get('sha256'))
+            print("Candidatos:", delivery.get('reel_candidate_count'), "Reels,",
+                  delivery.get('story_candidate_count'), "Stories")
+            print("Estado:", delivery.get('analysis_state'),
+                  "| Importador:", delivery.get('curator_import_status'),
+                  "| Próximo passo: segunda curadoria com ChatGPT")
+        elif delivery.get('delivery_status') == 'DELIVERY_BLOCKED':
+            print("VIDEO CURATOR: DELIVERY_BLOCKED —", delivery.get('reason'),
+                  "| ZIP original do Analyzer preservado.")
         from ldporto.progress import EVENT_PREFIX
         print(EVENT_PREFIX + json.dumps({'event':'run_completed', 'analysis_status':analysis['analysis_status'],
                            'package':analysis.get('second_curation_export'), 'package_path':(analysis.get('second_curation_export') or {}).get('path')}), flush=True)

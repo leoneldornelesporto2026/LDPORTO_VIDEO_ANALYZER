@@ -1,4 +1,4 @@
-"""Verify or safely repair CRLF checkout of the immutable stage55 JSON fixture.
+r"""Verify or safely repair CRLF checkout of the immutable stage55 JSON fixture.
 
 This is NOT a hash updater. The only accepted repair is CRLF -> LF producing
 the exact historical SHA256. No network, dependencies, or other files touched.

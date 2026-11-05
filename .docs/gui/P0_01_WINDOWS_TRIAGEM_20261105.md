@@ -65,3 +65,22 @@ Get-FileHash src/tests/fixtures/stage55_commercial_synthetic.json -Algorithm SHA
 
 Os ZIPs R4.9-S4 permanecem ausentes. Isso ainda bloqueia a suite historica,
 independentemente do resultado das correcoes focais. Nao criar substitutos.
+
+## Nova evidencia Windows — 2026-11-05
+
+Commit testado: `de79399a807f96f19f1640f8eea165ae20c5a78a`.
+Operador confirmou `git status --short` vazio antes do pull, branch develop,
+e correção da fixture stage55 com o script verificando
+SHA256 `81298196b4006f83e1cf3bc9c25dd82b243fbcf877e294f0c0122c4dfba9b164`.
+
+Resultado da regressao focada Windows:
+**65 passed, 1 skipped, 14 subtests passed, 1 warning em 6.31s.**
+As duas falhas anteriores (allowlist e CRLF) foram resolvidas nessa bateria.
+O warning e um `DeprecationWarning: invalid escape sequence '\\.'` do docstring
+do utilitario de reparo; corrigido tornando a docstring uma raw string.
+
+**Status de aceite P0-01: parcial.** Os testes focais foram comprovados,
+mas a suite completa segue bloqueada pela falta de
+`CHATGPT_REVIEW.zip` e `SECOND_CURATION_READY.zip` originais.
+Tambem falta homologar abertura e navegacao visual da GUI.
+Nao desabilitar testes nem alterar hashes para conceder aceite.

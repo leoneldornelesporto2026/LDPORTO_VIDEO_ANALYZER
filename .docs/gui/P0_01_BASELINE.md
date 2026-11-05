@@ -42,8 +42,10 @@ requirements/dev.txt antes de executar uma instalacao explicita no ambiente.
 - [x] Regressao focal GUI no Windows: 39 passed, 12 subtests passed.
 - [ ] Suite completa aprovada: 2622 passed, 10 failed, 5 skipped e 28 subtests passed (466.82s) em 2026-11-05.
   Triagem: 7 faltas de ZIPs historicos, 1 conversao CRLF e 2 launchers.
-  Correcoes publicadas, ainda nao validadas no Windows.
-  Os ZIPs precisam ser restaurados com hashes exatos de ORIGEM.json.
+  **Revalidacao focal no Windows (commit de79399): 65 passed, 1 skipped, 14 subtests passed, 1 warning, em 6.31s.**
+  O SHA256 da fixture foi recuperado exatamente (81298196...).
+  **Pendencia atual:** recuperar dois ZIPs originais, executar suite geral e validar a GUI visualmente.
+  O aviso de string de caminho foi corrigido em commit posterior; requer confirmar ausencia de warning no Windows.
 - [ ] GUI atual abre e funciona no Windows antes da refatoracao.
 
 **Status: AGUARDANDO VALIDACAO WINDOWS.**

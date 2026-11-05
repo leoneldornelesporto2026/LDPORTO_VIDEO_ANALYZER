@@ -38,6 +38,29 @@ Ollama é local, em loopback. O perfil `max` conserva seu orçamento original;
 consulte [configuração Ollama](docs/setup/OLLAMA_MAXIMO.md). A falta de um recurso
 habilitado aparece no preflight. Desabilite-o explicitamente quando adequado.
 
+### Atalhos Windows: interface publica
+
+Os oito `.bat` na raiz sao entradas publicas, mantidas por compatibilidade
+com instrucoes existentes. Cinco sao atalhos para `scripts/windows/`;
+`ABRIR_ANALYZER.bat` inicia a GUI; os dois diagnósticos chamam as ferramentas
+Python existentes. Evite apagar os atalhos sem migrar os chamadores.
+
+| Entrada | Finalidade |
+| --- | --- |
+| `ABRIR_ANALYZER.bat` | Inicializar GUI (Python 3.11) |
+| `INSTALAR_WINDOWS.bat` | Instalar base |
+| `INSTALAR_AVANCADO_WINDOWS.bat` | Instalar extras |
+| `DIAGNOSTICO_WINDOWS.bat` | `analyze.py --doctor --offline` |
+| `DIAGNOSTICO_GPU_WINDOWS.bat` | `scripts/test_gpu.py --check-only` |
+| `TESTAR_WINDOWS.bat` | Instalar dependencias dev e executar pytest |
+| `CORRIGIR_GPU_WINDOWS.bat` | Reparar runtime GPU |
+| `CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat` | Configurar Ollama local |
+
+Instalacao, GPU e Ollama podem modificar o ambiente quando chamados;
+diagnosticos apenas verificam prontidao e nao comprovam inferencia real.
+Para testar a integridade dos caminhos `.bat` sem executa-los:
+`python -m unittest discover -s src/tests -p test_windows_batch_paths.py`.
+
 ## Analisar
 
 Na GUI, selecione a entrada e os recursos, acompanhe as etapas e abra os resultados.

@@ -1,5 +1,8 @@
 @echo off
 setlocal EnableExtensions
-REM Compatibility wrapper. Canonical implementation: scripts/windows/diagnostics/DIAGNOSTICO_GPU_WINDOWS.bat
-call "%~dp0scripts\windows\diagnostics\DIAGNOSTICO_GPU_WINDOWS.bat" %*
+cd /d "%~dp0"
+call "%~dp0scripts\windows\CHECK_RUNTIME.bat"
+if errorlevel 1 exit /b 1
+echo L.D.PORTO - Diagnostico CUDA sem carregar modelos
+".venv\Scripts\python.exe" scripts\test_gpu.py --check-only
 exit /b %errorlevel%

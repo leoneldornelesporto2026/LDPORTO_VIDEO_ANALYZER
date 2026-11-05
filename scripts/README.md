@@ -1,18 +1,28 @@
-# Project Tools
+# Ferramentas do projeto
 
-Public commands remain available through the root compatibility wrappers.
+A raiz conserva oito atalhos `.bat` publicos para compatibilidade. Cinco
+delegam para scripts reais em `scripts/windows/`; o launcher da GUI
+`ABRIR_ANALYZER.bat` verifica o Python 3.11. Os diagnosticos apontavam
+para scripts inexistentes em `scripts/windows/diagnostics/` e foram
+corrigidos sem criar uma nova camada de arquivos batch.
 
-- windows/install/: base and optional Windows installation.
-- windows/diagnostics/: readiness and GPU diagnostics.
-- windows/gpu/: NVIDIA runtime repair; never stops unrelated Ollama models.
-- windows/ollama/: local serial Ollama configuration.
-- windows/testing/: canonical Python 3.11 pytest entrypoint.
-- dev/compare_runs.py: artifact comparison and replay editorial audit.
-- export/exportar_ldporto.py: source/forensic exporter; generated files live inside ZIPs.
+- `DIAGNOSTICO_WINDOWS.bat`: `analyze.py --doctor --offline` (preflight).
+- `DIAGNOSTICO_GPU_WINDOWS.bat`: `scripts/test_gpu.py --check-only` (CUDA).
+- `windows/CHECK_RUNTIME.bat`: Python 3.11 e `.venv`.
+- `windows/install/`: instalacao base/avancada, por comando explicito.
+- `windows/gpu/`: reparo NVIDIA, sem encerrar sessoes Ollama externas.
+- `windows/ollama/`: configuracao Ollama local.
+- `windows/testing/`: testes pytest; instala requirements/dev.
+- `windows/TESTAR_FLUXO_REAL_WINDOWS.bat`: canario de midia real, opt-in.
+- `dev/`: ferramentas de auditoria, benchmark e replay.
+- `export/`: geracao de pacote/ZIP.
 
-All moved Windows implementations resolve the project root from their own location,
-not the caller's working directory. Export/package outputs belong to ignored
-pacotes_para_enviar/ or exports/, never the source root.
-## Sessões 9–11: primeiro teste real
+Os scripts Windows operam relativos a seu diretorio e nao ao CWD do caller.
+Pacotes gerados ficam em `pacotes_para_enviar/` ou `exports/`, fora do fonte.
+O instalador base agora repassa o status de erro do `install.py`.
 
-`python scripts/dev/start_real_test_s11.py --package SECOND_CURATION_READY.zip --source video_original.mp4 --output pasta_teste` valida prontidão e hash da fonte e renderiza um único MP4 1080×1920. `scripts/dev/curator_s9.py` faz aprovação do canário, lote e gate final; `scripts/dev/performance_s10.py` audita A/B; `scripts/dev/homologation_s11.py` gera o relatório final. Leia `docs/S9_S11_REAL_TEST.md` antes de marcar qualquer aprovação.
+## Sessoes 9-11: teste real
+
+`python scripts/dev/start_real_test_s11.py --package SECOND_CURATION_READY.zip --source video_original.mp4 --output pasta_teste`
+valida prontidao e hash da fonte e gera um canario MP4. A aprovacao/revisao
+e separada do teste e nao autoriza publicacao. Leia `docs/S9_S11_REAL_TEST.md`.

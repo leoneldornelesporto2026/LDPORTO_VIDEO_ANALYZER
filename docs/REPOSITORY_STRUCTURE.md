@@ -21,10 +21,12 @@ Runtime: Python 3.11.x. The root is the public interface, not artifact staging.
 | .cache/ | Ignored tools, benchmark extraction and local runtime history |
 
 Root allowlist: .gitignore, ABRIR_ANALYZER.bat, analyze.py, app.py, install.py,
-README.md, requirements.txt, pytest.ini and CHANGELOG_V43.md. The seven small
-Windows compatibility wrappers and compare_runs.py/exportar_ldporto.py remain
-public entrypoints because older documented workflows and callers use them.
-They dispatch only; canonical implementations are under scripts/.
+README.md, requirements.txt, pytest.ini and CHANGELOG_V43.md. The seven auxiliary root Windows .bat entrypoints are retained for compatibility:
+five delegate to scripts/windows/, while the two diagnostics call the existing
+Python doctor and CUDA check directly. ABRIR_ANALYZER.bat is the GUI launcher.
+The former scripts/windows/diagnostics/ paths did not exist. The public
+compare_runs.py/exportar_ldporto.py entrypoints are also preserved.
+See scripts/README.md for an operational inventory.
 
 Root PROJECT_EXPORT_* and WORK_PACKAGE_* are generated package outputs. Existing
 user-modified .package/PROJECT_EXPORT_* files are preserved unchanged. Historical delivery manifests v3

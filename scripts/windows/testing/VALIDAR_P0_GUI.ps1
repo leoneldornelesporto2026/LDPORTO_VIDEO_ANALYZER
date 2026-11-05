@@ -38,6 +38,8 @@ try {
 
     Write-Host ""
     Write-Host "[3/3] Regressao focal da GUI"
+    & $python -m unittest discover -s src/tests -p test_fixture_newline_policy.py -v
+    Assert-Success "Regressao de integridade EOL"
     & $python -m pytest -q src/tests/test_r62_media_gui.py src/tests/test_stage54_ocr_gui.py src/tests/test_sol_v3_gui_review.py src/tests/test_windows_batch_paths.py
     Assert-Success "Regressao GUI"
 

@@ -284,8 +284,8 @@ def test_downstream_replay_does_not_run_asr_vision_or_llm(tmp_path):
 
 
 ROOT_ALLOWLIST = {
-    '.gitignore', 'ABRIR_ANALYZER.bat', 'analyze.py', 'app.py', 'install.py',
-    'README.md', 'requirements.txt', 'pytest.ini', 'CHANGELOG_V43.md',
+    '.gitignore', '.gitattributes', 'ABRIR_ANALYZER.bat', 'analyze.py', 'app.py', 'install.py',
+    'README.md', 'requirements.txt', 'pytest.ini',
     'compare_runs.py', 'exportar_ldporto.py', 'AGENTS.md',
     'CONFIGURAR_OLLAMA_MAXIMO_WINDOWS.bat',
     'CORRIGIR_GPU_WINDOWS.bat', 'DIAGNOSTICO_GPU_WINDOWS.bat', 'DIAGNOSTICO_WINDOWS.bat',

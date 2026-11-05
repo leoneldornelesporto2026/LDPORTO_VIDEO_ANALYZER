@@ -39,3 +39,29 @@ a suite pode ser considerada aprovada. Nao alterar main/release.
 O validador P0 com -FullSuite passa a verificar primeiro existencia, tamanho e
 SHA256 dos dois ZIPs originais e da fixture stage55 LF. Sem integridade
 comprovada interrompe antes da longa suite, sem ignorar nenhum teste.
+
+## Correcao complementar de 2026-11-05 (apos revalidacao Windows)
+
+O Windows aprovou 57 testes, ignorou 1, aprovou 14 subtestes e encontrou
+mais 2 falhas focais. O teste de allowlist da raiz nao incluia .gitattributes:
+a configuracao Git era valida, mas o teste tinha inventario desatualizado.
+A lista foi corrigida incluindo .gitattributes e retirando CHANGELOG_V43.md,
+ja movido para .docs/.
+
+O JSON stage55 continuou CRLF mesmo apos git restore. Para preservar
+os bytes exatos, .gitattributes passou a marcar somente essa fixture
+como -text, desabilitando qualquer conversao automatica de EOL.
+Adicionada ferramenta REPARAR_EOL_FIXTURE_STAGE55.py que somente transforma
+CRLF em LF se o SHA256 resultante for exatamente o registrado; nenhuma
+mudanca de conteudo ou atualizacao do hash esperado e permitida.
+
+No Windows, depois de git pull, execute explicitamente:
+
+~~~powershell
+.\.venv\Scripts\python.exe scripts/windows/testing/REPARAR_EOL_FIXTURE_STAGE55.py --repair
+Get-FileHash src/tests/fixtures/stage55_commercial_synthetic.json -Algorithm SHA256
+.\.venv\Scripts\python.exe -m pytest -q src/tests/test_v43_runtime.py src/tests/test_windows_batch_paths.py src/tests/test_stage55_commercial_evidence.py src/tests/test_fixture_newline_policy.py
+~~~
+
+Os ZIPs R4.9-S4 permanecem ausentes. Isso ainda bloqueia a suite historica,
+independentemente do resultado das correcoes focais. Nao criar substitutos.

@@ -19,3 +19,16 @@ Esta etapa depende de aceite visual. Teste estatico nao homologa a interface.
 Suite geral continua bloqueada pelos dois ZIPs historicos originais ausentes.
 
 Proxima: P0-03 - fluxo de entrada de video; depois P0-04 - perfis de analise.
+
+## Evidencia Windows recebida (2026-11-05)
+
+Abertura da GUI Windows comprovada com Python 3.11.9. A captura do
+usuario mostra cabeçalho, seis itens da navegacao, titulos das secoes
+e rodape fixo com ANALISAR. Testes estaticos da P0-02: 6/6 PASS;
+baseline P0-01: 15/15 PASS; regressao focal: 39 PASS e 14 subtestes
+PASS. Teste de integridade de fixture: 6/6 PASS.
+
+Apenas a renderizacao inicial foi comprovada pela captura.
+Ainda nao ha evidencia de clique em cada item de navegacao, DPI 125%
+e janela reduzida. O aceite completo de P0-02 fica pendente desses
+casos; P0-03 avanca isoladamente sem promover release/main.

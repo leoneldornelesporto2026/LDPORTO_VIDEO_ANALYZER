@@ -19,6 +19,7 @@ o indice do acervo tecnico.
 
 - [P0-01 - Baseline](gui/P0_01_BASELINE.md)
 - [P0-02 - Navegacao visual](gui/P0_02_SHELL.md)
+- [P0-03 - Origem de video guiada](gui/P0_03_MEDIA_CARD.md)
 
 ## Arquitetura e desenvolvimento
 

@@ -21,6 +21,7 @@ from ldporto.progress import WeightedProgress, STAGE_WEIGHTS, STAGE_LABELS, EVEN
 from ldporto.core import scrub
 from ldporto.gui.theme import apply_theme
 from ldporto.gui.navigation import scroll_fraction
+from ldporto.gui.presets import PROFILE_CHOICES, preset_settings, describe_effective_profile
 
 
 def inspect_media_selection(source, *, root, local_path='', expected_sha256='', download_config=None):
@@ -246,6 +247,23 @@ class App:
         self.local_original.trace_add('write', lambda *_: self.change_media_selection())
         self.media_sha256.trace_add('write', lambda *_: self.change_media_selection())
         mark_section("asr", "02   ANÁLISE E TRANSCRIÇÃO", "ASR, CPU/CUDA e modelo semântico.")
+        presets_card = ttk.Frame(outer, style="Preset.TFrame", padding=(16, 12))
+        presets_card.pack(fill="x", pady=(0, 12))
+        ttk.Label(presets_card, text="PERFIL DE ANÁLISE", style="PresetHeading.TLabel").pack(anchor="w")
+        ttk.Label(presets_card,
+                  text="Opcional: escolha o modelo ASR e o perfil do Ollama. Nada é baixado ou habilitado automaticamente.",
+                  style="PresetHint.TLabel").pack(anchor="w", pady=(4, 9))
+        self.analysis_profile = tk.StringVar(value="Personalizado")
+        self._applying_analysis_profile = False
+        profile_row = ttk.Frame(presets_card, style="Preset.TFrame")
+        profile_row.pack(fill="x")
+        self.analysis_profile_combo = ttk.Combobox(profile_row, textvariable=self.analysis_profile,
+                                                   values=PROFILE_CHOICES, state="readonly", width=33)
+        self.analysis_profile_combo.pack(side="left")
+        self.analysis_profile_combo.bind("<<ComboboxSelected>>",
+                                         lambda _event: self.apply_analysis_profile())
+        ttk.Label(profile_row, text="A escolha não altera CPU/CUDA, OCR, câmera ou consentimento.",
+                  style="PresetHint.TLabel").pack(side="left", padx=(12, 0))
         line2 = ttk.Frame(outer)
         line2.pack(fill="x", pady=8)
         ttk.Label(line2, text="Modelo ASR").pack(side="left")
@@ -278,6 +296,12 @@ class App:
         ttk.Button(ollama_row, text="Configurar Ollama", command=self.configure_ollama).pack(side="left", padx=4)
         self.ollama_status = tk.StringVar(value="Ollama: verificando…")
         ttk.Label(outer, textvariable=self.ollama_status, font=("Segoe UI", 9)).pack(anchor="w", pady=(0, 6))
+        self.analysis_profile_summary = tk.StringVar()
+        ttk.Label(presets_card, textvariable=self.analysis_profile_summary,
+                  wraplength=880, justify="left", style="PresetSummary.TLabel").pack(anchor="w", pady=(9, 0))
+        for variable in (self.model, self.device, self.ollama, self.ollama_model, self.ollama_profile):
+            variable.trace_add("write", lambda *_: self.on_manual_analysis_setting_change())
+        self.update_analysis_profile_summary()
         mark_section("camera", "03   CÂMERA E MOVIMENTO", "Camera Director e Smart Zoom.")
         try:
             camera_cfg = load_config(ROOT/"config"/"config.yaml")["camera_director"]
@@ -435,6 +459,35 @@ class App:
         window.after(150, self.poll)
         window.after(500, self.refresh_ollama)
         window.protocol("WM_DELETE_WINDOW", self.close)
+
+    def apply_analysis_profile(self):
+        """Apply only explicitly chosen ASR and semantic profile values."""
+        chosen = self.analysis_profile.get()
+        settings = preset_settings(chosen)
+        if settings is not None:
+            self._applying_analysis_profile = True
+            try:
+                self.model.set(settings["asr_model"])
+                self.ollama_profile.set(settings["ollama_profile"])
+            finally:
+                self._applying_analysis_profile = False
+        self.update_analysis_profile_summary()
+
+    def on_manual_analysis_setting_change(self):
+        """An edited setting cannot continue claiming a named preset."""
+        if getattr(self, "_applying_analysis_profile", False):
+            return
+        if self.analysis_profile.get() != "Personalizado":
+            self.analysis_profile.set("Personalizado")
+        self.update_analysis_profile_summary()
+
+    def update_analysis_profile_summary(self):
+        """Show effective settings without claiming speed or accuracy measurements."""
+        summary = describe_effective_profile(
+            self.analysis_profile.get(), self.model.get(), self.device.get(),
+            self.ollama.get(), self.ollama_model.get(), self.ollama_profile.get()
+        )
+        self.analysis_profile_summary.set(summary)
 
     def navigate_to_section(self, section):
         """Navigate within the form; this callback does not alter analysis state."""

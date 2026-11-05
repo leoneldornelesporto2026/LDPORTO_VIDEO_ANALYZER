@@ -43,6 +43,10 @@ try {
     & $python -m unittest discover -s src/tests -p test_p0_media_card.py -v
     Assert-Success "P0-03 origem de video"
     Write-Host ""
+    Write-Host "[P0-04] Perfis opcionais de analise"
+    & $python -m unittest discover -s src/tests -p test_p0_analysis_presets.py -v
+    Assert-Success "P0-04 perfis"
+    Write-Host ""
     Write-Host "[3/3] Regressao focal da GUI"
     & $python -m unittest discover -s src/tests -p test_fixture_newline_policy.py -v
     Assert-Success "Regressao de integridade EOL"

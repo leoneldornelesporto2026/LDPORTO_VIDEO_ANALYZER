@@ -9,10 +9,10 @@ Nenhum modelo, GPU, download ou pacote foi executado para esta entrega.
 
 ## Gates Windows
 
-- [ ] 8 testes P0-03 passam.
-- [ ] 6 testes P0-02 e 15 P0-01 passam.
-- [ ] Regressao focal de midia, OCR e seguranca passa.
-- [ ] Janela abre; escolher video, colar URL, verificar, expandir/recolher.
+- [x] 8/8 testes P0-03 PASS no Windows (commit c9c76a6, 2026-11-05).
+- [x] 6/6 P0-02 e 15/15 P0-01 PASS (Windows 2026-11-05).
+- [x] Regressao focal GUI 39 passed e 14 subtests passed (Windows 2026-11-05).
+- [ ] Janela: launcher confirma Python 3.11.9; ainda faltam captura e clique em escolher video, URL, verificar, expandir/recolher.
 - [ ] Consentimento permanece desmarcado por padrao e nao ocorre download automatico.
 - [ ] Rodape fixo e scroll testados com diferentes escalas Windows.
 

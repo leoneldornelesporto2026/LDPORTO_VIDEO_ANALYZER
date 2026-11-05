@@ -49,3 +49,12 @@ def apply_theme(style):
               foreground=[("readonly", "#16171c")])
     style.configure("MediaStatus.TFrame", background=COLORS["surface_alt"])
     style.configure("MediaStatus.TLabel", background=COLORS["surface_alt"], foreground=COLORS["text"])
+
+    # P0-04 semantic presets are UI-only; model loading remains in the CLI.
+    style.configure("Preset.TFrame", background=COLORS["surface"])
+    style.configure("PresetHeading.TLabel", background=COLORS["surface"],
+                    foreground=COLORS["text"], font=("Segoe UI", 11, "bold"))
+    style.configure("PresetHint.TLabel", background=COLORS["surface"],
+                    foreground=COLORS["muted"])
+    style.configure("PresetSummary.TLabel", background=COLORS["surface"],
+                    foreground=COLORS["text"], font=("Segoe UI", 10))

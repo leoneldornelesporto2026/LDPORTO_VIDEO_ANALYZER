@@ -53,3 +53,21 @@ Para retentar uma entrega bloqueada sem rodar inferência, executar:
 
 Não é possível homologar entrega física em um computador Windows externo sem executar uma análise ou
 reusar um ZIP original validado. Testes sintéticos de transporte não homologam conteúdo real.
+
+## Gate integrado Windows
+
+Na raiz do Analyzer, com ambos repositorios atualizados em develop:
+
+~~~powershell
+.\scripts\windows\testing\VALIDAR_ENTREGA_CURATOR.ps1
+~~~
+
+Para reutilizar um ZIP oficial ja exportado, sem inferencia de video:
+
+~~~powershell
+.\scripts\windows\testing\VALIDAR_ENTREGA_CURATOR.ps1 -AnalysisDir ".\analysis\video_<id>"
+~~~
+
+Opcional: -CuratorRoot aponta para o repo existente fora da pasta irma.
+O script recusa outras branches, verifica /input/ ignorado e Git sem arquivos de input rastreados.
+Sinteticos nao sao entrega fisica; somente -AnalysisDir faz copia real e verifica SHA no Curator.

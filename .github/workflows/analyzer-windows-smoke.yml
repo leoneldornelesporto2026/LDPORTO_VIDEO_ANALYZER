@@ -78,12 +78,45 @@ jobs:
           New-Item -Force -ItemType Directory -Path test-results | Out-Null
           .\.venv\Scripts\python.exe -m pytest -q --disable-warnings --maxfail=8 --junitxml=test-results/windows.xml src/tests/test_v43_runtime.py src/tests/test_r6_project_export.py src/tests/test_r63_compact_handoff_reader.py src/tests/test_r62_delivery_integrity.py src/tests/test_director_integration.py::test_bats_real_crlf_and_python311_syntax
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Preserve JUnit result only
+      - name: Check FFmpeg and FFprobe for synthetic-video regression
+        shell: pwsh
+        run: |
+          if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue) -or -not (Get-Command ffprobe -ErrorAction SilentlyContinue)) {
+            choco install ffmpeg -y --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot install required FFmpeg on ephemeral hosted runner' }
+          }
+          if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue) -or -not (Get-Command ffprobe -ErrorAction SilentlyContinue)) {
+            throw 'BLOCKED: FFmpeg and FFprobe must be available before full regression'
+          }
+          ffmpeg -version | Select-Object -First 1
+          ffprobe -version | Select-Object -First 1
+      - name: Full Windows offline regression (historical ZIP checks explicitly pending)
+        shell: pwsh
+        run: |
+          New-Item -Force -ItemType Directory -Path test-results | Out-Null
+          $extra = @()
+          if (-not (Test-Path 'src/tests/fixtures/historical_evidence/CHATGPT_REVIEW.zip') -or -not (Test-Path 'src/tests/fixtures/historical_evidence/SECOND_CURATION_READY.zip')) {
+            $extra = @(
+              '--deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance'
+              '--deselect=src/tests/test_stage13_explainability.py::test_all_52_historical_candidates_receive_stable_diagnostics'
+              '--deselect=src/tests/test_stage17_editorial_replay.py::test_real_same_52_ids_reproducible_and_unapproved'
+              '--deselect=src/tests/test_stage17_editorial_replay.py::test_mismatched_run_rejected'
+              '--deselect=src/tests/test_stage17_editorial_replay.py::test_missing_upstream_does_not_promote'
+              '--deselect=src/tests/test_stage18_handoff_audit.py::test_real_historical_fixture_hashes_links_and_contact_sheets'
+              '--deselect=src/tests/test_stage19_uncertain_words.py::test_historical_flags_are_not_the_prompt_percentage'
+            )
+            "BLOCKED: Seven historical tests not run because original ZIPs are unavailable. Not Windows acceptance." | Out-File -Append -FilePath $env:GITHUB_STEP_SUMMARY
+          }
+          .\.venv\Scripts\python.exe -m pytest src/tests -q --disable-warnings --maxfail=10 --junitxml=test-results/windows-full.xml @extra
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve JUnit results only
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: analyzer-windows-native-junit
-          path: test-results/windows.xml
+          path: |
+            test-results/windows.xml
+            test-results/windows-full.xml
           if-no-files-found: warn
           retention-days: 7
 

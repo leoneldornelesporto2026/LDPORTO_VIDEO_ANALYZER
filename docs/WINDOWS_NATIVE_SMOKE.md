@@ -15,3 +15,9 @@ Operations:
 This is a **new** CI scope not covered by the prior Linux pytest: it must execute and pass before it may be called verified. Windows full-suite testing, GUI interactive testing, real media, Ollama, GPU, FFmpeg integration, original historical ZIPs and promotion remain independent gates.
 
 Any failure must be diagnosed. Do not skip tests or change production contracts solely to make the runner green. Keep the PR draft until evidence is complete and approved.
+
+## Extended native regression (added after initial targeted smoke)
+
+A second Windows-hosted stage checks FFmpeg/FFprobe and runs the **full existing pytest suite** with the same seven explicit historical ZIP tests omitted only when the original ZIPs are unavailable. This stage has **not yet been verified** by this document. This is still synthetic/offline and does not exercise the user's GUI, media library, Ollama/GPU or real local acceptance.
+
+A failure in the extended stage must be diagnosed from the GitHub Actions log; keep the earlier targeted 101-test PASS separate from the full-suite result.

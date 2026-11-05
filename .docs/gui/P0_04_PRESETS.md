@@ -25,8 +25,8 @@ Resumo mostra valores efetivos, sem reivindicar benchmark.
 
 ## Aceite da sessao
 
-- [ ] 10/10 contratos P0-04 passam no Windows.
-- [ ] P0-01/02/03 e regressao focal continuam verdes.
+- [x] 11/11 testes P0-04 aprovados no Windows no commit 750f4eb (2026-11-05).
+- [x] P0-01 15/15, P0-02 6/6, P0-03 8/8, fixture 6/6 e regressao GUI 39 passed + 14 subtests passed, sem falhas.
 - [ ] GUI abre: inicio Personalizado; selecionar Qualidade, Equilibrado, Rapido;
 - [ ] Modelo ASR e perfil Ollama mudam conforme selecao; CPU/CUDA nao muda.
 - [ ] Ativar/desativar Ollama, trocar modelo/dispositivo -> Personalizado.
@@ -71,3 +71,44 @@ P0-03 8 PASS, regressao de integridade 6 PASS. A bateria focal
 completa foi interrompida pelo teste 06 e ainda precisa ser repetida.
 A GUI foi iniciada pelo BAT; falta homologacao visual e comportamental
 dos perfis. A suite historica continua bloqueada pelos ZIPs ausentes.
+
+## Evidencia Windows confirmada — commit 750f4eb (2026-11-05)
+
+O operador atualizou `develop` e executou o comando dedicado e
+`scripts/windows/testing/VALIDAR_P0_GUI.ps1`, usando Python 3.11.9 e pytest 9.1.1.
+
+| Gate | Resultado observado |
+| --- | --- |
+| Testes de perfis P0-04 | 11 passed, 0 failed |
+| Baseline P0-01 | 15 passed, 0 failed |
+| Shell P0-02 | 6 passed, 0 failed |
+| Midia P0-03 | 8 passed, 0 failed |
+| Integridade de fixture | 6 passed, 0 failed |
+| Regressao focal GUI | 39 passed, 14 subtests passed, 0 failed |
+
+No total do validador, sao **85 testes distintos aprovados e 14 subtestes
+aprovados**, sem duplicar a execucao separada da mesma classe P0-04.
+O aviso de escape e a falha da assercao de texto anterior nao reapareceram
+nessa evidencia.
+
+**Aceite de testes P0: APROVADO. Aceite visual P0: PENDENTE.**
+
+### Checklist manual que ainda falta (sem processar videos)
+
+1. Abrir `ABRIR_ANALYZER.bat` e conferir a nova secao de perfis na interface.
+2. Valor inicial deve ser Personalizado, sem alterar selecoes do operador.
+3. Selecionar Qualidade, Equilibrado e Rapido; conferir modelo ASR e
+   perfil do Ollama conforme mapeamento acima.
+4. Conferir que dispositivo CPU/CUDA nao muda, Ollama nao liga/desliga
+   e modelo Ollama permanece o escolhido.
+5. Alterar manualmente ASR ou dispositivo; seletor precisa voltar
+   para Personalizado sem descartar as opcoes.
+6. Abrir os detalhes de SHA256 e voltar; verificar que o consentimento
+   de download continua desmarcado, sem processamento automatico.
+7. Navegar pelas seis secoes; verificar rodape ANALISAR, scroll e foco
+   em 100% e 125% de escala Windows (quando possivel).
+
+A suite historica com evidencias externas **nao foi executada por completo**:
+`CHATGPT_REVIEW.zip` e `SECOND_CURATION_READY.zip` originais continuam
+ausentes. Nunca sintetizar arquivos, editar hashes ou desabilitar testes
+para conceder homologacao. `main` e `release` nao foram modificadas.

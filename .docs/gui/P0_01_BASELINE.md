@@ -48,7 +48,7 @@ requirements/dev.txt antes de executar uma instalacao explicita no ambiente.
   O aviso de string de caminho foi corrigido em commit posterior; requer confirmar ausencia de warning no Windows.
 - [ ] GUI atual abre e funciona no Windows antes da refatoracao.
 
-**Status: AGUARDANDO VALIDACAO WINDOWS.**
+**Status: contratos/regressao focal Windows aprovados; suite historica e aceite visual pendentes.**
 Testes estaticos nao comprovam funcionamento visual nem processamento real.
 Nenhuma promocao para release/main antes do aceite.
 
@@ -61,3 +61,12 @@ Nenhuma promocao para release/main antes do aceite.
 
 Ciclo de trabalho: alterar somente develop, registrar SHA, executar teste
 focado e suite completa no Windows, conferir visual e avancar apos aceite.
+
+## Consolidacao P0 no Windows (2026-11-05)
+
+Commit testado: `750f4eb`. P0-01 15, P0-02 6, P0-03 8,
+P0-04 11, integridade LF 6, regressao focal 39: **85 testes aprovados**,
+mais **14 subtestes aprovados**, sem falhas. A interface ja foi aberta
+em Windows e capturada na P0-02, mas cliques, escalas de tela e a nova
+area de perfis ainda requerem validacao manual. A suite de fixtures
+historicas continua bloqueada pela falta de dois ZIPs originais.

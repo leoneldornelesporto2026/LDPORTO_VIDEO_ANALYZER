@@ -38,3 +38,11 @@ python -m unittest discover -s src/tests -p test_windows_batch_paths.py
 Os diagnosticos exigem `.venv` Python 3.11 pronta. O script de teste geral
 instala dependencias dev; nao executa-lo como checagem somente leitura.
 A verificacao de caminhos nao homologa processamento de midia real.
+
+## Correcao P0-01 (2026-11-05)
+
+Para compatibilidade com o teste legado test_v43_runtime.py, os dois wrappers
+da raiz voltam a usar call "%~dp0...diagnostics..." %* e a propagar exit code.
+Os scripts canonicos foram efetivamente criados em scripts/windows/diagnostics/.
+Mantiveram os comandos read-only de preflight e CUDA check e o CHECK_RUNTIME.
+A nova alteracao exige validacao Windows, que ainda nao foi executada.

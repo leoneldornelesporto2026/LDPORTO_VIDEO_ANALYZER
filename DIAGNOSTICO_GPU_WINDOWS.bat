@@ -1,8 +1,4 @@
 @echo off
 setlocal EnableExtensions
-cd /d "%~dp0"
-call "%~dp0scripts\windows\CHECK_RUNTIME.bat"
-if errorlevel 1 exit /b 1
-echo L.D.PORTO - Diagnostico CUDA sem carregar modelos
-".venv\Scripts\python.exe" scripts\test_gpu.py --check-only
+call "%~dp0scripts\windows\diagnostics\DIAGNOSTICO_GPU_WINDOWS.bat" %*
 exit /b %errorlevel%

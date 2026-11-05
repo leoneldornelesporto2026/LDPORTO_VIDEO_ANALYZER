@@ -38,9 +38,12 @@ requirements/dev.txt antes de executar uma instalacao explicita no ambiente.
 
 - [x] Baseline e limites registrados.
 - [x] Classe e validador publicados na develop.
-- [ ] 15/15 verificacoes P0 aprovadas no Windows.
-- [ ] Regressao focal GUI aprovada no Windows.
-- [ ] Suite completa aprovada; registrar total e skips reais.
+- [x] 15/15 verificacoes P0 aprovadas no Windows (commit 6c8dec9).
+- [x] Regressao focal GUI no Windows: 39 passed, 12 subtests passed.
+- [ ] Suite completa aprovada: 2622 passed, 10 failed, 5 skipped e 28 subtests passed (466.82s) em 2026-11-05.
+  Triagem: 7 faltas de ZIPs historicos, 1 conversao CRLF e 2 launchers.
+  Correcoes publicadas, ainda nao validadas no Windows.
+  Os ZIPs precisam ser restaurados com hashes exatos de ORIGEM.json.
 - [ ] GUI atual abre e funciona no Windows antes da refatoracao.
 
 **Status: AGUARDANDO VALIDACAO WINDOWS.**

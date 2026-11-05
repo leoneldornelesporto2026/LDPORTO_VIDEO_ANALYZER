@@ -20,8 +20,8 @@ class WindowsBatchPathsTests(unittest.TestCase):
                     self.assertTrue(target.is_file(), str(target))
 
     def test_diagnostics_dispatch_to_existing_read_only_python(self):
-        doctor = (ROOT / "DIAGNOSTICO_WINDOWS.bat").read_text(encoding="utf-8")
-        gpu = (ROOT / "DIAGNOSTICO_GPU_WINDOWS.bat").read_text(encoding="utf-8")
+        doctor = (WIN / "diagnostics" / "DIAGNOSTICO_WINDOWS.bat").read_text(encoding="utf-8")
+        gpu = (WIN / "diagnostics" / "DIAGNOSTICO_GPU_WINDOWS.bat").read_text(encoding="utf-8")
         self.assertIn("CHECK_RUNTIME.bat", doctor)
         self.assertIn("CHECK_RUNTIME.bat", gpu)
         self.assertIn("analyze.py --doctor --offline", doctor)

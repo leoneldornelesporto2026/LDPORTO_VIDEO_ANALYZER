@@ -3,6 +3,8 @@ import ast
 import importlib.util
 from pathlib import Path
 import unittest
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 ROOT = Path(__file__).resolve().parents[2]
 APP = ROOT / "app.py"
@@ -76,14 +78,42 @@ class P0ProfilePresetTests(unittest.TestCase):
                           "self.diarization.set(", "self.ollama_model.set("):
             self.assertNotIn(forbidden, code)
 
+    def isolated_method(self, name, *, globals_dict=None):
+        """Execute only the parsed App method, without starting Tkinter."""
+        self.assertIn(name, self.methods)
+        module = ast.fix_missing_locations(
+            ast.Module(body=[self.methods[name]], type_ignores=[])
+        )
+        namespace = dict(globals_dict or {})
+        exec(compile(module, str(APP), "exec"), namespace)
+        return namespace[name]
+
     def test_06_manual_changes_turn_named_profile_into_custom(self):
         code = self.body("on_manual_analysis_setting_change")
-        self.assertIn("self._applying_analysis_profile", code)
+        self.assertIn('getattr(self, "_applying_analysis_profile", False)', code)
         self.assertIn('self.analysis_profile.set("Personalizado")', code)
         constructor = self.body("__init__")
         for name in ("self.model", "self.device", "self.ollama", "self.ollama_model", "self.ollama_profile"):
             self.assertIn(name, constructor)
         self.assertIn('trace_add("write", lambda *_: self.on_manual_analysis_setting_change())', constructor)
+
+        callback = self.isolated_method("on_manual_analysis_setting_change")
+        summary = Mock()
+        state = SimpleNamespace(
+            analysis_profile=FakeVar("Qualidade (large-v3)"),
+            update_analysis_profile_summary=summary,
+        )
+        callback(state)
+        self.assertEqual(state.analysis_profile.get(), "Personalizado")
+        summary.assert_called_once_with()
+
+        # Changes triggered by applying a preset must NOT clear its name.
+        state.analysis_profile.set("Rápido (turbo)")
+        state._applying_analysis_profile = True
+        summary.reset_mock()
+        callback(state)
+        self.assertEqual(state.analysis_profile.get(), "Rápido (turbo)")
+        summary.assert_not_called()
 
     def test_07_effective_summary_shows_actual_values_and_no_fake_benchmarks(self):
         text = self.presets.describe_effective_profile(
@@ -119,6 +149,43 @@ class P0ProfilePresetTests(unittest.TestCase):
                           "local_original.set(", "_start_checked(", "self.launch(",
                           "subprocess.Popen(", "config.yaml"):
                 self.assertNotIn(token, code)
+
+    def test_11_applying_preset_changes_only_expected_values_in_headless_runtime(self):
+        apply = self.isolated_method(
+            "apply_analysis_profile",
+            globals_dict={"preset_settings": self.presets.preset_settings},
+        )
+        summary = Mock()
+        state = SimpleNamespace(
+            analysis_profile=FakeVar("Equilibrado (medium)"),
+            model=FakeVar("tiny"),
+            ollama_profile=FakeVar("fast"),
+            device=FakeVar("cuda"),
+            ollama=FakeVar(False),
+            ollama_model=FakeVar("qwen3:14b"),
+            allow_download=FakeVar(False),
+            media_sha256=FakeVar("f" * 64),
+            update_analysis_profile_summary=summary,
+        )
+        apply(state)
+        self.assertEqual(state.model.get(), "medium")
+        self.assertEqual(state.ollama_profile.get(), "balanced")
+        self.assertEqual(state.device.get(), "cuda")
+        self.assertIs(state.ollama.get(), False)
+        self.assertEqual(state.ollama_model.get(), "qwen3:14b")
+        self.assertIs(state.allow_download.get(), False)
+        self.assertEqual(state.media_sha256.get(), "f" * 64)
+        self.assertIs(state._applying_analysis_profile, False)
+        summary.assert_called_once_with()
+
+        # Switching back to Custom must not rewrite the manual values.
+        state.analysis_profile.set("Personalizado")
+        state.model.set("small")
+        state.ollama_profile.set("max")
+        apply(state)
+        self.assertEqual(state.model.get(), "small")
+        self.assertEqual(state.ollama_profile.get(), "max")
+        self.assertEqual(summary.call_count, 2)
 
 
 if __name__ == "__main__":

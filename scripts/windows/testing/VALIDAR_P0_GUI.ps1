@@ -43,7 +43,28 @@ try {
 
     if ($FullSuite) {
         Write-Host ""
-        Write-Host "[4/4] Suite completa"
+        Write-Host "[4/4] Preflight de integridade antes da suite completa"
+        $expected = @(
+            @{ File="src\tests\fixtures\historical_evidence\CHATGPT_REVIEW.zip"; Hash="5a9da201f984d63de2c68dbd9aee4c03365b9e0815b1fb041130d4da02b5f073"; Bytes=[long]26956533 },
+            @{ File="src\tests\fixtures\historical_evidence\SECOND_CURATION_READY.zip"; Hash="8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349"; Bytes=[long]1864261 },
+            @{ File="src\tests\fixtures\stage55_commercial_synthetic.json"; Hash="81298196b4006f83e1cf3bc9c25dd82b243fbcf877e294f0c0122c4dfba9b164"; Bytes=[long]1598 }
+        )
+        foreach ($item in $expected) {
+            $target = Join-Path $root $item.File
+            if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+                throw ("Fixture nao encontrada: " + $target + ". Para os ZIPs use scripts\windows\testing\RESTAURAR_FIXTURES_HISTORICAS.ps1")
+            }
+            if ((Get-Item -LiteralPath $target).Length -ne $item.Bytes) {
+                throw ("Tamanho divergente: " + $target + ". Preserve o original e confira a proveniencia.")
+            }
+            $actual = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
+            if ($actual -ine $item.Hash) {
+                throw ("SHA256 divergente: " + $target + " (atual: " + $actual + ")")
+            }
+            Write-Host ("OK: " + $item.File)
+        }
+        Write-Host "Integridade aprovada. Iniciando suite completa..."
+
         & $python -m pytest -q src/tests
         Assert-Success "Suite completa"
     } else {

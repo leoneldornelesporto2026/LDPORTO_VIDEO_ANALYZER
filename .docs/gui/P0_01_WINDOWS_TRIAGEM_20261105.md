@@ -33,3 +33,9 @@ Get-FileHash src/tests/fixtures/stage55_commercial_synthetic.json -Algorithm SHA
 ```
 Somente apos evidencias reais Windows e todos os ZIPs integrais
 a suite pode ser considerada aprovada. Nao alterar main/release.
+
+## Preflight adicional de 2026-11-05
+
+O validador P0 com -FullSuite passa a verificar primeiro existencia, tamanho e
+SHA256 dos dois ZIPs originais e da fixture stage55 LF. Sem integridade
+comprovada interrompe antes da longa suite, sem ignorar nenhum teste.

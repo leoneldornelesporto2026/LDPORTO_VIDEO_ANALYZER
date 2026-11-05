@@ -46,7 +46,7 @@ V4.3 hardens the existing analyzer instead of replacing its architecture. The ma
 - Fala simultânea não atribui voz misturada automaticamente; distinção de offscreen / wide shot / falta de frame com indicadores de incerteza.
 - Camera Timeline, Global Planner e Director respeitam `active_person` e evitam zoom automático baseado apenas em rosto visível.
 - Auditor offline `scripts/dev/audit_speaker_s5.py`, goldset CSV e opção de comparar predições ASD externas sem promover modelo.
-- Limites e instruções: [`docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md`](docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md).
+- Limites e instruções: [`docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md`](../../docs/S5_SPEAKER_PERSON_ACTIVE_20261007.md).
 - Análise original dos cinco locutores não acompanha o ZIP: **nenhuma taxa de recuperação real é reivindicada**.
 
 ## R4.9/S6 — Camera Director e Smart Zoom (2026-10-07)

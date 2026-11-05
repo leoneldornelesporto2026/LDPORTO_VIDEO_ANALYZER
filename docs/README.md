@@ -1,6 +1,10 @@
 # Documentação por finalidade
 
-O [README principal](../README.md) é a referência operacional atual.
+O [README principal](../README.md) resume o projeto. O novo
+[índice central (.docs)](../.docs/README.md) reúne guias de uso, desenvolvimento e histórico.
+
+Esta pasta `docs/` mantém referências técnicas e evidências históricas nos caminhos
+originais para não quebrar links ou contratos anteriores.
 
 | Finalidade | Documentos |
 | --- | --- |

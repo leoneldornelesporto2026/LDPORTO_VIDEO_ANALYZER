@@ -33,3 +33,19 @@ def apply_theme(style):
                     foreground=COLORS["text"], font=("Segoe UI", 11, "bold"))
     style.configure("SectionHint.TLabel", background=COLORS["surface_alt"],
                     foreground=COLORS["muted"])
+
+    # Media source presentation; only ttk styling.
+    style.configure("MediaCard.TFrame", background=COLORS["surface"])
+    style.configure("MediaTitle.TLabel", background=COLORS["surface"], foreground=COLORS["text"],
+                    font=("Segoe UI", 13, "bold"))
+    style.configure("MediaHint.TLabel", background=COLORS["surface"], foreground=COLORS["muted"])
+    style.configure("MediaFieldLabel.TLabel", background=COLORS["surface"], foreground=COLORS["muted"],
+                    font=("Segoe UI", 9, "bold"))
+    style.configure("MediaAction.TButton", padding=(13, 8))
+    style.configure("Media.TCheckbutton", background=COLORS["surface"], foreground=COLORS["text"])
+    style.map("Media.TCheckbutton", background=[("active", COLORS["surface"])])
+    style.configure("Media.TEntry", fieldbackground="#e8e8ef", foreground="#16171c", padding=(9, 8))
+    style.map("Media.TEntry", fieldbackground=[("readonly", "#d3d4df")],
+              foreground=[("readonly", "#16171c")])
+    style.configure("MediaStatus.TFrame", background=COLORS["surface_alt"])
+    style.configure("MediaStatus.TLabel", background=COLORS["surface_alt"], foreground=COLORS["text"])

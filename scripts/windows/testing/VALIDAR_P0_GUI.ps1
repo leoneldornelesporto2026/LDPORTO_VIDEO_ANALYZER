@@ -37,6 +37,12 @@ try {
     }
 
     Write-Host ""
+    Write-Host "[P0-02/03] Contratos do novo layout"
+    & $python -m unittest discover -s src/tests -p test_p0_visual_shell.py -v
+    Assert-Success "P0-02 shell"
+    & $python -m unittest discover -s src/tests -p test_p0_media_card.py -v
+    Assert-Success "P0-03 origem de video"
+    Write-Host ""
     Write-Host "[3/3] Regressao focal da GUI"
     & $python -m unittest discover -s src/tests -p test_fixture_newline_policy.py -v
     Assert-Success "Regressao de integridade EOL"

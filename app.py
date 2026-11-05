@@ -192,28 +192,56 @@ class App:
         ttk.Label(hero, text="Fonte verificável  ·  Processamento local  ·  Revisão humana",
                   style="HeroHint.TLabel").pack(anchor="w", pady=(5, 0))
         mark_section("origem", "01   ORIGEM DO VÍDEO", "Selecione um vídeo ou link. O original é verificado antes de analisar.")
-        ttk.Label(outer, text="Arquivo local ou link do YouTube").pack(anchor="w")
-        line = ttk.Frame(outer)
-        line.pack(fill="x", pady=6)
+        # P0-03: organized source card; all original media safety gates remain.
         self.source = tk.StringVar()
-        ttk.Entry(line, textvariable=self.source).pack(side="left", fill="x", expand=True)
-        ttk.Button(line, text="Selecionar vídeo", command=self.select).pack(side="left", padx=(8, 0))
         self.media_busy, self.media_generation, self.media_check_result = False, 0, None
         self.allow_download = tk.BooleanVar(value=False)
         self.local_original, self.media_sha256 = tk.StringVar(), tk.StringVar()
         self.media_status = tk.StringVar(value='Mídia: selecione o arquivo ou verifique o link para reutilizar um original existente.')
-        media_row = ttk.Frame(outer)
-        media_row.pack(fill='x', pady=3)
-        ttk.Button(media_row, text='Verificar mídia local', command=self.verify_media).pack(side='left')
-        ttk.Button(media_row, text='Original local para este link', command=self.select_media_original).pack(side='left', padx=8)
-        ttk.Checkbutton(media_row, text='Autorizar download se o original estiver ausente',
-                        variable=self.allow_download).pack(side='left', padx=8)
-        ttk.Entry(outer, textvariable=self.local_original, state='readonly').pack(fill='x')
-        hash_row = ttk.Frame(outer)
-        hash_row.pack(fill='x', pady=3)
-        ttk.Label(hash_row, text='SHA256 esperado (opcional)').pack(side='left')
-        ttk.Entry(hash_row, textvariable=self.media_sha256).pack(side='left', fill='x', expand=True, padx=8)
-        ttk.Label(outer, textvariable=self.media_status, wraplength=980).pack(anchor='w')
+        source_card = ttk.Frame(outer, padding=(18, 16), style="MediaCard.TFrame")
+        source_card.pack(fill="x", pady=(0, 12))
+        ttk.Label(source_card, text="1. Informe o vídeo", style="MediaTitle.TLabel").pack(anchor="w")
+        ttk.Label(source_card, text="Selecione um arquivo ou cole a URL do YouTube. Sem downloads automáticos.",
+                  style="MediaHint.TLabel").pack(anchor="w", pady=(3, 10))
+        choices = ttk.Frame(source_card, style="MediaCard.TFrame")
+        choices.pack(fill="x", pady=(0, 8))
+        ttk.Button(choices, text="Selecionar vídeo", command=self.select,
+                   style="MediaAction.TButton").pack(side="left", padx=(0, 8))
+        ttk.Button(choices, text="Informar link do YouTube",
+                   command=self.focus_media_link).pack(side="left")
+        ttk.Label(source_card, text="ARQUIVO LOCAL OU URL",
+                  style="MediaFieldLabel.TLabel").pack(anchor="w")
+        source_row = ttk.Frame(source_card, style="MediaCard.TFrame")
+        source_row.pack(fill="x", pady=(5, 9))
+        self.media_source_entry = ttk.Entry(source_row, textvariable=self.source,
+                                            style="Media.TEntry")
+        self.media_source_entry.pack(side="left", fill="x", expand=True)
+        ttk.Button(source_row, text="Verificar mídia local", command=self.verify_media,
+                   style="MediaAction.TButton").pack(side="left", padx=(8, 0))
+        feedback = ttk.Frame(source_card, padding=(12, 10), style="MediaStatus.TFrame")
+        feedback.pack(fill="x", pady=(0, 11))
+        ttk.Label(feedback, textvariable=self.media_status, style="MediaStatus.TLabel",
+                  wraplength=900, justify="left").pack(anchor="w", fill="x")
+        permissions = ttk.Frame(source_card, style="MediaCard.TFrame")
+        permissions.pack(fill="x")
+        ttk.Checkbutton(permissions, text="Autorizar download se o original estiver ausente",
+                        variable=self.allow_download, style="Media.TCheckbutton").pack(side="left", padx=(0, 12))
+        self.media_details_button = ttk.Button(permissions, text="Exibir original e SHA256",
+                                               command=self.toggle_media_details)
+        self.media_details_button.pack(side="left")
+        self.media_details = ttk.Frame(source_card, style="MediaCard.TFrame")
+        original_row = ttk.Frame(self.media_details, style="MediaCard.TFrame")
+        original_row.pack(fill="x", pady=(0, 8))
+        ttk.Button(original_row, text="Original local para este link",
+                   command=self.select_media_original).pack(side="left", padx=(0, 8))
+        ttk.Entry(original_row, textvariable=self.local_original,
+                  state="readonly", style="Media.TEntry").pack(side="left", fill="x", expand=True)
+        hash_row = ttk.Frame(self.media_details, style="MediaCard.TFrame")
+        hash_row.pack(fill="x")
+        ttk.Label(hash_row, text="SHA256 esperado (opcional)",
+                  style="MediaFieldLabel.TLabel").pack(side="left", padx=(0, 10))
+        ttk.Entry(hash_row, textvariable=self.media_sha256,
+                  style="Media.TEntry").pack(side="left", fill="x", expand=True)
         self.source.trace_add('write', lambda *_: self.change_media_selection(clear_original=True))
         self.local_original.trace_add('write', lambda *_: self.change_media_selection())
         self.media_sha256.trace_add('write', lambda *_: self.change_media_selection())
@@ -560,6 +588,20 @@ class App:
                                           backend.get('fallback_reason') or report.get('error') or 'inferência nao comprovada')
         self.body_status.set(message)
         self.status.set('Teste corporal concluido: ' + status)
+
+    def focus_media_link(self):
+        """Focus the URL/source field, never changing permission or media state."""
+        self.media_source_entry.focus_set()
+        self.media_source_entry.selection_range(0, tk.END)
+
+    def toggle_media_details(self):
+        """Toggle optional fields without changing SHA, source, or download consent."""
+        if self.media_details.winfo_manager():
+            self.media_details.pack_forget()
+            self.media_details_button.configure(text="Exibir original e SHA256")
+        else:
+            self.media_details.pack(fill="x", pady=(10, 0))
+            self.media_details_button.configure(text="Ocultar original e SHA256")
 
     def select(self):
         path = filedialog.askopenfilename(filetypes=[("Vídeos", "*.mp4 *.mkv *.webm *.mov *.avi"), ("Todos", "*.*")])

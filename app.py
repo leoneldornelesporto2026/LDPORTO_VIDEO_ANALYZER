@@ -997,6 +997,31 @@ class App:
             '\nPublicacao pronta: ' + ('sim' if gate.get('publication_ready') is True else 'nao' if gate.get('publication_ready') is False else 'nao registrada') +
             ('\nCamera preservando source: speaker/person ou crop ainda insuficiente.' if not package.get('readiness', {}).get('camera_ready') else ''))
         self.final_package.set(str(self.package_path) + '\n' + f"{package.get('bytes', 0) / 1024 ** 2:.2f} MB | {package.get('state', 'FAILED')}" if self.package_path else 'Pacote indisponivel; artifacts locais foram preservados para diagnostico/resume.')
+        # The local Curator inbox is an evidence handoff, not a Curator Studio import.
+        if self.output_folder:
+            try:
+                receipt = json.loads((Path(self.output_folder) / 'curator_delivery.json').read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                receipt = {}
+            status = receipt.get('delivery_status')
+            if status in ('DELIVERED', 'ALREADY_DELIVERED'):
+                if code == 0:
+                    self.final_heading.set('ANÁLISE FINALIZADA — PACOTE ENTREGUE AO VIDEO CURATOR')
+                self.final_summary.set(self.final_summary.get() +
+                    '\n\nCurator: ' + status +
+                    '\nVídeo: ' + str(receipt.get('video_id') or 'n/d') +
+                    '\nZIP: ' + str((receipt.get('zip') or {}).get('name') or 'n/d') +
+                    '\nDestino: ' + str(receipt.get('destination') or 'n/d') +
+                    '\nSHA256 conferido: ' + str((receipt.get('zip') or {}).get('sha256') or 'n/d') +
+                    '\nReels: ' + str(receipt.get('reel_candidate_count', 'n/d')) +
+                    ' | Stories: ' + str(receipt.get('story_candidate_count', 'n/d')) +
+                    '\nAnálise: ' + str(receipt.get('analysis_state') or 'n/d') +
+                    '\nPendências: ' + str(receipt.get('pending_reviews') or {}) +
+                    '\nImportador: CURATOR_IMPORT_PENDING. Próximo passo: segunda curadoria com ChatGPT.')
+            elif status == 'DELIVERY_BLOCKED':
+                self.final_summary.set(self.final_summary.get() +
+                    '\n\nCurator: DELIVERY_BLOCKED — ' + str(receipt.get('reason') or 'motivo não registrado') +
+                    '\nZIP original preservado; confira curator_delivery.json.')
         self.restore_project_pointer()
         auto_export=getattr(self,'auto_project_export',None)
         if code == 0 and auto_export and auto_export.get() and self.package_path and not self.project_path:

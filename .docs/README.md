@@ -22,6 +22,10 @@ o indice do acervo tecnico.
 - [P0-03 - Origem de video guiada](gui/P0_03_MEDIA_CARD.md)
 - [P0-04 - Perfis de analise](gui/P0_04_PRESETS.md)
 
+## Integrações locais
+
+- [Entrega automática Analyzer → Curator](integrations/ANALYZER_TO_CURATOR.md)
+
 ## Arquitetura e desenvolvimento
 
 | Tema | Documento |

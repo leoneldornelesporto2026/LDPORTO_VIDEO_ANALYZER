@@ -834,6 +834,19 @@ class ReportEngine:
             final_receipt_seconds=storage['final_receipt_seconds'])
         if getattr(ctx, 'config', {}).get('export'):
             record_runtime_history(analysis.get('metadata', {}), ctx.config, ctx.stage_metrics)
+        # External integration only AFTER the signed report receipt and ZIP have closed.
+        # This is an independent, non-blocking copy of the verified native package.
+        from .local_curator_handoff import auto_delivery
+        delivery = auto_delivery(package_result, export_cfg)
+        try:
+            write_json(ctx.output / 'curator_delivery.json', delivery)
+        except OSError as exc:
+            ctx.logger.warning('Curator delivery receipt could not be persisted: %s', str(exc)[:250])
+        if delivery.get('delivery_status') == 'DELIVERY_BLOCKED':
+            ctx.logger.warning('Curator local inbox blocked, Analyzer original preserved: %s',
+                               delivery.get('reason', 'unknown'))
+        else:
+            ctx.logger.info('Curator inbox delivery: %s', delivery.get('delivery_status'))
         if export_cfg.get('organized_project_auto') and (package_result or {}).get('path'):
             from .project_export import export_project
             try:

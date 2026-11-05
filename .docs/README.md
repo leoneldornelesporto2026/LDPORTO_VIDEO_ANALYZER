@@ -15,6 +15,11 @@ o indice do acervo tecnico.
 | GPU/YOLO | [YOLO local](../docs/YOLO_LOCAL_57.md) |
 | Validacao e limites | [Validacao](../docs/VALIDACAO.md) |
 
+## Modernizacao da GUI
+
+- [P0-01 - Baseline](gui/P0_01_BASELINE.md)
+- [P0-02 - Navegacao visual](gui/P0_02_SHELL.md)
+
 ## Arquitetura e desenvolvimento
 
 | Tema | Documento |

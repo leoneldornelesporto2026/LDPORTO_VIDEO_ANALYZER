@@ -305,3 +305,12 @@ Se o probe simples `DIAGNOSTICAR_RENAME_CURATOR.ps1` permitir rename, mas a entr
 ```
 
 O diagnostico testa duas operacoes **Python `os.rename`** no mesmo diretorio do Curator: uma pasta com texto pequeno e outra com copia temporaria do ZIP original validado e SHA256 verificado. Ambas usam nomes novos aleatorios sob a inbox do video, sem tocar no destino definitivo. Nao ha mudanca de ACL, exclusao de entregas anteriores, desligamento de protecoes ou chamada ao Analyzer. O relatorio local `CURATOR_RENAME_DIAGNOSTIC_<id>.json` distingue: `RENAME_DENIED_FOR_BASIC_DIRECTORY`, `RENAME_DENIED_WITH_ZIP_PAYLOAD` e `TEMPORARY_PROBES_PASSED_REAL_HANDOFF_NOT_PROVEN`. O resultado classifica **apenas o que os testes fisicos demonstraram**, sem atribuir automaticamente a causa a Defender, antivirus, ACL ou processos concorrentes. Em falha de limpeza, os caminhos exatos dos artefatos pertencentes ao proprio diagnostico permanecem registrados para avaliacao humana. A suite sintetica nao substitui a execucao Win11.
+
+
+### Probe P0 adicional: staging completo (06/11/2026)
+
+O resultado real em Windows 11 demonstrou **17 testes focais PASS**, probes `text` e `zip` PASS, mas a entrega física posterior continuou `DELIVERY_BLOCKED` com `WinError 5` em seis tentativas. Portanto, nome de pasta, ACL, Defender e lock de processo ainda são hipóteses, não causas comprovadas.
+
+O mesmo comando de diagnóstico agora inclui um terceiro probe, `full`. Ele usa o mesmo prefixo `.analyzer-pending-` e a mesma rotina de cópia, `fsync`, validação oficial do ZIP e geração de `VIDEO_EVIDENCE_INDEX.json`, `ANALYZER_TO_CURATOR_HANDOFF.json` e `README_HANDOFF.md` do handoff real. O recibo temporário é expressamente `DIAGNOSTIC_ONLY_NOT_AN_ACTUAL_HANDOFF`. A promoção é feita por **uma** chamada a `os.rename` para destino isolado com prefixo de diagnóstico; nunca para o nome canônico da entrega. O diretório de prova é removido ao encerrar e o ZIP original é revalidado.
+
+Interpretações adicionais: `RENAME_DENIED_WITH_FULL_HANDOFF_STAGE` (bloqueio após montar os artefatos), `FULL_HANDOFF_STAGE_PREPARATION_FAILED` (falha antes de chamar o rename), ou `ALL_DIAGNOSTIC_PROBES_PASSED_REAL_HANDOFF_NOT_PROVEN` (todos os testes temporários passaram, mas a entrega definitiva ainda precisa ser investigada). Não alterar regras de segurança nem adicionar copy-fallback não atômico. Execute testes e depois o diagnóstico isolado; **não execute o piloto completo novamente antes de avaliar o JSON**.

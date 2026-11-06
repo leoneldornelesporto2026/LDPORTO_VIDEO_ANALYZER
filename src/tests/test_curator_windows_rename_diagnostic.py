@@ -95,3 +95,69 @@ def test_diagnostic_does_not_attempt_non_atomic_delivery_or_security_changes():
         assert forbidden not in content
     assert "final_delivery_preexists" in content
     assert "source_zip_preserved" in content
+
+
+def test_full_stage_probe_prepares_real_handoff_file_structure_and_cleans_it(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    expected = sha256(source.read_bytes()).hexdigest()
+    inbox = tmp_path / "curator"
+    inbox.mkdir()
+    facts = diag._facts(source)
+    observed = []
+    real_rename = diag.os.rename
+
+    def capture_and_rename(stage, target):
+        observed.append((set(path.name for path in Path(stage).iterdir()), str(stage)))
+        return real_rename(stage, target)
+
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        with patch.object(diag.os, "rename", side_effect=capture_and_rename):
+            result = diag.full_stage_probe(inbox, source, expected, facts)
+    assert result["status"] == "PASS"
+    assert result["os_rename_called"]
+    assert result["destination_is_diagnostic_only"]
+    assert not result["cleanup_errors"]
+    names, stage_name = observed[0]
+    assert Path(stage_name).name.startswith(".analyzer-pending-")
+    assert names == {
+        source.name,
+        "VIDEO_EVIDENCE_INDEX.json",
+        "ANALYZER_TO_CURATOR_HANDOFF.json",
+        "README_HANDOFF.md",
+    }
+    assert sha256(source.read_bytes()).hexdigest() == expected
+    assert not list(inbox.iterdir())
+
+
+def test_full_stage_winerror_5_does_not_fall_back_or_overwrite(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    expected = sha256(source.read_bytes()).hexdigest()
+    inbox = tmp_path / "curator"
+    inbox.mkdir()
+    facts = diag._facts(source)
+    denied = PermissionError(13, "Synthetic Windows folder rename failed")
+    denied.winerror = 5
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        with patch.object(diag.os, "rename", side_effect=denied) as move:
+            result = diag.full_stage_probe(inbox, source, expected, facts)
+    assert result["status"] == "FAILED"
+    assert result["winerror"] == 5
+    assert result["os_rename_called"]
+    assert not result["cleanup_errors"]
+    assert move.call_count == 1
+    assert not list(inbox.iterdir())
+    assert source.is_file() and sha256(source.read_bytes()).hexdigest() == expected
+
+
+def test_full_stage_has_no_non_atomic_delivery_or_security_bypass():
+    content = SCRIPT.read_text(encoding="utf-8")
+    assert 'tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=parent)' in content
+    assert "handoff._write_atomic_stage(" in content
+    assert "handoff._evidence_index(" in content
+    assert "handoff._readme(receipt)" in content
+    assert '"delivery_status": "DIAGNOSTIC_ONLY_NOT_AN_ACTUAL_HANDOFF"' in content
+    assert "os.rename(stage, target)" in content
+    assert "FULL_HANDOFF_STAGE_PREPARATION_FAILED" in content
+    assert "RENAME_DENIED_WITH_FULL_HANDOFF_STAGE" in content

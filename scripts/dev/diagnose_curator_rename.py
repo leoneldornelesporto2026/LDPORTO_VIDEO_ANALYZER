@@ -15,11 +15,13 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import tempfile
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from ldporto.local_curator_handoff import _facts, _not_linked  # noqa: E402
+from ldporto import local_curator_handoff as handoff  # noqa: E402
 from ldporto.second_curation_export import validate_core_package  # noqa: E402
 
 MAX_PROBE_ZIP_BYTES = 64 * 1024 * 1024
@@ -103,6 +105,99 @@ def rename_probe(parent, label, zip_source=None, expected_sha=None):
     return result
 
 
+
+def full_stage_probe(parent, zip_source, expected_sha, facts):
+    """Prepare the same four handoff artifacts, then ONE isolated directory rename.
+
+    Unlike a delivery, the temporary target starts with a diagnostic prefix,
+    marks itself DIAGNOSTIC_ONLY, and is never an accepted Curator run slot.
+    Stage creation uses the production tempfile.TemporaryDirectory pattern.
+    """
+    parent = Path(parent)
+    _not_linked(parent)
+    if not parent.is_dir():
+        raise ValueError("curator_video_parent_missing")
+    source = Path(zip_source)
+    token = uuid4().hex
+    target = parent / (".analyzer-rename-diag-result-full-" + token)
+    result = {"probe": "full", "status": "NOT_RUN", "os_rename_called": False,
+              "stage": None, "target": str(target), "cleanup_errors": [],
+              "reproduces_production_stage_files": True,
+              "destination_is_diagnostic_only": True, "stage_file_names": []}
+    moved = False
+    try:
+        if target.exists() or target.is_symlink():
+            raise FileExistsError("diagnostic_full_target_preexists")
+        if digest(source) != expected_sha:
+            raise ValueError("diagnostic_original_zip_sha_mismatch")
+        with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=parent) as temp:
+            stage = Path(temp)
+            result["stage"] = str(stage)
+            copied_sha, copied_validation = handoff._write_atomic_stage(
+                stage, source, expected_sha, facts
+            )
+            if copied_sha != expected_sha or copied_validation.get("status") != "valid":
+                raise ValueError("diagnostic_full_copied_zip_validation_failed")
+            evidence = handoff._evidence_index(stage / source.name, facts, copied_sha)
+            index_file = stage / handoff.EVIDENCE_INDEX_NAME
+            index_file.write_text(
+                json.dumps(evidence, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+                encoding="utf-8"
+            )
+            receipt = {
+                "diagnostic_only": True,
+                "delivery_status": "DIAGNOSTIC_ONLY_NOT_AN_ACTUAL_HANDOFF",
+                "analysis_state": facts["analysis_state"],
+                "source_video": facts["source_video"],
+                "zip": {"name": source.name, "sha256": copied_sha},
+                "evidence_index": {
+                    "name": handoff.EVIDENCE_INDEX_NAME, "sha256": digest(index_file)
+                },
+                "human_approval": False, "publication_ready": False,
+            }
+            (stage / handoff.HANDOFF_NAME).write_text(
+                json.dumps(receipt, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+                encoding="utf-8"
+            )
+            (stage / handoff.GUIDE_NAME).write_text(
+                handoff._readme(receipt), encoding="utf-8"
+            )
+            result["stage_file_names"] = sorted(row.name for row in stage.iterdir())
+            if target.exists() or target.is_symlink():
+                raise FileExistsError("diagnostic_full_target_created_concurrently")
+            result["os_rename_called"] = True
+            os.rename(stage, target)
+            moved = True
+            result["status"] = "PASS"
+    except (OSError, ValueError) as exc:
+        result.update({
+            "status": "FAILED",
+            "error_class": type(exc).__name__,
+            "winerror": getattr(exc, "winerror", None),
+            "errno": getattr(exc, "errno", None),
+            "error": str(exc)[:500],
+        })
+    finally:
+        # Never delete a preexisting destination: cleanup only after OUR rename.
+        if moved and (target.exists() or target.is_symlink()):
+            try:
+                _not_linked(target)
+                shutil.rmtree(target)
+            except (OSError, ValueError) as exc:
+                result["cleanup_errors"].append(
+                    {"path": str(target), "error": str(exc)[:300]}
+                )
+        # TemporaryDirectory owns its stage and cleans it on exit; if it
+        # could not, record the exact path without touching unrelated items.
+        if result["stage"] is not None:
+            stage = Path(result["stage"])
+            if stage.exists() or stage.is_symlink():
+                result["cleanup_errors"].append({
+                    "path": str(stage), "error": "temporary_stage_cleanup_incomplete"
+                })
+    return result
+
+
 def diagnose(analysis_dir, curator_root=None):
     analysis = Path(analysis_dir).expanduser()
     _not_linked(analysis)
@@ -141,7 +236,7 @@ def diagnose(analysis_dir, curator_root=None):
     final_path = parent / facts["run_id"]
     # A final delivery path is NEVER created, renamed, removed, or modified.
     result = {
-        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.0",
+        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.1",
         "diagnostic_only": True,
         "created_final_delivery": False,
         "changed_security_settings": False,
@@ -154,14 +249,19 @@ def diagnose(analysis_dir, curator_root=None):
     }
     result["probes"].append(rename_probe(parent, "text"))
     result["probes"].append(rename_probe(parent, "zip", package, expected))
-    basic, zipped = result["probes"]
+    result["probes"].append(full_stage_probe(parent, package, expected, facts))
+    basic, zipped, full = result["probes"]
     if basic["status"] != "PASS":
         result["interpretation"] = "RENAME_DENIED_FOR_BASIC_DIRECTORY"
     elif zipped["status"] != "PASS":
         result["interpretation"] = "RENAME_DENIED_WITH_ZIP_PAYLOAD"
+    elif full["status"] != "PASS" and full["os_rename_called"]:
+        result["interpretation"] = "RENAME_DENIED_WITH_FULL_HANDOFF_STAGE"
+    elif full["status"] != "PASS":
+        result["interpretation"] = "FULL_HANDOFF_STAGE_PREPARATION_FAILED"
     else:
-        result["interpretation"] = "TEMPORARY_PROBES_PASSED_REAL_HANDOFF_NOT_PROVEN"
-    # Verify original bytes did not change during either diagnostic probe.
+        result["interpretation"] = "ALL_DIAGNOSTIC_PROBES_PASSED_REAL_HANDOFF_NOT_PROVEN"
+    # Verify original bytes did not change during all diagnostic probes.
     result["source_zip_preserved"] = digest(package) == expected
     if not result["source_zip_preserved"]:
         raise ValueError("original_zip_changed_during_diagnostic")

@@ -188,3 +188,18 @@ Se os originais estiverem em outra pasta de backups, informar a raiz onde a busc
 ```
 
 O vídeo real **não inicia** enquanto qualquer fixture estiver ausente/divergente ou enquanto uma das duas suítes completas falhar. O script não instala dependências nem cria artefatos falsos, e preserva todos os outputs do piloto anterior. Se não houver os ZIPs originais em nenhuma pasta, o bloqueio deve ser documentado como `FIXTURE_HISTORICA_INDISPONIVEL`; procurar os backups legítimos em vez de desabilitar testes ou modificar os hashes.
+
+
+### Piloto com baseline atual, quando os dois ZIPs históricos não estão disponíveis
+
+**Uso excepcional e explicitamente nomeado — não é homologação da suíte histórica completa.** O operador `PILOTO_FULL_DEFAULTS.ps1` aceita a opção `-CurrentBaselineWithoutHistoricalFixtures`. A opção nunca fabrica, altera ou re-hash ZIPs históricos. Com o switch, caso as fixtures históricas estejam ausentes, a validação de existência/hashes segue reportada como pendente, e somente o teste `test_relocated_historical_zip_bytes_match_original_provenance` é retirado **explicitamente** do conjunto de testes da baseline atual.
+
+```powershell
+& .\scripts\windows\testing\PILOTO_FULL_DEFAULTS.ps1 -AllowDownload -CurrentBaselineWithoutHistoricalFixtures
+```
+
+Sequência de execução: (1) checar fixtures presentes e bloquear bytes divergentes; (2) executar `VALIDAR_P0_GUI.ps1` focal e `pytest -q src/tests --deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance`, ou a suíte histórica **sem exceção** se ambos os ZIPs estiverem presentes; (3) executar a **suíte integral** do Curator; (4) analisar vídeo curto real com `config/config.yaml` intacto; (5) transferir ZIP R6, verificar o SHA original e gerar prévia técnica de 6 segundos, sem publicação.
+
+O relatório `PILOT_FULL_DEFAULTS_REPORT.json` distingue `historical_full_suite_passed` de `suite_analyzer`, lista `deselected_tests`, e usa `CURRENT_BASELINE_AND_REAL_TECHNICAL_PREVIEW_PASS_HISTORICAL_PENDING` somente quando todas as etapas efetivamente rodarem sem erros, mas as fixtures históricas permanecerem ausentes. A referência anterior `FULL_SUITES_AND_REAL_TECHNICAL_PREVIEW_PASS` permanece restrita ao caminho completo com provas originais.
+
+**Importante:** se outros testes falharem por dependência, execução, fixtures adicionais ou defeitos reais, a regressão atual também falha e o vídeo não inicia. Se qualquer ZIP presente apresentar SHA/tamanho errado, o processo bloqueia; nunca aceita um arquivo divergente. Nenhuma branch de produção, mídia ou dado de cliente é enviado ao Git. Esse caminho é útil para testar a integração atual sem confundir progresso técnico com aceite histórico.

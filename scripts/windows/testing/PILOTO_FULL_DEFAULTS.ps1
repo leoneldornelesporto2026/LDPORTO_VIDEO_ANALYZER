@@ -7,6 +7,7 @@ param(
     [string]$SourceUrl = "https://www.youtube.com/watch?v=Eo2bUJcxASI",
     [string]$MediaPath = "",
     [string]$FixtureSearchRoot = "",
+    [switch]$CurrentBaselineWithoutHistoricalFixtures,
     [switch]$AllowDownload
 )
 $ErrorActionPreference="Stop"
@@ -71,7 +72,12 @@ $requiredFixtures=@(
 $fixtureMissing=@($requiredFixtures | Where-Object {
     -not (Test-Path -LiteralPath (Join-Path $analyzer $_) -PathType Leaf)
 })
-if ($fixtureMissing.Count -gt 0) {
+$historicalMode="FULL_VERIFIED"
+if ($fixtureMissing.Count -gt 0 -and $CurrentBaselineWithoutHistoricalFixtures) {
+    $historicalMode="HISTORICAL_FIXTURES_MISSING"
+    Write-Warning "Baseline atual autorizada explicitamente: as fixtures historicas ausentes NAO foram substituidas."
+    Write-Warning "Nao sera declarado PASS da suite historica completa. Um teste de proveniencia sera DESELECTED."
+} elseif ($fixtureMissing.Count -gt 0) {
     $restore=Join-Path $analyzer "scripts\windows\testing\RESTAURAR_FIXTURES_HISTORICAS.ps1"
     if (-not (Test-Path -LiteralPath $restore -PathType Leaf)) {
         throw "Restaurador oficial indisponivel: $restore"
@@ -94,6 +100,11 @@ $expectedFixtures=@(
 foreach ($fixture in $expectedFixtures) {
     $target=Join-Path $analyzer ("src\tests\fixtures\historical_evidence\"+$fixture.Name)
     if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+        if ($CurrentBaselineWithoutHistoricalFixtures) {
+            $historicalMode="HISTORICAL_FIXTURES_MISSING"
+            Write-Warning ("PENDENTE / NAO VERIFICADO: "+$fixture.Name)
+            continue
+        }
         throw "BLOQUEADO: fixture original ausente: $($fixture.Name). Informe -FixtureSearchRoot com sua pasta de backups."
     }
     if ((Get-Item -LiteralPath $target).Length -ne $fixture.Bytes) {
@@ -107,10 +118,23 @@ foreach ($fixture in $expectedFixtures) {
 }
 
 Write-Host ""
-Write-Host "[1/5] ANALYZER: suite COMPLETA com preflight de fixtures" -ForegroundColor Cyan
-Run-Suite $analyzer {
-    & (Join-Path $analyzer "scripts\windows\testing\VALIDAR_P0_GUI.ps1") -FullSuite
-    Assert-Exit "Suite completa Analyzer (sem pular fixtures)"
+if ($historicalMode -eq "FULL_VERIFIED") {
+    Write-Host "[1/5] ANALYZER: suite COMPLETA com fixtures originais" -ForegroundColor Cyan
+    Run-Suite $analyzer {
+        & (Join-Path $analyzer "scripts\windows\testing\VALIDAR_P0_GUI.ps1") -FullSuite
+        Assert-Exit "Suite completa Analyzer (incluindo fixtures historicas)"
+    }
+    $analyzerSuiteStatus="FULL_SUITE_PASS"
+} else {
+    Write-Host "[1/5] ANALYZER: REGRESSAO DA BASELINE ATUAL (historico NAO homologado)" -ForegroundColor Yellow
+    Write-Warning "Exclusao explicita e restrita: test_relocated_historical_zip_bytes_match_original_provenance"
+    Run-Suite $analyzer {
+        & (Join-Path $analyzer "scripts\windows\testing\VALIDAR_P0_GUI.ps1")
+        Assert-Exit "Gate focal de GUI Analyzer"
+        & $ap -m pytest -q src/tests --deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance
+        Assert-Exit "Regressao Analyzer atual; falhas adicionais nao sao ignoradas"
+    }
+    $analyzerSuiteStatus="CURRENT_BASELINE_PASS_ONE_HISTORICAL_TEST_DESELECTED"
 }
 Write-Host ""
 Write-Host "[2/5] CURATOR: suite COMPLETA incluindo FFmpeg, camera e R6" -ForegroundColor Cyan
@@ -204,9 +228,18 @@ Run-Suite $curator {
 }
 $after=(Get-FileHash -LiteralPath $config -Algorithm SHA256).Hash
 if ($before -ne $after) { throw "config/config.yaml foi alterado durante o piloto!" }
+$resultLabel=if ($historicalMode -eq "FULL_VERIFIED") {
+    "FULL_SUITES_AND_REAL_TECHNICAL_PREVIEW_PASS"
+} else {
+    "CURRENT_BASELINE_AND_REAL_TECHNICAL_PREVIEW_PASS_HISTORICAL_PENDING"
+}
+$deselectedTests=@()
+if ($historicalMode -ne "FULL_VERIFIED") {
+    $deselectedTests=@("src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance")
+}
 $final=[ordered]@{
     schema_version="1.0"
-    result="FULL_SUITES_AND_REAL_TECHNICAL_PREVIEW_PASS"
+    result=$resultLabel
     analyzer_commit=(& git.exe -C $analyzer rev-parse HEAD).Trim()
     curator_commit=(& git.exe -C $curator rev-parse HEAD).Trim()
     analyzed_url=$SourceUrl
@@ -219,8 +252,11 @@ $final=[ordered]@{
     preview_file=[string]$preview.file_path
     preview_sha256=[string]$preview.preview_sha256
     analyzer_default_config_unchanged=$true
-    suite_analyzer="PASS"
-    suite_curator="PASS"
+    suite_analyzer=$analyzerSuiteStatus
+    suite_curator="FULL_SUITE_PASS"
+    historical_fixture_status=$historicalMode
+    historical_full_suite_passed=($historicalMode -eq "FULL_VERIFIED")
+    deselected_tests=@($deselectedTests)
     editorial_r6_to_r57_ready=$false
     human_approved=$false
     publication_ready=$false
@@ -231,4 +267,7 @@ $target=Join-Path $recent.FullName "PILOT_FULL_DEFAULTS_REPORT.json"
 Write-Host ""
 Write-Host "PILOTO FISICO CONCLUIDO (ATE PREVIA TECNICA)" -ForegroundColor Green
 Write-Host "Resumo: $target" -ForegroundColor Green
+if ($historicalMode -ne "FULL_VERIFIED") {
+    Write-Warning "ACEITE LIMITADO: baseline atual aprovada, mas regressao historica COMPLETA continua pendente."
+}
 Write-Host "Ainda falta converter o roteiro R6 em pacote editorial renderizavel R57."

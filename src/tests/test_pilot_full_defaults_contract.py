@@ -29,6 +29,25 @@ class FullDefaultsPilotContractTests(unittest.TestCase):
         self.assertIn('BLOQUEADO: tamanho da fixture diferente',self.script)
         self.assertNotIn('--ignore=',self.script)
 
+    def test_missing_historical_baseline_requires_explicit_switch(self):
+        self.assertIn('[switch]$CurrentBaselineWithoutHistoricalFixtures',self.script)
+        self.assertIn('if ($fixtureMissing.Count -gt 0 -and $CurrentBaselineWithoutHistoricalFixtures)',self.script)
+        self.assertIn('$historicalMode="HISTORICAL_FIXTURES_MISSING"',self.script)
+        self.assertIn('BLOQUEADO: SHA256 da fixture diferente',self.script)
+
+    def test_current_baseline_runs_all_other_analyzer_tests_without_false_full_pass(self):
+        self.assertIn('VALIDAR_P0_GUI.ps1")',self.script)
+        self.assertIn('pytest -q src/tests --deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance',self.script)
+        self.assertIn('CURRENT_BASELINE_PASS_ONE_HISTORICAL_TEST_DESELECTED',self.script)
+        self.assertIn('historical_full_suite_passed=($historicalMode -eq "FULL_VERIFIED")',self.script)
+        self.assertIn('CURRENT_BASELINE_AND_REAL_TECHNICAL_PREVIEW_PASS_HISTORICAL_PENDING',self.script)
+
+    def test_full_historical_gate_remains_unchanged_for_normal_mode(self):
+        self.assertIn('if ($historicalMode -eq "FULL_VERIFIED")',self.script)
+        self.assertIn('VALIDAR_P0_GUI.ps1") -FullSuite',self.script)
+        self.assertIn('FULL_SUITES_AND_REAL_TECHNICAL_PREVIEW_PASS',self.script)
+        self.assertIn('deselected_tests=@($deselectedTests)',self.script)
+
     def test_full_curator_suite_not_just_selected_r6_tests(self):
         self.assertIn('unittest discover -s tests -p "test_*.py" -v',self.script)
         self.assertIn('Assert-Exit "Suite completa Curator',self.script)

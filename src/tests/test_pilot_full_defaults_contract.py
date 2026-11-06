@@ -18,6 +18,17 @@ class FullDefaultsPilotContractTests(unittest.TestCase):
         self.assertIn('VALIDAR_P0_GUI.ps1',self.script)
         self.assertIn(' -FullSuite',self.script)
         self.assertIn('Assert-Exit "Suite completa Analyzer',self.script)
+    def test_missing_historical_fixtures_use_exact_originals_and_block_otherwise(self):
+        self.assertIn('RESTAURAR_FIXTURES_HISTORICAS.ps1',self.script)
+        self.assertIn('FixtureSearchRoot',self.script)
+        self.assertIn('Assert-Exit "Restauracao de fixtures originais"',self.script)
+        self.assertIn('CHATGPT_REVIEW.zip',self.script)
+        self.assertIn('SECOND_CURATION_READY.zip',self.script)
+        self.assertIn('Get-FileHash -LiteralPath $target -Algorithm SHA256',self.script)
+        self.assertIn('BLOQUEADO: SHA256 da fixture diferente',self.script)
+        self.assertIn('BLOQUEADO: tamanho da fixture diferente',self.script)
+        self.assertNotIn('--ignore=',self.script)
+
     def test_full_curator_suite_not_just_selected_r6_tests(self):
         self.assertIn('unittest discover -s tests -p "test_*.py" -v',self.script)
         self.assertIn('Assert-Exit "Suite completa Curator',self.script)

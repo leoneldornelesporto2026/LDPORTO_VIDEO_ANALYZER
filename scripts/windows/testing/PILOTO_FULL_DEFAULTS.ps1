@@ -6,6 +6,7 @@
 param(
     [string]$SourceUrl = "https://www.youtube.com/watch?v=Eo2bUJcxASI",
     [string]$MediaPath = "",
+    [string]$FixtureSearchRoot = "",
     [switch]$AllowDownload
 )
 $ErrorActionPreference="Stop"
@@ -60,6 +61,50 @@ foreach ($tool in @("ffmpeg","ffprobe")) {
 }
 & $ap -c "import sys; assert sys.version_info[:2] == (3,11); print('Analyzer Python',sys.version.split()[0])"
 Assert-Exit "Python 3.11"
+
+Write-Host ""
+Write-Host "[0/5] RECUPERACAO DE FIXTURES HISTORICAS REAIS - SEM MOCKS" -ForegroundColor Cyan
+$requiredFixtures=@(
+    "src\tests\fixtures\historical_evidence\CHATGPT_REVIEW.zip",
+    "src\tests\fixtures\historical_evidence\SECOND_CURATION_READY.zip"
+)
+$fixtureMissing=@($requiredFixtures | Where-Object {
+    -not (Test-Path -LiteralPath (Join-Path $analyzer $_) -PathType Leaf)
+})
+if ($fixtureMissing.Count -gt 0) {
+    $restore=Join-Path $analyzer "scripts\windows\testing\RESTAURAR_FIXTURES_HISTORICAS.ps1"
+    if (-not (Test-Path -LiteralPath $restore -PathType Leaf)) {
+        throw "Restaurador oficial indisponivel: $restore"
+    }
+    $search=if ($FixtureSearchRoot) {
+        (Resolve-Path -LiteralPath $FixtureSearchRoot).Path
+    } else {
+        Split-Path -Path $analyzer -Parent
+    }
+    Write-Host "Buscando copias exatas (SHA256) em: $search"
+    Write-Host "A busca pode levar mais tempo em pastas com muitos projetos."
+    & $restore -SearchRoot $search
+    Assert-Exit "Restauracao de fixtures originais"
+}
+# Always verify provenance and exact hashes; do not accept wrong copies.
+$expectedFixtures=@(
+    @{ Name="CHATGPT_REVIEW.zip"; Bytes=[long]26956533; SHA="5a9da201f984d63de2c68dbd9aee4c03365b9e0815b1fb041130d4da02b5f073" },
+    @{ Name="SECOND_CURATION_READY.zip"; Bytes=[long]1864261; SHA="8339e90f41cce13f93bc61cc6417cecc1058ad37df272d194d7f62060d860349" }
+)
+foreach ($fixture in $expectedFixtures) {
+    $target=Join-Path $analyzer ("src\tests\fixtures\historical_evidence\"+$fixture.Name)
+    if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+        throw "BLOQUEADO: fixture original ausente: $($fixture.Name). Informe -FixtureSearchRoot com sua pasta de backups."
+    }
+    if ((Get-Item -LiteralPath $target).Length -ne $fixture.Bytes) {
+        throw "BLOQUEADO: tamanho da fixture diferente: $target"
+    }
+    $actual=(Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
+    if ($actual -ine $fixture.SHA) {
+        throw "BLOQUEADO: SHA256 da fixture diferente: $target"
+    }
+    Write-Host ("Fixture original OK: "+$fixture.Name) -ForegroundColor Green
+}
 
 Write-Host ""
 Write-Host "[1/5] ANALYZER: suite COMPLETA com preflight de fixtures" -ForegroundColor Cyan

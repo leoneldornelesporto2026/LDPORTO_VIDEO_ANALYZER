@@ -294,3 +294,14 @@ Esses controles são **adicionais** à validação da mídia original e ao FFpro
 
 
 No piloto NASA, `media_resolution.origin=legacy_input` não implica a existência de `download.json`. Quando esse manifesto não existe, o operador consulta **somente** `Analyzer/input/youtube/<videoId>/<videoId>.{mp4,mkv,webm,mov}`, conforme o fallback legado do motor, e aceita apenas o arquivo que coincidir com o SHA256 do pacote R6. Não há busca recursiva, redownload ou aceitação por nome/duração isoladamente. `-MediaPath` explícito continua disponível para fontes em outros locais.
+
+
+### Diagnostico Python de WinError 5 persistente (06/11/2026)
+
+Se o probe simples `DIAGNOSTICAR_RENAME_CURATOR.ps1` permitir rename, mas a entrega do ZIP real continuar com `curator_atomic_directory_rename_denied:winerror=5;attempts=6`, executar **sem reanalise e sem retentar entregar**:
+
+```powershell
+& .\.venv\Scripts\python.exe scripts\dev\diagnose_curator_rename.py --analysis-dir ".\analysis\pilot_e2e_20261106_135438_190"
+```
+
+O diagnostico testa duas operacoes **Python `os.rename`** no mesmo diretorio do Curator: uma pasta com texto pequeno e outra com copia temporaria do ZIP original validado e SHA256 verificado. Ambas usam nomes novos aleatorios sob a inbox do video, sem tocar no destino definitivo. Nao ha mudanca de ACL, exclusao de entregas anteriores, desligamento de protecoes ou chamada ao Analyzer. O relatorio local `CURATOR_RENAME_DIAGNOSTIC_<id>.json` distingue: `RENAME_DENIED_FOR_BASIC_DIRECTORY`, `RENAME_DENIED_WITH_ZIP_PAYLOAD` e `TEMPORARY_PROBES_PASSED_REAL_HANDOFF_NOT_PROVEN`. O resultado classifica **apenas o que os testes fisicos demonstraram**, sem atribuir automaticamente a causa a Defender, antivirus, ACL ou processos concorrentes. Em falha de limpeza, os caminhos exatos dos artefatos pertencentes ao proprio diagnostico permanecem registrados para avaliacao humana. A suite sintetica nao substitui a execucao Win11.

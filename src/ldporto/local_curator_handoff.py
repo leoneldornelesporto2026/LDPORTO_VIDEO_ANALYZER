@@ -271,9 +271,23 @@ def _write_atomic_stage(stage, package, expected_sha, facts):
     copied_sha = file_hash(target)
     if copied_sha != expected_sha or file_hash(package) != expected_sha:
         raise ValueError("copy_sha256_mismatch_or_source_changed")
-    validation = validate_core_package(target)
-    if validation.get("status") != "valid":
-        raise ValueError("copied_zip_validation_failed:" + ",".join(validation.get("errors") or []))
+    # Windows can deny the subsequent atomic DIRECTORY rename after the
+    # official ZIP validator has opened the archive inside that directory.
+    # Validate a BYTE-IDENTICAL snapshot OUTSIDE the pending Curator folder,
+    # rather than weakening validation or abandoning atomic publication.
+    with tempfile.TemporaryDirectory(prefix="ldporto-handoff-zip-validation-") as scratch:
+        snapshot = Path(scratch) / package.name
+        with target.open("rb") as copied, snapshot.open("xb") as verified:
+            shutil.copyfileobj(copied, verified, length=4 * 1024 * 1024)
+            verified.flush()
+            os.fsync(verified.fileno())
+        if file_hash(snapshot) != expected_sha:
+            raise ValueError("validation_snapshot_sha256_mismatch")
+        validation = validate_core_package(snapshot)
+        if validation.get("status") != "valid":
+            raise ValueError("copied_zip_validation_failed:" + ",".join(validation.get("errors") or []))
+    if file_hash(target) != expected_sha or file_hash(package) != expected_sha:
+        raise ValueError("post_validation_original_or_staged_zip_sha256_mismatch")
     return copied_sha, validation
 
 
@@ -352,7 +366,11 @@ def deliver_package(package_path, *, curator_root=None, config=None, expected_sh
     with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=video_dir) as temp:
         staging = Path(temp)
         copied_sha, copied_validation = _write_atomic_stage(staging, package, original_sha, facts)
-        index_document = _evidence_index(staging / package.name, facts, copied_sha)
+        # Enumerate byte-identical ORIGINAL bytes: never open the ZIP from
+        # the pending Curator folder before the final atomic rename.
+        index_document = _evidence_index(package, facts, copied_sha)
+        if file_hash(staging / package.name) != original_sha or file_hash(package) != original_sha:
+            raise ValueError("post_index_original_or_staged_zip_sha256_mismatch")
         index_file = staging / EVIDENCE_INDEX_NAME
         index_file.write_text(
             json.dumps(index_document, ensure_ascii=False, indent=2, allow_nan=False) + "\n",

@@ -123,6 +123,7 @@ def full_stage_probe(parent, zip_source, expected_sha, facts):
     result = {"probe": "full", "status": "NOT_RUN", "os_rename_called": False,
               "stage": None, "target": str(target), "cleanup_errors": [],
               "reproduces_production_stage_files": True,
+              "zip_validation_outside_curator_stage": True,
               "destination_is_diagnostic_only": True, "stage_file_names": []}
     moved = False
     try:
@@ -138,7 +139,7 @@ def full_stage_probe(parent, zip_source, expected_sha, facts):
             )
             if copied_sha != expected_sha or copied_validation.get("status") != "valid":
                 raise ValueError("diagnostic_full_copied_zip_validation_failed")
-            evidence = handoff._evidence_index(stage / source.name, facts, copied_sha)
+            evidence = handoff._evidence_index(source, facts, copied_sha)
             index_file = stage / handoff.EVIDENCE_INDEX_NAME
             index_file.write_text(
                 json.dumps(evidence, ensure_ascii=False, indent=2, allow_nan=False) + "\n",

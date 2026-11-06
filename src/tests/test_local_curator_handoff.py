@@ -384,3 +384,81 @@ def test_24_rename_race_never_overwrites_someone_elses_directory(tmp_path, stubb
     assert source.is_file()
 
 
+
+
+
+def test_25_validates_byte_identical_snapshot_outside_pending_curator_folder(tmp_path):
+    """ZIP reader must never touch pending-stage ZIP; copied bytes stay verified."""
+    root = fake_curator(tmp_path)
+    source = fake_zip(tmp_path / "analysis")
+    source_sha = delivery.file_hash(source)
+    validated_paths = []
+
+    def validate_guard(path):
+        path = Path(path)
+        validated_paths.append(path)
+        assert path.is_file()
+        assert delivery.file_hash(path) == source_sha
+        assert ".analyzer-pending-" not in str(path)
+        return synthetic_validator(path)
+
+    # Also block reading ZIP evidence from any .analyzer-pending- directory.
+    original_index = delivery._evidence_index
+    evidence_paths = []
+
+    def index_guard(path, facts, zip_sha):
+        evidence_paths.append(Path(path))
+        assert Path(path) == source
+        assert zip_sha == source_sha
+        return original_index(path, facts, zip_sha)
+
+    with patch.object(delivery, "validate_core_package", side_effect=validate_guard):
+        with patch.object(delivery, "_evidence_index", side_effect=index_guard):
+            result = delivery.deliver_package(source, curator_root=root, expected_sha=source_sha)
+    assert result["delivery_status"] == "DELIVERED"
+    assert len(validated_paths) == 2
+    assert validated_paths[0] == source
+    assert validated_paths[1] != source
+    assert "ldporto-handoff-zip-validation-" in str(validated_paths[1])
+    assert not validated_paths[1].exists()  # Snapshot removed after successful check.
+    assert evidence_paths == [source]
+    assert delivery.file_hash(Path(result["destination"]) / source.name) == source_sha
+    assert delivery.file_hash(source) == source_sha
+
+
+def test_26_snapshot_validation_rejection_never_publishes_an_unverified_package(tmp_path):
+    root = fake_curator(tmp_path)
+    source = fake_zip(tmp_path / "analysis")
+    original_sha = delivery.file_hash(source)
+    validated_paths = []
+
+    def reject_snapshot(path):
+        path = Path(path)
+        validated_paths.append(path)
+        if "ldporto-handoff-zip-validation-" in str(path):
+            return {"status": "failed", "errors": ["synthetic_copy_rejected"]}
+        return {"status": "valid", "errors": []}
+
+    with patch.object(delivery, "validate_core_package", side_effect=reject_snapshot):
+        result = delivery.auto_delivery(
+            {"path": str(source), "zip_sha256": original_sha}, curator_root=root
+        )
+    assert result["delivery_status"] == "DELIVERY_BLOCKED"
+    assert "copied_zip_validation_failed:synthetic_copy_rejected" in result["reason"]
+    assert len(validated_paths) == 2
+    assert not (root / "input" / "analyzer" / "VIDEO123" / "RUN_1").exists()
+    assert not list((root / "input" / "analyzer" / "VIDEO123").iterdir())
+    assert delivery.file_hash(source) == original_sha
+
+
+def test_27_original_and_stage_are_checked_after_offstage_validation(tmp_path):
+    code = (Path(__file__).resolve().parents[1] / "ldporto" /
+            "local_curator_handoff.py").read_text(encoding="utf-8")
+    assert 'tempfile.TemporaryDirectory(prefix="ldporto-handoff-zip-validation-")' in code
+    assert 'if file_hash(snapshot) != expected_sha:' in code
+    assert 'validation = validate_core_package(snapshot)' in code
+    assert 'if file_hash(target) != expected_sha or file_hash(package) != expected_sha:' in code
+    assert 'index_document = _evidence_index(package, facts, copied_sha)' in code
+    assert 'if file_hash(staging / package.name) != original_sha or file_hash(package) != original_sha:' in code
+    assert "os.replace(staging, folder)" not in code
+    assert "os.rename(staging, folder)" in code

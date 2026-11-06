@@ -239,3 +239,11 @@ def test_stage_matrix_does_not_modify_final_delivery_or_weaken_rename():
     assert "os.replace(stage, target)" not in script
     assert "chmod(" not in script
     assert "icacls" not in script
+
+
+
+def test_full_probe_uses_offstage_zip_validation_and_original_zip_evidence():
+    source = SCRIPT.read_text(encoding="utf-8")
+    assert '"zip_validation_outside_curator_stage": True' in source
+    assert 'evidence = handoff._evidence_index(source, facts, copied_sha)' in source
+    assert 'handoff._write_atomic_stage(' in source

@@ -358,3 +358,41 @@ A execução **real** do diagnóstico temporal v1.5 na máquina Windows 11 do op
 A política real de renomeação atômica do handoff passa a usar **quatro tentativas** (primeira imediata, depois intervalos de 2, 5 e 10 segundos, com no máximo 17 segundos de espera). Mantém o mesmo staging, exige o destino ainda inexistente antes de **cada** tentativa, faz uma única operação `os.rename(staging, folder)` por tentativa, e só repete para códigos Windows 5, 32 e 33. Erros diferentes, destino concorrente ou esgotamento da janela bloqueiam a entrega preservando o ZIP original. A validação oficial de snapshot externo, checksums SHA256 e revisão humana continuam obrigatórios. Sem copy-fallback, sem renomeação forçada, sem reprocessamento de vídeo, sem alteração de permissões e sem publicação de mídia.
 
 Depois de atualizar `develop`, execute testes focais e somente então `RETOMAR_R6_NASA_SEM_REANALISE.ps1`. Sucesso técnico somente com os relatórios reais `PILOT_E2E_REPORT.json` e `PILOT_RECOVERED_PREVIEW_REPORT.json`, correspondentes à inbox e MP4 realmente verificados. `release`/`main` seguem não promovidas até aceite.
+
+
+## Histórico do Analyzer → input do Curator (P0, sem reanálise)
+
+A entrega automática para **novas** análises já ocorre após o exportador oficial R6 e o relatório. Para **análises anteriores**, `scripts/dev/sync_historical_curator_delivery.py` inventaria as subpastas **imediatas** de `analysis/` e aceita selecionar pastas históricas explícitas, sem percorrer recursivamente mídia ou backups.
+
+**Modo padrão = somente leitura**, valida `second_curation_export.json`, SHA256 do ZIP original, `validate_core_package` oficial e metadados de origem. Classifica:
+
+- `READY_FOR_DELIVERY`: existe ZIP R6 válido, pronto para sincronizar
+- `NO_R6_EXPORT`: existe análise, mas **não existe ZIP oficial já exportado**; não inventar nem reconstruir sem solicitação separada
+- `MISSING_SOURCE_ZIP`, `BLOCKED_*`: pacote/recibo ausente, incompatível ou corrompido; não publicar
+- `DELIVERED`, `ALREADY_DELIVERED`: após `--apply`, entrega atômica ao `input/analyzer/<video_id>/<run_id>/` com integridade SHA256 e idempotência
+
+**Prévia de todo o histórico (sem alterações)**:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/dev/sync_historical_curator_delivery.py --scan-root ".\analysis"
+```
+
+**Entregar apenas uma análise anterior, primeiro como dry run**:
+
+```powershell
+.\scripts\windows\testing\SINCRONIZAR_ANALISES_CURATOR.ps1 -AnalysisDir @(".\analysis\pilot_e2e_20261106_135438_190")
+```
+
+**Aplicar explicitamente apenas ZIPs R6 válidos de todas as análises imediatas**:
+
+```powershell
+.\scripts\windows\testing\SINCRONIZAR_ANALISES_CURATOR.ps1 -ScanRoot ".\analysis" -Aplicar
+```
+
+**Aplicar somente pastas escolhidas**, sem varrer todo `analysis/`:
+
+```powershell
+.\scripts\windows\testing\SINCRONIZAR_ANALISES_CURATOR.ps1 -AnalysisDir @(".\analysis\run_A", ".\analysis\run_B") -Aplicar
+```
+
+O operador limita o inventário a 250 runs, recusa diretórios apontando para links/junctions, exige as duas branches `develop` para aplicar via PowerShell, não sobrescreve destinos e não altera `release`/`main`. O próprio `deliver_package` aplica a política física validada de retry de renomeação (2/5/10 segundos). Nenhum download, inferência, render, Stories inventados ou aprovação é executado. O relatório JSON é impresso no console e pode ser guardado fora do Git. A transferência de um R6 `PARTIAL` não significa análise completa nem R57 pronto.

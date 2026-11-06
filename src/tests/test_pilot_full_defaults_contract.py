@@ -1,0 +1,53 @@
+"""Safety contract for full-suite / real-video / technical-preview pilot.
+
+These are static checks; only execution on the user's Windows can establish a
+real pass of the two full suites, source processing, ZIP handoff and FFmpeg video.
+"""
+from pathlib import Path
+import unittest
+
+ROOT=Path(__file__).resolve().parents[2]
+SCRIPT=ROOT/'scripts/windows/testing/PILOTO_FULL_DEFAULTS.ps1'
+
+
+class FullDefaultsPilotContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.script=SCRIPT.read_text(encoding='utf-8')
+    def test_full_analyzer_suite_and_fixture_integrity_gate(self):
+        self.assertIn('VALIDAR_P0_GUI.ps1',self.script)
+        self.assertIn(' -FullSuite',self.script)
+        self.assertIn('Assert-Exit "Suite completa Analyzer',self.script)
+    def test_full_curator_suite_not_just_selected_r6_tests(self):
+        self.assertIn('unittest discover -s tests -p "test_*.py" -v',self.script)
+        self.assertIn('Assert-Exit "Suite completa Curator',self.script)
+    def test_uses_real_verified_short_nasa_youtube_sample(self):
+        self.assertIn('https://www.youtube.com/watch?v=Eo2bUJcxASI',self.script)
+        self.assertIn('if ($AllowDownload)',self.script)
+        self.assertIn('if (-not $media -and -not $AllowDownload)',self.script)
+        self.assertIn('PILOTO_E2E_REAL.ps1',self.script)
+    def test_default_yaml_is_unmodified_and_not_downscaled(self):
+        self.assertIn('config\\config.yaml',self.script)
+        self.assertIn('Get-FileHash',self.script)
+        self.assertIn('if ($before -ne $after)',self.script)
+        for prohibited in ('--no-vision','--no-diarization','--offline','--device cpu',
+                           '--semantic heuristic','--model tiny','--force'):
+            self.assertNotIn(prohibited,self.script)
+    def test_source_exact_sha_and_real_preview_only(self):
+        self.assertIn('r6-review --inbox $inbox --summary',self.script)
+        self.assertIn('r6-media-audit --inbox $inbox --media $media',self.script)
+        self.assertIn('r6-preview-smoke --inbox $inbox --media $media',self.script)
+        self.assertIn('--confirm-preview-test',self.script)
+        self.assertIn('TECHNICAL_PREVIEW_REVIEW_REQUIRED',self.script)
+    def test_no_git_write_or_false_editorial_approvals(self):
+        for action in ('git push','git add','git reset','git checkout','git merge'):
+            self.assertNotIn(action,self.script)
+        self.assertIn('editorial_r6_to_r57_ready=$false',self.script)
+        self.assertIn('human_approved=$false',self.script)
+        self.assertIn('publication_ready=$false',self.script)
+        self.assertIn('PILOT_FULL_DEFAULTS_REPORT.json',self.script)
+        self.assertIn('analysis/',(ROOT/'.gitignore').read_text(encoding='utf-8'))
+
+
+if __name__=='__main__':
+    unittest.main()

@@ -106,7 +106,7 @@ def rename_probe(parent, label, zip_source=None, expected_sha=None):
 
 
 
-def full_stage_probe(parent, zip_source, expected_sha, facts):
+def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None):
     """Prepare the same four handoff artifacts, then ONE isolated directory rename.
 
     Unlike a delivery, the temporary target starts with a diagnostic prefix,
@@ -118,20 +118,25 @@ def full_stage_probe(parent, zip_source, expected_sha, facts):
     if not parent.is_dir():
         raise ValueError("curator_video_parent_missing")
     source = Path(zip_source)
+    stage_root = Path(stage_root) if stage_root is not None else parent
+    _not_linked(stage_root)
+    if not stage_root.is_dir() or stage_root.stat().st_dev != parent.stat().st_dev:
+        raise ValueError("diagnostic_stage_root_missing_or_different_volume")
     token = uuid4().hex
     target = parent / (".analyzer-rename-diag-result-full-" + token)
     result = {"probe": "full", "status": "NOT_RUN", "os_rename_called": False,
               "stage": None, "target": str(target), "cleanup_errors": [],
               "reproduces_production_stage_files": True,
               "zip_validation_outside_curator_stage": True,
-              "destination_is_diagnostic_only": True, "stage_file_names": []}
+              "destination_is_diagnostic_only": True, "stage_file_names": [],
+              "stage_root": str(stage_root), "cross_parent_stage": stage_root != parent}
     moved = False
     try:
         if target.exists() or target.is_symlink():
             raise FileExistsError("diagnostic_full_target_preexists")
         if digest(source) != expected_sha:
             raise ValueError("diagnostic_original_zip_sha_mismatch")
-        with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=parent) as temp:
+        with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=stage_root) as temp:
             stage = Path(temp)
             result["stage"] = str(stage)
             copied_sha, copied_validation = handoff._write_atomic_stage(
@@ -312,6 +317,103 @@ def stage_matrix_probe(parent, zip_source, expected_sha, facts, phase):
     return result
 
 
+
+READ_PATTERN_PHASES = (
+    "rehash",
+    "snapshot_copy",
+    "snapshot_validated",
+    "source_validated",
+)
+
+
+def read_pattern_probe(parent, zip_source, expected_sha, phase):
+    """Find which ZIP read pattern correlates with a Windows rename denial.
+
+    Only one ZIP copy is staged; no evidence receipt, real run directory,
+    chmod/ACL changes, or fallback-to-copy publication is permitted.
+    """
+    if phase not in READ_PATTERN_PHASES:
+        raise ValueError("unknown_diagnostic_read_phase")
+    parent = Path(parent)
+    _not_linked(parent)
+    if not parent.is_dir():
+        raise ValueError("curator_video_parent_missing")
+    package = Path(zip_source)
+    token = uuid4().hex
+    target = parent / (".analyzer-rename-diag-result-read-" + phase + "-" + token)
+    result = {
+        "phase": phase, "status": "NOT_RUN", "os_rename_called": False,
+        "stage": None, "target": str(target), "cleanup_errors": [],
+        "diagnostic_only": True,
+    }
+    moved = False
+    try:
+        if target.exists() or target.is_symlink():
+            raise FileExistsError("diagnostic_read_target_preexists")
+        if digest(package) != expected_sha:
+            raise ValueError("diagnostic_original_zip_sha_mismatch")
+        with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=parent) as temp:
+            stage = Path(temp)
+            result["stage"] = str(stage)
+            copy = stage / package.name
+            with package.open("rb") as incoming, copy.open("xb") as outgoing:
+                shutil.copyfileobj(incoming, outgoing, length=4 * 1024 * 1024)
+                outgoing.flush()
+                os.fsync(outgoing.fileno())
+            if digest(copy) != expected_sha:
+                raise ValueError("diagnostic_read_initial_sha_mismatch")
+            if phase == "rehash":
+                if digest(copy) != expected_sha or digest(copy) != expected_sha:
+                    raise ValueError("diagnostic_read_rehash_mismatch")
+            if phase in ("snapshot_copy", "snapshot_validated"):
+                with tempfile.TemporaryDirectory(prefix="ldporto-diagnostic-snapshot-") as scratch:
+                    snapshot = Path(scratch) / package.name
+                    with copy.open("rb") as inside, snapshot.open("xb") as outside:
+                        shutil.copyfileobj(inside, outside, length=4 * 1024 * 1024)
+                        outside.flush()
+                        os.fsync(outside.fileno())
+                    if digest(snapshot) != expected_sha:
+                        raise ValueError("diagnostic_read_snapshot_sha_mismatch")
+                    if phase == "snapshot_validated":
+                        check = handoff.validate_core_package(snapshot)
+                        if check.get("status") != "valid":
+                            raise ValueError("diagnostic_read_snapshot_validation_failed")
+            if phase == "source_validated":
+                check = handoff.validate_core_package(package)
+                if check.get("status") != "valid":
+                    raise ValueError("diagnostic_read_original_validation_failed")
+            if target.exists() or target.is_symlink():
+                raise FileExistsError("diagnostic_read_target_created_concurrently")
+            result["os_rename_called"] = True
+            os.rename(stage, target)
+            moved = True
+            result["status"] = "PASS"
+    except (OSError, ValueError) as exc:
+        result.update({
+            "status": "FAILED",
+            "error_class": type(exc).__name__,
+            "winerror": getattr(exc, "winerror", None),
+            "errno": getattr(exc, "errno", None),
+            "error": str(exc)[:500],
+        })
+    finally:
+        if moved and (target.exists() or target.is_symlink()):
+            try:
+                _not_linked(target)
+                shutil.rmtree(target)
+            except (OSError, ValueError) as exc:
+                result["cleanup_errors"].append({
+                    "path": str(target), "error": str(exc)[:300]
+                })
+        if result["stage"] is not None:
+            stage = Path(result["stage"])
+            if stage.exists() or stage.is_symlink():
+                result["cleanup_errors"].append({
+                    "path": str(stage), "error": "temporary_stage_cleanup_incomplete"
+                })
+    return result
+
+
 def diagnose(analysis_dir, curator_root=None):
     analysis = Path(analysis_dir).expanduser()
     _not_linked(analysis)
@@ -350,7 +452,7 @@ def diagnose(analysis_dir, curator_root=None):
     final_path = parent / facts["run_id"]
     # A final delivery path is NEVER created, renamed, removed, or modified.
     result = {
-        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.2",
+        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.3",
         "diagnostic_only": True,
         "created_final_delivery": False,
         "changed_security_settings": False,
@@ -390,6 +492,17 @@ def diagnose(analysis_dir, curator_root=None):
             result["matrix_interpretation"] = "MATRIX_PASSED_FULL_FAILURE_MAY_BE_INTERMITTENT"
         else:
             result["matrix_interpretation"] = "FIRST_FAILING_STAGE_IS_DIAGNOSTIC_NOT_CAUSAL_PROOF"
+    if full["status"] != "PASS":
+        result["read_pattern_probes"] = [
+            read_pattern_probe(parent, package, expected, phase)
+            for phase in READ_PATTERN_PHASES
+        ]
+        # This tests an alternative temporary staging location on the same
+        # filesystem, but still renames ONLY to a disposable destination.
+        # The production handoff remains untouched.
+        result["cross_parent_full_probe"] = full_stage_probe(
+            parent, package, expected, facts, stage_root=parent.parent
+        )
     # Verify original bytes did not change during all diagnostic probes.
     result["source_zip_preserved"] = digest(package) == expected
     if not result["source_zip_preserved"]:
@@ -408,8 +521,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     result = diagnose(args.analysis_dir, args.curator_root)
     print(json.dumps(result, ensure_ascii=False, indent=2))
+    optional = result.get("read_pattern_probes", [])
+    if "cross_parent_full_probe" in result:
+        optional = [*optional, result["cross_parent_full_probe"]]
     return 0 if all(row["status"] == "PASS" and not row["cleanup_errors"]
-                    for row in result["probes"]) else 2
+                    for row in [*result["probes"], *optional]) else 2
 
 
 if __name__ == "__main__":

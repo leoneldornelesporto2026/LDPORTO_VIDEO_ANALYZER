@@ -330,3 +330,12 @@ Matriz real Windows: `pending_zip_copy=PASS`, `pending_zip_validate=FAILED (WinE
 O Analyzer mantém os controles originais: valida o pacote de origem, copia-o com `fsync` para o staging, exige hash SHA256 original == staging, cria um snapshot do **staging** fora da pasta Curator, exige SHA256 snapshot == original, executa o **mesmo** `validate_core_package` sobre o snapshot, remove-o e verifica novamente staging e original por SHA256. A geração do índice de evidências passa a ler o original (bytes comprovadamente idênticos) em vez de abrir o ZIP dentro do staging. Antes de publicar, os hashes do staging e original são repetidos. Renomeação continua **atômica**, sem fallback de cópia para a inbox, sem sobrescrever destinos e sem mudanças nas ACLs/Defender.
 
 O probe `full` passa a testar esse novo comportamento. Os estágios históricos `pending_zip_validate` e seguintes continuam usando leitura direta no staging para distinguir o padrão anterior; falha nesses estágios não invalida automaticamente sucesso do novo probe full. Apenas os resultados físicos Win11 confirmarão se a mudança resolveu o bloqueio. O Curator só receberá R6 técnico; revisão editorial, R57 e publicação permanecem pendentes.
+
+
+### Diagnóstico diferencial v1.3 — isolamento de leituras e pasta-pai
+
+Em Windows 11, 52 testes focais passaram (1 SKIP), mas o terceiro probe `full` continuou com `WinError 5`, mesmo ao validar um snapshot fora da inbox. A matriz anterior `pending_zip_validate` **continua lendo o ZIP no staging**, logo seu resultado não permite atribuir a falha do `full` atualizado à mesma operação.
+
+O diagnóstico v1.3 mantém os probes originais e, apenas se `full` falhar, executa quatro testes de leitura isolados usando ZIP e destino descartáveis: `rehash` (SHA repetido), `snapshot_copy` (cópia externa sem validação), `snapshot_validated` (validador oficial no snapshot externo) e `source_validated` (validador oficial no original). Acrescenta também `cross_parent_full_probe`: o mesmo staging completo, mas criado **na pasta-pai `input/analyzer` no mesmo volume**, com renomeação atômica para um destino temporário no diretório do vídeo. Se esse último passar e `full` falhar, o local do staging será candidato a mudança de arquitetura — não uma homologação automática. Não cria slot de entrega real nem modifica segurança, Git ou mídia original.
+
+Resultados da matriz são observacionais: a primeira falha não prova a causa ou a identidade de um processo de segurança. A execução física da entrega definitiva continua pendente.

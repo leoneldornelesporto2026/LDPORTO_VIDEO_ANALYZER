@@ -247,3 +247,98 @@ def test_full_probe_uses_offstage_zip_validation_and_original_zip_evidence():
     assert '"zip_validation_outside_curator_stage": True' in source
     assert 'evidence = handoff._evidence_index(source, facts, copied_sha)' in source
     assert 'handoff._write_atomic_stage(' in source
+
+
+
+def test_read_pattern_probes_work_on_synthetic_zip_without_moving_source(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    expected = sha256(source.read_bytes()).hexdigest()
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        for phase in diag.READ_PATTERN_PHASES:
+            result = diag.read_pattern_probe(parent, source, expected, phase)
+            assert result["status"] == "PASS", (phase, result)
+            assert result["os_rename_called"]
+            assert not result["cleanup_errors"]
+            assert Path(result["stage"]).name.startswith(".analyzer-pending-")
+            assert not list(parent.iterdir())
+    assert sha256(source.read_bytes()).hexdigest() == expected
+
+
+def test_read_pattern_denial_has_no_non_atomic_fallback(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    sha = sha256(source.read_bytes()).hexdigest()
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    blocked = PermissionError(13, "Synthetic Windows denied rename")
+    blocked.winerror = 5
+    with patch.object(diag.os, "rename", side_effect=blocked) as move:
+        report = diag.read_pattern_probe(parent, source, sha, "snapshot_copy")
+    assert report["status"] == "FAILED"
+    assert report["winerror"] == 5
+    assert report["os_rename_called"]
+    assert not report["cleanup_errors"]
+    assert move.call_count == 1
+    assert not list(parent.iterdir())
+    assert sha256(source.read_bytes()).hexdigest() == sha
+
+
+def test_cross_parent_full_stage_is_atomic_and_diagnostic_only(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    sha = sha256(source.read_bytes()).hexdigest()
+    base = tmp_path / "curator" / "input" / "analyzer"
+    parent = base / "VIDEO123"
+    parent.mkdir(parents=True)
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        result = diag.full_stage_probe(parent, source, sha, diag._facts(source), stage_root=base)
+    assert result["status"] == "PASS", result
+    assert result["cross_parent_stage"]
+    assert result["stage_root"] == str(base)
+    assert result["destination_is_diagnostic_only"]
+    assert Path(result["target"]).parent == parent
+    assert Path(result["stage"]).parent == base
+    assert not result["cleanup_errors"]
+    assert not list(base.iterdir()) == []   # video dir still exists
+    assert not list(parent.iterdir())
+    assert sha256(source.read_bytes()).hexdigest() == sha
+
+
+def test_cross_parent_full_stage_never_overwrites_a_preexisting_target(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    sha = sha256(source.read_bytes()).hexdigest()
+    base = tmp_path / "curator" / "input" / "analyzer"
+    parent = base / "VIDEO123"
+    parent.mkdir(parents=True)
+    class FixedUUID:
+        hex = "a" * 32
+    destination = parent / (".analyzer-rename-diag-result-full-" + "a" * 32)
+    destination.mkdir()
+    (destination / "user_owned.txt").write_text("preserve", encoding="utf-8")
+    with patch.object(diag, "uuid4", return_value=FixedUUID()):
+        with patch.object(diag.os, "rename") as move:
+            result = diag.full_stage_probe(
+                parent, source, sha, diag._facts(source), stage_root=base
+            )
+    assert result["status"] == "FAILED"
+    assert not result["os_rename_called"]
+    assert (destination / "user_owned.txt").read_text(encoding="utf-8") == "preserve"
+    move.assert_not_called()
+
+
+def test_read_pattern_probe_rejects_invalid_phase_without_writes(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source")
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    try:
+        diag.read_pattern_probe(parent, source, sha256(source.read_bytes()).hexdigest(), "accept_and_publish")
+    except ValueError as exc:
+        assert "unknown_diagnostic_read_phase" in str(exc)
+    else:
+        assert False, "Unexpected acceptance of a non-diagnostic phase"
+    assert not list(parent.iterdir())

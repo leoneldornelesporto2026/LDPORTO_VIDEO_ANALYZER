@@ -92,18 +92,36 @@ $media = ""
 if ($explicitMedia) {
     $media = $explicitMedia
 } else {
-    $download = Join-Path $analyzer ("input\youtube\"+$videoId+"\download.json")
-    if (-not (Test-Path -LiteralPath $download -PathType Leaf)) {
-        throw "Fonte local nao encontrada no cache legado: $download. Informe -MediaPath com o original exato."
+    $legacyDir = Join-Path $analyzer ("input\youtube\" + $videoId)
+    $download = Join-Path $legacyDir "download.json"
+    if (Test-Path -LiteralPath $download -PathType Leaf) {
+        $cache = Get-Content -LiteralPath $download -Raw | ConvertFrom-Json
+        $filename = [string]$cache.filename
+        if (-not $filename -or $filename -ne [IO.Path]::GetFileName($filename) -or
+            $filename.Contains('\') -or $filename.Contains('/') -or
+            $filename.Contains(':') -or $filename.Contains('..')) {
+            throw "Nome de arquivo inseguro no cache legado"
+        }
+        $media = Join-Path $legacyDir $filename
+    } else {
+        # Analyzer media_library supports legacy <videoId>.<extension> without a
+        # download.json. Search ONLY this video's managed folder, not the drive.
+        foreach ($extension in @(".mp4", ".mkv", ".webm", ".mov")) {
+            $candidate = Join-Path $legacyDir ($videoId + $extension)
+            if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) { continue }
+            if ((Get-Item -LiteralPath $candidate -Force).Attributes -band
+                [IO.FileAttributes]::ReparsePoint) { continue }
+            $candidateSha = (Get-FileHash -LiteralPath $candidate -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($candidateSha -eq [string]$summary.source.source_sha256) {
+                $media = $candidate
+                Write-Host "Original legado sem download.json confirmado por SHA256: $media"
+                break
+            }
+        }
+        if (-not $media) {
+            throw "Fonte exata ausente na pasta legada $legacyDir. Informe -MediaPath com o original."
+        }
     }
-    $cache = Get-Content -LiteralPath $download -Raw | ConvertFrom-Json
-    $filename = [string]$cache.filename
-    if (-not $filename -or $filename -ne [IO.Path]::GetFileName($filename) -or
-        $filename.Contains('\') -or $filename.Contains('/') -or
-        $filename.Contains(':') -or $filename.Contains('..')) {
-        throw "Nome de arquivo inseguro no cache legado"
-    }
-    $media = Join-Path (Split-Path -Path $download -Parent) $filename
 }
 if (-not (Test-Path -LiteralPath $media -PathType Leaf)) { throw "Fonte de video ausente: $media" }
 $mediaSha = (Get-FileHash -LiteralPath $media -Algorithm SHA256).Hash.ToLowerInvariant()

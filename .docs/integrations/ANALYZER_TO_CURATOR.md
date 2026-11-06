@@ -291,3 +291,6 @@ O operador `RETOMAR_R6_NASA_SEM_REANALISE.ps1` agora normaliza `-MediaPath` rela
 O relatório de sucesso exige que o MP4 exista fisicamente sob `Curator/output/r6_preview_smoke/`, não seja um reparse point, tenha extensão MP4, bytes e SHA256 idênticos aos do recibo do Curator. Metadados retornados pelo Curator devem declarar áudio, 360×640 e duração compatível com a amostra solicitada. A prévia pode ter **menos de seis segundos** se o intervalo do candidato for mais curto. O contrato não atesta verificação editorial, publicação ou Reels finais.
 
 Esses controles são **adicionais** à validação da mídia original e ao FFprobe já executados pelo Curator. A verificação física do Windows 11 permanece necessária; testes sintéticos e revisão de código não autorizam declarar o incidente recuperado.
+
+
+No piloto NASA, `media_resolution.origin=legacy_input` não implica a existência de `download.json`. Quando esse manifesto não existe, o operador consulta **somente** `Analyzer/input/youtube/<videoId>/<videoId>.{mp4,mkv,webm,mov}`, conforme o fallback legado do motor, e aceita apenas o arquivo que coincidir com o SHA256 do pacote R6. Não há busca recursiva, redownload ou aceitação por nome/duração isoladamente. `-MediaPath` explícito continua disponível para fontes em outros locais.

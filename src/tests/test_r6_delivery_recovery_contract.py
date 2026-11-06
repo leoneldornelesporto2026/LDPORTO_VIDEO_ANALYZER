@@ -117,3 +117,16 @@ def test_10_report_keeps_short_technical_preview_distinct_from_final_reels():
     assert 'human_approved=$false' in script
     assert 'publication_ready=$false' in script
     assert 'final_reels_rendered=$false' in script
+
+
+def test_11_legacy_media_without_download_manifest_has_bounded_sha_verified_fallback():
+    script=RECOVERY.read_text(encoding="utf-8")
+    assert '$legacyDir = Join-Path $analyzer' in script
+    assert 'if (Test-Path -LiteralPath $download -PathType Leaf)' in script
+    assert 'foreach ($extension in @(".mp4", ".mkv", ".webm", ".mov"))' in script
+    assert '$candidate = Join-Path $legacyDir ($videoId + $extension)' in script
+    assert '$candidateSha = (Get-FileHash -LiteralPath $candidate -Algorithm SHA256)' in script
+    assert 'if ($candidateSha -eq [string]$summary.source.source_sha256)' in script
+    assert 'Fonte exata ausente na pasta legada' in script
+    assert 'Get-ChildItem -Recurse' not in script
+    assert 'AllowDownload' not in script

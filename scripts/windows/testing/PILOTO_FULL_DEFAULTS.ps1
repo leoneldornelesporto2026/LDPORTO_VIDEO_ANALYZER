@@ -8,6 +8,7 @@ param(
     [string]$MediaPath = "",
     [string]$FixtureSearchRoot = "",
     [switch]$CurrentBaselineWithoutHistoricalFixtures,
+    [switch]$ResumeAfterValidatedSuites,
     [switch]$AllowDownload
 )
 $ErrorActionPreference="Stop"
@@ -117,8 +118,57 @@ foreach ($fixture in $expectedFixtures) {
     Write-Host ("Fixture original OK: "+$fixture.Name) -ForegroundColor Green
 }
 
+# Resume is only allowed for the exact Windows full-suite evidence supplied by
+# the operator (Analyzer 2693 passed / 7 historical deselected, Curator 94 passed).
+# It never pretends that the new orchestration commit was fully regressed.
+if ($ResumeAfterValidatedSuites) {
+    if (-not $CurrentBaselineWithoutHistoricalFixtures -or $historicalMode -ne "HISTORICAL_FIXTURES_MISSING") {
+        throw "Retomada exige -CurrentBaselineWithoutHistoricalFixtures com as fixtures ainda ausentes."
+    }
+    $testedAnalyzer="751ac18e47765a918c859d194a60871a891616ac"
+    $testedCurator="70c3c7150d1f84057fb0dbda819f5fef0218544b"
+    $currentCurator=(& git.exe -C $curator rev-parse HEAD).Trim()
+    Assert-Exit "SHA Curator na retomada"
+    if ($currentCurator -ne $testedCurator) {
+        throw "Curator mudou desde os 94 testes; execute as suites completas novamente."
+    }
+    $filesChanged=@(& git.exe -C $analyzer diff --name-only $testedAnalyzer HEAD)
+    Assert-Exit "Delta Analyzer desde 2693 testes"
+    $allowedOnly=@(
+        "scripts/windows/testing/PILOTO_FULL_DEFAULTS.ps1",
+        "src/tests/test_pilot_full_defaults_contract.py",
+        "README.md",
+        "docs/VALIDACAO.md",
+        ".docs/integrations/ANALYZER_TO_CURATOR.md"
+    )
+    foreach ($changedFile in $filesChanged) {
+        if ($changedFile -notin $allowedOnly) {
+            throw "Codigo Analyzer mudou desde a regressao: $changedFile. Execute as suites novamente."
+        }
+    }
+    $dirtyRelevant=@(& git.exe -C $analyzer diff --name-only HEAD)
+    Assert-Exit "Mudancas locais Analyzer"
+    foreach ($changedFile in $dirtyRelevant) {
+        if ($changedFile -match "^(src/|config/|analyze.py|scripts/windows/testing/)") {
+            throw "Existem alteracoes locais no codigo/config do Analyzer: $changedFile"
+        }
+    }
+    Write-Host "[1/5] Retomada: testes principais PASSARAM no log anterior; nenhuma nova suite completa sera alegada." -ForegroundColor Yellow
+    Write-Host "    Analyzer: 2693 PASS, 6 SKIP, 7 HISTORICAL PENDING"
+    Write-Host "    Curator: 94 PASS"
+    Push-Location $analyzer
+    try {
+        & $ap -m pytest -q src/tests/test_pilot_full_defaults_contract.py src/tests/test_pilot_e2e_windows_contract.py
+        Assert-Exit "Testes do controlador na nova revisao"
+    }
+    finally { Pop-Location }
+    $analyzerSuiteStatus="PREVIOUS_WINDOWS_LOG_2693_PASS_7_HISTORICAL_PENDING_NOT_RERUN"
+    $curatorSuiteStatus="PREVIOUS_WINDOWS_LOG_94_PASS_NOT_RERUN"
+}
 Write-Host ""
-if ($historicalMode -eq "FULL_VERIFIED") {
+if ($ResumeAfterValidatedSuites) {
+    Write-Host "[1-2/5] Reutilizando evidencias anteriores com SHA fixo (sem repetir suites)." -ForegroundColor Yellow
+} elseif ($historicalMode -eq "FULL_VERIFIED") {
     Write-Host "[1/5] ANALYZER: suite COMPLETA com fixtures originais" -ForegroundColor Cyan
     Run-Suite $analyzer {
         & (Join-Path $analyzer "scripts\windows\testing\VALIDAR_P0_GUI.ps1") -FullSuite
@@ -152,11 +202,14 @@ if ($historicalMode -eq "FULL_VERIFIED") {
     }
     $analyzerSuiteStatus="CURRENT_BASELINE_PASS_7_HISTORICAL_TESTS_DESELECTED"
 }
-Write-Host ""
-Write-Host "[2/5] CURATOR: suite COMPLETA incluindo FFmpeg, camera e R6" -ForegroundColor Cyan
-Run-Suite $curator {
-    & $cp -m unittest discover -s tests -p "test_*.py" -v
-    Assert-Exit "Suite completa Curator (incluindo preview R57 sintetico)"
+if (-not $ResumeAfterValidatedSuites) {
+    Write-Host ""
+    Write-Host "[2/5] CURATOR: suite COMPLETA incluindo FFmpeg, camera e R6" -ForegroundColor Cyan
+    Run-Suite $curator {
+        & $cp -m unittest discover -s tests -p "test_*.py" -v
+        Assert-Exit "Suite completa Curator (incluindo preview R57 sintetico)"
+    }
+    $curatorSuiteStatus="FULL_SUITE_PASS"
 }
 $source=([uri]$SourceUrl)
 if ($source.Scheme -ne "https" -or
@@ -176,10 +229,9 @@ Write-Host ""
 Write-Host "[3/5] ANALYZER: video real CURTO, configuracao YAML padrao" -ForegroundColor Cyan
 $started=Get-Date
 $pilot=Join-Path $analyzer "scripts\windows\testing\PILOTO_E2E_REAL.ps1"
-$pilotArgs=@("-SourceUrl",$SourceUrl,"-SmokeCount",1)
-if ($media) { $pilotArgs+=@("-MediaPath",$media) }
-if ($AllowDownload) { $pilotArgs+="-AllowDownload" }
-& $pilot @pilotArgs
+# PowerShell 5.1 requires NAMED binding for .ps1; an array splat here
+# passes "-SourceUrl" as positional text and fails before real analysis.
+& $pilot -SourceUrl $SourceUrl -SmokeCount 1 -MediaPath $media -AllowDownload:$AllowDownload
 Assert-Exit "Piloto real Analyzer -> Curator"
 $analysisRoot=Join-Path $analyzer "analysis"
 $recent=Get-ChildItem -LiteralPath $analysisRoot -Directory -Filter "pilot_e2e_*" |
@@ -244,7 +296,9 @@ Run-Suite $curator {
 }
 $after=(Get-FileHash -LiteralPath $config -Algorithm SHA256).Hash
 if ($before -ne $after) { throw "config/config.yaml foi alterado durante o piloto!" }
-$resultLabel=if ($historicalMode -eq "FULL_VERIFIED") {
+$resultLabel=if ($ResumeAfterValidatedSuites) {
+    "RESUMED_REAL_TECHNICAL_PREVIEW_WITH_PRIOR_SUITES_HISTORICAL_PENDING"
+} elseif ($historicalMode -eq "FULL_VERIFIED") {
     "FULL_SUITES_AND_REAL_TECHNICAL_PREVIEW_PASS"
 } else {
     "CURRENT_BASELINE_AND_REAL_TECHNICAL_PREVIEW_PASS_HISTORICAL_PENDING"
@@ -269,7 +323,9 @@ $final=[ordered]@{
     preview_sha256=[string]$preview.preview_sha256
     analyzer_default_config_unchanged=$true
     suite_analyzer=$analyzerSuiteStatus
-    suite_curator="FULL_SUITE_PASS"
+    suite_curator=$curatorSuiteStatus
+    suites_executed_nesta_invocacao=(-not $ResumeAfterValidatedSuites)
+    suites_retoma_com_evidencia_anterior=[bool]$ResumeAfterValidatedSuites
     historical_fixture_status=$historicalMode
     historical_full_suite_passed=($historicalMode -eq "FULL_VERIFIED")
     deselected_tests=@($deselectedTests)

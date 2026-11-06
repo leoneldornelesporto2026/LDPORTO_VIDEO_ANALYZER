@@ -80,7 +80,7 @@ class FullDefaultsPilotContractTests(unittest.TestCase):
         self.assertIn('Assert-Exit "Suite completa Curator',self.script)
     def test_uses_real_verified_short_nasa_youtube_sample(self):
         self.assertIn('https://www.youtube.com/watch?v=Eo2bUJcxASI',self.script)
-        self.assertIn('if ($AllowDownload)',self.script)
+        self.assertIn('-AllowDownload:$AllowDownload',self.script)
         self.assertIn('if (-not $media -and -not $AllowDownload)',self.script)
         self.assertIn('PILOTO_E2E_REAL.ps1',self.script)
     def test_default_yaml_is_unmodified_and_not_downscaled(self):
@@ -96,6 +96,26 @@ class FullDefaultsPilotContractTests(unittest.TestCase):
         self.assertIn('r6-preview-smoke --inbox $inbox --media $media',self.script)
         self.assertIn('--confirm-preview-test',self.script)
         self.assertIn('TECHNICAL_PREVIEW_REVIEW_REQUIRED',self.script)
+    def test_powershell_51_calls_child_script_with_named_parameters(self):
+        self.assertIn(
+            '& $pilot -SourceUrl $SourceUrl -SmokeCount 1 -MediaPath $media -AllowDownload:$AllowDownload',
+            self.script)
+        self.assertNotIn('& $pilot @pilotArgs',self.script)
+        self.assertNotIn('$pilotArgs=@("-SourceUrl"',self.script)
+
+    def test_fast_resume_is_explicit_and_restricted_to_logged_suite_baselines(self):
+        self.assertIn('[switch]$ResumeAfterValidatedSuites',self.script)
+        self.assertIn('751ac18e47765a918c859d194a60871a891616ac',self.script)
+        self.assertIn('70c3c7150d1f84057fb0dbda819f5fef0218544b',self.script)
+        self.assertIn('git.exe -C $analyzer diff --name-only $testedAnalyzer HEAD',self.script)
+        self.assertIn('foreach ($changedFile in $filesChanged)',self.script)
+        self.assertIn('if ($changedFile -notin $allowedOnly)',self.script)
+        self.assertIn('src/tests/test_pilot_e2e_windows_contract.py',self.script)
+        self.assertIn('RESUMED_REAL_TECHNICAL_PREVIEW_WITH_PRIOR_SUITES_HISTORICAL_PENDING',self.script)
+        self.assertIn('suites_executed_nesta_invocacao=(-not $ResumeAfterValidatedSuites)',self.script)
+        self.assertIn('suites_retoma_com_evidencia_anterior=[bool]$ResumeAfterValidatedSuites',self.script)
+        self.assertNotIn('suite_curator="FULL_SUITE_PASS"',self.script)
+
     def test_no_git_write_or_false_editorial_approvals(self):
         for action in ('git push','git add','git reset','git checkout','git merge'):
             self.assertNotIn(action,self.script)

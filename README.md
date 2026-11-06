@@ -110,3 +110,17 @@ O relatório `PILOT_FULL_DEFAULTS_REPORT.json` distingue `historical_full_suite_
 
 
 **Evidência Windows em 06/11/2026:** com apenas um dos sete testes desmarcado, o Analyzer apresentou **2.692 testes aprovados, seis falhas exclusivamente por ausência dos dois ZIPs, seis skipped, um deselected**. A baseline atual desmarca agora os sete casos comprovadamente dependentes desses arquivos: o de proveniência, um de diagnósticos S4, três de replay S17, um de auditoria S18 e um de palavras incertas S19. O total de testes restantes não é declarado PASS antes de nova execução no Windows. Nenhum estado de publicação ou render é liberado por esse tratamento.
+
+### Retomar o video real apos suites aprovadas no Windows (PowerShell 5.1)
+
+Em 06/11/2026 as suites passaram em **Analyzer `751ac18`** (2.693 passed, 6 skipped, 7 históricos deselected, 39 subtests) e **Curator `70c3c71`** (94/94). A execucao parou antes de iniciar o YouTube por um defeito de *parameter binding* ao usar array splatting `& $pilot @pilotArgs`: no PowerShell 5.1, os elementos `"-SourceUrl"` e `"-SmokeCount"` foram tratados como argumentos posicionais. O controlador agora chama `PILOTO_E2E_REAL.ps1` usando os nomes reais dos parametros.
+
+Nao precisa repetir todos os testes para diagnosticar o download e o processamento. A retomada **opt-in** segue os mesmos gates de fixtures e de SHA, mas verifica o commit exato do Curator, restringe mudancas do Analyzer desde `751ac18` a script controlador, teste de contrato e docs, bloqueia modificacoes locais de codigo/config e reexecuta os testes de contrato dos operadores. O suboperador continua executando testes **focais reais** antes de iniciar a inferencia.
+
+```powershell
+& .\scripts\windows\testing\PILOTO_FULL_DEFAULTS.ps1 -AllowDownload -CurrentBaselineWithoutHistoricalFixtures -ResumeAfterValidatedSuites
+```
+
+A opcao imprime que as suites foram **reutilizadas do log de execucao anterior**: nunca relata como se os 2.693 ou 94 testes tivessem rodado de novo. Um relatorio final de retomada, se a etapa do video e a previa passarem, usa o status `RESUMED_REAL_TECHNICAL_PREVIEW_WITH_PRIOR_SUITES_HISTORICAL_PENDING`, `suites_executed_nesta_invocacao=false` e `suites_retoma_com_evidencia_anterior=true`.
+
+Para repetir a regressao integral da baseline atual, **omita** `-ResumeAfterValidatedSuites`. Se os commits ou arquivos criticos mudarem, a retomada aborta e exige novamente as suites. O teste historico integral permanece pendente ate recuperar as duas fixtures SHA256 originais; os downloads, registros e resultados de video permanecem locais (nao criar commit com MP4/ZIP).

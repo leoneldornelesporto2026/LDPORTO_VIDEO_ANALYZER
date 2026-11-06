@@ -40,3 +40,9 @@ substituem homologacao em Windows com videos e modelos reais.
 Os arquivos `AGENTS.md` (instrucoes de agentes), `src/`, `scripts/`,
 `config/` e `schemas/` continuam nos caminhos tecnicos originais por
 compatibilidade com o codigo e as ferramentas.
+
+## Piloto real Analyzer -> Curator
+
+No Windows/PowerShell 5.1, execute o operador `scripts/windows/testing/PILOTO_E2E_REAL.ps1`, com um vídeo do YouTube que você tem direito de processar. Exige `-SourceUrl <URL>` e **`-AllowDownload` explícito** se for baixar, ou `-MediaPath <original local>` quando já houver mídia. Pode repetir um resultado existente com `-AnalysisDir <pasta>`, sem inferência.
+
+O operador gera `analysis/pilot_e2e_*/PILOT_E2E_REPORT.json` com os gates P0/P1 de ZIP real, recibo, SHA256, smoke técnico R6 e auditoria do MP4. Não renderiza vídeos finais, não efetua commits/push de mídia e não aprova publicação. Leia detalhes em `.docs/integrations/ANALYZER_TO_CURATOR.md`.

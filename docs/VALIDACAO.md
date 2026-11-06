@@ -136,3 +136,9 @@ Os arquivos `AUDITORIA_CLOVIS_20261009.md` e
 `SEGUNDA_CURADORIA_CLOVIS_PARCIAL.zip` não estavam disponíveis nos caminhos
 informados nesta execução. A obtenção desses arquivos e de outputs pós comparáveis
 permanece pendente; não há alegação de homologação real do vídeo Clóvis.
+
+## Gate real Windows Analyzer + Curator
+
+Script: `.\scripts\windows\testing\PILOTO_E2E_REAL.ps1`. Uso: `-SourceUrl <URL> -MediaPath <original.mp4>` ou `-SourceUrl <URL> -AllowDownload`; sem inferência: `-AnalysisDir <output>`. Verifique `PILOT_E2E_REPORT.json`, recibos e `r6-smoke`.
+
+O arquivo `src/tests/test_pilot_e2e_windows_contract.py` verifica apenas invariantes estáticas (source local/download opt-in, branch develop, gates, nenhuma publicação). **Não substitui** a execução física do PowerShell 5.1 nem a inspeção do vídeo real. A homologação de render R6 -> Curator permanece P2 pendente.

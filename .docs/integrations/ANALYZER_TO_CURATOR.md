@@ -143,3 +143,42 @@ O novo arquivo `VIDEO_EVIDENCE_INDEX.json` acompanha cada entrega nova. Ele enum
 **Limite de escopo:** o Analyzer exporta evidências canônicas suficientes para a segunda curadoria; os arquivos de modelos, mídia original e artefatos temporários/brutos fora do pacote canônico não são copiados. A mídia original continua separada do handoff e pode ser obtida/associada pelo Curator em `input/videos/`. Um pacote complementar opcional de prévias, quando gerado pelo Analyzer (`media_path`), também **não faz parte da entrega automática atual**; essa extensão exige contrato e homologação específicos. Não anunciar que esses arquivos extras chegaram quando não chegaram.
 
 A entrega completa de **evidências incluídas no ZIP** é atestada apenas após o ZIP e o índice passarem no inspetor do Curator. Isso não atesta processamento editorial, aprovação ou renderização.
+
+## Piloto E2E real Windows — sem dados no GitHub
+
+O script `scripts/windows/testing/PILOTO_E2E_REAL.ps1` valida as **etapas já implementadas**, sem falsear um render R57: execução REAL do Analyzer a partir de um vídeo YouTube autorizado, ZIP canônico, entrega física validada no Curator, smoke R6 com 1–5 IDs gerados apenas para teste, relatório de mídia por SHA256, evidência final no diretório de análise. Pode reutilizar análise existente sem reprocessamento.
+
+**Condições:** Windows PowerShell 5.1, Python Analyzer 3.11 em `.venv`, Curator irmão em `develop`, vídeo com direitos de processamento, dependências FFmpeg/modelos conforme `--doctor`, espaço em disco e conexão apenas quando explicitamente autorizada. O script não instala dependências, não executa Git pull/commit/push, não altera branches. Ele bloqueia download implícito. Quando o vídeo é fornecido por URL e você deseja autorização explícita de baixar, informe `-AllowDownload`; para mídia local já disponível, use `-MediaPath`. O SHA256 local será vinculado à URL pelo Analyzer.
+
+### Novo vídeo (pode baixar apenas com consentimento explícito)
+
+```powershell
+cd "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER"
+& .\scripts\windows\testing\PILOTO_E2E_REAL.ps1 -SourceUrl "https://www.youtube.com/watch?v=ID_DO_VIDEO_AUTORIZADO" -AllowDownload
+```
+
+### Vídeo do YouTube já salvo no Windows (recomendado: evita download duplicado)
+
+```powershell
+& .\scripts\windows\testing\PILOTO_E2E_REAL.ps1 -SourceUrl "https://www.youtube.com/watch?v=ID_DO_VIDEO_AUTORIZADO" -MediaPath "C:\CAMINHO\VIDEO_ORIGINAL.mp4"
+```
+
+### Repetir entrega e consumo sem nova inferência
+
+```powershell
+& .\scripts\windows\testing\PILOTO_E2E_REAL.ps1 -AnalysisDir ".\analysis\PILOT_OUTPUT_REAL"
+```
+
+**Gates e evidências:**
+
+1. Regressão focal Analyzer/Curator antes de processar mídia; falha interrompe a execução.
+2. Análise real com checkpoints e saída nova em `analysis/pilot_e2e_<timestamp>/`; ZIP oficial validado. A análise pode ser `partial`, sem falso "sucesso editorial".
+3. Gate integrado Windows físico `VALIDAR_ENTREGA_CURATOR.ps1 -AnalysisDir`: destino `Curator/input/analyzer/<video_id>/<run_id>/`, recibo de entrega e hashes. `ALREADY_DELIVERED` é idempotência, não corte renderizado.
+4. `r6-smoke` automático: 2 IDs distintos por padrão, JSON de teste em `Curator/output/r6_smoke/`, `render_ready=false`, `human_approved=false`.
+5. `r6-media-audit`: procura mídia em locais locais gerenciados. Com `-MediaPath` também verifica esse arquivo explicitamente. Sempre exige SHA256 igual para considerar a fonte exata. O relatório local fica em `Analyzer/analysis/pilot_e2e_*/PILOT_E2E_REPORT.json`.
+
+**Critério P0/P1:** recibo `DELIVERED` ou `ALREADY_DELIVERED`, inspetor `VALID`, smoke de candidatos reais `SMOKE_PASSED_WITH_PENDING_HUMAN_REVIEWS`, relatório com os SHAs e `render_ready=false`. Se não houver dois candidatos sem sobreposição, o teste falha honestamente; `-SmokeCount 1` testa um só. Não inventar Stories nem ignorar `publication_eligible_false`.
+
+**P2 pendente:** associação de vídeo ao motor de prévias, adaptador verdadeiro R6 -> contratos/ativos do renderizador R57, vídeo curto de teste, inspeção de áudio/câmera/legendas, render final condicionado a aprovação. Um piloto P0/P1 PASSOU não é homologação E2E até o MP4 final. Se a auditoria encontrar mídia alternativa com SHA diferente, não liberar os timestamps automaticamente.
+
+**Sem commits de análise:** o GitHub recebe somente código, testes, contratos e documentos. ZIP R6, MP4 original, diretórios `analysis/`, capturas, prévias e renders ficam localmente ignorados pelo Git; para compartilhar evidências enviar um pacote de diagnóstico **separado**, com relatório/manifesto/hashes, ou artefatos apropriados com retenção. Nunca executar `git add -f` nesses caminhos.

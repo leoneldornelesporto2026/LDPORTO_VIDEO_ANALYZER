@@ -407,3 +407,108 @@ def test_delete_access_probe_has_no_deletefile_calls():
     assert "kernel.DeleteFile" not in script
     assert "kernel.MoveFile" not in script
     assert "chmod(" not in script
+
+
+
+def test_timed_settle_probe_retries_same_stage_then_atomically_renames(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    digest_value = sha256(source.read_bytes()).hexdigest()
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    original_rename = diag.os.rename
+    attempts = []
+    def temporary_denial(stage, dest):
+        attempts.append((str(stage), str(dest)))
+        if len(attempts) <= 2:
+            error = PermissionError(13, "Synthetic transient Windows rename failure")
+            error.winerror = 5
+            raise error
+        return original_rename(stage, dest)
+
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        with patch.object(diag.os, "rename", side_effect=temporary_denial):
+            with patch.object(diag.time, "sleep", return_value=None) as sleep:
+                result = diag.full_stage_probe(
+                    parent, source, digest_value, diag._facts(source),
+                    retry_delays=(2, 5, 10),
+                )
+    assert result["status"] == "PASS"
+    assert result["rename_attempts"] == 3
+    assert [row["winerror"] for row in result["rename_failures"]] == [5, 5]
+    assert result["wait_seconds_total"] == 7
+    assert len({x[0] for x in attempts}) == 1
+    assert len({x[1] for x in attempts}) == 1
+    assert sleep.call_args_list[0].args == (2,)
+    assert sleep.call_args_list[1].args == (5,)
+    assert sleep.call_count == 2
+    assert not result["cleanup_errors"]
+    assert not list(parent.iterdir())
+    assert sha256(source.read_bytes()).hexdigest() == digest_value
+
+
+def test_timed_settle_probe_persistent_denial_exits_without_publishing(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    digest_value = sha256(source.read_bytes()).hexdigest()
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    denial = PermissionError(13, "Synthetic persistent Windows denial")
+    denial.winerror = 5
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        with patch.object(diag.os, "rename", side_effect=denial) as rename:
+            with patch.object(diag.time, "sleep", return_value=None) as sleep:
+                result = diag.full_stage_probe(
+                    parent, source, digest_value, diag._facts(source),
+                    retry_delays=(2, 5, 10),
+                )
+    assert result["status"] == "FAILED"
+    assert result["winerror"] == 5
+    assert result["rename_attempts"] == 4
+    assert result["wait_seconds_total"] == 17
+    assert rename.call_count == 4
+    assert sleep.call_count == 3
+    assert not result["cleanup_errors"]
+    assert not list(parent.iterdir())
+    assert sha256(source.read_bytes()).hexdigest() == digest_value
+
+
+def test_timed_settle_probe_does_not_retry_unknown_error(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    error = PermissionError(13, "Synthetic unknown Windows error")
+    error.winerror = 123
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        with patch.object(diag.os, "rename", side_effect=error) as rename:
+            with patch.object(diag.time, "sleep", return_value=None) as sleep:
+                result = diag.full_stage_probe(
+                    parent, source, sha256(source.read_bytes()).hexdigest(),
+                    diag._facts(source), retry_delays=(2, 5, 10),
+                )
+    assert result["status"] == "FAILED"
+    assert result["rename_attempts"] == 1
+    assert result["wait_seconds_total"] == 0
+    rename.assert_called_once()
+    sleep.assert_not_called()
+    assert not list(parent.iterdir())
+
+
+def test_timed_settle_probe_rejects_unbounded_waits_before_writing(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source")
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    with patch.object(diag.os, "rename") as rename:
+        try:
+            diag.full_stage_probe(
+                parent, source, sha256(source.read_bytes()).hexdigest(),
+                diag._facts(source), retry_delays=(2, 5, 10, 15, 30),
+            )
+        except ValueError as exc:
+            assert "invalid_bounded_diagnostic_retry_schedule" in str(exc)
+        else:
+            assert False, "Unbounded diagnostic retry must be rejected"
+    rename.assert_not_called()
+    assert not list(parent.iterdir())

@@ -16,6 +16,7 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
+import time
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -142,7 +143,7 @@ def windows_delete_share_probe(path, *, directory=False):
         return {"status": "PROBE_ERROR", "error": str(exc)[:300]}
 
 
-def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None):
+def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None, retry_delays=()):
     """Prepare the same four handoff artifacts, then ONE isolated directory rename.
 
     Unlike a delivery, the temporary target starts with a diagnostic prefix,
@@ -153,6 +154,11 @@ def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None
     _not_linked(parent)
     if not parent.is_dir():
         raise ValueError("curator_video_parent_missing")
+    if len(retry_delays) > 4 or any(
+        isinstance(delay, bool) or not isinstance(delay, (int, float)) or
+        not (0 < delay <= 30) for delay in retry_delays
+    ):
+        raise ValueError("invalid_bounded_diagnostic_retry_schedule")
     source = Path(zip_source)
     stage_root = Path(stage_root) if stage_root is not None else parent
     _not_linked(stage_root)
@@ -165,7 +171,9 @@ def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None
               "reproduces_production_stage_files": True,
               "zip_validation_outside_curator_stage": True,
               "destination_is_diagnostic_only": True, "stage_file_names": [],
-              "stage_root": str(stage_root), "cross_parent_stage": stage_root != parent}
+              "stage_root": str(stage_root), "cross_parent_stage": stage_root != parent,
+              "rename_attempts": 0, "rename_failures": [],
+              "wait_seconds_total": 0, "retry_delays": list(retry_delays)}
     moved = False
     try:
         if target.exists() or target.is_symlink():
@@ -208,18 +216,34 @@ def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None
             if target.exists() or target.is_symlink():
                 raise FileExistsError("diagnostic_full_target_created_concurrently")
             result["os_rename_called"] = True
-            try:
-                os.rename(stage, target)
-            except OSError:
-                result["stage_delete_access_on_failure"] = windows_delete_share_probe(
-                    stage, directory=True
-                )
-                result["zip_delete_access_on_failure"] = windows_delete_share_probe(
-                    stage / source.name
-                )
-                raise
-            moved = True
-            result["status"] = "PASS"
+            for attempt in range(len(retry_delays) + 1):
+                if target.exists() or target.is_symlink():
+                    raise FileExistsError("diagnostic_full_target_created_concurrently")
+                result["rename_attempts"] += 1
+                try:
+                    os.rename(stage, target)
+                except OSError as exc:
+                    result["rename_failures"].append({
+                        "winerror": getattr(exc, "winerror", None),
+                        "errno": getattr(exc, "errno", None),
+                    })
+                    result["stage_delete_access_on_failure"] = windows_delete_share_probe(
+                        stage, directory=True
+                    )
+                    result["zip_delete_access_on_failure"] = windows_delete_share_probe(
+                        stage / source.name
+                    )
+                    if getattr(exc, "winerror", None) not in (5, 32, 33):
+                        raise
+                    if attempt >= len(retry_delays):
+                        raise
+                    delay = retry_delays[attempt]
+                    result["wait_seconds_total"] += delay
+                    time.sleep(delay)
+                else:
+                    moved = True
+                    result["status"] = "PASS"
+                    break
     except (OSError, ValueError) as exc:
         result.update({
             "status": "FAILED",
@@ -504,7 +528,7 @@ def diagnose(analysis_dir, curator_root=None):
     final_path = parent / facts["run_id"]
     # A final delivery path is NEVER created, renamed, removed, or modified.
     result = {
-        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.4",
+        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.5",
         "diagnostic_only": True,
         "created_final_delivery": False,
         "changed_security_settings": False,
@@ -555,6 +579,12 @@ def diagnose(analysis_dir, curator_root=None):
         result["cross_parent_full_probe"] = full_stage_probe(
             parent, package, expected, facts, stage_root=parent.parent
         )
+        # Temporal control: prepare ONE full stage and retry only known Windows
+        # sharing/permission failures at bounded intervals (17 seconds total).
+        # Never change the real handoff's retry policy without physical evidence.
+        result["timed_settle_full_probe"] = full_stage_probe(
+            parent, package, expected, facts, retry_delays=(2, 5, 10)
+        )
     # Verify original bytes did not change during all diagnostic probes.
     result["source_zip_preserved"] = digest(package) == expected
     if not result["source_zip_preserved"]:
@@ -576,6 +606,8 @@ def main(argv=None):
     optional = result.get("read_pattern_probes", [])
     if "cross_parent_full_probe" in result:
         optional = [*optional, result["cross_parent_full_probe"]]
+    if "timed_settle_full_probe" in result:
+        optional = [*optional, result["timed_settle_full_probe"]]
     return 0 if all(row["status"] == "PASS" and not row["cleanup_errors"]
                     for row in [*result["probes"], *optional]) else 2
 

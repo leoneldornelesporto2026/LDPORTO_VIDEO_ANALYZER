@@ -322,8 +322,9 @@ def test_21_windows_transient_rename_denial_retries_then_commits_atomically(tmp_
             raise _windows_rename_error(5)
         return real_rename(source_dir, destination)
 
-    with patch.object(delivery.os, "rename", side_effect=transient), (
-        patch.object(delivery.time, "sleep", return_value=None) as sleep
+    with (
+        patch.object(delivery.os, "rename", side_effect=transient),
+        patch.object(delivery.time, "sleep", return_value=None) as sleep,
     ):
         delivered = delivery.deliver_package(source, curator_root=root)
     assert delivered["delivery_status"] == "DELIVERED"
@@ -340,8 +341,9 @@ def test_22_windows_persistent_rename_denial_preserves_original_and_reports_caus
     root = fake_curator(tmp_path)
     source = fake_zip(tmp_path / "run")
     original_sha = delivery.file_hash(source)
-    with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(5)) as rename_mock, (
-        patch.object(delivery.time, "sleep", return_value=None) as sleep
+    with (
+        patch.object(delivery.os, "rename", side_effect=_windows_rename_error(5)) as rename_mock,
+        patch.object(delivery.time, "sleep", return_value=None) as sleep,
     ):
         result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
     assert result["delivery_status"] == "DELIVERY_BLOCKED"
@@ -356,8 +358,9 @@ def test_22_windows_persistent_rename_denial_preserves_original_and_reports_caus
 def test_23_nontransient_rename_errors_are_not_retried(tmp_path, stubbed_validator):
     root = fake_curator(tmp_path)
     source = fake_zip(tmp_path / "run")
-    with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(123)) as rename_mock, (
-        patch.object(delivery.time, "sleep", return_value=None) as sleep
+    with (
+        patch.object(delivery.os, "rename", side_effect=_windows_rename_error(123)) as rename_mock,
+        patch.object(delivery.time, "sleep", return_value=None) as sleep,
     ):
         result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
     assert result["delivery_status"] == "DELIVERY_BLOCKED"

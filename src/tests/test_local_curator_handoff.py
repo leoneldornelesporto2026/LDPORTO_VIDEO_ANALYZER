@@ -303,3 +303,84 @@ def test_20_cli_reports_verified_delivery_and_not_unverified_import():
     assert "delivery.get('analysis_state')" in code
     assert "delivery.get('delivery_status') in ('DELIVERED', 'ALREADY_DELIVERED')" in code
     assert "VIDEO CURATOR: DELIVERY_BLOCKED" in code
+
+def _windows_rename_error(code=5):
+    error = PermissionError(13, "synthetic Windows directory rename denied")
+    error.winerror = code
+    return error
+
+
+def test_21_windows_transient_rename_denial_retries_then_commits_atomically(tmp_path, stubbed_validator):
+    root = fake_curator(tmp_path)
+    source = fake_zip(tmp_path / "run")
+    real_rename = delivery.os.rename
+    calls = []
+
+    def transient(source_dir, destination):
+        calls.append((source_dir, destination))
+        if len(calls) <= 2:
+            raise _windows_rename_error(5)
+        return real_rename(source_dir, destination)
+
+    with patch.object(delivery.os, "rename", side_effect=transient), (
+        patch.object(delivery.time, "sleep", return_value=None)
+    ):
+        delivered = delivery.deliver_package(source, curator_root=root)
+    assert delivered["delivery_status"] == "DELIVERED"
+    assert len(calls) == 3
+    assert Path(delivered["destination"]).is_dir()
+    assert source.is_file()
+    assert delivery.file_hash(Path(delivered["destination"]) / source.name) == delivery.file_hash(source)
+
+
+def test_22_windows_persistent_rename_denial_preserves_original_and_reports_cause(tmp_path, stubbed_validator):
+    root = fake_curator(tmp_path)
+    source = fake_zip(tmp_path / "run")
+    original_sha = delivery.file_hash(source)
+    with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(5)) as rename_mock, (
+        patch.object(delivery.time, "sleep", return_value=None)
+    ):
+        result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
+    assert result["delivery_status"] == "DELIVERY_BLOCKED"
+    assert "curator_atomic_directory_rename_denied:winerror=5;attempts=6" in result["reason"]
+    assert rename_mock.call_count == 6
+    assert source.is_file() and delivery.file_hash(source) == original_sha
+    assert not (root / "input" / "analyzer" / "VIDEO123" / "RUN_1").exists()
+    assert not list((root / "input" / "analyzer" / "VIDEO123").glob(".analyzer-pending-*"))
+
+
+def test_23_nontransient_rename_errors_are_not_retried(tmp_path, stubbed_validator):
+    root = fake_curator(tmp_path)
+    source = fake_zip(tmp_path / "run")
+    with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(123)) as rename_mock, (
+        patch.object(delivery.time, "sleep", return_value=None)
+    ):
+        result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
+    assert result["delivery_status"] == "DELIVERY_BLOCKED"
+    assert rename_mock.call_count == 1
+    assert source.is_file()
+
+
+def test_24_rename_race_never_overwrites_someone_elses_directory(tmp_path, stubbed_validator):
+    root = fake_curator(tmp_path)
+    source = fake_zip(tmp_path / "run")
+    conflicting = root / "input" / "analyzer" / "VIDEO123" / "RUN_1"
+    calls = []
+
+    def race(source_dir, destination):
+        calls.append(destination)
+        Path(destination).mkdir(parents=True, exist_ok=False)
+        (Path(destination) / "unrelated.txt").write_text("other publisher", encoding="utf-8")
+        raise _windows_rename_error(32)
+
+    with patch.object(delivery.os, "rename", side_effect=race), (
+        patch.object(delivery.time, "sleep", return_value=None)
+    ):
+        result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
+    assert result["delivery_status"] == "DELIVERY_BLOCKED"
+    assert "delivery_destination_race_without_overwrite" in result["reason"]
+    assert len(calls) == 1
+    assert (conflicting / "unrelated.txt").read_text(encoding="utf-8") == "other publisher"
+    assert source.is_file()
+
+

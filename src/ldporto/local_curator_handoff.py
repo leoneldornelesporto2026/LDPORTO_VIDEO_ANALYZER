@@ -14,6 +14,7 @@ import re
 import shutil
 import stat
 import tempfile
+import time
 import zipfile
 
 from .core import file_hash
@@ -276,6 +277,34 @@ def _write_atomic_stage(stage, package, expected_sha, facts):
     return copied_sha, validation
 
 
+def _publish_directory_with_bounded_retry(staging, folder, *, max_attempts=6):
+    """Publish only via same-filesystem atomic directory rename.
+
+    On Windows, scanners/indexers can briefly retain a handle to freshly
+    written ZIPs. Retry WinError 5/32/33 only; no copy-as-fallback, overwrite,
+    deletion of pre-existing targets or weakened hash verification.
+    """
+    for attempt in range(max_attempts):
+        _not_linked(folder)
+        if folder.exists() or folder.is_symlink():
+            raise ValueError("delivery_destination_race_without_overwrite")
+        try:
+            os.rename(staging, folder)
+            return
+        except OSError as exc:
+            code = getattr(exc, "winerror", None)
+            if code not in (5, 32, 33):
+                raise
+            if attempt == max_attempts - 1:
+                raise PermissionError(
+                    "curator_atomic_directory_rename_denied:"
+                    f"winerror={code};attempts={max_attempts};"
+                    "check_destination_acl_defender_or_open_handles;"
+                    f"destination={folder}"
+                ) from exc
+            time.sleep(min(0.2 * (attempt + 1), 1.0))
+
+
 def deliver_package(package_path, *, curator_root=None, config=None, expected_sha=None):
     """Validate, stage, atomically publish a single immutable delivery; may raise.
 
@@ -361,9 +390,7 @@ def deliver_package(package_path, *, curator_root=None, config=None, expected_sh
             json.dumps(receipt, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8"
         )
         (staging / GUIDE_NAME).write_text(_readme(receipt), encoding="utf-8")
-        if folder.exists() or folder.is_symlink():
-            raise ValueError("delivery_destination_race_without_overwrite")
-        os.rename(staging, folder)
+        _publish_directory_with_bounded_retry(staging, folder)
         if file_hash(folder / package.name) != original_sha:
             raise ValueError("delivered_sha256_verification_failed")
     return {"delivery_status": DELIVERY_SUCCESS,

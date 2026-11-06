@@ -260,3 +260,25 @@ Nao precisa repetir todos os testes para diagnosticar o download e o processamen
 A opcao imprime que as suites foram **reutilizadas do log de execucao anterior**: nunca relata como se os 2.693 ou 94 testes tivessem rodado de novo. Um relatorio final de retomada, se a etapa do video e a previa passarem, usa o status `RESUMED_REAL_TECHNICAL_PREVIEW_WITH_PRIOR_SUITES_HISTORICAL_PENDING`, `suites_executed_nesta_invocacao=false` e `suites_retoma_com_evidencia_anterior=true`.
 
 Para repetir a regressao integral da baseline atual, **omita** `-ResumeAfterValidatedSuites`. Se os commits ou arquivos criticos mudarem, a retomada aborta e exige novamente as suites. O teste historico integral permanece pendente ate recuperar as duas fixtures SHA256 originais; os downloads, registros e resultados de video permanecem locais (nao criar commit com MP4/ZIP).
+
+
+### Incidente R6 real NASA — WinError 5 ao promover pasta temporária do Curator (06/11/2026)
+
+Execução real em Windows 11, PowerShell 5.1, Analyzer `d913bb1`, Curator `70c3c71`: baseline atual Analyzer **2.693 passed, 6 skipped e 7 testes históricos pendentes**, Curator **94/94 PASS**, testes focais da retomada **19/19** e handoff focais **20 passed, 1 skipped**. Vídeo oficial NASA `Eo2bUJcxASI`, 158,654 s, mídia original identificada por SHA256 `2131f80ae982b4dc6e00c4b4a4dc86e38ee7a6bc5a676785715dde3f0d7ef634`. Etapas reais de transcrição, diarização, visão YOLO e Ollama foram executadas; resultado geral da análise `PARTIAL`, com avisos editoriais, não `READY`.
+
+O Analyzer preservou o ZIP R6 `pacotes_para_enviar/SECOND_CURATION_PARTIAL_Eo2bUJcxASI_20261106_170203_379229_e70235.zip`, **3.863.207 bytes**, mas **NÃO entregou** ao Curator: houve `[WinError 5] Acesso negado` no `os.rename` da pasta temporária `.analyzer-pending-*` para `Curator/input/analyzer/Eo2bUJcxASI/2131f80ae982b4dc`. Duas tentativas independentes falharam da mesma forma. Não interpretar isso como falha do download, da inferência ou do ZIP. O log sozinho não distingue um bloqueio temporário de um ACL/antivírus/política de segurança persistente.
+
+**Correção:** o handoff tenta renomeação atômica até **seis vezes** para os códigos Win32 5/32/33, com atraso limitado, verificando que ninguém criou o destino nesse intervalo; qualquer outro erro falha imediatamente. Nunca substitui um destino existente, modifica ACLs, desliga proteção, usa fallback não-atômico ou toca no ZIP original. Bloqueio persistente retorna `curator_atomic_directory_rename_denied:winerror=...`, sem fingir sucesso. Novos testes sintéticos cobrem retries, bloqueio permanente e disputa pelo mesmo nome.
+
+**Diagnóstico isolado** no Windows: `scripts/windows/testing/DIAGNOSTICAR_RENAME_CURATOR.ps1`, que cria, renomeia e remove **somente suas próprias pastas temporárias com GUID** sob `input/analyzer/Eo2bUJcxASI`. Em caso de erro, verificar permissões do Windows e bloqueios de processos/proteção com o operador, sem executar comandos para contornar controles corporativos.
+
+**Retomada segura, sem nova inferência nem download:**
+
+```powershell
+cd "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER"
+& .\scripts\windows\testing\RETOMAR_R6_NASA_SEM_REANALISE.ps1 -AnalysisDir ".\analysis\pilot_e2e_20261106_135438_190"
+```
+
+O operador executa o diagnóstico de rename, chama `PILOTO_E2E_REAL.ps1 -AnalysisDir` (somente regressão focal + reentrega validada, sem reprocessar vídeo), checa `PILOT_E2E_REPORT.json`, verifica a mídia original local do Analyzer com **SHA256 exato**, audita no Curator e cria **apenas uma prévia técnica de 6 segundos** em `output/r6_preview_smoke/`. Se o original não estiver no cache `input/youtube/<id>/download.json`, indique `-MediaPath "<original.mp4>"`; nunca usar um recode diferente como se fosse o original. O relatório local fica em `analysis/pilot_e2e_.../PILOT_RECOVERED_PREVIEW_REPORT.json`, com `publication_ready=false`. Se o diagnóstico persistir em `WinError 5`, não repetir a análise pesada nem aplicar ACLs/antivírus de forma automática.
+
+**Status do incidente:** correção de código publicada, reentrega física e prévia ainda dependem de execução real no Windows. O motor editorial R6 → R57 e as revisões de câmera, legendas, áudio e direitos continuam pendentes.

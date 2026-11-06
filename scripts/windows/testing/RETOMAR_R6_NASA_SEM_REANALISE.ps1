@@ -109,8 +109,7 @@ if ($explicitMedia) {
         foreach ($extension in @(".mp4", ".mkv", ".webm", ".mov")) {
             $candidate = Join-Path $legacyDir ($videoId + $extension)
             if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) { continue }
-            if ((Get-Item -LiteralPath $candidate -Force).Attributes -band
-                [IO.FileAttributes]::ReparsePoint) { continue }
+            if ((Get-Item -LiteralPath $candidate -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) { continue }
             $candidateSha = (Get-FileHash -LiteralPath $candidate -Algorithm SHA256).Hash.ToLowerInvariant()
             if ($candidateSha -eq [string]$summary.source.source_sha256) {
                 $media = $candidate

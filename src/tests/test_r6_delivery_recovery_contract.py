@@ -17,7 +17,8 @@ def test_01_recovery_requires_an_existing_analysis_not_youtube_redownload():
     assert "[string]$AnalysisDir" in script
     assert "second_curation_export.json" in script
     assert "PILOTO_E2E_REAL.ps1" in script
-    assert "-AnalysisDir $folder" in script
+    assert '$realParams = @{ AnalysisDir=$folder; CuratorRoot=$curator; SmokeCount=$SmokeCount }' in script
+    assert '& $real @realParams' in script
     assert "allow-download" not in script.lower()
     assert "analyze.py" not in script
     assert "git push" not in script and "git merge" not in script

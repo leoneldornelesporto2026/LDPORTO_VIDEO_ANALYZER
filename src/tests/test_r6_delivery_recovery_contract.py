@@ -60,7 +60,8 @@ def test_05_handoff_atomic_rename_stays_bounded_with_no_copy_fallback():
     script=DELIVERY.read_text(encoding="utf-8")
     assert "def _publish_directory_with_bounded_retry" in script
     assert "winerror" in script
-    assert "max_attempts=6" in script
+    assert "max_attempts=4" in script
+    assert "_WINDOWS_RENAME_RETRY_DELAYS_SECONDS = (2, 5, 10)" in script
     assert "if code not in (5, 32, 33)" in script
     assert "delivery_destination_race_without_overwrite" in script
     assert "os.rename(staging, folder)" in script

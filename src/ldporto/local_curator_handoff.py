@@ -291,13 +291,22 @@ def _write_atomic_stage(stage, package, expected_sha, facts):
     return copied_sha, validation
 
 
-def _publish_directory_with_bounded_retry(staging, folder, *, max_attempts=6):
-    """Publish only via same-filesystem atomic directory rename.
+# Reproduced on the physical Windows 11 NASA R6 ZIP handoff probe:
+# the first two os.rename attempts returned WinError 5; the third succeeded
+# after 2 + 5 seconds of total wait. Keep a final bounded 10 s allowance.
+_WINDOWS_RENAME_RETRY_DELAYS_SECONDS = (2, 5, 10)
 
-    On Windows, scanners/indexers can briefly retain a handle to freshly
-    written ZIPs. Retry WinError 5/32/33 only; no copy-as-fallback, overwrite,
-    deletion of pre-existing targets or weakened hash verification.
+
+def _publish_directory_with_bounded_retry(staging, folder, *, max_attempts=4):
+    """Atomically publish a validated handoff with a bounded Windows retry.
+
+    Only WinError 5/32/33 are retried on the SAME staged directory. Real
+    Windows diagnostic: third attempt passed after 7 seconds. Never use a
+    copy fallback, overwrite an existing destination, change ACL/Defender,
+    or treat a successful rename as human/editorial approval.
     """
+    if isinstance(max_attempts, bool) or not isinstance(max_attempts, int) or not 1 <= max_attempts <= 4:
+        raise ValueError("invalid_bounded_rename_attempts")
     for attempt in range(max_attempts):
         _not_linked(folder)
         if folder.exists() or folder.is_symlink():
@@ -316,7 +325,7 @@ def _publish_directory_with_bounded_retry(staging, folder, *, max_attempts=6):
                     "check_destination_acl_defender_or_open_handles;"
                     f"destination={folder}"
                 ) from exc
-            time.sleep(min(0.2 * (attempt + 1), 1.0))
+            time.sleep(_WINDOWS_RENAME_RETRY_DELAYS_SECONDS[attempt])
 
 
 def deliver_package(package_path, *, curator_root=None, config=None, expected_sha=None):

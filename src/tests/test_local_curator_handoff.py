@@ -323,11 +323,14 @@ def test_21_windows_transient_rename_denial_retries_then_commits_atomically(tmp_
         return real_rename(source_dir, destination)
 
     with patch.object(delivery.os, "rename", side_effect=transient), (
-        patch.object(delivery.time, "sleep", return_value=None)
+        patch.object(delivery.time, "sleep", return_value=None) as sleep
     ):
         delivered = delivery.deliver_package(source, curator_root=root)
     assert delivered["delivery_status"] == "DELIVERED"
     assert len(calls) == 3
+    assert [row.args[0] for row in sleep.call_args_list] == [2, 5]
+    assert len({str(stage) for stage, _ in calls}) == 1
+    assert len({str(target) for _, target in calls}) == 1
     assert Path(delivered["destination"]).is_dir()
     assert source.is_file()
     assert delivery.file_hash(Path(delivered["destination"]) / source.name) == delivery.file_hash(source)
@@ -338,12 +341,13 @@ def test_22_windows_persistent_rename_denial_preserves_original_and_reports_caus
     source = fake_zip(tmp_path / "run")
     original_sha = delivery.file_hash(source)
     with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(5)) as rename_mock, (
-        patch.object(delivery.time, "sleep", return_value=None)
+        patch.object(delivery.time, "sleep", return_value=None) as sleep
     ):
         result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
     assert result["delivery_status"] == "DELIVERY_BLOCKED"
-    assert "curator_atomic_directory_rename_denied:winerror=5;attempts=6" in result["reason"]
-    assert rename_mock.call_count == 6
+    assert "curator_atomic_directory_rename_denied:winerror=5;attempts=4" in result["reason"]
+    assert rename_mock.call_count == 4
+    assert [row.args[0] for row in sleep.call_args_list] == [2, 5, 10]
     assert source.is_file() and delivery.file_hash(source) == original_sha
     assert not (root / "input" / "analyzer" / "VIDEO123" / "RUN_1").exists()
     assert not list((root / "input" / "analyzer" / "VIDEO123").glob(".analyzer-pending-*"))
@@ -353,11 +357,12 @@ def test_23_nontransient_rename_errors_are_not_retried(tmp_path, stubbed_validat
     root = fake_curator(tmp_path)
     source = fake_zip(tmp_path / "run")
     with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(123)) as rename_mock, (
-        patch.object(delivery.time, "sleep", return_value=None)
+        patch.object(delivery.time, "sleep", return_value=None) as sleep
     ):
         result = delivery.auto_delivery({"path": str(source)}, curator_root=root)
     assert result["delivery_status"] == "DELIVERY_BLOCKED"
     assert rename_mock.call_count == 1
+    sleep.assert_not_called()
     assert source.is_file()
 
 
@@ -462,3 +467,60 @@ def test_27_original_and_stage_are_checked_after_offstage_validation(tmp_path):
     assert 'if file_hash(staging / package.name) != original_sha or file_hash(package) != original_sha:' in code
     assert "os.replace(staging, folder)" not in code
     assert "os.rename(staging, folder)" in code
+
+
+
+def test_28_windows_retry_schedule_bounds_are_enforced(tmp_path):
+    """Reject unbounded or malformed retry requests before any rename."""
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    target = tmp_path / "target"
+    for invalid in (0, -1, 5, True, "4", 4.0):
+        with patch.object(delivery.os, "rename") as rename:
+            with pytest.raises(ValueError, match="invalid_bounded_rename_attempts"):
+                delivery._publish_directory_with_bounded_retry(
+                    stage, target, max_attempts=invalid
+                )
+            rename.assert_not_called()
+    assert stage.is_dir()
+    assert not target.exists()
+
+
+def test_29_windows_retry_collision_after_first_denial_never_overwrites(tmp_path):
+    """A competing delivery appearing during the retry window must be preserved."""
+    stage = tmp_path / "staging"
+    stage.mkdir()
+    (stage / "original.txt").write_text("staged", encoding="utf-8")
+    target = tmp_path / "target"
+    denial = _windows_rename_error(5)
+
+    def first_denial(_stage, _target):
+        raise denial
+
+    def competing_delivery(_duration):
+        target.mkdir()
+        (target / "operator_owned.txt").write_text("preserve", encoding="utf-8")
+
+    with patch.object(delivery.os, "rename", side_effect=first_denial) as rename:
+        with patch.object(delivery.time, "sleep", side_effect=competing_delivery) as sleep:
+            with pytest.raises(ValueError, match="delivery_destination_race_without_overwrite"):
+                delivery._publish_directory_with_bounded_retry(stage, target)
+    rename.assert_called_once()
+    sleep.assert_called_once_with(2)
+    assert (target / "operator_owned.txt").read_text(encoding="utf-8") == "preserve"
+    assert (stage / "original.txt").read_text(encoding="utf-8") == "staged"
+
+
+def test_30_single_attempt_never_waits_or_overwrites(tmp_path):
+    stage = tmp_path / "staging"
+    stage.mkdir()
+    target = tmp_path / "dest"
+    with patch.object(delivery.os, "rename", side_effect=_windows_rename_error(5)) as rename:
+        with patch.object(delivery.time, "sleep", return_value=None) as sleep:
+            with pytest.raises(PermissionError, match="attempts=1"):
+                delivery._publish_directory_with_bounded_retry(
+                    stage, target, max_attempts=1
+                )
+    rename.assert_called_once()
+    sleep.assert_not_called()
+    assert stage.is_dir() and not target.exists()

@@ -76,7 +76,7 @@ $historicalMode="FULL_VERIFIED"
 if ($fixtureMissing.Count -gt 0 -and $CurrentBaselineWithoutHistoricalFixtures) {
     $historicalMode="HISTORICAL_FIXTURES_MISSING"
     Write-Warning "Baseline atual autorizada explicitamente: as fixtures historicas ausentes NAO foram substituidas."
-    Write-Warning "Nao sera declarado PASS da suite historica completa. Um teste de proveniencia sera DESELECTED."
+    Write-Warning "Nao sera declarado PASS da suite historica completa. Sete testes ligados aos ZIPs serao DESELECTED."
 } elseif ($fixtureMissing.Count -gt 0) {
     $restore=Join-Path $analyzer "scripts\windows\testing\RESTAURAR_FIXTURES_HISTORICAS.ps1"
     if (-not (Test-Path -LiteralPath $restore -PathType Leaf)) {
@@ -127,14 +127,30 @@ if ($historicalMode -eq "FULL_VERIFIED") {
     $analyzerSuiteStatus="FULL_SUITE_PASS"
 } else {
     Write-Host "[1/5] ANALYZER: REGRESSAO DA BASELINE ATUAL (historico NAO homologado)" -ForegroundColor Yellow
-    Write-Warning "Exclusao explicita e restrita: test_relocated_historical_zip_bytes_match_original_provenance"
+    # Explicit, individually audited legacy cases whose input files are absent.
+    # Keep every other test in these modules, including synthetic regressions.
+    $historicalTestIds=@(
+        "src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance",
+        "src/tests/test_stage13_explainability.py::test_all_52_historical_candidates_receive_stable_diagnostics",
+        "src/tests/test_stage17_editorial_replay.py::test_real_same_52_ids_reproducible_and_unapproved",
+        "src/tests/test_stage17_editorial_replay.py::test_mismatched_run_rejected",
+        "src/tests/test_stage17_editorial_replay.py::test_missing_upstream_does_not_promote",
+        "src/tests/test_stage18_handoff_audit.py::test_real_historical_fixture_hashes_links_and_contact_sheets",
+        "src/tests/test_stage19_uncertain_words.py::test_historical_flags_are_not_the_prompt_percentage"
+    )
+    if ($historicalTestIds.Count -ne 7 -or @($historicalTestIds | Select-Object -Unique).Count -ne 7) {
+        throw "Contrato de exclusoes historicas invalido: esperados sete testes distintos."
+    }
+    $historicalDeselectArgs=@($historicalTestIds | ForEach-Object { "--deselect=$_" })
+    Write-Warning ("Excluidos SOMENTE os "+$historicalTestIds.Count+" testes que exigem os dois ZIPs originais:")
+    $historicalTestIds | ForEach-Object { Write-Host ("HISTORICAL_PENDING: "+$_) }
     Run-Suite $analyzer {
         & (Join-Path $analyzer "scripts\windows\testing\VALIDAR_P0_GUI.ps1")
         Assert-Exit "Gate focal de GUI Analyzer"
-        & $ap -m pytest -q src/tests --deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance
+        & $ap -m pytest -q src/tests @historicalDeselectArgs
         Assert-Exit "Regressao Analyzer atual; falhas adicionais nao sao ignoradas"
     }
-    $analyzerSuiteStatus="CURRENT_BASELINE_PASS_ONE_HISTORICAL_TEST_DESELECTED"
+    $analyzerSuiteStatus="CURRENT_BASELINE_PASS_7_HISTORICAL_TESTS_DESELECTED"
 }
 Write-Host ""
 Write-Host "[2/5] CURATOR: suite COMPLETA incluindo FFmpeg, camera e R6" -ForegroundColor Cyan
@@ -235,7 +251,7 @@ $resultLabel=if ($historicalMode -eq "FULL_VERIFIED") {
 }
 $deselectedTests=@()
 if ($historicalMode -ne "FULL_VERIFIED") {
-    $deselectedTests=@("src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance")
+    $deselectedTests=@($historicalTestIds)
 }
 $final=[ordered]@{
     schema_version="1.0"

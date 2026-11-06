@@ -37,10 +37,37 @@ class FullDefaultsPilotContractTests(unittest.TestCase):
 
     def test_current_baseline_runs_all_other_analyzer_tests_without_false_full_pass(self):
         self.assertIn('VALIDAR_P0_GUI.ps1")',self.script)
-        self.assertIn('pytest -q src/tests --deselect=src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance',self.script)
-        self.assertIn('CURRENT_BASELINE_PASS_ONE_HISTORICAL_TEST_DESELECTED',self.script)
+        self.assertIn('pytest -q src/tests @historicalDeselectArgs',self.script)
+        self.assertIn('CURRENT_BASELINE_PASS_7_HISTORICAL_TESTS_DESELECTED',self.script)
         self.assertIn('historical_full_suite_passed=($historicalMode -eq "FULL_VERIFIED")',self.script)
         self.assertIn('CURRENT_BASELINE_AND_REAL_TECHNICAL_PREVIEW_PASS_HISTORICAL_PENDING',self.script)
+
+    def test_seven_specific_historical_nodes_are_audited_not_whole_files(self):
+        import ast
+        ids=[]
+        for line in self.script.splitlines():
+            item=line.strip().rstrip(',')
+            if item.startswith('"src/tests/test_') and '::test_' in item:
+                ids.append(item.strip('"'))
+        required={
+            'src/tests/test_historical_fixture_provenance.py::test_relocated_historical_zip_bytes_match_original_provenance',
+            'src/tests/test_stage13_explainability.py::test_all_52_historical_candidates_receive_stable_diagnostics',
+            'src/tests/test_stage17_editorial_replay.py::test_real_same_52_ids_reproducible_and_unapproved',
+            'src/tests/test_stage17_editorial_replay.py::test_mismatched_run_rejected',
+            'src/tests/test_stage17_editorial_replay.py::test_missing_upstream_does_not_promote',
+            'src/tests/test_stage18_handoff_audit.py::test_real_historical_fixture_hashes_links_and_contact_sheets',
+            'src/tests/test_stage19_uncertain_words.py::test_historical_flags_are_not_the_prompt_percentage'
+        }
+        self.assertEqual(len(ids),7)
+        self.assertEqual(set(ids),required)
+        for item in ids:
+            path,func=item.split('::')
+            parsed=ast.parse((ROOT/path).read_text(encoding='utf-8'))
+            functions={node.name for node in ast.walk(parsed)
+                       if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef))}
+            self.assertIn(func,functions)
+        self.assertIn('HISTORICAL_PENDING:',self.script)
+        self.assertIn('$deselectedTests=@($historicalTestIds)',self.script)
 
     def test_full_historical_gate_remains_unchanged_for_normal_mode(self):
         self.assertIn('if ($historicalMode -eq "FULL_VERIFIED")',self.script)

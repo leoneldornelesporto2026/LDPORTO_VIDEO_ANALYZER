@@ -339,3 +339,8 @@ Em Windows 11, 52 testes focais passaram (1 SKIP), mas o terceiro probe `full` c
 O diagnóstico v1.3 mantém os probes originais e, apenas se `full` falhar, executa quatro testes de leitura isolados usando ZIP e destino descartáveis: `rehash` (SHA repetido), `snapshot_copy` (cópia externa sem validação), `snapshot_validated` (validador oficial no snapshot externo) e `source_validated` (validador oficial no original). Acrescenta também `cross_parent_full_probe`: o mesmo staging completo, mas criado **na pasta-pai `input/analyzer` no mesmo volume**, com renomeação atômica para um destino temporário no diretório do vídeo. Se esse último passar e `full` falhar, o local do staging será candidato a mudança de arquitetura — não uma homologação automática. Não cria slot de entrega real nem modifica segurança, Git ou mídia original.
 
 Resultados da matriz são observacionais: a primeira falha não prova a causa ou a identidade de um processo de segurança. A execução física da entrega definitiva continua pendente.
+
+
+### Windows v1.4 — inspecao nao destrutiva do acesso DELETE
+
+Quando um probe `full` ou de leitura falha na renomeacao, antes de limpar a pasta de prova consulta `CreateFileW` com acesso DELETE e compartilhamento de leitura/escrita/exclusao sobre a propria pasta e sobre o ZIP, fechando imediatamente o handle. **Solicitar acesso DELETE nao executa uma exclusao.** O codigo nao chama `DeleteFile` nem altera ACL. Os campos `stage_delete_access_on_failure` e `zip_delete_access_on_failure` registram `DELETE_ACCESS_AVAILABLE` ou `DELETE_ACCESS_UNAVAILABLE` com o codigo Windows. Esses codigos nao provam identidade do processo, exclusao por antivirus ou causa especifica de ACL.

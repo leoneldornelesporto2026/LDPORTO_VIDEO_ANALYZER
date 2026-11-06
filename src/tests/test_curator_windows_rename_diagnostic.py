@@ -342,3 +342,68 @@ def test_read_pattern_probe_rejects_invalid_phase_without_writes(tmp_path):
     else:
         assert False, "Unexpected acceptance of a non-diagnostic phase"
     assert not list(parent.iterdir())
+
+
+def test_windows_delete_share_probe_is_read_only_on_non_windows(tmp_path):
+    import os
+    if os.name == "nt":
+        return
+    p = tmp_path / "preserve.txt"
+    p.write_text("data", encoding="utf-8")
+    assert diag.windows_delete_share_probe(p) == {"status": "UNSUPPORTED_NON_WINDOWS"}
+    assert p.read_text(encoding="utf-8") == "data"
+
+
+def test_full_probe_captures_access_before_temporary_files_disappear(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    sha = sha256(source.read_bytes()).hexdigest()
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    seen = []
+    def check_access(path, *, directory=False):
+        assert Path(path).exists()
+        seen.append((Path(path).name, directory))
+        return {"status": "DIAGNOSTIC_ACCESS_QUERY"}
+    error = PermissionError(13, "Synthetic denied")
+    error.winerror = 5
+    with patch.object(diag.handoff, "validate_core_package", return_value={"status": "valid"}):
+        with patch.object(diag.os, "rename", side_effect=error):
+            with patch.object(diag, "windows_delete_share_probe", side_effect=check_access):
+                row = diag.full_stage_probe(parent, source, sha, diag._facts(source))
+    assert row["status"] == "FAILED"
+    assert row["winerror"] == 5
+    assert len(seen) == 2 and seen[0][1] is True and seen[1] == (source.name, False)
+    assert row["stage_delete_access_on_failure"]["status"] == "DIAGNOSTIC_ACCESS_QUERY"
+    assert row["zip_delete_access_on_failure"]["status"] == "DIAGNOSTIC_ACCESS_QUERY"
+    assert not row["cleanup_errors"]
+    assert not list(parent.iterdir())
+
+
+def test_read_probe_captures_access_before_temporary_files_disappear(tmp_path):
+    from test_local_curator_handoff import fake_zip
+    source = fake_zip(tmp_path / "source", video_id="VIDEO123", run_id="RUN_1")
+    sha = sha256(source.read_bytes()).hexdigest()
+    parent = tmp_path / "curator"
+    parent.mkdir()
+    error = PermissionError(13, "Synthetic denied")
+    error.winerror = 5
+    with patch.object(diag.os, "rename", side_effect=error):
+        with patch.object(diag, "windows_delete_share_probe",
+                          return_value={"status": "DIAGNOSTIC_ACCESS_QUERY"}) as access:
+            row = diag.read_pattern_probe(parent, source, sha, "rehash")
+    assert row["status"] == "FAILED"
+    assert access.call_count == 2
+    assert row["zip_delete_access_on_failure"]["status"] == "DIAGNOSTIC_ACCESS_QUERY"
+    assert not row["cleanup_errors"]
+    assert not list(parent.iterdir())
+
+
+def test_delete_access_probe_has_no_deletefile_calls():
+    script = SCRIPT.read_text(encoding="utf-8")
+    assert "create = kernel.CreateFileW" in script
+    assert "close = kernel.CloseHandle" in script
+    assert "0x00010000, 0x00000007" in script
+    assert "kernel.DeleteFile" not in script
+    assert "kernel.MoveFile" not in script
+    assert "chmod(" not in script

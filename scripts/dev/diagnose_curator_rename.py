@@ -106,6 +106,42 @@ def rename_probe(parent, label, zip_source=None, expected_sha=None):
 
 
 
+
+def windows_delete_share_probe(path, *, directory=False):
+    """Observe Windows DELETE-handle access, without deletion or ACL changes."""
+    if os.name != "nt":
+        return {"status": "UNSUPPORTED_NON_WINDOWS"}
+    path = Path(path)
+    if not path.exists() and not path.is_symlink():
+        return {"status": "PATH_MISSING"}
+    try:
+        _not_linked(path)
+        import ctypes
+        from ctypes import wintypes
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        create = kernel.CreateFileW
+        create.argtypes = [
+            wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD,
+            ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE,
+        ]
+        create.restype = wintypes.HANDLE
+        close = kernel.CloseHandle
+        close.argtypes = [wintypes.HANDLE]
+        close.restype = wintypes.BOOL
+        # Request DELETE access with all three SHARE flags, then close.
+        # No DeleteFile/MoveFile invocation and no security modification.
+        handle = create(
+            str(path), 0x00010000, 0x00000007, None, 3,
+            0x02000000 if directory else 0x00000080, None,
+        )
+        if handle in (None, 0, ctypes.c_void_p(-1).value):
+            return {"status": "DELETE_ACCESS_UNAVAILABLE", "winerror": ctypes.get_last_error()}
+        close(handle)
+        return {"status": "DELETE_ACCESS_AVAILABLE"}
+    except (OSError, ValueError) as exc:
+        return {"status": "PROBE_ERROR", "error": str(exc)[:300]}
+
+
 def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None):
     """Prepare the same four handoff artifacts, then ONE isolated directory rename.
 
@@ -172,7 +208,16 @@ def full_stage_probe(parent, zip_source, expected_sha, facts, *, stage_root=None
             if target.exists() or target.is_symlink():
                 raise FileExistsError("diagnostic_full_target_created_concurrently")
             result["os_rename_called"] = True
-            os.rename(stage, target)
+            try:
+                os.rename(stage, target)
+            except OSError:
+                result["stage_delete_access_on_failure"] = windows_delete_share_probe(
+                    stage, directory=True
+                )
+                result["zip_delete_access_on_failure"] = windows_delete_share_probe(
+                    stage / source.name
+                )
+                raise
             moved = True
             result["status"] = "PASS"
     except (OSError, ValueError) as exc:
@@ -385,7 +430,14 @@ def read_pattern_probe(parent, zip_source, expected_sha, phase):
             if target.exists() or target.is_symlink():
                 raise FileExistsError("diagnostic_read_target_created_concurrently")
             result["os_rename_called"] = True
-            os.rename(stage, target)
+            try:
+                os.rename(stage, target)
+            except OSError:
+                result["stage_delete_access_on_failure"] = windows_delete_share_probe(
+                    stage, directory=True
+                )
+                result["zip_delete_access_on_failure"] = windows_delete_share_probe(copy)
+                raise
             moved = True
             result["status"] = "PASS"
     except (OSError, ValueError) as exc:
@@ -452,7 +504,7 @@ def diagnose(analysis_dir, curator_root=None):
     final_path = parent / facts["run_id"]
     # A final delivery path is NEVER created, renamed, removed, or modified.
     result = {
-        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.3",
+        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.4",
         "diagnostic_only": True,
         "created_final_delivery": False,
         "changed_security_settings": False,

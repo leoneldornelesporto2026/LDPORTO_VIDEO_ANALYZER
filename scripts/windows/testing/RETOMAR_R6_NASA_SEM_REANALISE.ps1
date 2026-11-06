@@ -39,6 +39,17 @@ if (-not $export.path) { throw "Recibo sem pacote ZIP valido" }
 $zip = [string]$export.path
 if (-not [IO.Path]::IsPathRooted($zip)) { $zip = Join-Path $analyzer $zip }
 if (-not (Test-Path -LiteralPath $zip -PathType Leaf)) { throw "ZIP nao encontrado: $zip" }
+# Record the original artifact before anything is copied to the Curator.
+$originalZipSha = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+$originalZipBytes = [long](Get-Item -LiteralPath $zip).Length
+# Resolve relative user-supplied paths in the CALLER's directory, before Push-Location.
+$explicitMedia = ""
+if ($MediaPath) {
+    $explicitMedia = (Resolve-Path -LiteralPath $MediaPath).Path
+    if (-not (Test-Path -LiteralPath $explicitMedia -PathType Leaf)) {
+        throw "Midia explicita nao encontrada: $explicitMedia"
+    }
+}
 Write-Host "PILOTO R6: somente RETOMADA DO ZIP REAL, SEM INFERENCIA" -ForegroundColor Cyan
 Write-Host "ZIP preservado: $zip"
 
@@ -50,7 +61,9 @@ $diagnostic = Join-Path $analyzer "scripts\windows\testing\DIAGNOSTICAR_RENAME_C
 
 Write-Host "[2/5] P0/P1: gate real existente, sem nova analise"
 $real = Join-Path $analyzer "scripts\windows\testing\PILOTO_E2E_REAL.ps1"
-& $real -AnalysisDir $folder -CuratorRoot $curator -SmokeCount $SmokeCount
+$realParams = @{ AnalysisDir=$folder; CuratorRoot=$curator; SmokeCount=$SmokeCount }
+if ($explicitMedia) { $realParams.MediaPath = $explicitMedia }
+& $real @realParams
 $receiptPath = Join-Path $folder "PILOT_E2E_REPORT.json"
 if (-not (Test-Path -LiteralPath $receiptPath -PathType Leaf)) {
     throw "Relatorio do handoff ausente: $receiptPath"
@@ -58,6 +71,9 @@ if (-not (Test-Path -LiteralPath $receiptPath -PathType Leaf)) {
 $handoff = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
 if ($handoff.status -ne "P0_P1_REAL_PILOT_PASSED_P2_PENDING") {
     throw "Handoff nao validado"
+}
+if ([string]$handoff.zip_sha256 -ne $originalZipSha) {
+    throw "BLOQUEADO: recibo do handoff diverge do SHA256 original do ZIP."
 }
 $inbox = [string]$handoff.curator_inbox
 Write-Host "Inbox verificada: $inbox" -ForegroundColor Green
@@ -73,8 +89,8 @@ $match = [regex]::Match($id, '[?&]v=([A-Za-z0-9_-]{11})(?:&|$)')
 if (-not $match.Success) { throw "ID nao encontrado no pacote R6" }
 $videoId = $match.Groups[1].Value
 $media = ""
-if ($MediaPath) {
-    $media = (Resolve-Path -LiteralPath $MediaPath).Path
+if ($explicitMedia) {
+    $media = $explicitMedia
 } else {
     $download = Join-Path $analyzer ("input\youtube\"+$videoId+"\download.json")
     if (-not (Test-Path -LiteralPath $download -PathType Leaf)) {
@@ -110,12 +126,48 @@ if ($preview.status -ne "TECHNICAL_PREVIEW_REVIEW_REQUIRED" -or
     $preview.publication_ready -ne $false -or $preview.human_approved -ne $false) {
     throw "Previa tecnica com estado inseguro"
 }
-Write-Host "PREVIA REAL: $($preview.file_path)" -ForegroundColor Green
+# A success JSON is not proof that the referenced MP4 survived on disk.
+if (-not $preview.file_path -or -not $preview.preview_sha256) {
+    throw "Previa sem caminho fisico ou SHA256."
+}
+$previewFile = (Resolve-Path -LiteralPath ([string]$preview.file_path)).Path
+if (-not (Test-Path -LiteralPath $previewFile -PathType Leaf)) {
+    throw "Previa MP4 ausente: $previewFile"
+}
+$previewRoot = [IO.Path]::GetFullPath((Join-Path $curator "output\r6_preview_smoke"))
+$allowedPrefix = $previewRoot + [IO.Path]::DirectorySeparatorChar
+if (-not $previewFile.StartsWith($allowedPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+    throw "Previa fora do output tecnico isolado do Curator."
+}
+$previewItem = Get-Item -LiteralPath $previewFile -Force
+if (($previewItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -or
+    [IO.Path]::GetExtension($previewFile).ToLowerInvariant() -ne ".mp4") {
+    throw "Previa nao e um MP4 fisico regular."
+}
+$previewBytes = [long]$previewItem.Length
+$previewSha = (Get-FileHash -LiteralPath $previewFile -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($previewBytes -le 0 -or $previewBytes -ne [long]$preview.file_bytes -or
+    $previewSha -ne ([string]$preview.preview_sha256).ToLowerInvariant()) {
+    throw "BLOQUEADO: previa MP4 ausente, truncada ou divergente do recibo."
+}
+if ($preview.has_audio -ne $true -or [int]$preview.output_width -ne 360 -or
+    [int]$preview.output_height -ne 640 -or
+    [double]$preview.sample_seconds -lt 1 -or [double]$preview.sample_seconds -gt 6 -or
+    [double]$preview.output_duration -lt 0.5 -or [double]$preview.output_duration -gt 7) {
+    throw "BLOQUEADO: metadados de audio, dimensoes ou duracao da previa invalidos."
+}
+Write-Host "PREVIA REAL: $previewFile (SHA256 confirmado)" -ForegroundColor Green
 }
 finally {
     Pop-Location
 }
 
+# Verify original ZIP preservation AFTER the delivery and preview, not by assertion alone.
+$finalZipSha = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+$finalZipBytes = [long](Get-Item -LiteralPath $zip).Length
+if ($finalZipSha -ne $originalZipSha -or $finalZipBytes -ne $originalZipBytes) {
+    throw "BLOQUEADO: ZIP original foi alterado durante a recuperacao."
+}
 Write-Host "[5/5] Relatorio local de retomada"
 $report = [ordered]@{
     schema_version="1.0"
@@ -124,12 +176,19 @@ $report = [ordered]@{
     analyzer_commit=(& git.exe -C $analyzer rev-parse HEAD).Trim()
     curator_commit=(& git.exe -C $curator rev-parse HEAD).Trim()
     source_zip=$zip
-    source_zip_sha256=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+    source_zip_sha256=$finalZipSha
+    source_zip_bytes=$finalZipBytes
+    source_zip_preservation_verified=$true
     curator_inbox=$inbox
     source_media=$media
     source_sha256=$mediaSha
-    technical_preview_file=[string]$preview.file_path
-    technical_preview_sha256=[string]$preview.preview_sha256
+    technical_preview_file=$previewFile
+    technical_preview_sha256=$previewSha
+    technical_preview_bytes=$previewBytes
+    technical_preview_duration_seconds=[double]$preview.output_duration
+    technical_preview_sample_seconds=[double]$preview.sample_seconds
+    technical_preview_audio_reported=$true
+    technical_preview_file_verified=$true
     analyzer_current_baseline_previous_suite="2693_PASS_6_SKIPPED_7_HISTORICAL_PENDING"
     curator_previous_suite="94_PASS"
     historical_full_suite_passed=$false

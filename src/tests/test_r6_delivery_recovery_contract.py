@@ -76,3 +76,44 @@ def test_06_original_package_remains_immutable_in_recovery():
     assert "SHA256" in script
     assert "python -m" not in script or "git add" not in script
     assert "PILOTO_FULL_DEFAULTS.ps1" not in script
+
+
+def test_07_explicit_media_is_normalized_before_curator_directory_switch():
+    script=RECOVERY.read_text(encoding="utf-8")
+    assert 'if ($MediaPath) {' in script
+    assert '$explicitMedia = (Resolve-Path -LiteralPath $MediaPath).Path' in script
+    assert script.index('$explicitMedia = (Resolve-Path -LiteralPath $MediaPath).Path') < script.index('Push-Location $curator')
+    assert 'if ($explicitMedia) { $realParams.MediaPath = $explicitMedia }' in script
+    assert '$media = $explicitMedia' in script
+
+
+def test_08_zip_is_measured_before_and_after_handoff():
+    script=RECOVERY.read_text(encoding="utf-8")
+    assert '$originalZipSha = (Get-FileHash -LiteralPath $zip -Algorithm SHA256)' in script
+    assert '$finalZipSha = (Get-FileHash -LiteralPath $zip -Algorithm SHA256)' in script
+    assert 'if ([string]$handoff.zip_sha256 -ne $originalZipSha)' in script
+    assert 'if ($finalZipSha -ne $originalZipSha -or $finalZipBytes -ne $originalZipBytes)' in script
+    assert 'source_zip_preservation_verified=$true' in script
+    assert script.index('$originalZipSha =') < script.index('& $real @realParams')
+    assert script.index('$finalZipSha =') > script.index('Pop-Location')
+
+
+def test_09_preview_receipt_is_crosschecked_with_a_real_mp4():
+    script=RECOVERY.read_text(encoding="utf-8")
+    assert 'Resolve-Path -LiteralPath ([string]$preview.file_path)' in script
+    assert 'output\\r6_preview_smoke' in script
+    assert '[IO.FileAttributes]::ReparsePoint' in script
+    assert '$previewSha = (Get-FileHash -LiteralPath $previewFile -Algorithm SHA256)' in script
+    assert '$previewBytes -ne [long]$preview.file_bytes' in script
+    assert '$preview.has_audio -ne $true' in script
+    assert 'technical_preview_file_verified=$true' in script
+    assert script.index('$previewSha =') < script.index('Write-Host "[5/5]')
+
+
+def test_10_report_keeps_short_technical_preview_distinct_from_final_reels():
+    script=RECOVERY.read_text(encoding="utf-8")
+    assert 'technical_preview_duration_seconds=[double]$preview.output_duration' in script
+    assert 'technical_preview_sample_seconds=[double]$preview.sample_seconds' in script
+    assert 'human_approved=$false' in script
+    assert 'publication_ready=$false' in script
+    assert 'final_reels_rendered=$false' in script

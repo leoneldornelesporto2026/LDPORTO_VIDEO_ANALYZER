@@ -282,3 +282,12 @@ cd "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER"
 O operador executa o diagnóstico de rename, chama `PILOTO_E2E_REAL.ps1 -AnalysisDir` (somente regressão focal + reentrega validada, sem reprocessar vídeo), checa `PILOT_E2E_REPORT.json`, verifica a mídia original local do Analyzer com **SHA256 exato**, audita no Curator e cria **apenas uma prévia técnica de 6 segundos** em `output/r6_preview_smoke/`. Se o original não estiver no cache `input/youtube/<id>/download.json`, indique `-MediaPath "<original.mp4>"`; nunca usar um recode diferente como se fosse o original. O relatório local fica em `analysis/pilot_e2e_.../PILOT_RECOVERED_PREVIEW_REPORT.json`, com `publication_ready=false`. Se o diagnóstico persistir em `WinError 5`, não repetir a análise pesada nem aplicar ACLs/antivírus de forma automática.
 
 **Status do incidente:** correção de código publicada, reentrega física e prévia ainda dependem de execução real no Windows. O motor editorial R6 → R57 e as revisões de câmera, legendas, áudio e direitos continuam pendentes.
+
+
+### Contrato de retomada reforçado (06/11/2026)
+
+O operador `RETOMAR_R6_NASA_SEM_REANALISE.ps1` agora normaliza `-MediaPath` relativo **antes** de mudar o diretório corrente para o Curator; quando informado, repassa o caminho absoluto ao gate P0/P1. O ZIP original é medido em bytes e SHA256 antes da tentativa e revalidado após o handoff e a prévia. O recibo P0/P1 também deve coincidir com o SHA256 inicial.
+
+O relatório de sucesso exige que o MP4 exista fisicamente sob `Curator/output/r6_preview_smoke/`, não seja um reparse point, tenha extensão MP4, bytes e SHA256 idênticos aos do recibo do Curator. Metadados retornados pelo Curator devem declarar áudio, 360×640 e duração compatível com a amostra solicitada. A prévia pode ter **menos de seis segundos** se o intervalo do candidato for mais curto. O contrato não atesta verificação editorial, publicação ou Reels finais.
+
+Esses controles são **adicionais** à validação da mídia original e ao FFprobe já executados pelo Curator. A verificação física do Windows 11 permanece necessária; testes sintéticos e revisão de código não autorizam declarar o incidente recuperado.

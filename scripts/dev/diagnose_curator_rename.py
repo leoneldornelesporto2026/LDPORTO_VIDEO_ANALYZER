@@ -198,6 +198,119 @@ def full_stage_probe(parent, zip_source, expected_sha, facts):
     return result
 
 
+
+STAGE_MATRIX_PHASES = (
+    "pending_empty",
+    "pending_text",
+    "pending_zip_copy",
+    "pending_zip_validate",
+    "pending_zip_index",
+    "pending_zip_receipt",
+    "pending_zip_readme",
+)
+
+
+def stage_matrix_probe(parent, zip_source, expected_sha, facts, phase):
+    """Locate the first denied stage using disposable folders, not real delivery.
+
+    All variants use the exact production stage prefix and Windows os.rename.
+    Each variant adds one feature relative to the previous stage. No security
+    changes, delivery to a canonical path, inference, or non-atomic fallback.
+    """
+    if phase not in STAGE_MATRIX_PHASES:
+        raise ValueError("unknown_diagnostic_matrix_phase")
+    step = STAGE_MATRIX_PHASES.index(phase)
+    parent = Path(parent)
+    _not_linked(parent)
+    if not parent.is_dir():
+        raise ValueError("curator_video_parent_missing")
+    source = Path(zip_source)
+    target = parent / (".analyzer-rename-diag-result-matrix-" + phase + "-" + uuid4().hex)
+    result = {
+        "phase": phase, "status": "NOT_RUN", "os_rename_called": False,
+        "target": str(target), "stage": None, "stage_file_names": [],
+        "cleanup_errors": [], "diagnostic_only": True,
+    }
+    moved = False
+    try:
+        if target.exists() or target.is_symlink():
+            raise FileExistsError("diagnostic_matrix_target_preexists")
+        with tempfile.TemporaryDirectory(prefix=".analyzer-pending-", dir=parent) as temp:
+            stage = Path(temp)
+            result["stage"] = str(stage)
+            if step >= 1:
+                (stage / "DIAGNOSTIC_ONLY.txt").write_text(
+                    "Temporary rename test, not a delivery.\n", encoding="utf-8"
+                )
+            if step >= 2:
+                if digest(source) != expected_sha:
+                    raise ValueError("diagnostic_original_zip_sha_mismatch")
+                with source.open("rb") as incoming, (stage / source.name).open("xb") as outgoing:
+                    shutil.copyfileobj(incoming, outgoing, length=4 * 1024 * 1024)
+                    outgoing.flush()
+                    os.fsync(outgoing.fileno())
+                if digest(stage / source.name) != expected_sha:
+                    raise ValueError("diagnostic_matrix_copy_sha_mismatch")
+            if step >= 3:
+                checked = handoff.validate_core_package(stage / source.name)
+                if checked.get("status") != "valid":
+                    raise ValueError("diagnostic_matrix_zip_validation_failed")
+            if step >= 4:
+                index = handoff._evidence_index(stage / source.name, facts, expected_sha)
+                (stage / handoff.EVIDENCE_INDEX_NAME).write_text(
+                    json.dumps(index, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+                    encoding="utf-8",
+                )
+            receipt = {
+                "diagnostic_only": True,
+                "delivery_status": "DIAGNOSTIC_ONLY_NOT_AN_ACTUAL_HANDOFF",
+                "analysis_state": facts["analysis_state"],
+                "source_video": facts["source_video"],
+                "zip": {"name": source.name, "sha256": expected_sha},
+                "human_approval": False, "publication_ready": False,
+            }
+            if step >= 5:
+                (stage / handoff.HANDOFF_NAME).write_text(
+                    json.dumps(receipt, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+            if step >= 6:
+                (stage / handoff.GUIDE_NAME).write_text(
+                    handoff._readme(receipt), encoding="utf-8"
+                )
+            result["stage_file_names"] = sorted(p.name for p in stage.iterdir())
+            if target.exists() or target.is_symlink():
+                raise FileExistsError("diagnostic_matrix_target_created_concurrently")
+            result["os_rename_called"] = True
+            os.rename(stage, target)
+            moved = True
+            result["status"] = "PASS"
+    except (OSError, ValueError) as exc:
+        result.update({
+            "status": "FAILED",
+            "error_class": type(exc).__name__,
+            "winerror": getattr(exc, "winerror", None),
+            "errno": getattr(exc, "errno", None),
+            "error": str(exc)[:500],
+        })
+    finally:
+        if moved and (target.exists() or target.is_symlink()):
+            try:
+                _not_linked(target)
+                shutil.rmtree(target)
+            except (OSError, ValueError) as exc:
+                result["cleanup_errors"].append(
+                    {"path": str(target), "error": str(exc)[:300]}
+                )
+        if result["stage"] is not None:
+            stage = Path(result["stage"])
+            if stage.exists() or stage.is_symlink():
+                result["cleanup_errors"].append({
+                    "path": str(stage), "error": "temporary_stage_cleanup_incomplete"
+                })
+    return result
+
+
 def diagnose(analysis_dir, curator_root=None):
     analysis = Path(analysis_dir).expanduser()
     _not_linked(analysis)
@@ -236,7 +349,7 @@ def diagnose(analysis_dir, curator_root=None):
     final_path = parent / facts["run_id"]
     # A final delivery path is NEVER created, renamed, removed, or modified.
     result = {
-        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.1",
+        "schema_version": "ldporto-windows-curator-rename-diagnostic-1.2",
         "diagnostic_only": True,
         "created_final_delivery": False,
         "changed_security_settings": False,
@@ -261,6 +374,21 @@ def diagnose(analysis_dir, curator_root=None):
         result["interpretation"] = "FULL_HANDOFF_STAGE_PREPARATION_FAILED"
     else:
         result["interpretation"] = "ALL_DIAGNOSTIC_PROBES_PASSED_REAL_HANDOFF_NOT_PROVEN"
+    # The full stage failed, so isolate stage naming, ZIP reads and each
+    # additional artifact. The matrix never publishes a real run slot.
+    if full["status"] != "PASS":
+        result["stage_matrix"] = [
+            stage_matrix_probe(parent, package, expected, facts, phase)
+            for phase in STAGE_MATRIX_PHASES
+        ]
+        result["matrix_first_failure"] = next(
+            (row["phase"] for row in result["stage_matrix"] if row["status"] != "PASS"),
+            None
+        )
+        if result["matrix_first_failure"] is None:
+            result["matrix_interpretation"] = "MATRIX_PASSED_FULL_FAILURE_MAY_BE_INTERMITTENT"
+        else:
+            result["matrix_interpretation"] = "FIRST_FAILING_STAGE_IS_DIAGNOSTIC_NOT_CAUSAL_PROOF"
     # Verify original bytes did not change during all diagnostic probes.
     result["source_zip_preserved"] = digest(package) == expected
     if not result["source_zip_preserved"]:

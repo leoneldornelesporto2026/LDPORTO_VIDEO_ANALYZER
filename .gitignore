@@ -303,3 +303,9 @@ profiling_raw/
 # ------------------------------------------------------------
 
 /docs/reports/r6_20261016/R6_2_FINAL_HANDOFF/delivery/
+
+# Canonical R6 review snapshots only: textual evidence in Git after human review.
+# Raw analysis/ and downloaded transcripts remain ignored.
+!/docs/analyzer_runs/
+!/docs/analyzer_runs/**/*.srt
+!/docs/analyzer_runs/**/*.vtt

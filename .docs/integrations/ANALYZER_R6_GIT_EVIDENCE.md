@@ -48,3 +48,6 @@ Use `--summary` no comando de inspeção ou exportação para exibir apenas cont
 Caso o total textual exceda 160 MiB, o exportador **bloqueia sem perda de fonte** para decisão explícita de divisão entre snapshots. Não aumente cegamente o limite nem execute `git add`/push automático de análises volumosas.
 
 Snapshots anteriores sem membros grandes (por exemplo o primeiro export NASA) continuam verificáveis/idempotentes mesmo sem os dois novos campos opcionais do manifesto.
+
+
+**Atenção ao Git staging:** o Analyzer ignora pastas `audio/` de runtime em qualquer nível. O arquivo canônico `evidence/audio/sound_events.json` do snapshot tinha sido omitido pelo `git add` anterior, embora estivesse salvo localmente. A exceção restrita no `.gitignore` permite adicionar **somente JSONs textuais nessa pasta de evidências**, mantendo mídia e `input/audio/` ignorados. Antes de commitar, confira que os arquivos do `ANALYZER_GIT_EVIDENCE_MANIFEST.json` estão todos no staging, não apenas a contagem geral.

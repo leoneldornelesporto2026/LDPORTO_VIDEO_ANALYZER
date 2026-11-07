@@ -5,6 +5,8 @@ from hashlib import sha256
 from pathlib import Path
 import importlib.util
 import json
+import shutil
+import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -201,6 +203,33 @@ class R6GitEvidenceTests(unittest.TestCase):
         self.assertIn("people/person_appearances.json",report["large_text_names"])
         self.assertNotIn("git_text_files",report)
         self.assertFalse(report["git_push_executed"])
+
+    @unittest.skipUnless(shutil.which("git"),"Git required")
+    def test_git_stages_complete_audio_text_evidence_not_runtime_audio(self):
+        # The global audio/ ignore used to silently omit 1 file per snapshot.
+        source_ignore=(MODULE_PATH.parents[2]/".gitignore").read_text(encoding="utf-8")
+        sandbox=self.root/"git_sandbox"
+        sandbox.mkdir()
+        (sandbox/".gitignore").write_text(source_ignore,encoding="utf-8")
+        subprocess.run(["git","init","-q"],cwd=sandbox,check=True,
+                       stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        rel="docs/analyzer_runs/VIDEO123/RUN_ABC_aabbcc/evidence/audio/sound_events.json"
+        path=sandbox/rel
+        path.parent.mkdir(parents=True)
+        path.write_text('{"event":"valid"}',encoding="utf-8")
+        raw=sandbox/"audio/source.wav"
+        raw.parent.mkdir()
+        raw.write_bytes(b"not media")
+        check=subprocess.run(["git","check-ignore","-q","--",rel],
+                             cwd=sandbox)
+        self.assertEqual(check.returncode,1,"Canonical sound_events.json must be addable")
+        check_raw=subprocess.run(["git","check-ignore","-q","--","audio/source.wav"],
+                                 cwd=sandbox)
+        self.assertEqual(check_raw.returncode,0,"Raw source audio must remain ignored")
+        subprocess.run(["git","add","--",rel],cwd=sandbox,check=True)
+        staged=subprocess.check_output(["git","diff","--cached","--name-only"],
+                                        cwd=sandbox,text=True).splitlines()
+        self.assertEqual(staged,[rel])
 
     def test_path_traversal_zip_blocked(self):
         self._write({"../escaped.json": b"{}"})

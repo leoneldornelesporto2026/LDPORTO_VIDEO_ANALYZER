@@ -309,3 +309,7 @@ profiling_raw/
 !/docs/analyzer_runs/
 !/docs/analyzer_runs/**/*.srt
 !/docs/analyzer_runs/**/*.vtt
+# Do not allow the global audio/ runtime ignore to hide canonical
+# Git-review JSON evidence under evidence/audio/. Only this nested path.
+!/docs/analyzer_runs/**/evidence/audio/
+!/docs/analyzer_runs/**/evidence/audio/*.json

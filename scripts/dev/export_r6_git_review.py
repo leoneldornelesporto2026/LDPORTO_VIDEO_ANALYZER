@@ -264,8 +264,16 @@ def _verify_existing(folder, plan):
     manifest = folder / "ANALYZER_GIT_EVIDENCE_MANIFEST.json"
     if not manifest.is_file() or _is_link(manifest):
         raise ValueError("Snapshot anterior sem manifesto íntegro")
-    if json.loads(manifest.read_text(encoding="utf-8")) != plan:
-        raise ValueError("Snapshot anterior pertence a outro ZIP")
+    saved_plan=json.loads(manifest.read_text(encoding="utf-8"))
+    if saved_plan!=plan:
+        # Legacy NASA snapshots were written before the optional part counters
+        # existed. Accept them ONLY when all original entries are direct files
+        # and the remaining complete, hash-bound manifest is identical.
+        old_fields=("chunked_text_file_count","chunk_count")
+        legacy_plan={k:v for k,v in plan.items() if k not in old_fields}
+        if (any(x.get("parts") for x in plan["git_text_files"])
+                or saved_plan!=legacy_plan):
+            raise ValueError("Snapshot anterior pertence a outro ZIP")
     expected={"ANALYZER_GIT_EVIDENCE_MANIFEST.json","README.md"}
     for row in plan["git_text_files"]:
         if row.get("parts"):

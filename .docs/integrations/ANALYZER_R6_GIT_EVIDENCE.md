@@ -20,7 +20,7 @@ Gerar snapshot para inspeção local:
 
     python scripts/dev/export_r6_git_review.py --delivery "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_CURATOR\input\analyzer\Eo2bUJcxASI\2131f80ae982b4dc" --save --confirm-git-text-review
 
-Destino padrão: docs/analyzer_runs/<video_id>/<run_id>_<ZIP_sha_prefix>/. Cada arquivo textual mantém seu conteúdo integral em `evidence/<caminho-original>` no snapshot; o manifesto lista também os binários excluídos, sua origem e hashes.
+Destino padrão: docs/analyzer_runs/<video_id>/<run_id>_<ZIP_sha_prefix>/. Textos de até 24 MiB permanecem integrais em `evidence/<caminho-original>`. Membros maiores (como `people/person_appearances.json` do CBJR) são divididos **sem perda** em `parts/<sha256-do-caminho>/00001.txt`, `00002.txt` etc., cada parte com no máximo 4 MiB, UTF-8 válido, SHA256 individual e ordem documentada no manifesto. A concatenação binária na ordem indicada reconstrói o JSON original exatamente, confirmado pelo SHA256 do membro. O limite agregado de 160 MiB para texto e de 256 MiB descompactados continua vigente.
 
 Revisar conteúdo antes de versionar:
 
@@ -40,3 +40,11 @@ Depois da revisão humana de confidencialidade, dados pessoais, direitos e segre
 ### Testes
 
     python -m unittest discover -s src/tests -p test_r6_git_evidence.py -v
+
+### Saída resumida e arquivos grandes
+
+Use `--summary` no comando de inspeção ou exportação para exibir apenas contagens e nomes dos membros particionados, evitando despejar centenas de linhas no console.
+
+Caso o total textual exceda 160 MiB, o exportador **bloqueia sem perda de fonte** para decisão explícita de divisão entre snapshots. Não aumente cegamente o limite nem execute `git add`/push automático de análises volumosas.
+
+Snapshots anteriores sem membros grandes (por exemplo o primeiro export NASA) continuam verificáveis/idempotentes mesmo sem os dois novos campos opcionais do manifesto.

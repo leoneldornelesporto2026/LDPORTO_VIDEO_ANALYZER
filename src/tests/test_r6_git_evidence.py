@@ -7,6 +7,9 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
+from unittest.mock import patch
 from zipfile import ZipFile, ZIP_DEFLATED
 
 
@@ -129,6 +132,75 @@ class R6GitEvidenceTests(unittest.TestCase):
         receipt_path.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, "Manifesto"):
             audit.plan_snapshot(self.delivery)
+
+    def test_realistic_oversized_json_is_losslessly_split_and_rechecked(self):
+        # This reproduces CBJR: a canonical JSON member larger than 24 MiB,
+        # with a small compressed ZIP and no new media downloads.
+        oversized=(b'{"people":"' + (b"x" * (audit.MAX_FILE_BYTES + 97)) + b'"}')
+        self._write({"people/person_appearances.json":oversized})
+        plan=audit.plan_snapshot(self.delivery)
+        row=next(x for x in plan["git_text_files"]
+                 if x["path"]=="people/person_appearances.json")
+        self.assertEqual(row["storage"],"UTF8_LOSSLESS_PARTS")
+        self.assertGreater(len(row["parts"]),1)
+        self.assertTrue(all(x["bytes"]<=audit.CHUNK_BYTES for x in row["parts"]))
+        folder=audit.save_snapshot(self.delivery,self.destination)
+        joined=b"".join((folder/x["path"]).read_bytes() for x in row["parts"])
+        self.assertEqual(joined,oversized)
+        self.assertEqual(sha256(joined).hexdigest(),row["sha256"])
+        self.assertEqual(audit.save_snapshot(self.delivery,self.destination),folder)
+        self.assertFalse((folder/"evidence/people/person_appearances.json").exists())
+
+    def test_utf8_characters_are_not_cut_mid_codepoint(self):
+        # Force a tiny threshold to cover a multibyte split boundary.
+        original=('{"text":"'+'áçã🚀'*50+'"}').encode("utf-8")
+        self._write({"people/person_appearances.json":original})
+        with patch.object(audit,"MAX_FILE_BYTES",24),patch.object(audit,"CHUNK_BYTES",37):
+            plan=audit.plan_snapshot(self.delivery)
+            row=next(x for x in plan["git_text_files"]
+                     if x["path"]=="people/person_appearances.json")
+            self.assertTrue(all(x["bytes"]<=37 for x in row["parts"]))
+            folder=audit.save_snapshot(self.delivery,self.destination)
+            content=b"".join((folder/x["path"]).read_bytes() for x in row["parts"])
+        self.assertEqual(content,original)
+        for x in row["parts"]:
+            (folder/x["path"]).read_text(encoding="utf-8-sig")
+
+    def test_tampered_large_chunk_is_preserved_and_refused(self):
+        self._write({"people/person_appearances.json":b'{"test":"' + b"z"*500 + b'"}'})
+        with patch.object(audit,"MAX_FILE_BYTES",32),patch.object(audit,"CHUNK_BYTES",60):
+            folder=audit.save_snapshot(self.delivery,self.destination)
+            manifest=json.loads((folder/"ANALYZER_GIT_EVIDENCE_MANIFEST.json")
+                                .read_text(encoding="utf-8"))
+            row=next(x for x in manifest["git_text_files"]
+                     if x["path"]=="people/person_appearances.json")
+            part=folder/row["parts"][0]["path"]
+            part.write_bytes(b"tampered")
+            with self.assertRaisesRegex(ValueError,"modificada"):
+                audit.save_snapshot(self.delivery,self.destination)
+            self.assertEqual(part.read_bytes(),b"tampered")
+
+    def test_legacy_nasa_direct_snapshot_is_idempotent(self):
+        folder=audit.save_snapshot(self.delivery,self.destination)
+        manifest=folder/"ANALYZER_GIT_EVIDENCE_MANIFEST.json"
+        record=json.loads(manifest.read_text(encoding="utf-8"))
+        record.pop("chunk_count")
+        record.pop("chunked_text_file_count")
+        manifest.write_text(json.dumps(record,ensure_ascii=False),encoding="utf-8")
+        self.assertEqual(audit.save_snapshot(self.delivery,self.destination),folder)
+
+    def test_summary_reports_large_files_without_full_inventory(self):
+        self._write({"people/person_appearances.json":b'{"x":"' + b"y"*500 + b'"}'})
+        output=StringIO()
+        with patch.object(audit,"MAX_FILE_BYTES",20),patch.object(audit,"CHUNK_BYTES",45):
+            with redirect_stdout(output):
+                self.assertEqual(audit.main([
+                    "--delivery",str(self.delivery),"--summary"]),0)
+        report=json.loads(output.getvalue())
+        self.assertGreater(report["chunk_count"],1)
+        self.assertIn("people/person_appearances.json",report["large_text_names"])
+        self.assertNotIn("git_text_files",report)
+        self.assertFalse(report["git_push_executed"])
 
     def test_path_traversal_zip_blocked(self):
         self._write({"../escaped.json": b"{}"})

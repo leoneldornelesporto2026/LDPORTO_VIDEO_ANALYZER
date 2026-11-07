@@ -25,7 +25,7 @@ Destino padrão: docs/analyzer_runs/<video_id>/<run_id>_<ZIP_sha_prefix>/. Cada 
 Revisar conteúdo antes de versionar:
 
     git status --short
-    git diff --no-index -- /dev/null docs/analyzer_runs/<video_id>/<run_id>_<sha>/README.md
+    Get-Content -LiteralPath "docs/analyzer_runs/<video_id>/<run_id>_<sha>/README.md"
 
 Depois da revisão humana de confidencialidade, dados pessoais, direitos e segredos, o operador pode executar `git add docs/analyzer_runs/<video_id>/<run_id>_<sha>` e um commit local. **O script não executa git add, commit, push, merge ou deploy.**
 

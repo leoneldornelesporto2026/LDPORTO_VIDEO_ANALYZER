@@ -146,3 +146,8 @@ cd "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER"
 O operador executa o diagnóstico de rename, chama `PILOTO_E2E_REAL.ps1 -AnalysisDir` (somente regressão focal + reentrega validada, sem reprocessar vídeo), checa `PILOT_E2E_REPORT.json`, verifica a mídia original local do Analyzer com **SHA256 exato**, audita no Curator e cria **apenas uma prévia técnica de 6 segundos** em `output/r6_preview_smoke/`. Se o original não estiver no cache `input/youtube/<id>/download.json`, indique `-MediaPath "<original.mp4>"`; nunca usar um recode diferente como se fosse o original. O relatório local fica em `analysis/pilot_e2e_.../PILOT_RECOVERED_PREVIEW_REPORT.json`, com `publication_ready=false`. Se o diagnóstico persistir em `WinError 5`, não repetir a análise pesada nem aplicar ACLs/antivírus de forma automática.
 
 **Status do incidente:** correção de código publicada, reentrega física e prévia ainda dependem de execução real no Windows. O motor editorial R6 → R57 e as revisões de câmera, legendas, áudio e direitos continuam pendentes.
+
+
+### Evidências de análises R6 no Git (exportação textual controlada)
+
+O Analyzer mantém `analysis/`, vídeos, imagens, ZIPs e modelos fora do Git, mas agora pode exportar **todos os textos do ZIP R6 canônico** (transcrição SRT/JSONL, candidatos, câmera, metadados e manifestos) para `docs/analyzer_runs/` mediante conferência e autorização explícita. Não há commit nem push automático e nenhuma legenda é aprovada sem segunda curadoria. Veja [.docs/integrations/ANALYZER_R6_GIT_EVIDENCE.md](.docs/integrations/ANALYZER_R6_GIT_EVIDENCE.md).

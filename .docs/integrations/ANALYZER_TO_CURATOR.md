@@ -181,7 +181,7 @@ cd "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_ANALYZER"
 
 **P2 pendente:** associação de vídeo ao motor de prévias, adaptador verdadeiro R6 -> contratos/ativos do renderizador R57, vídeo curto de teste, inspeção de áudio/câmera/legendas, render final condicionado a aprovação. Um piloto P0/P1 PASSOU não é homologação E2E até o MP4 final. Se a auditoria encontrar mídia alternativa com SHA diferente, não liberar os timestamps automaticamente.
 
-**Sem commits de análise:** o GitHub recebe somente código, testes, contratos e documentos. ZIP R6, MP4 original, diretórios `analysis/`, capturas, prévias e renders ficam localmente ignorados pelo Git; para compartilhar evidências enviar um pacote de diagnóstico **separado**, com relatório/manifesto/hashes, ou artefatos apropriados com retenção. Nunca executar `git add -f` nesses caminhos.
+**Análises textuais no Git (nova opção revisável):** o Git continua protegendo o ZIP R6, MP4 original, diretórios `analysis/`, capturas, prévias e renders. Contudo, após revisão de conteúdo/confidencialidade e comando explícito, `scripts/dev/export_r6_git_review.py` prepara em `docs/analyzer_runs/<video_id>/<run_id>_<sha>/` **todos os membros textuais do ZIP canônico** (inclusive transcrições SRT e JSONL, evidências editoriais/câmera e hashes). Binários aparecem apenas no manifesto. Os arquivos textuais podem ser commitados manualmente; o exportador não faz `git add`, `commit` ou `push`. Consulte `.docs/integrations/ANALYZER_R6_GIT_EVIDENCE.md`. Nunca executar `git add -f` sobre os diretórios brutos.
 
 ## Piloto de duas suítes COMPLETAS + vídeo curto real sem mudar defaults
 

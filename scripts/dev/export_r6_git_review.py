@@ -23,7 +23,8 @@ TEXT_SUFFIXES = frozenset({
 })
 MAX_ZIP_BYTES = 256 * 1024 * 1024
 MAX_TEXT_BYTES = 160 * 1024 * 1024
-MAX_FILE_BYTES = 24 * 1024 * 1024
+MAX_FILE_BYTES = 24 * 1024 * 1024  # Direct display threshold, NOT a rejection limit.
+CHUNK_BYTES = 4 * 1024 * 1024       # Git-readable UTF-8 text parts.
 MAX_FILES = 5000
 SAFE_ID = re.compile(r"^[A-Za-z0-9_-]{1,96}$")
 SAFE_RUN = re.compile(r"^[A-Za-z0-9_.-]{1,120}$")
@@ -50,6 +51,38 @@ def _is_link(path):
         getattr(path.lstat(), "st_file_attributes", 0)
         & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 1024)
     )
+
+
+def _text_chunks(raw):
+    """Lossless UTF-8 slices, each at most CHUNK_BYTES and individually readable."""
+    chunks=[]
+    offset=0
+    while offset<len(raw):
+        end=min(len(raw),offset+CHUNK_BYTES)
+        if end<len(raw):
+            # Do not split a multibyte Unicode code point.
+            while end>offset and raw[end] & 0xC0 == 0x80:
+                end-=1
+        if end==offset:
+            raise ValueError("Fronteira UTF-8 inválida no particionamento")
+        part=raw[offset:end]
+        try:
+            part.decode("utf-8-sig" if offset==0 else "utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("Chunk textual UTF-8 inválido") from exc
+        chunks.append(part)
+        offset=end
+    return chunks
+
+
+def _parts_for(path, raw):
+    """Content-addressed path namespace avoids any collisions with R6 members."""
+    parent="parts/"+sha256(path.encode("utf-8")).hexdigest()
+    return [
+        {"path":f"{parent}/{i:05d}.txt",
+         "bytes":len(part),"sha256":sha256(part).hexdigest()}
+        for i,part in enumerate(_text_chunks(raw),1)
+    ]
 
 
 def plan_snapshot(delivery):
@@ -128,17 +161,18 @@ def plan_snapshot(delivery):
                                  "sha256": sha256(raw).hexdigest(),
                                  "reason": "NON_TEXT_MEDIA_OR_BINARY"})
                 continue
-            if len(raw) > MAX_FILE_BYTES:
-                raise ValueError("Arquivo textual acima do limite: " + name)
+            total_text += len(raw)
+            if total_text > MAX_TEXT_BYTES:
+                raise ValueError("Conjunto textual acima de 160 MiB")
             try:
                 raw.decode("utf-8-sig")
             except UnicodeDecodeError as exc:
                 raise ValueError("Arquivo textual não UTF-8: " + name) from exc
-            total_text += len(raw)
-            if total_text > MAX_TEXT_BYTES:
-                raise ValueError("Conjunto textual acima de 160 MiB")
-            text_files.append({"path": name, "bytes": len(raw),
-                               "sha256": sha256(raw).hexdigest()})
+            row={"path":name,"bytes":len(raw),"sha256":sha256(raw).hexdigest()}
+            if len(raw)>MAX_FILE_BYTES:
+                row["storage"]="UTF8_LOSSLESS_PARTS"
+                row["parts"]=_parts_for(name,raw)
+            text_files.append(row)
     return {
         "schema": SCHEMA,
         "status": "GIT_TEXT_REVIEW_PENDING",
@@ -150,6 +184,8 @@ def plan_snapshot(delivery):
         "git_text_files": text_files,
         "excluded_binary_files": excluded,
         "text_bytes": total_text,
+        "chunked_text_file_count":sum(bool(x.get("parts")) for x in text_files),
+        "chunk_count":sum(len(x.get("parts",[])) for x in text_files),
         "human_approved": False,
         "publication_ready": False,
         "git_commit_created": False,
@@ -183,15 +219,31 @@ def save_snapshot(delivery, destination_root):
                 raw = archive.read(row["path"])
                 if len(raw) != row["bytes"] or sha256(raw).hexdigest() != row["sha256"]:
                     raise ValueError("Evidência mudou durante exportação: " + row["path"])
-                destination = stage.joinpath("evidence", *PurePosixPath(row["path"]).parts)
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_bytes(raw)
+                if row.get("parts"):
+                    chunks=_text_chunks(raw)
+                    if len(chunks)!=len(row["parts"]):
+                        raise ValueError("Contagem de partes divergente: "+row["path"])
+                    for info,part in zip(row["parts"],chunks):
+                        if (len(part)!=info["bytes"] or
+                                sha256(part).hexdigest()!=info["sha256"]):
+                            raise ValueError("Parte divergente: "+info["path"])
+                        target=stage.joinpath(*PurePosixPath(info["path"]).parts)
+                        target.parent.mkdir(parents=True,exist_ok=True)
+                        target.write_bytes(part)
+                else:
+                    destination = stage.joinpath("evidence", *PurePosixPath(row["path"]).parts)
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    destination.write_bytes(raw)
         (stage / "ANALYZER_GIT_EVIDENCE_MANIFEST.json").write_text(
             json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         (stage / "README.md").write_text(
             "# Analyzer R6 | Evidências textuais originais\n\n"
-            "Snapshot verificável do ZIP canônico exportado. Textos em evidence/; o manifesto lista todos"
-            " os membros, inclusive imagens e outros binários não versionados.\n\n"
+            "Snapshot verificável do ZIP canônico exportado. Textos pequenos em evidence/.\n"
+            "Textos maiores que 24 MiB são particionados sem perda em parts/<SHA256-do-caminho>/"
+            "00001.txt etc.; o manifesto lista a ordem, bytes e SHA256 de cada pedaço.\n"
+            "A concatenação binária na ordem restaura exatamente o arquivo original,"
+            " comprovável pelo sha256 do membro no manifesto.\n"
+            "O manifesto lista também imagens e binários não versionados.\n\n"
             "A transcrição é o ASR ORIGINAL, não as legendas revisadas.\n"
             "A segunda checagem de palavras, tempos e contexto pertence ao Curator.\n"
             "Nenhuma aprovação, render, Git commit ou push automático ocorreu.\n"
@@ -214,8 +266,12 @@ def _verify_existing(folder, plan):
         raise ValueError("Snapshot anterior sem manifesto íntegro")
     if json.loads(manifest.read_text(encoding="utf-8")) != plan:
         raise ValueError("Snapshot anterior pertence a outro ZIP")
-    expected = {"evidence/" + row["path"] for row in plan["git_text_files"]}
-    expected |= {"ANALYZER_GIT_EVIDENCE_MANIFEST.json", "README.md"}
+    expected={"ANALYZER_GIT_EVIDENCE_MANIFEST.json","README.md"}
+    for row in plan["git_text_files"]:
+        if row.get("parts"):
+            expected.update(x["path"] for x in row["parts"])
+        else:
+            expected.add("evidence/"+row["path"])
     files = list(folder.rglob("*"))
     if any(_is_link(p) for p in files):
         raise ValueError("Snapshot anterior contém link")
@@ -223,9 +279,24 @@ def _verify_existing(folder, plan):
     if actual != expected:
         raise ValueError("Arquivos do snapshot anterior foram adicionados/removidos")
     for row in plan["git_text_files"]:
-        p = folder.joinpath("evidence", *PurePosixPath(row["path"]).parts)
-        if not p.is_file() or p.stat().st_size != row["bytes"] or digest(p) != row["sha256"]:
-            raise ValueError("Texto já exportado foi modificado: " + row["path"])
+        if row.get("parts"):
+            calculated=sha256()
+            size=0
+            for part in row["parts"]:
+                p=folder.joinpath(*PurePosixPath(part["path"]).parts)
+                if (not p.is_file() or p.stat().st_size!=part["bytes"]
+                        or digest(p)!=part["sha256"]):
+                    raise ValueError("Parte textual já exportada foi modificada: "+part["path"])
+                size+=part["bytes"]
+                with p.open("rb") as source:
+                    for block in iter(lambda:source.read(1024*1024),b""):
+                        calculated.update(block)
+            if size!=row["bytes"] or calculated.hexdigest()!=row["sha256"]:
+                raise ValueError("Reconstrução SHA256 do texto divergente: "+row["path"])
+        else:
+            p = folder.joinpath("evidence", *PurePosixPath(row["path"]).parts)
+            if not p.is_file() or p.stat().st_size != row["bytes"] or digest(p) != row["sha256"]:
+                raise ValueError("Texto já exportado foi modificado: " + row["path"])
     return folder
 
 
@@ -235,6 +306,8 @@ def main(argv=None):
                    help="Curator input/analyzer/<video_id>/<run_id>")
     p.add_argument("--destination-root", type=Path,
                    default=Path(__file__).resolve().parents[2] / "docs" / "analyzer_runs")
+    p.add_argument("--summary", action="store_true",
+                   help="Print compact counts instead of full manifest inventory")
     p.add_argument("--save", action="store_true",
                    help="Persist verified textual evidence in docs/analyzer_runs")
     p.add_argument("--confirm-git-text-review", action="store_true",
@@ -247,7 +320,19 @@ def main(argv=None):
         plan["saved_folder"] = str(save_snapshot(args.delivery, args.destination_root))
     else:
         plan["saved_folder"] = None
-    print(json.dumps(plan, ensure_ascii=False, indent=2))
+    if args.summary:
+        summary={k:plan[k] for k in (
+            "schema","status","video_id","run_id","zip_members_total",
+            "text_bytes","chunked_text_file_count","chunk_count",
+            "human_approved","git_commit_created","git_push_executed",
+            "saved_folder")}
+        summary["git_text_file_count"]=len(plan["git_text_files"])
+        summary["excluded_binary_file_count"]=len(plan["excluded_binary_files"])
+        summary["large_text_names"]=[
+            x["path"] for x in plan["git_text_files"] if x.get("parts")]
+        print(json.dumps(summary,ensure_ascii=False,indent=2))
+    else:
+        print(json.dumps(plan, ensure_ascii=False, indent=2))
     return 0
 
 

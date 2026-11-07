@@ -20,7 +20,7 @@ Gerar snapshot para inspeção local:
 
     python scripts/dev/export_r6_git_review.py --delivery "C:\Users\leone\Documentos\Meus Projetos\LDPORTO_VIDEO_CURATOR\input\analyzer\Eo2bUJcxASI\2131f80ae982b4dc" --save --confirm-git-text-review
 
-Destino padrão: docs/analyzer_runs/<video_id>/<run_id>_<ZIP_sha_prefix>/. Cada arquivo textual mantém seu conteúdo integral no snapshot; o manifesto lista também os binários excluídos, sua origem e hashes.
+Destino padrão: docs/analyzer_runs/<video_id>/<run_id>_<ZIP_sha_prefix>/. Cada arquivo textual mantém seu conteúdo integral em `evidence/<caminho-original>` no snapshot; o manifesto lista também os binários excluídos, sua origem e hashes.
 
 Revisar conteúdo antes de versionar:
 

@@ -81,9 +81,9 @@ class R6GitEvidenceTests(unittest.TestCase):
         self.assertEqual(folder, audit.save_snapshot(self.delivery, self.destination))
         for path, raw in self.files.items():
             if path.lower().endswith(".jpg"):
-                self.assertFalse((folder / path).exists())
+                self.assertFalse((folder / "evidence" / path).exists())
             else:
-                self.assertEqual((folder / path).read_bytes(), raw)
+                self.assertEqual((folder / "evidence" / path).read_bytes(), raw)
         self.assertEqual(original, audit.digest(self.delivery / "SECOND_CURATION_RUN_ABC.zip"))
         self.assertFalse(any(p.suffix == ".mp4" for p in folder.rglob("*")))
         report = json.loads((folder / "ANALYZER_GIT_EVIDENCE_MANIFEST.json").read_text())
@@ -99,7 +99,7 @@ class R6GitEvidenceTests(unittest.TestCase):
 
     def test_modified_existing_srt_cannot_be_overwritten(self):
         folder = audit.save_snapshot(self.delivery, self.destination)
-        srt = folder / "transcript/transcript.srt"
+        srt = folder / "evidence/transcript/transcript.srt"
         srt.write_bytes(b"human changed")
         with self.assertRaisesRegex(ValueError, "modificado"):
             audit.save_snapshot(self.delivery, self.destination)

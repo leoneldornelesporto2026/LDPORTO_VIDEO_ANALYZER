@@ -183,14 +183,14 @@ def save_snapshot(delivery, destination_root):
                 raw = archive.read(row["path"])
                 if len(raw) != row["bytes"] or sha256(raw).hexdigest() != row["sha256"]:
                     raise ValueError("Evidência mudou durante exportação: " + row["path"])
-                destination = stage.joinpath(*PurePosixPath(row["path"]).parts)
+                destination = stage.joinpath("evidence", *PurePosixPath(row["path"]).parts)
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 destination.write_bytes(raw)
         (stage / "ANALYZER_GIT_EVIDENCE_MANIFEST.json").write_text(
             json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         (stage / "README.md").write_text(
             "# Analyzer R6 | Evidências textuais originais\n\n"
-            "Snapshot verificável do ZIP canônico exportado; o manifesto lista todos"
+            "Snapshot verificável do ZIP canônico exportado. Textos em evidence/; o manifesto lista todos"
             " os membros, inclusive imagens e outros binários não versionados.\n\n"
             "A transcrição é o ASR ORIGINAL, não as legendas revisadas.\n"
             "A segunda checagem de palavras, tempos e contexto pertence ao Curator.\n"
@@ -214,7 +214,7 @@ def _verify_existing(folder, plan):
         raise ValueError("Snapshot anterior sem manifesto íntegro")
     if json.loads(manifest.read_text(encoding="utf-8")) != plan:
         raise ValueError("Snapshot anterior pertence a outro ZIP")
-    expected = {row["path"] for row in plan["git_text_files"]}
+    expected = {"evidence/" + row["path"] for row in plan["git_text_files"]}
     expected |= {"ANALYZER_GIT_EVIDENCE_MANIFEST.json", "README.md"}
     files = list(folder.rglob("*"))
     if any(_is_link(p) for p in files):
@@ -223,7 +223,7 @@ def _verify_existing(folder, plan):
     if actual != expected:
         raise ValueError("Arquivos do snapshot anterior foram adicionados/removidos")
     for row in plan["git_text_files"]:
-        p = folder.joinpath(*PurePosixPath(row["path"]).parts)
+        p = folder.joinpath("evidence", *PurePosixPath(row["path"]).parts)
         if not p.is_file() or p.stat().st_size != row["bytes"] or digest(p) != row["sha256"]:
             raise ValueError("Texto já exportado foi modificado: " + row["path"])
     return folder
